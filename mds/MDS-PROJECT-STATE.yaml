@@ -1,0 +1,896 @@
+mds:
+  system: Mercurius Design System
+  schema_version: "1.1"
+  project_id: "home-school-haven-learning-platform"
+  project_name: "Home School Haven Learning Platform"
+  lifecycle: active
+  mds_version: "v1.0"
+  current_gate: implementation_readiness
+  mps_project_id: "home-school-haven-learning-platform"
+  mps_version: "unversioned draft; Library version 11 consumed"
+  created_at: "2026-08-27T00:00:00Z"
+  updated_at: "2026-08-27T02:37:26Z"
+
+project:
+  name: "Home School Haven Learning Platform"
+  description: "A connected Christ-centered ecosystem combining the public Home School Haven website with family, educator, and administrative experiences."
+  product_type: "Responsive public website, program management portal, blended learning hub, and future online learning platform"
+  audience:
+    - "Prospective and current parents or guardians"
+    - "Parent-controlled students"
+    - "Educators"
+    - "Administrators"
+    - "Samantha Dodson as owner and final decision owner"
+    - "Optional invited secondary guardians"
+  platforms:
+    - "Responsive web"
+  primary_experience: "Help families discover an appropriate program, choose guided assistance or direct enrollment, and manage family participation in one trusted place."
+  scope:
+    - "Responsive public website and program discovery"
+    - "Program catalog and details"
+    - "Inquiry, tour, guidance, and assistance requests"
+    - "Registration with program-specific external checkout handoff"
+    - "Parent-controlled family accounts and student profiles"
+    - "Family dashboard for enrollments, schedules, announcements, and resources"
+    - "Educator assigned-program workspace"
+    - "Administrator program operations"
+    - "Program announcements and learning resources"
+    - "Private Foundation Release beta using current website content"
+  out_of_scope:
+    - "Independent student accounts in the Foundation Release beta"
+    - "Internal payment processing for the Foundation Release beta"
+    - "Automated scholarship, discount, refund, credit, transfer, or other financial-policy decisions"
+    - "Real-family activation before unresolved consent and child-data policy is approved"
+  status: "MPS requirements approved for private beta design; authoritative implementation handoff remains policy-blocked"
+
+identity:
+  logo:
+    direction: "Preserve and thoughtfully refine the existing Home School Haven identity and logo"
+    status: approved
+    canonical_source:
+      name: "Home School Haven of SWFL original website logo"
+      library_file_id: "libfile_1847dbb7f6cc81919312fd15c1988149"
+      original_filename: "8aa5b524-c55b-4345-a44d-a9f0c54fc380.png"
+      status: approved
+    preservation_rules:
+      - "Preserve the handwritten Homeschool wordmark, Haven of SWFL descriptor, house line art, and coral heart."
+      - "Refinement may improve cleanup, spacing, lockups, and small-size legibility without replacing the recognizable identity."
+      - "Do not redraw the logo through generative image output; use the supplied logo as the canonical identity asset."
+  personality:
+    - value: "calm"
+      status: observed
+    - value: "creative"
+      status: observed
+    - value: "relationship-centered"
+      status: observed
+    - value: "Christ-centered"
+      status: approved_product_constraint
+  brand_adjectives:
+    - "boutique"
+    - "warm"
+    - "trusted"
+    - "welcoming"
+  emotional_response:
+    - "Parents feel reassured and personally supported"
+    - "Children feel welcomed without the product becoming childish"
+    - "Educators feel organized and respected"
+  visual_direction:
+    value: "Warm boutique learning community with a balanced, naturally integrated Christ-centered identity"
+    status: approved
+  principles:
+    - statement: "Creativity over conformity"
+      source: MPS
+      status: approved_product_principle
+    - statement: "Curiosity over perfection"
+      source: MPS
+      status: approved_product_principle
+    - statement: "Character over performance"
+      source: MPS
+      status: approved_product_principle
+    - statement: "Community over competition"
+      source: MPS
+      status: approved_product_principle
+    - statement: "A Haven, Not Just a Platform"
+      source: MDS
+      status: approved
+    - statement: "Warmth With Clarity"
+      source: MDS
+      status: approved
+    - statement: "Parent Trust Comes First"
+      source: MDS
+      status: approved
+    - statement: "Creativity Within Calm Structure"
+      source: MDS
+      status: approved
+    - statement: "Faith Expressed Through Character"
+      source: MDS
+      status: approved
+  references:
+    - "https://homeschoolhaven.org/"
+
+color:
+  primary:
+    forest_700: {name: "Forest 700", value: "#31483F", role: "Primary hover, active, and high-emphasis surfaces", status: approved}
+    forest_600: {name: "Forest 600", value: "#3F5C50", role: "Primary actions, navigation emphasis, and key brand structure", status: approved}
+    forest_500: {name: "Forest 500", value: "#557467", role: "Secondary botanical emphasis and illustration detail", status: approved}
+    forest_100: {name: "Forest 100", value: "#DDE7E1", role: "Selected surfaces and supportive panels", status: approved}
+    forest_50: {name: "Forest 50", value: "#EFF4F1", role: "Quiet botanical background", status: approved}
+  secondary:
+    coral_700: {name: "Coral 700", value: "#A84248", role: "Accessible coral text, focus emphasis, and critical accent", status: approved}
+    coral_500: {name: "Logo Coral", value: "#ED7D7C", role: "Canonical logo heart and decorative brand accent", status: approved}
+    coral_100: {name: "Coral 100", value: "#F9E2E1", role: "Warm highlight surface", status: approved}
+  accent:
+    gold_700: {name: "Heritage Gold 700", value: "#7A5A20", role: "Accessible gold-toned text and icon emphasis", status: approved}
+    gold_500: {name: "Heritage Gold", value: "#B38A42", role: "Restrained decorative highlight", status: approved}
+    gold_100: {name: "Heritage Gold 100", value: "#EFE3C8", role: "Warm highlight panel", status: approved}
+  neutrals:
+    ink_900: {name: "Ink 900", value: "#1F2522", role: "Primary text", status: approved}
+    logo_ink: {name: "Logo Ink", value: "#292929", role: "Canonical logo linework", status: approved}
+    ink_700: {name: "Ink 700", value: "#4F5954", role: "Secondary text", status: approved}
+    ink_600: {name: "Ink 600", value: "#626B67", role: "Muted accessible text", status: approved}
+    neutral_400: {name: "Neutral 400", value: "#9AA29E", role: "Disabled content and quiet iconography", status: approved}
+    neutral_300: {name: "Neutral 300", value: "#C9CEC9", role: "Strong border and divider", status: approved}
+    neutral_200: {name: "Neutral 200", value: "#E2E5E2", role: "Default border and divider", status: approved}
+    ivory_100: {name: "Logo Ivory", value: "#F4F1EC", role: "Canonical brand canvas and warm page surface", status: approved}
+    ivory_50: {name: "Warm White", value: "#FBF9F6", role: "Elevated warm surface", status: approved}
+    white: {name: "White", value: "#FFFFFF", role: "High-clarity content surface", status: approved}
+  semantic:
+    success: {name: "Success", value: "#2F6B4F", role: "Confirmed and successful states", status: approved}
+    warning: {name: "Warning", value: "#8A5A12", role: "Attention and pending states", status: approved}
+    error: {name: "Error", value: "#A43C3C", role: "Error and blocked states", status: approved}
+    info: {name: "Information", value: "#356A85", role: "Informational states", status: approved}
+  surfaces:
+    page: "#F4F1EC"
+    elevated: "#FBF9F6"
+    card: "#FFFFFF"
+    quiet: "#EFF4F1"
+    warm_highlight: "#F9E2E1"
+  text:
+    primary: "#1F2522"
+    secondary: "#4F5954"
+    muted: "#626B67"
+    inverse: "#FFFFFF"
+    link: "#31483F"
+  borders:
+    default: "#E2E5E2"
+    strong: "#C9CEC9"
+    focus: "#A84248"
+  usage_rules:
+    - "Forest 600 is the principal interactive color; Forest 700 is its hover and active partner."
+    - "Logo Coral #ED7D7C is decorative and identity-bearing; do not use it for normal-size text on light surfaces."
+    - "Coral 700 #A84248 is the accessible coral alternative for text, focus, and meaningful status emphasis."
+    - "Heritage Gold #B38A42 is decorative; use Gold 700 #7A5A20 when the color must carry readable meaning."
+    - "No state may rely on color alone; pair semantic color with language and iconography."
+
+typography:
+  display_family:
+    family: "Lora"
+    fallback: "Georgia, Times New Roman, serif"
+    status: approved
+  ui_family:
+    family: "Manrope"
+    fallback: "Inter, Arial, sans-serif"
+    status: approved
+  mono_family: null
+  weights:
+    regular: 400
+    medium: 500
+    semibold: 600
+    bold: 700
+  scale:
+    display_xl: {desktop: "56px", mobile: "40px", line_height: "1.14", family: "Lora", weight: 600, letter_spacing: "-0.02em"}
+    display_lg: {desktop: "44px", mobile: "34px", line_height: "1.18", family: "Lora", weight: 600, letter_spacing: "-0.015em"}
+    heading_1: {desktop: "40px", mobile: "32px", line_height: "1.2", family: "Lora", weight: 600, letter_spacing: "-0.01em"}
+    heading_2: {desktop: "32px", mobile: "28px", line_height: "1.25", family: "Lora", weight: 600, letter_spacing: "-0.01em"}
+    heading_3: {desktop: "24px", mobile: "24px", line_height: "1.33", family: "Lora", weight: 600, letter_spacing: "0"}
+    heading_4: {desktop: "20px", mobile: "20px", line_height: "1.4", family: "Manrope", weight: 700, letter_spacing: "-0.005em"}
+    body_lg: {desktop: "18px", mobile: "18px", line_height: "1.67", family: "Manrope", weight: 400, letter_spacing: "0"}
+    body_md: {desktop: "16px", mobile: "16px", line_height: "1.625", family: "Manrope", weight: 400, letter_spacing: "0"}
+    body_sm: {desktop: "14px", mobile: "14px", line_height: "1.57", family: "Manrope", weight: 400, letter_spacing: "0"}
+    label: {desktop: "14px", mobile: "14px", line_height: "1.43", family: "Manrope", weight: 600, letter_spacing: "0.01em"}
+    caption: {desktop: "12px", mobile: "12px", line_height: "1.5", family: "Manrope", weight: 500, letter_spacing: "0.01em"}
+  line_heights: {display: "1.14–1.25", heading: "1.2–1.4", body: "1.57–1.67", label: "1.43–1.5"}
+  letter_spacing: {display: "-0.02em to 0", body: "0", labels: "0.01em"}
+  roles:
+    editorial_display: "Lora 600"
+    page_heading: "Lora 600"
+    component_heading: "Manrope 700"
+    body_and_ui: "Manrope 400"
+    label: "Manrope 600"
+    caption: "Manrope 500"
+  usage_rules:
+    - "Use Lora for public storytelling, page titles, section headings, and warm editorial moments."
+    - "Use Manrope for navigation, forms, buttons, dashboards, tables, schedules, labels, and sustained body reading."
+    - "Do not use the handwritten logo lettering as a general interface typeface."
+    - "Avoid long passages set in Lora; operational clarity belongs to Manrope."
+
+spacing:
+  base_unit: "4px"
+  scale: {0: "0", 1: "4px", 2: "8px", 3: "12px", 4: "16px", 5: "20px", 6: "24px", 8: "32px", 10: "40px", 12: "48px", 16: "64px", 20: "80px", 24: "96px"}
+  page_rules: {desktop_gutter: "32px", tablet_gutter: "24px", mobile_gutter: "16px"}
+  section_rules: {desktop: "80px", tablet: "64px", mobile: "48px"}
+  component_rules: {compact: "8px", standard: "16px", comfortable: "24px", grouped: "32px"}
+shape:
+  radius: {small: "6px", control: "10px", card: "14px", feature: "20px", pill: "999px"}
+  borders: {default: "1px solid #E2E5E2", strong: "1px solid #C9CEC9", focus: "2px solid #A84248"}
+  dividers: {default: "1px solid #E2E5E2"}
+  shadows:
+    subtle: "0 1px 2px rgba(31, 37, 34, 0.06)"
+    card: "0 8px 24px rgba(31, 37, 34, 0.08)"
+    overlay: "0 20px 48px rgba(31, 37, 34, 0.16)"
+  elevation: {base: 0, card: 1, sticky: 2, overlay: 3}
+icons:
+  family: "Warm outlined icon language"
+  implementation: "Final library selection deferred to MTS; visual treatment is authoritative"
+  stroke_style: "1.75px rounded stroke with simple human geometry"
+  fill_style: "Outline by default; selective filled status marks only"
+  sizes: {small: "16px", standard: "20px", comfortable: "24px", feature: "32px"}
+  custom_icon_rules:
+    - "The house-and-heart identity motif may inspire illustrations but must not be copied into every component."
+  usage_rules:
+    - "Icons support labels; they do not replace critical enrollment, payment, consent, or assistance language."
+
+components:
+  button:
+    applicability: required
+    status: approved
+    variants: [primary, secondary, quiet, text, destructive]
+    sizes: [small_36, standard_44, large_52]
+    states: [default, hover, focus, active, disabled, loading]
+    specification:
+      primary: "Forest 600 fill, white label; Forest 700 hover/active"
+      secondary: "Warm White or transparent surface, Forest 700 label, Forest 600 border"
+      quiet: "Forest 50 surface, Forest 700 label"
+      text: "No container; Forest 700 label with directional icon when useful"
+      destructive: "Error color reserved for destructive or irreversible actions"
+      radius: "10px"
+      minimum_touch_target: "44x44px"
+  icon_button:
+    applicability: required
+    status: approved
+    variants: [default, quiet, inverse, destructive]
+    sizes: [standard_44, comfortable_48]
+    states: [default, hover, focus, active, disabled, loading]
+    specification:
+      rule: "Every icon-only control requires an accessible name and tooltip where the meaning is not universal"
+  input:
+    applicability: required
+    status: approved
+    variants: [text, email, phone, password, date, search]
+    sizes: [standard_44, comfortable_48]
+    states: [default, hover, focus, filled, disabled, readonly, loading, success, warning, error]
+    specification:
+      label: "Persistent Manrope 600 label above the field"
+      help: "Optional help text below; validation message replaces or follows help without layout ambiguity"
+      focus: "2px Coral 700 ring with 2px offset"
+      error: "Error icon, message, and border; never color alone"
+  textarea:
+    applicability: required
+    status: approved
+    variants: [standard, guided]
+    sizes: [standard, large]
+    states: [default, focus, filled, disabled, readonly, error]
+  select:
+    applicability: required
+    status: approved
+    variants: [single, multi]
+    sizes: [standard_44, comfortable_48]
+    states: [default, open, focus, selected, disabled, error, empty]
+  checkbox:
+    applicability: required
+    status: approved
+    variants: [standard, consent]
+    sizes: [standard_20]
+    states: [unchecked, checked, indeterminate, focus, disabled, error]
+  radio:
+    applicability: required
+    status: approved
+    variants: [standard, choice_card]
+    sizes: [standard_20]
+    states: [unselected, selected, focus, disabled, error]
+  switch:
+    applicability: optional
+    status: approved
+    variants: [standard]
+    sizes: [standard]
+    states: [off, on, focus, disabled]
+    specification:
+      rule: "Use only for settings that apply immediately; do not use for consent or enrollment commitments"
+  search:
+    applicability: required
+    status: approved
+    variants: [compact, full, filtered]
+    sizes: [standard_44, comfortable_48]
+    states: [empty, typing, results, no_results, loading, error]
+  badge:
+    applicability: required
+    status: approved
+    variants: [format, age_grade, category, private, role]
+    sizes: [small, standard]
+    states: [default, selected, removable, disabled]
+    specification:
+      rule: "Descriptive metadata uses quiet tonal styling and must not compete with enrollment status"
+  status:
+    applicability: required
+    status: approved
+    variants: [success, warning, error, info, neutral]
+    sizes: [compact, standard]
+    states: [default]
+    specification:
+      rule: "Always pair semantic color with an icon and explicit label"
+  progress:
+    applicability: required
+    status: approved
+    variants: [steps, bar, completion_ring]
+    sizes: [compact, standard]
+    states: [not_started, current, complete, blocked]
+    specification:
+      rule: "Use step progress for enrollment and setup; never imply payment confirmation from checkout handoff"
+  card:
+    applicability: required
+    status: approved
+    variants: [standard, interactive, selected, quiet, alerting]
+    sizes: [compact, standard, feature]
+    states: [default, hover, focus, selected, disabled, loading, empty]
+  tabs:
+    applicability: required
+    status: approved
+    variants: [underline, contained]
+    sizes: [standard]
+    states: [default, hover, focus, selected, disabled, overflow]
+  alert:
+    applicability: required
+    status: approved
+    variants: [success, warning, error, info, neutral]
+    sizes: [inline, banner]
+    states: [default, dismissible, persistent]
+  dialog:
+    applicability: required
+    status: approved
+    variants: [confirmation, form, information, destructive]
+    sizes: [small, medium, large]
+    states: [opening, open, submitting, success, error]
+    specification:
+      rule: "Destructive, consent, and financial dialogs require explicit action language and safe cancellation"
+  table:
+    applicability: required
+    status: approved
+    variants: [standard, roster, enrollment, payment_status]
+    sizes: [comfortable, compact]
+    states: [default, sortable, filtered, selected, loading, empty, error]
+    specification:
+      responsive: "Transform to labeled rows or cards on narrow screens; never force unreadable horizontal compression"
+  navigation:
+    applicability: required
+    status: approved
+    variants: [public_header, portal_sidebar, mobile_header, mobile_bottom_navigation, breadcrumbs, account_menu]
+    sizes: [desktop, tablet, mobile]
+    states: [default, current, hover, focus, expanded, collapsed]
+    specification:
+      public: "Logo, Programs, Calendar, About, Resources, Contact, Sign In, and clear enrollment/guidance actions"
+      family: "Overview, Programs, Schedule, Announcements, Resources, Family, Account"
+      educator: "Overview, Assigned Programs, Schedule, Rosters, Announcements, Resources"
+      admin: "Overview, Programs, Enrollments, Families, Educators, Schedule, Communications, Reports, Settings"
+  program_card:
+    applicability: required
+    status: approved
+    variants: [catalog, featured, compact, enrolled]
+    sizes: [grid, list, feature]
+    states: [open, limited, waitlist, closed, seasonal, enrolled, loading]
+    specification:
+      content_order: [image_or_quiet_illustration, title, concise_summary, format, age_or_grade_when_verified, schedule_when_verified, price_when_verified, availability, action]
+      truthful_content: "Missing facts remain unset or use Contact for details; never invent catalog data"
+  enrollment_state:
+    applicability: required
+    status: approved
+    variants: [open, limited_spaces, waitlist, pending_review, awaiting_external_payment, payment_pending_verification, enrolled, not_confirmed, closed, cancelled]
+    sizes: [badge, inline_panel, detail_panel]
+    states: [default, action_required, blocked, complete]
+    specification:
+      open: "Enrollment available"
+      limited_spaces: "Limited availability; exact capacity only when verified"
+      waitlist: "Join waitlist; do not imply enrollment"
+      pending_review: "Request received; administrative review pending"
+      awaiting_external_payment: "Continue to secure checkout; leaving the platform"
+      payment_pending_verification: "Payment status pending verification; enrollment not yet confirmed"
+      enrolled: "Enrollment confirmed only from an authoritative enrollment outcome"
+      not_confirmed: "Clear neutral language; no success styling"
+  payment_handoff:
+    applicability: required
+    status: approved
+    variants: [external_checkout_notice, return_pending, status_unknown]
+    sizes: [inline, dialog]
+    states: [ready, leaving_site, returned, pending, error]
+    specification:
+      rule: "External handoff is never displayed as successful payment or confirmed enrollment"
+  consent_state:
+    applicability: required
+    status: approved
+    variants: [required, accepted, renewal_required, unavailable, blocked]
+    sizes: [inline, panel, step]
+    states: [default, action_required, accepted, expired, error]
+    specification:
+      rule: "Show policy name/version and acceptance state when known; unresolved policy language remains blocked"
+  assistance_request:
+    applicability: required
+    status: approved
+    variants: [quiet_link, supportive_panel, private_form]
+    sizes: [inline, panel, full]
+    states: [available, submitting, received, incomplete, unavailable]
+    specification:
+      rule: "Use dignified, private, non-stigmatizing language; requests are manually reviewed and never promise an outcome"
+  family_student_selector:
+    applicability: required
+    status: approved
+    variants: [avatar_tabs, dropdown, card_selector]
+    sizes: [compact, standard]
+    states: [default, selected, loading, empty, restricted]
+    specification:
+      rule: "Parent-controlled selection; expose only minimum appropriate student information"
+  schedule_item:
+    applicability: required
+    status: approved
+    variants: [class, event, deadline, cancelled, rescheduled]
+    sizes: [compact, standard, agenda]
+    states: [upcoming, today, completed, changed, cancelled]
+  announcement:
+    applicability: required
+    status: approved
+    variants: [general, program, urgent, educator_draft]
+    sizes: [compact, standard, feature]
+    states: [unread, read, pinned, scheduled, draft, archived]
+  learning_resource:
+    applicability: required
+    status: approved
+    variants: [document, link, video, activity, download]
+    sizes: [compact, standard, feature]
+    states: [available, new, viewed, downloading, unavailable, error]
+  empty_state:
+    applicability: required
+    status: approved
+    variants: [first_use, no_results, no_enrollments, no_schedule, no_resources]
+    sizes: [inline, page]
+    states: [default]
+    specification:
+      rule: "Use warm guidance and one clear next action; avoid playful illustrations that trivialize the situation"
+  skeleton:
+    applicability: required
+    status: approved
+    variants: [text, card, table, dashboard]
+    sizes: [contextual]
+    states: [loading]
+    specification:
+      rule: "Reserve layout without simulating real student or payment data"
+  content_builder:
+    applicability: optional
+    status: approved
+    variants: [course_outline, material_editor, content_block_picker, resource_upload, review_state]
+    sizes: [desktop_workspace, responsive_editor]
+    states: [draft, saved, review_required, submitting, submitted, error]
+    specification:
+      horizon: "Future LMS; not Foundation Beta behavior"
+      authority: "Assigned programs only; no pricing or availability controls; direct public publishing is not granted"
+      blocks: [text, image, file, link, video]
+      policy_gap: "Exact future create, submit, review, and publish authority is deferred to future MPS evolution and is not Foundation Beta behavior"
+
+layout:
+  max_content_width:
+    public_standard: "1200px"
+    public_wide: "1280px"
+    portal_standard: "1280px"
+    operations_wide: "1440px"
+    reading: "720px"
+  grid:
+    desktop: {columns: 12, gap: "24px"}
+    tablet: {columns: 8, gap: "20px"}
+    mobile: {columns: 4, gap: "16px"}
+  gutters: {desktop: "32px", tablet: "24px", mobile: "16px"}
+  header:
+    public_desktop: "72px sticky header with logo, primary navigation, sign-in, and contextual primary action"
+    portal_desktop: "64px contextual top bar paired with role-specific sidebar"
+    mobile: "60px header with logo, page context, and accessible menu or account action"
+  sidebar:
+    desktop: "264px expanded role-specific navigation"
+    tablet: "72px collapsed navigation rail with accessible labels and expansion"
+    mobile: "No persistent sidebar; use mobile header plus bottom navigation for primary portal destinations"
+  footer: "Warm ivory public footer with brand, navigation, contact, policy, and restrained faith/value expression"
+  section_spacing: {desktop: "80px", tablet: "64px", mobile: "48px"}
+  page_shells:
+    public_home:
+      status: approved
+      composition: "Public header; editorial hero; trust/value band; featured programs; how it works; community story; guidance CTA; footer"
+    public_catalog:
+      status: approved
+      composition: "Page heading and search; 280px desktop filter rail; responsive program grid; results state; guidance pathway"
+    program_detail:
+      status: approved
+      composition: "Breadcrumbs; program identity; 8-column content; 4-column sticky action/status rail; related programs"
+    family_dashboard:
+      status: approved
+      composition: "Role sidebar; family/student context; welcome and next action; enrollments; schedule; announcements; resources"
+    educator_workspace:
+      status: approved
+      composition: "Role sidebar; assigned programs; schedule; roster access; announcements; resources; scoped actions"
+    admin_operations:
+      status: approved
+      composition: "Role sidebar; operational overview; program/enrollment/family/educator navigation; filters; tables; detail drawers"
+    authentication:
+      status: approved
+      composition: "Centered 440px account panel on warm brand surface with trust, help, and privacy context"
+
+responsive:
+  breakpoints: {mobile: "0–639px", tablet: "640–1023px", desktop: "1024–1439px", wide: "1440px and above"}
+  rules:
+    stacking:
+      - "Program detail action rail moves below the identity summary and before long-form details on mobile"
+      - "Dashboard overview grids collapse from multi-column to one prioritized feed"
+      - "Forms stack labels and controls without compressing help or validation language"
+    navigation:
+      - "Public desktop navigation becomes a mobile menu while preserving a visible contextual conversion action"
+      - "Portal desktop sidebar becomes a tablet rail and a maximum five-destination mobile bottom navigation"
+      - "Secondary destinations move to the mobile account or More menu"
+    sidebar:
+      - "Catalog filters become an accessible filter drawer on tablet and mobile"
+      - "Sticky detail rails become inline panels below 1024px"
+    grid:
+      - "Program grid uses 3 columns wide/desktop, 2 columns tablet, and 1 column mobile"
+      - "Feature cards span 6 or 12 desktop columns and become full width on mobile"
+      - "Operational tables transform to labeled record cards when column integrity cannot be preserved"
+    typography:
+      - "Use approved responsive values; do not uniformly scale every type role"
+      - "Preserve 16px body text and readable line length on mobile"
+    spacing:
+      - "Page gutters change 32px to 24px to 16px"
+      - "Section rhythm changes 80px to 64px to 48px"
+    visibility:
+      - "Never hide required enrollment, payment, consent, or privacy meaning to simplify mobile"
+      - "Progressively disclose secondary metadata while keeping labels available"
+    media:
+      - "Program cards use 4:3 media; feature storytelling uses 16:9 or editorial crop"
+      - "Images must crop safely without obscuring people, work, or learning context"
+    touch:
+      - "Maintain minimum 44x44 targets and at least 8px separation between adjacent actions"
+      - "Use mobile bottom action bars only for contextual primary actions and preserve safe-area spacing"
+
+patterns:
+  landing: {applicability: required, status: approved, composition: "Editorial hero, trust/value band, featured programs, guidance, community story, CTA", responsive_behavior: "Narrative order preserved; two-column sections stack intentionally"}
+  dashboard: {applicability: required, status: approved, composition: "Context header, next action, enrollment summary, schedule, announcements, resources", responsive_behavior: "Priority feed on mobile; bottom navigation"}
+  search_results: {applicability: required, status: approved, composition: "Search, filters, result count, program grid/list, no-results guidance", responsive_behavior: "Filter drawer; single-column cards"}
+  detail: {applicability: required, status: approved, composition: "Identity, verified facts, description, schedule, educator, status/action rail, related content", responsive_behavior: "Action/status moves above long content"}
+  forms: {applicability: required, status: approved, composition: "Intro, progress when multi-step, grouped fields, contextual help, summary, safe actions", responsive_behavior: "One column; sticky mobile action only when appropriate"}
+  authentication: {applicability: required, status: approved, composition: "Brand context, account form, recovery/help, privacy reassurance", responsive_behavior: "Full-width panel with 16px gutter"}
+  empty: {applicability: required, status: approved, composition: "Warm explanation, one clear next action, optional quiet illustration", responsive_behavior: "Compact and centered without excessive vertical space"}
+  error: {applicability: required, status: approved, composition: "Plain-language problem, preservation reassurance, recovery action, help route", responsive_behavior: "No lost actions or hidden details"}
+  loading: {applicability: required, status: approved, composition: "Layout-preserving skeleton with announced progress where needed", responsive_behavior: "Matches final responsive composition"}
+  custom:
+    program_discovery: {applicability: required, status: approved, composition: "Browse, search, filter, compare, request guidance, or open details"}
+    enrollment_handoff: {applicability: required, status: approved, composition: "Student selection, consent readiness, summary, explicit external checkout notice, return status"}
+    waitlist: {applicability: required, status: approved, composition: "Program context, non-enrollment explanation, contact details, submit, received state"}
+    consent: {applicability: required, status: approved, composition: "Owner-approved policy content, version/context, explicit acceptance, retained status"}
+    assistance_request: {applicability: required, status: approved, composition: "Private supportive introduction, minimum necessary fields, manual-review expectation, received state"}
+    educator_content_studio: {applicability: optional, status: approved, horizon: "Future LMS", composition: "Assigned-program selector, course outline, material editor, resource upload, draft/preview/review actions, authoring boundaries"}
+    admin_operations: {applicability: required, status: approved, horizon: "Foundation Beta", composition: "Attention overview, program operations, quick actions, payment/consent/content states, recent activity, owner-authority reminder"}
+
+visual_language:
+  personality: "Warm boutique learning community; calm, creative, trusted, relationship-centered, and child-welcoming without being childish"
+  density: "Comfortable and calm; operational screens may become moderately dense while preserving scanability"
+  contrast: "Soft overall atmosphere with strong readable text and unmistakable interactive states"
+  surface_philosophy: "Warm ivory canvas, white or warm-white content surfaces, botanical quiet panels, and occasional coral or gold highlights"
+  border_philosophy: "Soft structural borders; avoid heavy boxes and excessive compartmentalization"
+  shadow_philosophy: "Restrained elevation only where hierarchy or layering requires it"
+  color_philosophy: "Botanical green provides trust and structure; coral carries inherited warmth; gold adds sparing heritage emphasis"
+  typography_character: "Editorial warmth in storytelling paired with modern operational clarity"
+  icon_character: "Simple, warm, rounded line work consistent with the logo's house illustration"
+  whitespace_philosophy: "Generous breathing room that creates calm and communicates boutique care"
+
+guidance:
+  do:
+    - {id: MDS-DO-001, area: identity, statement: "Preserve the recognizable logo and its heart-and-home warmth", rationale: "Maintains continuity and trust", status: approved}
+    - {id: MDS-DO-002, area: composition, statement: "Use calm whitespace and clear hierarchy to guide families", rationale: "Reduces uncertainty and cognitive load", status: approved}
+    - {id: MDS-DO-003, area: faith, statement: "Express faith naturally through values, language, imagery, and moments of encouragement", rationale: "Supports balanced Christ-centered identity", status: approved}
+    - {id: MDS-DO-004, area: privacy, statement: "Make consent, student privacy, enrollment, waitlist, and payment distinctions explicit", rationale: "Protects family trust", status: approved}
+  dont:
+    - {id: MDS-DONT-001, area: identity, statement: "Do not replace or generatively redraw the canonical logo", rationale: "The supplied logo is authoritative", status: approved}
+    - {id: MDS-DONT-002, area: visual_language, statement: "Do not make the interface childish, cartoon-heavy, overly rustic, or institutionally sterile", rationale: "Protects the warm boutique direction", status: approved}
+    - {id: MDS-DONT-003, area: faith, statement: "Do not rely on repetitive religious decoration as a substitute for authentic values", rationale: "Preserves balanced expression", status: approved}
+    - {id: MDS-DONT-004, area: accessibility, statement: "Do not use Logo Coral or Heritage Gold for normal-size text on light surfaces", rationale: "Those native accents do not meet required text contrast", status: approved}
+
+accessibility:
+  target: {value: "WCAG 2.2 AA", status: approved}
+  contrast: "Minimum 4.5:1 for normal text, 3:1 for large text and meaningful non-text UI; decorative Logo Coral and Heritage Gold are not text colors on light surfaces"
+  focus: "Visible 2px Coral 700 #A84248 focus ring with 2px offset; never remove focus without an equivalent"
+  keyboard: "All interactive flows, navigation, dialogs, forms, enrollment, and dashboard actions must be keyboard operable"
+  touch_targets: "Minimum 44x44 CSS pixels for primary touch interactions"
+  motion: "Respect prefers-reduced-motion; motion supports orientation and must not be required for meaning"
+  semantic_markup: "Use correct headings, landmarks, labels, lists, tables, buttons, links, and form associations"
+  screen_reader: "Announce validation, loading, success, pending, blocked, waitlist, payment-handoff, and confirmation changes appropriately"
+  image_alternatives: "Meaningful learning and program imagery requires useful alternative text; decorative botanical imagery uses empty alternatives"
+  additional_rules:
+    - "Enrollment, waitlist, external-payment handoff, payment status, consent, and assistance states must not rely on color alone."
+    - "Student and family information must use privacy-aware presentation patterns."
+
+references:
+  - id: MDS-REF-001
+    name: "Current Home School Haven website"
+    type: brand
+    source: "https://homeschoolhaven.org/"
+    canonical: false
+    applies_to: [identity, content_character, public_experience]
+    observations:
+      - "Product source describes a boutique, calm, creative, Christ-centered community."
+    inferences: []
+    proposed_rules: []
+    approved_rules: []
+  - id: MDS-REF-002
+    name: "Canonical Home School Haven logo"
+    type: brand
+    source: "libfile_1847dbb7f6cc81919312fd15c1988149"
+    canonical: true
+    applies_to: [identity, native_palette, line_character, visual_language]
+    observations:
+      - "Warm ivory background #F4F1EC"
+      - "Charcoal linework approximately #292929"
+      - "Coral heart approximately #ED7D7C"
+      - "Handwritten wordmark paired with light sans-serif descriptor and simple house line art"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Preserve and thoughtfully refine the existing identity"
+      - "Use the heart and home motif sparingly as an identity cue"
+  - id: MDS-REF-003
+    name: "GPT Image 2.2 MDS visual reference package"
+    type: design_system
+    source: "libfile_14839fdca0308191a71a55968ebaa430"
+    canonical: true
+    applies_to: [foundations, layout, components, page_patterns, ui_references, content_hierarchy, do_dont]
+    observations:
+      - "Revised visual draft accurately presents approved palette hex values and the approved Lora/Manrope hierarchy"
+      - "The generated logo depiction is illustrative only; MDS-REF-002 remains the canonical identity asset"
+      - "The sheet demonstrates spacing, radii, sample controls, principles, Do/Don't guidance, and WCAG 2.2 AA intent"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Image plus machine-readable tokens and rules plus canonical UI references form the visual implementation contract"
+      - "Preserve the Vertex reference-sheet anatomy while adding layout, visual language, page patterns, UI references, content hierarchy, and explicit Do/Don't guidance"
+  - id: MDS-REF-004
+    name: "Home School Haven Component Library"
+    type: component
+    source: "libfile_2c87a62ad97c81919a9500f2b7f09a7e"
+    canonical: true
+    applies_to: [components, states, program_discovery, family_experience, navigation, data, accessibility]
+    observations:
+      - "Demonstrates approved foundation tokens across actions, forms, program cards, family components, trust states, navigation, and responsive data patterns"
+      - "Uses only approved program facts and clearly labeled sample or sanitized interface data after MDS reconciliation"
+      - "Keeps enrollment, waitlist, external checkout, payment verification, consent, and assistance states visibly distinct"
+      - "Uses a policy placeholder rather than inventing owner consent language"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed component hierarchy, density, shape, control styling, trust-state patterns, and responsive data treatment"
+  - id: MDS-REF-005
+    name: "Home School Haven Layout & Behavior"
+    type: layout
+    source: "libfile_ba6ac8c0d06c8191b32505fdbf68aec9"
+    canonical: true
+    applies_to: [grid, containers, public_shells, portal_shells, navigation, responsive, content_hierarchy, interaction]
+    observations:
+      - "Demonstrates 12/8/4-column responsive grids and approved container widths"
+      - "Shows public home, catalog, program-detail, family, educator, and admin composition patterns"
+      - "Reconciled to approved program facts, sample-data boundaries, and role-specific navigation"
+      - "Demonstrates responsive transformation by composition rather than desktop shrinkage"
+      - "Preserves meaning and trust states across desktop, tablet, and mobile"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed layout hierarchy, page-shell architecture, role-specific navigation, responsive transformations, and interaction-state composition"
+  - id: MDS-REF-006
+    name: "Home School Haven Public Homepage"
+    type: homepage
+    source: "libfile_9c95889e9fc081918d465994c3969810"
+    canonical: true
+    applies_to: [public_home, public_navigation, program_discovery, brand_expression, conversion_hierarchy]
+    observations:
+      - "Uses approved public navigation, value proposition, brand principles, and verified program facts"
+      - "Balances warm editorial storytelling with clear program discovery and guidance actions"
+      - "Preserves the original logo on a compatible warm surface"
+      - "Uses generated editorial imagery as visual direction, not as a real student record or approved production photograph"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed homepage hierarchy, hero balance, value band, featured-program composition, guidance pathway, and section rhythm"
+  - id: MDS-REF-007
+    name: "Home School Haven Family Dashboard"
+    type: dashboard
+    source: "libfile_9ac613ffcb508191bfb9f045b3015fe7"
+    canonical: true
+    applies_to: [family_dashboard, parent_control, student_context, enrollment_status, schedule, announcements, resources, assistance]
+    observations:
+      - "Uses a parent-controlled student selector and sample/sanitized data only"
+      - "Displays payment verification as warning/pending and explicitly states that enrollment is not confirmed"
+      - "Uses the canonical logo on a warm-ivory panel rather than inventing a reversed logo"
+      - "Maintains clear family navigation and a calm operational hierarchy"
+      - "Any auxiliary generated microcopy not present in approved MPS remains non-authoritative placeholder content"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed family-dashboard shell, priority hierarchy, student context, trust-state presentation, card composition, and assistance pathway"
+  - id: MDS-REF-008
+    name: "Home School Haven Educator Content Studio"
+    type: dashboard
+    source: "libfile_abbb23022eb88191a4e650b6ba3c9322"
+    canonical: true
+    applies_to: [educator_workspace, future_lms, course_outline, material_editor, resource_upload, authoring_boundaries]
+    observations:
+      - "Clearly labels the Course Builder as future LMS proposed scope"
+      - "Limits educator context to assigned programs and excludes pricing, availability, and direct publishing controls"
+      - "Supports draft course structure, material creation, preview, review submission, and resource upload"
+      - "Uses warning semantics for review-required status"
+      - "Uses the canonical logo on a warm-ivory panel and approved product-principle language"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed educator content-studio architecture as the future-platform visual direction; do not treat it as Foundation Beta behavior"
+  - id: MDS-REF-009
+    name: "Home School Haven Administrator Operations"
+    type: dashboard
+    source: "libfile_b2ede9df68988191a47c28de82268ee7"
+    canonical: true
+    applies_to: [admin_operations, programs, enrollments, educators, payment_status, consent_status, content_review]
+    observations:
+      - "Uses private-beta sample data and no real family or student information"
+      - "Demonstrates program, enrollment, payment-verification, educator-assignment, and content-review operations"
+      - "Keeps external checkout distinct from payment confirmation"
+      - "Preserves Samantha as final owner and administrators as delegated operational actors"
+      - "Uses approved warning, blocked, and information semantics"
+    inferences: []
+    proposed_rules: []
+    approved_rules:
+      - "Adopt the displayed administrator operations shell, attention hierarchy, program table, quick actions, and owner-authority framing"
+
+technical: {framework: null, framework_version: null, language: null, styling_system: null, component_system: null, icon_implementation: null, font_implementation: null, repository_structure: null, token_location: null, component_location: null, global_style_location: null, layout_location: null, deployment_target: null, accessibility_tools: [], test_tools: []}
+
+governance:
+  decisions:
+    - {id: MDS-DEC-001, area: product_context, key: product_ecosystem, value: "Public, family, educator, and admin experiences", status: approved, source: MPS, dependencies: [layout, navigation, page_shells, role_specific_patterns]}
+    - {id: MDS-DEC-002, area: release, key: beta_intent, value: "Private owner and reviewer validation", status: approved, source: MPS, dependencies: [references, sample_data, qa]}
+    - {id: MDS-DEC-003, area: interaction, key: checkout, value: "Program-specific external checkout handoff; handoff is not payment confirmation", status: approved, source: MPS, dependencies: [program_detail, enrollment_state, status_language]}
+    - {id: MDS-DEC-004, area: privacy, key: student_access, value: "Parent-controlled student profiles; no independent beta student login", status: approved, source: MPS, dependencies: [authentication, navigation, family_dashboard, student_selector]}
+    - {id: MDS-DEC-005, area: accessibility, key: target, value: "WCAG 2.2 AA", status: proposed, source: MDS, dependencies: [tokens, components, patterns, qa]}
+    - {id: MDS-DEC-006, area: identity, key: identity_treatment, value: "Preserve and thoughtfully refine the existing Home School Haven identity and logo", status: approved, source: "User approval on 2026-08-26", dependencies: [logo, color, typography, references]}
+    - {id: MDS-DEC-007, area: visual_language, key: leading_character, value: "Warm boutique learning community", status: approved, source: "User approval on 2026-08-26", dependencies: [color, typography, spacing, shape, imagery, components]}
+    - {id: MDS-DEC-008, area: identity, key: faith_expression, value: "Balanced and naturally integrated", status: approved, source: "User approval on 2026-08-26", dependencies: [content_hierarchy, imagery, iconography, page_patterns, guidance]}
+    - {id: MDS-DEC-009, area: typography, key: font_pairing, value: "Lora for editorial display and Manrope for body and UI", status: approved, source: "User approval on 2026-08-26", dependencies: [type_scale, components, layout, references, implementation]}
+    - {id: MDS-DEC-010, area: color, key: exact_palette, value: "Logo-native ivory #F4F1EC, ink #292929, coral #ED7D7C extended with Forest #3F5C50, Heritage Gold #B38A42, and accessibility-safe role variants", status: approved, source: "User approval and canonical logo analysis on 2026-08-26", dependencies: [tokens, components, states, references, accessibility, implementation]}
+    - {id: MDS-DEC-011, area: foundations, key: shape_and_elevation, value: "Medium rounded geometry, soft borders, restrained shadows, and generous whitespace", status: approved, source: "User approval on 2026-08-26", dependencies: [components, layout, references]}
+    - {id: MDS-DEC-012, area: accessibility, key: target, value: "WCAG 2.2 AA", status: approved, source: "User approval of complete foundations direction on 2026-08-26", dependencies: [tokens, components, patterns, qa]}
+    - {id: MDS-DEC-013, area: references, key: visual_generation_method, value: "GPT Image 2.2 visual specification workflow modeled on Vertex", status: approved, source: "User instruction on 2026-08-26", dependencies: [core_reference, layout_reference, component_reference, ui_references, reconciliation]}
+    - {id: MDS-DEC-014, area: references, key: core_foundations_reference, value: "Corrected Home School Haven Core Foundations visual reference", status: approved, source: "User approval on 2026-08-26", dependencies: [components, composition, ui_references, implementation, qa]}
+    - {id: MDS-DEC-015, area: components, key: component_architecture, value: "Home School Haven public, family, educator, admin, enrollment, consent, payment-handoff, assistance, and learning component system", status: approved, source: "User approval on 2026-08-26", dependencies: [component_reference, composition, page_patterns, implementation, qa]}
+    - {id: MDS-DEC-016, area: composition, key: layout_and_behavior, value: "12/8/4-column responsive system with role-specific public, family, educator, and admin page shells", status: approved, source: "User approval on 2026-08-26", dependencies: [layout_reference, ui_references, implementation, qa]}
+    - {id: MDS-DEC-017, area: references, key: initial_ui_reference_set, value: "Public homepage and parent-controlled family dashboard", status: approved, source: "User approval on 2026-08-26", dependencies: [homepage_reference, family_dashboard_reference, implementation, qa]}
+    - {id: MDS-DEC-018, area: references, key: homepage_and_family_dashboard, value: "Reconciled public homepage and parent-controlled family dashboard visual references", status: approved, source: "User approval on 2026-08-26", dependencies: [implementation, visual_qa, responsive_references]}
+    - {id: MDS-DEC-019, area: references, key: educator_and_admin_backoffice, value: "Educator content workspace and administrator operations references", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_authority, educator_reference, admin_reference, implementation, qa]}
+    - {id: MDS-DEC-020, area: release, key: educator_course_builder_horizon, value: "Future platform; not Foundation Release Beta", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_future_scope, educator_reference, implementation_manifest]}
+  gaps:
+    - {id: MDS-GAP-001, area: identity, statement: "Logo preservation or evolution direction is unapproved", status: resolved}
+    - {id: MDS-GAP-002, area: visual_language, statement: "Canonical visual personality and mood are unapproved", status: resolved}
+    - {id: MDS-GAP-003, area: identity, statement: "Visual prominence of Christ-centered identity is unapproved", status: resolved}
+    - {id: MDS-GAP-004, area: references, statement: "Original logo and brand assets have not been supplied or verified", status: resolved}
+    - {id: MDS-GAP-005, area: components, statement: "Proposed component architecture and visual reference require user approval", status: resolved}
+    - {id: MDS-GAP-006, area: composition, statement: "Proposed Layout & Behavior architecture and visual reference require user approval", status: resolved}
+    - {id: MDS-GAP-007, area: references, statement: "Initial full-size homepage and family-dashboard UI references require generation, reconciliation, and user approval", status: resolved}
+    - {id: MDS-GAP-008, area: product_authority, statement: "Educator full-course authoring is future-platform scope; exact create, submit, review, and publish authority requires MPS confirmation and must not expand Foundation Beta permissions", status: resolved, resolution: "User placed the full Course Builder in the future platform; Foundation Beta permissions remain unchanged"}
+    - {id: MDS-GAP-009, area: references, statement: "Educator and administrator back-office references require generation, reconciliation, and user approval", status: resolved}
+  exceptions:
+    - {id: MDS-EXC-001, area: beta_data, statement: "Private beta references may use sample or sanitized family and student data until MPS policy gaps are resolved", status: approved}
+  deviations: []
+  changes:
+    - id: MDS-CHG-001
+      area: references
+      previous_value: "Core Foundations visual reference — draft"
+      new_value: "Core Foundations visual reference — canonical"
+      reason: "User confirmed that the design system fits Home School Haven and approved the corrected visual direction"
+      version_impact: "Initial v1.0 foundation"
+      affected_artifacts: [core_reference, component_reference, layout_reference, ui_references, design_specification, tokens]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-002
+      area: components
+      previous_value: "Component architecture and visual reference — proposed"
+      new_value: "Component architecture and visual reference — approved and canonical"
+      reason: "User approved the reconciled Component Library direction"
+      version_impact: "Initial v1.0 component foundation"
+      affected_artifacts: [component_reference, layout_reference, ui_references, design_specification, implementation_manifest, qa_protocol]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-003
+      area: composition
+      previous_value: "Layout & Behavior architecture and visual reference — proposed"
+      new_value: "Layout & Behavior architecture and visual reference — approved and canonical"
+      reason: "User approved the reconciled composition system"
+      version_impact: "Initial v1.0 composition foundation"
+      affected_artifacts: [layout_reference, ui_references, design_specification, implementation_manifest, qa_protocol]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-004
+      area: references
+      previous_value: "Homepage and Family Dashboard — proposed"
+      new_value: "Homepage and Family Dashboard — approved and canonical"
+      reason: "User approved both reconciled full-size UI references"
+      version_impact: "Initial v1.0 UI reference set"
+      affected_artifacts: [ui_references, design_specification, implementation_manifest, qa_protocol]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-005
+      area: references
+      previous_value: "Educator and Administrator references — proposed"
+      new_value: "Educator and Administrator references — approved and canonical"
+      reason: "User approved both reconciled back-office visual directions"
+      version_impact: "Initial v1.0 UI reference set"
+      affected_artifacts: [ui_references, design_specification, implementation_manifest, qa_protocol]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-006
+      area: release
+      previous_value: "Full educator Course Builder release placement unresolved"
+      new_value: "Full educator Course Builder assigned to the future platform"
+      reason: "Preserves the Foundation Beta boundary while approving the future visual direction"
+      version_impact: "No Foundation Beta expansion; future MPS evolution required"
+      affected_artifacts: [educator_reference, implementation_manifest, agents_md]
+      approved_at: "2026-08-26"
+    - id: MDS-CHG-007
+      area: implementation_readiness
+      previous_value: "Approved visual system with missing written handoff artifacts"
+      new_value: "MDS v1.0 design handoff package written, reconciled, and locked; MTS and repository mapping remain pending"
+      reason: "User directed completion and lock of the Home School Haven MDS v1.0 handoff before starting MTS"
+      version_impact: "Initial v1.0 handoff packaging; no approved design behavior changed"
+      affected_artifacts: [design_specification, principles, do_dont, tokens, reference_index, implementation_manifest, qa_protocol, agents_md, project_state]
+      approved_at: "2026-08-26"
+  versions:
+    - version: "v1.0"
+      status: active
+      activated_at: "2026-08-26"
+      scope: "Approved Home School Haven visual foundations, components, composition, and canonical public, family, educator-future, and administrator references"
+
+artifacts:
+  handoff_index: {path: "mds/MDS-HANDOFF-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  principles: {path: "mds/specification/PRINCIPLES.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  do_dont: {path: "mds/specification/DO-DONT.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  tokens: {path: "mds/tokens", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  reference_index: {path: "mds/references/REFERENCE-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  core_reference: {path: "/Home School Haven Learning Platform/Home School Haven design foundations sheet.png", status: current, last_updated: "2026-08-27T01:40:00Z"}
+  layout_reference: {path: "/Home School Haven Learning Platform/Home School Haven Navigation Blueprint.png", status: current, last_updated: "2026-08-27T03:10:00Z"}
+  component_reference: {path: "/Home School Haven Learning Platform/Proposed component library visual reference.png", status: current, last_updated: "2026-08-27T02:35:00Z"}
+  ui_references:
+    - {id: MDS-UI-REF-001, name: "Public Homepage", path: "/Home School Haven Learning Platform/Home School Haven homepage preview.png", status: current, last_updated: "2026-08-27T03:45:00Z"}
+    - {id: MDS-UI-REF-002, name: "Family Dashboard", path: "/Home School Haven Learning Platform/Home school dashboard with pending payment warning.png", status: current, last_updated: "2026-08-27T03:45:00Z"}
+    - {id: MDS-UI-REF-003, name: "Educator Content Workspace", path: "/Home School Haven Learning Platform/Home School Haven course builder dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Future platform"}
+    - {id: MDS-UI-REF-004, name: "Administrator Operations", path: "/Home School Haven Learning Platform/Home School Haven admin dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Foundation Beta"}
+  agents_md: {path: "AGENTS.md", status: draft, last_updated: "2026-08-27T02:37:26Z", note: "MDS guardrails current; requires MTS and repository reconciliation before implementation activation"}
+  implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled; exact repository versions, paths, and commands pending inspection"}
+  qa_protocol: {path: "mds/qa/MDS-QA.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  compliance_report: {path: "mds/qa/MDS-COMPLIANCE.md", status: missing}
+
+gates:
+  discovery:
+    status: complete
+    requirements: ["Inherited MPS context", "Identity direction", "Reference inventory"]
+    blocking_items: []
+    completed_at: "2026-08-27T01:00:00Z"
+  foundations:
+    status: complete
+    requirements: ["Principles", "Color direction and exact tokens", "Typography", "Spacing", "Shape and elevation", "Iconography", "Accessibility target", "Visual language", "Do and Don't guidance"]
+    blocking_items: []
+    completed_at: "2026-08-27T01:25:00Z"
+  components: {status: complete, requirements: ["Required component inventory", "Variants", "Sizes", "Interaction states", "Project-specific components"], blocking_items: [], completed_at: "2026-08-27T02:35:00Z"}
+  composition: {status: complete, requirements: ["Content widths and grids", "Page shells", "Responsive transformations", "Navigation behavior", "Content hierarchy", "Page patterns", "Interaction behavior"], blocking_items: [], completed_at: "2026-08-27T03:10:00Z"}
+  references: {status: complete, requirements: ["Core Foundations reference", "Component Library reference", "Layout & Behavior reference", "Canonical public homepage", "Canonical family dashboard", "Educator content workspace", "Administrator operations"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
+  approval: {status: complete, requirements: ["Foundations approved", "Components approved", "Composition approved", "Canonical references approved", "Release boundary recorded"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
+  implementation_readiness: {status: in_progress, requirements: ["Design specification", "Principles", "Do/Don't guidance", "Tokens", "Project AGENTS.md", "Implementation manifest", "QA protocol", "Technical implementation inspection"], blocking_items: ["MPS-GAP-005 for real-family policy", "MPS-GAP-010 for authoritative financial policy", "MTS not yet completed", "Target repository and technical stack not yet inspected", "Project AGENTS.md requires MTS reconciliation"], completed_at: null}
+  compliance: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+
+compliance:
+  gate_1: null
+  gate_2: null
+  gate_3: null
+  overall_status: null
+  open_gaps: 0
+  approved_exceptions: 1
+  open_deviations: 0
+  reviewed_at: null

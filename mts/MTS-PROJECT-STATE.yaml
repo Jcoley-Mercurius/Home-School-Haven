@@ -1,0 +1,679 @@
+mts:
+  system: Mercurius Technology System
+  schema_version: "1.1"
+  project_id: "home-school-haven-learning-platform"
+  project_name: "Home School Haven Learning Platform"
+  lifecycle: approved
+  mts_version: "v1.0"
+  current_gate: inspection
+  mps_project_id: "home-school-haven-learning-platform"
+  mps_version: "v1.0 Foundation Release"
+  mds_project_id: "home-school-haven-learning-platform"
+  mds_version: "v1.0"
+  created_at: "2026-08-26"
+  updated_at: "2026-08-27"
+
+project:
+  name: "Home School Haven Learning Platform"
+  description: "A connected Christ-centered ecosystem combining the public Home School Haven website with family, educator, and administrative experiences."
+  product_type: "Responsive public website, program management portal, blended learning hub, and future online learning platform"
+  users:
+    - "Prospective and current parents or guardians"
+    - "Parent-controlled students with no independent Foundation Beta login"
+    - "Educators limited to assigned programs, rosters, announcements, and resources"
+    - "Administrators with delegated operational authority"
+    - "Samantha Dodson as owner and final decision owner"
+    - "Optional invited secondary guardians"
+  platforms: ["Responsive web"]
+  business_stage: "Existing in-person homeschool community preparing a private Foundation Release beta"
+  scope:
+    - "Responsive public website and program discovery"
+    - "Program catalog and detail pages"
+    - "Inquiry, tour, guidance, and private assistance requests"
+    - "Registration using existing program-specific external checkout handoff"
+    - "Parent-controlled family accounts and minimum-data student profiles"
+    - "Family dashboard for enrollment, schedules, announcements, and resources"
+    - "Educator assigned-program workspace"
+    - "Administrator program operations"
+    - "Program announcements and learning resources"
+    - "Private Foundation Release beta using current approved website content"
+  out_of_scope:
+    - "Independent student accounts in Foundation Release Beta"
+    - "Internal payment processing in Foundation Release Beta"
+    - "Automated scholarship, discount, refund, cancellation, credit, transfer, or other financial-policy decisions"
+    - "Real-family activation before child-data, consent, retention, and deletion policy approval"
+    - "Full educator Course Builder in Foundation Release Beta; retained as future-platform direction"
+  constraints:
+    - "Preserve approved MPS product scope, roles, rules, acceptance criteria, and release boundaries."
+    - "Preserve locked MDS v1.0 visual, interaction, responsive, and WCAG 2.2 AA decisions."
+    - "External checkout initiation is not successful payment, and payment activity is not confirmed enrollment without an authoritative outcome."
+    - "Use sample or sanitized family and student data until applicable policy is approved."
+    - "Only Samantha-approved policy and financial language may be used."
+    - "Prefer the smallest coherent architecture that satisfies approved requirements."
+    - "Primary implementation team is Josh Coley working with Codex; recommendations must minimize operational burden and provide deterministic implementation guidance."
+    - "Target Samantha-review build in 2–3 days when possible and no later than 5 days."
+    - "Target recurring software cost below $100 per month and explore credible free tiers first."
+  scale_assumptions:
+    - "Fewer than 100 families during the first year."
+    - "Foundation Release is a private Samantha-review build before real-family activation."
+  regulatory_context:
+    - "Product serves minors in Florida and requires explicit parental authority, privacy, consent, retention, deletion, and role-access controls."
+    - "No compliance certification or precise statutory implementation claim has been established; legal/policy authority remains with MPS and Samantha."
+
+existing_system:
+  repositories:
+    - name: "Target application repository"
+      classification: observed
+      status: "Will be supplied later"
+      inspection_status: "Unavailable; Gate 2 remains blocked"
+  runtime: {}
+  deployment: {}
+  packages: []
+  services:
+    - name: "Current public Home School Haven website"
+      classification: observed
+      inspection_status: "Content reviewed by MPS; technical implementation not supplied"
+    - name: "Vercel account"
+      classification: observed
+      ownership: "Josh Coley"
+      cost_responsibility: "Josh Coley"
+      inspection_status: "Account availability confirmed; no Home School Haven project or configuration inspected"
+    - name: "Supabase account"
+      classification: observed
+      ownership: "Josh Coley"
+      cost_responsibility: "Josh Coley"
+      inspection_status: "Account availability confirmed; no Home School Haven project, schema, policies, or configuration inspected"
+  data_stores: []
+  integrations:
+    - name: "Program-specific external checkout"
+      classification: observed
+      inspection_status: "Only current checkout links are available; provider, API, webhook, account ownership, test mode, and reconciliation behavior remain unverified"
+  agent_capabilities:
+    - "Mercurius Product System"
+    - "Mercurius Design System"
+    - "Mercurius Technology System"
+  environment_variable_names: []
+
+capabilities:
+  - id: MTS-CAP-001
+    name: "Responsive application runtime and hosting"
+    family: "application runtime and hosting"
+    requirement: "Support public, family, educator, and administrator responsive web experiences."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-001 through MPS-FEA-009; MDS v1.0"
+    existing_implementation: []
+    data_classes: ["public content", "account data", "family and student data", "operational data"]
+    trust_boundaries: ["public browser", "authenticated browser", "server runtime"]
+    constraints: ["WCAG 2.2 AA", "4/8/12-column responsive composition", "repository not supplied"]
+    mds_impacts: ["all approved page shells and responsive states"]
+    strategy: integrate
+    candidates: ["Next.js on Vercel"]
+    approved_selection: "Next.js App Router with TypeScript on Vercel"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: []
+    risks: []
+  - id: MTS-CAP-002
+    name: "Identity and account recovery"
+    family: "identity, authentication, authorization, and tenancy"
+    requirement: "Authenticate parents, educators, administrators, and Samantha while preserving parent-controlled student profiles."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-005, MPS-FEA-007, MPS-FEA-008, MPS-FEA-010"
+    existing_implementation: []
+    data_classes: ["identity data", "contact data", "role assignments"]
+    trust_boundaries: ["browser", "identity service", "application server"]
+    constraints: ["no independent beta student login", "owner credentials must not be shared"]
+    mds_impacts: ["authentication", "verification", "recovery", "blocked and expired states"]
+    strategy: integrate
+    candidates: ["Supabase Auth"]
+    approved_selection: "Supabase Auth with server-managed sessions and recovery"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: []
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-003
+    name: "Server-side role and assignment authorization"
+    family: "identity, authentication, authorization, and tenancy"
+    requirement: "Enforce family ownership, educator assignment, administrator scope, and owner authority server-side."
+    need_status: required
+    priority: must
+    source: "MPS actor and business-rule model"
+    existing_implementation: []
+    data_classes: ["family data", "student data", "rosters", "program operations"]
+    trust_boundaries: ["authenticated client", "application server", "data store"]
+    constraints: ["deny by default", "least privilege", "object ownership and assignment enforcement"]
+    mds_impacts: ["unauthorized", "reassignment", "session expired", "access removed states"]
+    strategy: configure
+    candidates: ["Supabase Row Level Security plus server authorization"]
+    approved_selection: "Server-derived roles and assignments enforced through application checks and deny-by-default Supabase RLS"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-002]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-004
+    name: "Application database and audit history"
+    family: "data storage, database, cache, and files"
+    requirement: "Store programs, families, parent-controlled students, enrollment state, assignments, consent evidence, announcements, resources, and attributable administrative changes."
+    need_status: required
+    priority: must
+    source: "MPS-REQ-007 through MPS-REQ-024"
+    existing_implementation: []
+    data_classes: ["public content", "personal data", "minor data", "consent records", "operational audit records"]
+    trust_boundaries: ["application server", "database", "administrative operations"]
+    constraints: ["data minimization", "retention/deletion support", "attributable material-change history"]
+    mds_impacts: ["loading", "empty", "conflict", "save failure", "audit visibility states"]
+    strategy: integrate
+    candidates: ["Supabase Postgres"]
+    approved_selection: "Supabase Postgres with versioned migrations, generated types, and attributable audit history"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-003]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-005
+    name: "Public content and program publishing"
+    family: "content management and editorial workflow"
+    requirement: "Publish verified public pages and program facts while limiting publication authority to administrators or Samantha."
+    need_status: required
+    priority: must
+    source: "MPS-REQ-007, MPS-REQ-008, MPS-RUL-005"
+    existing_implementation: ["Current website is approved beta content source"]
+    data_classes: ["public content", "publication metadata"]
+    trust_boundaries: ["content editor", "publishing service", "public site"]
+    constraints: ["do not invent missing facts", "preserve seasonal and publication state"]
+    mds_impacts: ["draft", "published", "unpublished", "stale", "missing-fact states"]
+    strategy: build
+    candidates: ["Supabase-backed in-app administration", "Sanity"]
+    approved_selection: "Supabase-backed in-app program and course administration; Sanity deferred for Foundation Release"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-003, MTS-CAP-004]
+    risks: []
+  - id: MTS-CAP-006
+    name: "External checkout handoff and payment-state reconciliation"
+    family: "payments, billing, tax, invoicing, and entitlements"
+    requirement: "Preserve program-specific checkout URLs and represent payment/enrollment truth without false confirmation."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-004, CTX-010, MPS-RUL-004; MDS payment-handoff contract"
+    existing_implementation: ["Current program-specific checkout URLs"]
+    data_classes: ["checkout reference", "payment status", "enrollment status"]
+    trust_boundaries: ["Home School Haven application", "external payment provider", "administrator verification"]
+    constraints: ["no internal beta payment processing", "no automated financial exceptions", "handoff is not payment success"]
+    mds_impacts: ["leaving site", "returned", "pending verification", "unknown", "failed", "not confirmed"]
+    strategy: keep_and_integrate
+    candidates: ["Existing program-specific checkout URLs with manual reconciliation"]
+    approved_selection: "Existing checkout links with explicit pending/unknown states and authorized manual administrator verification"
+    implementation_status: existing
+    validation_status: unverified
+    dependencies: [MTS-CAP-004]
+    risks: [MTS-RSK-002]
+  - id: MTS-CAP-007
+    name: "Inquiry and private assistance intake"
+    family: "internal administration, support, moderation, and data operations"
+    requirement: "Capture guidance, tour, general inquiry, and discounted-class assistance requests with minimum necessary data and authorized ownership."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-003, MPS-REQ-009, MPS-REQ-010"
+    existing_implementation: []
+    data_classes: ["contact data", "private assistance request data"]
+    trust_boundaries: ["public form", "application server", "authorized administrator"]
+    constraints: ["private and manually reviewed", "no promised outcome"]
+    mds_impacts: ["submission", "received", "validation", "private-review expectation"]
+    strategy: build
+    candidates: ["Next.js server-controlled forms with Supabase records and Cloudflare Turnstile"]
+    approved_selection: "Server-validated inquiry and private-assistance intake; Turnstile before public or real-family activation"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-004]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-008
+    name: "Learning-resource file storage and delivery"
+    family: "data storage, database, cache, and files"
+    requirement: "Let authorized educators and administrators publish program-scoped learning resources for enrolled families."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-008, MPS-FEA-009"
+    existing_implementation: []
+    data_classes: ["learning files", "resource metadata", "access scope"]
+    trust_boundaries: ["educator upload", "file store", "authorized family download"]
+    constraints: ["program assignment and enrollment scope", "untrusted file validation"]
+    mds_impacts: ["upload", "processing", "ready", "failed", "unavailable", "unauthorized states"]
+    strategy: integrate
+    candidates: ["Supabase private Storage", "Cloudflare R2 recovery copy"]
+    approved_selection: "Private Supabase Storage with signed scoped access and scheduled Cloudflare R2 recovery copy before real-family activation"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-003, MTS-CAP-004]
+    risks: [MTS-RSK-003]
+  - id: MTS-CAP-009
+    name: "Program announcements and email notifications"
+    family: "email, SMS, push, chat, and notifications"
+    requirement: "Deliver authorized program-scoped announcements and optional beta email notifications."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-009; MPS-FEA-014 is should-priority for email"
+    existing_implementation: []
+    data_classes: ["contact data", "message content", "delivery status"]
+    trust_boundaries: ["authorized sender", "application server", "notification provider", "recipient"]
+    constraints: ["marketing consent remains distinct", "educator scope must be enforced"]
+    mds_impacts: ["draft", "sending", "sent", "partial failure", "delivery failure states"]
+    strategy: integrate
+    candidates: ["Resend through Supabase custom SMTP"]
+    approved_selection: "Resend for authentication and transactional email using the controlled domain and Supabase custom SMTP"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-003, MTS-CAP-004]
+    risks: []
+  - id: MTS-CAP-010
+    name: "Consent evidence and policy versioning"
+    family: "security scanning, secrets, audit, backup, recovery, and compliance evidence"
+    requirement: "Record explicit owner-approved consent, applicable policy version, acceptance time, renewal requirement, and unavailable/blocked states."
+    need_status: required
+    priority: must
+    source: "MPS-FEA-010, MPS-RUL-008 through MPS-RUL-010"
+    existing_implementation: []
+    data_classes: ["consent evidence", "policy version", "guardian identity", "student relationship"]
+    trust_boundaries: ["guardian", "application server", "audit store", "administrator"]
+    constraints: ["owner-approved language only", "real-family activation blocked while policy is unresolved"]
+    mds_impacts: ["required", "accepted", "renewal required", "unavailable", "blocked"]
+    strategy: build
+    candidates: ["Versioned consent records in Supabase Postgres"]
+    approved_selection: "Structured Supabase consent evidence and policy versioning; real-family use remains policy-gated"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-002, MTS-CAP-003, MTS-CAP-004]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-011
+    name: "Observability and operational alerting"
+    family: "logs, errors, metrics, tracing, alerting, and status"
+    requirement: "Detect application, checkout-handoff, notification, authorization, and data-operation failures without leaking personal data."
+    need_status: required
+    priority: must
+    source: "MTS operational requirement supporting MPS acceptance and recovery"
+    existing_implementation: []
+    data_classes: ["technical telemetry", "redacted operational identifiers"]
+    trust_boundaries: ["application runtime", "observability service", "authorized operator"]
+    constraints: ["no student/family details in logs or analytics"]
+    mds_impacts: ["degraded service", "retry", "support and recovery states"]
+    strategy: integrate
+    candidates: ["Vercel runtime logs", "PostHog browser error tracking", "Sentry"]
+    approved_selection: "Vercel runtime logs plus privacy-scrubbed PostHog browser errors; Sentry deferred until evidenced"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-001]
+    risks: []
+  - id: MTS-CAP-012
+    name: "Testing, preview, deployment, backup, and recovery"
+    family: "testing, CI/CD, preview, deployment, and release controls"
+    requirement: "Support private-beta environments, deterministic checks, safe releases, rollback, backup, restore, and combined MPS/MDS/MTS validation."
+    need_status: required
+    priority: must
+    source: "MPS beta-release intent; MDS QA; MTS security and verification standards"
+    existing_implementation: []
+    data_classes: ["sanitized test data", "deployment metadata", "backup data"]
+    trust_boundaries: ["development", "preview", "production", "backup store"]
+    constraints: ["private beta", "sample/sanitized data", "no unsupported production-readiness claim"]
+    mds_impacts: ["error recovery and degraded-service states"]
+    strategy: configure_and_integrate
+    candidates: ["Vercel previews", "Playwright and axe", "Supabase Pro backups", "Cloudflare R2 recovery"]
+    approved_selection: "Vercel preview/deployment, repository-compatible TypeScript/ESLint, Playwright, axe, screenshot/ARIA checks, Supabase Pro database backups, and R2 object recovery"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-001, MTS-CAP-004]
+    risks: []
+  - id: MTS-CAP-013
+    name: "Product analytics with privacy controls"
+    family: "product analytics, consent, experimentation, and feature flags"
+    requirement: "Preserve enough private-beta evidence to evaluate approved success signals without collecting unnecessary family or student data."
+    need_status: required
+    priority: should
+    source: "MPS-FEA-017, MPS-FEA-024, MPS-REQ-022"
+    existing_implementation: []
+    data_classes: ["pseudonymous usage events", "owner feedback", "beta evidence"]
+    trust_boundaries: ["application", "analytics service", "authorized owner/admin"]
+    constraints: ["data minimization", "no sensitive personal data in event payloads", "consent posture unresolved"]
+    mds_impacts: ["consent and feedback-capture states when applicable"]
+    strategy: staged_integrate
+    candidates: ["Structured walkthrough evidence", "PostHog Free"]
+    approved_selection: "Structured feedback for the first walkthrough; PostHog Free after core stability on anonymous public routes only"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-011]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-014
+    name: "Calendar export"
+    family: "APIs, integrations, queues, jobs, and webhooks"
+    requirement: "Allow families to download approved schedules without exposing private roster or student data."
+    need_status: optional
+    priority: should
+    source: "MPS-FEA-015"
+    existing_implementation: []
+    data_classes: ["program schedule", "family enrollment context"]
+    trust_boundaries: ["application server", "family device/calendar"]
+    constraints: ["minimum private detail"]
+    mds_impacts: ["download ready and failed states"]
+    strategy: build
+    candidates: ["Server-generated iCalendar export"]
+    approved_selection: "Server-generated calendar download with minimum private detail when retained in Should scope"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-004]
+    risks: []
+  - id: MTS-CAP-015
+    name: "Attendance tracking"
+    family: "internal administration, support, moderation, and data operations"
+    requirement: "Support educator/admin attendance recording if retained in beta scope."
+    need_status: optional
+    priority: should
+    source: "MPS-FEA-011"
+    existing_implementation: []
+    data_classes: ["student participation record"]
+    trust_boundaries: ["assigned educator", "administrator", "database"]
+    constraints: ["assignment-scoped access", "retention policy unresolved"]
+    mds_impacts: ["present", "absent", "not recorded", "save conflict states"]
+    strategy: build
+    candidates: ["Supabase Postgres attendance records"]
+    approved_selection: "Assignment-scoped Supabase attendance records when retained in Should scope"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-003, MTS-CAP-004]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-016
+    name: "Capacity and waitlist management"
+    family: "internal administration, support, moderation, and data operations"
+    requirement: "Support program-specific capacity and waitlist behavior without implying enrollment or collecting payment unless approved."
+    need_status: optional
+    priority: should
+    source: "MPS-FEA-012, MPS-RUL-001, MPS-RUL-002"
+    existing_implementation: []
+    data_classes: ["program capacity", "waitlist contact", "enrollment state"]
+    trust_boundaries: ["family", "application server", "administrator"]
+    constraints: ["program-specific behavior", "waitlist is not enrollment"]
+    mds_impacts: ["open", "limited", "waitlist", "closed", "pending states"]
+    strategy: build
+    candidates: ["Supabase relational capacity and waitlist state"]
+    approved_selection: "Supabase-backed program-specific capacity and waitlist state"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-004, MTS-CAP-006]
+    risks: []
+  - id: MTS-CAP-017
+    name: "Invited secondary guardian access"
+    family: "identity, authentication, authorization, and tenancy"
+    requirement: "Permit invited secondary-guardian access only if retained after complexity review."
+    need_status: optional
+    priority: should
+    source: "MPS-FEA-013; ACT-007 approved_optional"
+    existing_implementation: []
+    data_classes: ["identity", "family membership", "invitation evidence"]
+    trust_boundaries: ["primary guardian", "invited guardian", "application server"]
+    constraints: ["explicit family authorization", "exact beta inclusion unresolved"]
+    mds_impacts: ["invite", "pending", "accepted", "revoked", "expired states"]
+    strategy: build
+    candidates: ["Supabase Auth plus family membership invitations"]
+    approved_selection: "Supabase Auth and explicit family-membership invitations if retained after Should-scope complexity review"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: [MTS-CAP-002, MTS-CAP-003]
+    risks: [MTS-RSK-001]
+  - id: MTS-CAP-018
+    name: "Full educator Course Builder"
+    family: "content management and editorial workflow"
+    requirement: "Future online-learning authoring capability; not Foundation Release behavior."
+    need_status: deferred
+    priority: later
+    source: "Approved MDS-DEC-020 and MPS future-platform direction"
+    existing_implementation: []
+    data_classes: []
+    trust_boundaries: []
+    constraints: ["must not expand beta permissions or scope"]
+    mds_impacts: ["approved future visual direction only"]
+    strategy: defer
+    candidates: []
+    approved_selection: "No Foundation Release implementation; future-platform capability only"
+    implementation_status: absent
+    validation_status: unverified
+    dependencies: []
+    risks: [MTS-RSK-004]
+
+architecture:
+  environments: [local_development, private_preview, production]
+  runtime: {selection: "Next.js App Router with TypeScript", status: approved, repository_compatibility: unverified}
+  deployment: {selection: Vercel, status: approved, commercial_plan: "Vercel Pro target", account_owner: "Josh Coley"}
+  data: {selection: "Supabase Postgres and private Storage", status: approved, system_of_record: "programs, operations, enrollment, roles, announcements, and learning resources"}
+  identity: {selection: "Supabase Auth", status: approved, student_accounts: "not permitted in Foundation Release"}
+  authorization: {selection: "server-derived roles plus Supabase Row Level Security", status: approved, posture: "deny by default"}
+  tenancy: {}
+  services:
+    - {name: Resend, capability: "transactional and authentication email", status: approved, domain_authentication: "SPF, DKIM, and DMARC required"}
+    - {name: Sanity, capability: "public editorial CMS", status: deferred, note: "Not required for Foundation Release; must never own enrollment, roster, progress, child data, or access-control truth"}
+    - {name: PostHog, capability: "public analytics, feature flags, and browser error visibility", status: approved_staged, privacy_profile: "public routes only; cookieless; person_profiles never; session replay disabled"}
+    - {name: Cloudflare Turnstile, capability: "form and authentication bot protection", status: approved, timing: "before public or real-family activation"}
+    - {name: Cloudflare R2, capability: "secondary recovery copy for Supabase Storage objects", status: approved, timing: "before real-family activation"}
+  integrations: []
+  apis: []
+  events: []
+  jobs: []
+  observability: {foundation: "Vercel runtime logs", approved_addition: "privacy-scrubbed PostHog browser error tracking", deferred: "Sentry unless deeper server tracing is evidenced"}
+  analytics: {approved_staged: "PostHog Free for anonymous public funnels and feature flags after core stability", prohibited_foundation_capture: "authenticated routes, PII, child/family identifiers, form contents, checkout details, and session replay"}
+  ai: {}
+  reliability: {}
+  recovery: {database: "Supabase Pro daily backups before real-family activation", files: "separate scheduled object copy required because database backups exclude Storage objects"}
+
+security:
+  actors: ["public visitor", "primary guardian", "secondary guardian", "educator", "administrator", "Samantha as owner", "external payment system", "service identities"]
+  roles: ["public", "parent_guardian", "educator", "administrator", "owner"]
+  assets: ["accounts", "family records", "student profiles", "rosters", "enrollment states", "consent evidence", "assistance requests", "learning resources", "audit history"]
+  data_classes:
+    - {name: "Public content", sensitivity: low}
+    - {name: "Account and contact data", sensitivity: moderate}
+    - {name: "Minor/family data", sensitivity: high}
+    - {name: "Consent evidence", sensitivity: high}
+    - {name: "Private assistance requests", sensitivity: high}
+    - {name: "Payment and enrollment status references", sensitivity: high}
+    - {name: "Security credentials and service secrets", sensitivity: critical}
+  trust_boundaries:
+    - "Public browser to public application surface"
+    - "Authenticated browser to server-side application boundary"
+    - "Application server to identity, data, file, notification, analytics, and observability services"
+    - "Application to external checkout provider"
+    - "Privileged administrator/owner operations to protected data and audit controls"
+  secret_controls:
+    - "Keep private credentials server-side and out of source, clients, logs, analytics, URLs, and artifacts."
+  access_controls:
+    - "Derive identity and roles from authenticated server context; deny by default."
+    - "Enforce family ownership, program assignment, and privileged operations server-side."
+  privacy_controls:
+    - "Minimize minor/family data and block real-family activation until owner-approved policy exists."
+    - "Keep private assistance data out of public content, analytics, and ordinary educator access."
+  ai_controls: []
+  operational_controls:
+    - "Separate development, private-beta preview, and production environments."
+    - "Test authorization, recovery, replay/idempotency, backup, and restore controls before readiness claims."
+
+research:
+  - id: MTS-RES-001
+    capability: "Application runtime and commercial hosting"
+    candidates: ["Next.js on Vercel Pro", "Next.js/self-hosted", "Cloudflare Workers/OpenNext"]
+    approved_direction: "Next.js App Router on Vercel Pro"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://nextjs.org/docs/app", "https://vercel.com/docs/frameworks/full-stack/nextjs", "https://vercel.com/pricing", "https://vercel.com/legal/terms"]
+  - id: MTS-RES-002
+    capability: "Identity, relational data, authorization, and files"
+    candidates: ["Supabase consolidated backend", "Separate identity/database/storage providers", "Cloudflare D1/R2 with custom identity"]
+    approved_direction: "Supabase Auth, Postgres RLS, and Storage"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://supabase.com/pricing", "https://supabase.com/docs/guides/auth", "https://supabase.com/docs/guides/database/postgres/row-level-security", "https://supabase.com/docs/guides/storage"]
+  - id: MTS-RES-003
+    capability: "Transactional and authentication email"
+    candidates: ["Supabase default SMTP for pre-authorized review addresses", "Resend custom SMTP"]
+    approved_direction: "Resend Free when email must reach addresses outside the Supabase project team"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://supabase.com/docs/guides/auth/auth-smtp", "https://resend.com/pricing"]
+  - id: MTS-RES-004
+    capability: "MDS implementation and accessibility"
+    candidates: ["MDS CSS variables with constrained Tailwind and selective Radix/Lucide", "CSS Modules with custom primitives"]
+    approved_direction: "MDS CSS variables, constrained Tailwind if repository-compatible, selective Radix Primitives, Lucide React"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://tailwindcss.com/docs/guides/nextjs", "https://www.radix-ui.com/primitives/docs/overview/introduction", "https://lucide.dev/guide/react/"]
+  - id: MTS-RES-005
+    capability: "Engineering and accessibility QA"
+    candidates: ["Playwright plus axe", "Repository-native equivalent"]
+    approved_direction: "Playwright with @axe-core/playwright and screenshot/ARIA snapshots"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://playwright.dev/docs/accessibility-testing", "https://playwright.dev/docs/aria-snapshots"]
+  - id: MTS-RES-006
+    capability: "Analytics and error monitoring"
+    candidates: ["Defer external tools for Samantha walkthrough", "PostHog Free", "Sentry Free"]
+    approved_direction: "No external analytics for first walkthrough; privacy-minimized PostHog after core stability; defer Sentry"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://posthog.com/pricing", "https://posthog.com/docs/privacy/data-collection", "https://sentry.io/pricing/"]
+  - id: MTS-RES-007
+    capability: "Course content and editorial workflow"
+    candidates: ["Supabase-backed in-app administration", "Sanity headless CMS"]
+    approved_direction: "Use Supabase as the Foundation program/course system of record; defer Sanity to a future public-editorial need"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://www.sanity.io/docs/platform-management/plans-and-payments", "https://www.sanity.io/docs/content-lake/technical-limits", "https://www.sanity.io/docs/content-lake/datasets"]
+  - id: MTS-RES-008
+    capability: "Abuse prevention and storage recovery"
+    candidates: ["Cloudflare Turnstile", "Cloudflare R2", "provider-native controls only"]
+    approved_direction: "Turnstile before public/auth activation and separate R2 object backup before real-family activation"
+    status: approved
+    verified_at: "2026-08-26"
+    sources: ["https://supabase.com/docs/guides/auth/auth-captcha", "https://developers.cloudflare.com/turnstile/", "https://supabase.com/docs/guides/platform/backups", "https://developers.cloudflare.com/r2/pricing/"]
+
+governance:
+  decisions:
+    - {id: MTS-DEC-001, area: authority, key: three_system_boundary, value: "MPS owns product truth; MDS v1.0 owns experience truth; MTS owns technology and security architecture", status: approved, source: "MPS–MDS–MTS contract", rationale: "Preserves approved decisions and prevents technology-created scope", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: []}
+    - {id: MTS-DEC-002, area: release, key: beta_data_boundary, value: "Use sample or sanitized family/student data; real-family activation remains blocked", status: approved, source: "MPS-EXC-001 and MDS-EXC-001", rationale: "Permits private beta design and walkthrough without inventing child-data policy", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-004, MTS-CAP-010, MTS-CAP-012]}
+    - {id: MTS-DEC-003, area: payments, key: beta_checkout_boundary, value: "Preserve current program-specific external checkout; handoff is not payment success or confirmed enrollment", status: approved, source: "MPS CTX-010 and MDS v1.0", rationale: "Preserves the approved beta payment path and truthful status semantics", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-006]}
+    - {id: MTS-DEC-004, area: release, key: educator_course_builder_horizon, value: "Deferred to future platform; not Foundation Release Beta", status: approved, source: "MPS/MDS approval on 2026-08-26", rationale: "Prevents beta scope expansion", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-018]}
+    - {id: MTS-DEC-005, area: inspection, key: repository_availability, value: "Target repository will be supplied later", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Inspection cannot occur until the repository is supplied; greenfield architecture must not be assumed", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-GAP-001]}
+    - {id: MTS-DEC-006, area: delivery, key: implementation_team, value: "Josh Coley working with Codex", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Architecture and implementation guidance should favor manageable services, strong defaults, and low operational burden", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-GAP-002]}
+    - {id: MTS-DEC-007, area: payments, key: available_checkout_evidence, value: "Only current checkout links are available", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "MTS cannot assume provider APIs, webhooks, test mode, or authoritative payment signals", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-006, MTS-GAP-003]}
+    - {id: MTS-DEC-008, area: delivery, key: samantha_review_window, value: "Target 2–3 days when possible; no more than 5 days", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Requires a tightly scoped sanitized review build and staged production hardening", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-001, MTS-CAP-012]}
+    - {id: MTS-DEC-009, area: cost, key: recurring_budget, value: "Under $100 per month; credible free options should be explored", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Disqualifies unnecessary vendor sprawl and favors consolidated managed services", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-001, MTS-CAP-004, MTS-CAP-011, MTS-CAP-013]}
+    - {id: MTS-DEC-010, area: scale, key: first_year_family_volume, value: "Under 100 families", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Does not require high-scale distributed infrastructure for Foundation Release", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-001, MTS-CAP-004, MTS-CAP-009]}
+    - {id: MTS-DEC-011, area: architecture, key: approved_target, value: "Next.js App Router with TypeScript on Vercel, using Supabase Auth/Postgres/RLS/Storage", status: approved, source: "Josh Coley explicit approval on 2026-08-26", rationale: "Smallest coherent low-operations architecture that fits the 2–5 day review window, under-$100 ceiling, under-100-family scale, and the team's established expertise", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: [MTS-GAP-001]}
+    - {id: MTS-DEC-012, area: data, key: beta_backend_plan, value: "Supabase Free for sanitized Samantha review; Supabase Pro required before real-family activation", status: approved, source: "Supabase pricing and backup documentation verified 2026-08-26; Josh Coley blanket MTS approval", rationale: "Free supports review; Pro prevents pausing and adds daily backups while remaining within budget", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-GAP-004, MTS-GAP-005]}
+    - {id: MTS-DEC-013, area: payments, key: link_only_reconciliation, value: "Approved checkout links plus manual administrator verification; no webhook or automatic success assumption", status: approved, source: "Available evidence, MPS/MDS trust-state rules, and Josh Coley blanket MTS approval", rationale: "Provider APIs and authoritative payment signals are unknown", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-GAP-003]}
+    - {id: MTS-DEC-014, area: analytics, key: samantha_walkthrough_posture, value: "No external analytics or session replay required for first walkthrough; use structured feedback and privacy-minimized internal events", status: approved, source: "MTS delivery/privacy analysis and Josh Coley blanket MTS approval", rationale: "Reduces 2–5 day scope and avoids unnecessary child/family data exposure", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-013]}
+    - {id: MTS-DEC-015, area: ownership, key: vercel_supabase_accounts, value: "Josh Coley owns both the Vercel and Supabase accounts and will cover their costs", status: observed, source: "Josh Coley response on 2026-08-26", rationale: "Resolves account ownership and cost responsibility but does not itself approve the architecture or reveal project configuration", approved_at: null, introduced_version: null, deprecated_version: null, dependencies: [MTS-DEC-011, MTS-DEC-012]}
+    - {id: MTS-DEC-016, area: email, key: transactional_provider, value: "Resend using the controlled Home School Haven domain and Supabase custom SMTP", status: approved, source: "Josh Coley explicit approval on 2026-08-26", rationale: "Provides production-capable authentication and transactional email while preserving a consolidated low-cost stack", approved_at: "2026-08-26", introduced_version: null, deprecated_version: null, dependencies: [MTS-CAP-009]}
+    - {id: MTS-DEC-017, area: content, key: foundation_course_system, value: "Supabase-backed in-app program and course administration; do not add Sanity to Foundation Release", status: approved, source: "MTS course/content analysis and Josh Coley blanket MTS approval", rationale: "Foundation course data is operational and permissioned; a second CMS would duplicate schemas and authorization while Course Builder remains deferred", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-004, MTS-CAP-005, MTS-CAP-018]}
+    - {id: MTS-DEC-018, area: analytics, key: posthog_privacy_profile, value: "PostHog Free on public routes only with cookieless capture, person_profiles never, session replay disabled, and a sensitive-data event denylist", status: approved, source: "PostHog first-party research and Josh Coley blanket MTS approval", rationale: "Adds useful funnel, feature-flag, and browser-error evidence without sending authenticated family or child activity", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-013]}
+    - {id: MTS-DEC-019, area: security, key: bot_protection, value: "Cloudflare Turnstile for public forms and Supabase auth before public or real-family activation", status: approved, source: "Supabase/Cloudflare first-party research and Josh Coley blanket MTS approval", rationale: "Reduces form and email-auth abuse using a supported, accessible, free control", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-002, MTS-CAP-007, MTS-CAP-009]}
+    - {id: MTS-DEC-020, area: recovery, key: storage_object_backup, value: "Schedule an independent copy of private Supabase Storage objects to Cloudflare R2 before real-family activation", status: approved, source: "Supabase/Cloudflare first-party research and Josh Coley blanket MTS approval", rationale: "Supabase database backups do not restore deleted Storage objects; R2 fits the scale and budget", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-008, MTS-CAP-012]}
+    - {id: MTS-DEC-021, area: observability, key: foundation_error_visibility, value: "Use Vercel runtime logs plus privacy-scrubbed PostHog browser errors; defer Sentry until deeper server tracing is evidenced", status: approved, source: "Vercel/PostHog first-party research and Josh Coley blanket MTS approval", rationale: "Closes basic visibility needs without adding another vendor during the 2–5 day review build", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-012]}
+    - {id: MTS-DEC-022, area: ui_implementation, key: styling_primitives_icons, value: "MDS CSS variables with repository-compatible constrained Tailwind, selective Radix Primitives, and Lucide React at 1.75 px rounded strokes", status: approved, source: "MTS selection research and Josh Coley blanket MTS approval", rationale: "Implements approved MDS quickly without importing competing visual decisions", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-001]}
+    - {id: MTS-DEC-023, area: quality, key: engineering_mds_qa, value: "Repository-compatible TypeScript and ESLint plus Playwright, @axe-core/playwright, screenshot comparison, and ARIA snapshots", status: approved, source: "MTS selection research and Josh Coley blanket MTS approval", rationale: "Supports deterministic engineering, accessibility, and visual verification", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-012]}
+    - {id: MTS-DEC-024, area: ai, key: foundation_runtime_ai, value: "No runtime AI capability in Foundation Release", status: approved, source: "MPS capability evidence and Josh Coley blanket MTS approval", rationale: "No approved Foundation requirement needs runtime AI", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: []}
+  gaps:
+    - {id: MTS-GAP-001, area: inspection, statement: "The target application repository will be supplied later; manifests, schemas, deployment configuration, tests, and environment-variable names cannot yet be inspected.", severity: high, status: open, owner: "Project team", resolution_trigger: "Repository supplied"}
+    - {id: MTS-GAP-002, area: delivery_constraints, statement: "Implementation ownership, budget ceiling, and review timeline are confirmed; architecture should favor low-operational-burden managed services within the stated ceiling.", severity: high, status: resolved, owner: "Josh Coley / project team", resolution: "Josh with Codex; 2–5 day Samantha-review window; under $100/month with free tiers explored"}
+    - {id: MTS-GAP-003, area: payments, statement: "Only current checkout links are available; the provider, technical integration surface, account ownership, test mode, and authoritative payment-status signal remain unverified.", severity: high, status: open, owner: "Samantha Dodson"}
+    - {id: MTS-GAP-004, area: product_policy, statement: "MPS-GAP-005 remains open for parental authority, child-data fields, consent, retention, deletion, media, communication, and staff-access policy.", severity: critical, status: open, owner: "Samantha Dodson", routed_to: MPS}
+    - {id: MTS-GAP-005, area: product_policy, statement: "MPS-GAP-010 remains open for authoritative pricing, payment, scholarship, discount, refund, cancellation, credit, and transfer policy.", severity: high, status: open, owner: "Samantha Dodson", routed_to: MPS}
+    - {id: MTS-GAP-006, area: scale, statement: "First-year family volume is expected to remain under 100; detailed storage volume is not material to initial candidate qualification and will be validated during implementation planning.", severity: medium, status: resolved, owner: "Project team", resolution: "Under 100 families in first year"}
+  risks:
+    - {id: MTS-RSK-001, area: minors_privacy_access, statement: "Incorrect authorization or excessive collection could expose child, family, consent, or assistance data.", severity: critical, status: open, mitigation: "Block real-family activation; minimize fields; require server-side ownership and assignment controls; test access boundaries."}
+    - {id: MTS-RSK-002, area: payment_truth, statement: "External checkout return or user navigation could be mistaken for payment success or confirmed enrollment.", severity: high, status: open, mitigation: "Use explicit pending/unknown states and an authoritative reconciliation path or administrator verification."}
+    - {id: MTS-RSK-003, area: file_handling, statement: "Educator-uploaded resources may introduce unsafe files, excessive data exposure, or unauthorized access.", severity: high, status: open, mitigation: "Define file type/size policy, server-side validation, private storage, scoped access, and malware/content controls proportionate to risk."}
+    - {id: MTS-RSK-004, area: scope_drift, statement: "The future Course Builder could be implemented prematurely and expand educator authority or beta complexity.", severity: medium, status: open, mitigation: "Keep capability deferred and exclude it from Foundation Release implementation manifests."}
+    - {id: MTS-RSK-005, area: architecture, statement: "Selecting providers before repository, payment, budget, team, and scale evidence could create avoidable cost, lock-in, or rework.", severity: high, status: open, mitigation: "Complete Discovery and Inspection before Recommendation."}
+  exceptions:
+    - {id: MTS-EXC-001, area: beta_data, statement: "Private beta design, content import, and owner walkthrough may use sample or sanitized family/student data while policy gaps remain open.", status: approved, source: "MPS-EXC-001 / MDS-EXC-001"}
+  deviations: []
+  changes:
+    - id: MTS-CHG-001
+      area: discovery
+      previous_value: "Repository, implementation team, and checkout evidence unknown"
+      new_value: "Repository later; Josh with Codex; checkout links only"
+      reason: "Josh Coley supplied the first MTS discovery answers"
+      version_impact: "Draft discovery-state update; no technology approved"
+      affected_artifacts: [state, discovery_brief]
+      recorded_at: "2026-08-26"
+    - id: MTS-CHG-002
+      area: discovery
+      previous_value: "Timeline, recurring budget, and first-year scale unknown"
+      new_value: "2–5 day review build; under $100/month with free tiers; under 100 families"
+      reason: "Josh Coley supplied the remaining MTS discovery constraints"
+      version_impact: "Discovery and capability-mapping gates may complete; no provider approved"
+      affected_artifacts: [state, discovery_brief]
+      recorded_at: "2026-08-26"
+    - id: MTS-CHG-003
+      area: ownership
+      previous_value: "Vercel and Supabase account ownership/cost responsibility not recorded"
+      new_value: "Josh Coley owns both accounts and will cover their costs"
+      reason: "Josh Coley supplied account and payment-responsibility evidence"
+      version_impact: "Research-state clarification; proposed architecture remains unapproved"
+      affected_artifacts: [state, provisional_research]
+      recorded_at: "2026-08-26"
+    - id: MTS-CHG-004
+      area: architecture_approval
+      previous_value: "Next.js, Vercel, Supabase, and Resend were proposed or conditional"
+      new_value: "Next.js with TypeScript, Vercel, Supabase Auth/Postgres/RLS/Storage, and Resend are explicitly approved"
+      reason: "Josh Coley explicitly approved the core stack and Resend"
+      version_impact: "Core provider selection approved subject to repository compatibility inspection; optional add-ons remain proposed"
+      affected_artifacts: [state, provisional_research, architecture_addendum]
+      recorded_at: "2026-08-26"
+    - id: MTS-CHG-005
+      area: final_architecture_approval
+      previous_value: "Core stack approved; staged services, implementation packages, privacy profile, recovery, and monitoring decisions proposed"
+      new_value: "All MTS selections approved; repository inspection remains the next implementation gate"
+      reason: "Josh Coley explicitly approved everything and requested final AGENTS.md reconciliation"
+      version_impact: "Activates MTS v1.0 as the complete approved architecture without clearing MPS real-family policy gates"
+      affected_artifacts: [state, technology_blueprint, capability_matrix, integration_manifest, security_architecture, implementation_plan, selection_record, architecture_addendum, agents_md, qa_protocol]
+      recorded_at: "2026-08-26"
+  versions:
+    - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
+
+artifacts:
+  state: {path: "mts/MTS-PROJECT-STATE.yaml", status: current, source_decisions: [MTS-DEC-001, MTS-DEC-002, MTS-DEC-003, MTS-DEC-004], last_updated: "2026-08-26"}
+  discovery_brief: {path: "mts/history/MTS-DISCOVERY-BRIEF.md", status: not_applicable, note: "Historical pre-approval snapshot retained for decision history.", last_updated: "2026-08-26"}
+  provisional_research: {path: "mts/MTS-SELECTION-RECORD.md", status: current, note: "Final approved selection record; compatibility filename retained in state key.", last_updated: "2026-08-26"}
+  architecture_addendum: {path: "mts/MTS-ARCHITECTURE-ADDENDUM.md", status: current, source_decisions: [MTS-DEC-011, MTS-DEC-016, MTS-DEC-017, MTS-DEC-018, MTS-DEC-019, MTS-DEC-020, MTS-DEC-021], last_updated: "2026-08-26"}
+  technology_blueprint: {path: "mts/TECHNOLOGY-BLUEPRINT.md", status: current}
+  capability_matrix: {path: "mts/CAPABILITY-MATRIX.md", status: current}
+  integration_manifest: {path: "mts/INTEGRATION-MANIFEST.md", status: current, note: "Repository paths remain inspection placeholders and must be reconciled in Codex."}
+  security_architecture: {path: "mts/SECURITY-ARCHITECTURE.md", status: current}
+  implementation_plan: {path: "mts/IMPLEMENTATION-PLAN.md", status: current}
+  agents_md: {path: "AGENTS.md", status: current, note: "Approved core architecture included; repository-specific paths and commands require inspection."}
+  qa_protocol: {path: "mts/qa/MTS-QA.md", status: current}
+  verification_report: {path: "mts/qa/MTS-VERIFICATION.md", status: missing}
+
+gates:
+  discovery:
+    status: complete
+    requirements:
+      - "Consume current MPS and locked MDS v1.0 inputs"
+      - "Confirm delivery, budget, team, scale, repository, deployment, and payment constraints"
+      - "Record minors/privacy and unresolved product-policy blockers"
+    blocking_items: []
+    completed_at: "2026-08-26"
+  inspection: {status: not_started, requirements: ["Inspect target repository, runtime, configuration, schemas, tests, and deployment"], blocking_items: [MTS-GAP-001], completed_at: null}
+  capability_mapping: {status: complete, requirements: ["Trace approved MPS requirements and MDS states to technical capabilities"], blocking_items: [], completed_at: "2026-08-26"}
+  research: {status: complete, requirements: ["Research viable providers from current first-party sources after disqualifying constraints are known"], blocking_items: [], completed_at: "2026-08-26"}
+  recommendation: {status: complete, requirements: ["Compare viable keep/build/buy options and propose a coherent architecture"], blocking_items: [], completed_at: "2026-08-26"}
+  approval: {status: complete, requirements: ["Obtain explicit approval for providers, persistent dependencies, data flows, cost, and lock-in"], blocking_items: [], completed_at: "2026-08-26"}
+  implementation_readiness: {status: in_progress, requirements: ["Produce blueprint, manifests, security architecture, plan, QA, and reconciled AGENTS.md", "Reconcile repository-specific paths, commands, packages, schemas, and deployment configuration"], blocking_items: [MTS-GAP-001], completed_at: null}
+  verification: {status: not_started, requirements: ["Verify implemented architecture, integrations, security, recovery, and synchronization"], blocking_items: [], completed_at: null}
+
+verification:
+  architecture: null
+  integration_data: null
+  security_privacy: null
+  reliability_operations: null
+  mps_synchronization: "MPS Library version 11 consumed; policy gaps preserved"
+  mds_synchronization: "MDS v1.0 handoff consumed; no design changes introduced"
+  overall_status: null
+  reviewed_at: null

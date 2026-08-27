@@ -1,0 +1,618 @@
+mps:
+  system: Mercurius Product System
+  schema_version: "1.0"
+  project_id: "home-school-haven-learning-platform"
+  project_name: "Home School Haven Learning Platform"
+  lifecycle: approved
+  mps_version: "v1.0"
+  current_gate: approval_handoff
+  created_at: "2026-08-26T23:38:07.209612+00:00"
+  updated_at: "2026-08-27T03:40:00Z"
+
+project:
+  name: "Home School Haven Learning Platform"
+  description: "Upgrade the public Home School Haven website and define a connected learning platform for its homeschool community."
+  product_type: "Approved hybrid ecosystem: public website, program management portal, blended learning hub, and full online learning platform"
+  business_stage: "Existing in-person homeschool community; digital ecosystem preparing a private Foundation Release beta"
+  geography:
+    - "Cape Coral, Florida"
+    - "Southwest Florida"
+  platforms:
+    - "Responsive web"
+  decision_owners:
+    - name: "Samantha Dodson"
+      role: "Home School Haven owner and final product decision owner"
+      status: approved
+  context:
+    - id: CTX-001
+      status: observed
+      statement: "Home School Haven currently offers enrichment classes, hands-on workshops, small-group learning experiences, and community support for homeschool families."
+      evidence: "https://homeschoolhaven.org/"
+    - id: CTX-002
+      status: observed
+      statement: "The organization presents itself as a boutique, calm, creative, Christ-centered learning community."
+      evidence: "https://homeschoolhaven.org/"
+    - id: CTX-003
+      status: observed
+      statement: "Current offerings include multi-week enrichment, readiness, art, sewing, gardening, history, summer programs, and special events."
+      evidence: "https://homeschoolhaven.org/classes"
+    - id: CTX-004
+      status: observed
+      statement: "The current website uses separate class, calendar, contact, and external payment experiences."
+      evidence: "Public website review on 2026-08-26"
+    - id: CTX-005
+      status: approved
+      statement: "Treat the public website and learning platform as one product ecosystem with distinct public, family, educator, and administrative experiences."
+    - id: CTX-006
+      status: observed
+      statement: "Current offerings are commonly sold by specific class, multi-week session, program, term, or summer week through direct Register & Pay or Pay Now actions."
+      evidence: "https://homeschoolhaven.org/classes and https://homeschoolhaven.org/summer-series reviewed 2026-08-26"
+    - id: CTX-007
+      status: observed
+      statement: "The current contact experience explicitly invites families to request support or help with discounted classes."
+      evidence: "https://homeschoolhaven.org/contact reviewed 2026-08-26"
+    - id: CTX-008
+      status: observed
+      statement: "The public privacy policy says payment details are processed through third-party platforms and child-related information is collected with parental consent for program participation."
+      evidence: "https://homeschoolhaven.org/privacy-policy reviewed 2026-08-26"
+    - id: CTX-009
+      status: approved
+      statement: "The courses, programs, and other information currently published on the Home School Haven website are current and authorized as the Foundation Release beta content-import source."
+      evidence: "Product-definition collaborator confirmation on 2026-08-26"
+    - id: CTX-010
+      status: approved
+      statement: "The current website's program-specific external checkout procedure is sufficient for the Foundation Release private beta."
+      evidence: "Product-definition collaborator confirmation on 2026-08-26"
+  constraints:
+    - "The product serves children and must require explicit decisions for parental consent, child-data handling, permissions, safety, and public visibility."
+    - "The product identity should preserve Home School Haven's Christ-centered values and warm boutique-community positioning."
+    - "The Foundation Release is a private beta for owner review, not the public platform launch."
+    - "The complete launch scope must incorporate Samantha Dodson's beta feedback before approval."
+  non_goals: []
+
+purpose:
+  statement: "Home School Haven gives homeschool families one trusted, Christ-centered place to discover programs, enroll, manage their family's participation, access meaningful learning, and stay connected—while giving educators and administrators the tools to operate and expand both local and online programs."
+  problem_statement: "Homeschool families currently navigate disconnected experiences for discovering programs, registering and paying, tracking schedules, receiving communication, and accessing learning resources. At the same time, Home School Haven needs a unified way to manage families, students, educators, programs, enrollment, and learning so it can serve its local community well and expand to remote families without losing its personal, Christ-centered character."
+  value_proposition: "Home School Haven brings trusted community, Christ-centered support, flexible enrollment, program management, and meaningful learning into one connected experience. Families can move naturally from discovering the right opportunity to enrolling, participating, and learning—whether locally, through live online classes, or at their own pace—without navigating disconnected systems or losing the personal support that makes Home School Haven distinctive."
+  principles:
+    - "Creativity over conformity"
+    - "Curiosity over perfection"
+    - "Character over performance"
+    - "Community over competition"
+  guardrails:
+    - "Do not weaken child safety, family privacy, parental authority, or community trust in pursuit of convenience or growth."
+    - "Do not replace or silently change existing pricing, scholarship, discount, payment, refund, or cancellation policy without Samantha Dodson's explicit approval."
+
+outcomes:
+  - {id: OUT-FAM-001, type: user, beneficiary: "Prospective and current families", status: approved, statement: "Quickly understand which programs fit their children and choose guided assistance or direct enrollment.", direction: improve, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-FAM-002, type: user, beneficiary: "Parents and guardians", status: approved, statement: "Manage multiple children through one parent-controlled family account.", direction: simplify, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-FAM-003, type: user, beneficiary: "Enrolled families", status: approved, statement: "See enrollments, schedules, announcements, and learning resources in one trusted place.", direction: centralize, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-FAM-004, type: user, beneficiary: "Local and remote families", status: approved, statement: "Participate in local, blended, live-online, and self-paced learning as the platform expands.", direction: expand_access, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-EDU-001, type: user, beneficiary: "Educators", status: approved, statement: "Understand assigned programs and schedules and access accurate rosters and relevant student information.", direction: improve_clarity, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-EDU-002, type: user, beneficiary: "Educators", status: approved, statement: "Communicate with enrolled families, share resources, and deliver learning with less disconnected coordination work.", direction: reduce_effort, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-ADM-001, type: business, beneficiary: "Home School Haven administrators", status: approved, statement: "Manage programs, schedules, educators, families, and enrollment centrally while maintaining accurate public and private information.", direction: centralize_and_improve_accuracy, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-ADM-002, type: business, beneficiary: "Home School Haven administrators", status: approved, statement: "Reduce repetitive administrative work and enrollment errors while improving visibility into interest, capacity, enrollment, and participation.", direction: reduce_and_improve, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-BIZ-001, type: business, beneficiary: "Home School Haven", status: approved, statement: "Expand from a local program community into blended and remote learning without losing family trust, personal support, or community quality.", direction: responsible_growth, baseline: unknown, owner: "Samantha Dodson"}
+  - {id: OUT-BIZ-002, type: business, beneficiary: "Home School Haven", status: approved, statement: "Help more well-matched families move from interest to appropriate participation through flexible conversion paths.", direction: improve_conversion_quality, baseline: unknown, owner: "Samantha Dodson"}
+actors:
+  - id: ACT-001
+    name: "Primary parent or guardian"
+    type: primary_user
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["Manage the family account", "Manage student profiles", "Discover and select programs", "Request guidance or enroll directly", "Pay", "View schedules and announcements", "Access enrolled resources"]
+    authority: "Controls the family account, student profiles, enrollments, and family-visible information."
+    restrictions: ["Cannot access another family", "Cannot grant student login in the beta", "Cannot change organization policy or program records"]
+  - id: ACT-002
+    name: "Student"
+    type: affected_minor
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["Participate in enrolled programs", "Receive parent-mediated access to schedules, announcements, and learning resources"]
+    authority: "Represented by a parent-controlled profile; no independent beta login."
+    restrictions: ["No direct account authority", "No default collection of sensitive medical, behavioral, or accommodation data"]
+  - id: ACT-003
+    name: "Educator"
+    type: operational_user
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["View assigned programs and schedules", "Access assigned rosters and appropriate student information", "Publish learning resources", "Draft or publish program-scoped announcements as permitted"]
+    authority: "Limited to assigned programs and enrolled students."
+    restrictions: ["Cannot control public pricing", "Cannot change public program availability", "Cannot access unassigned families or programs", "Cannot issue organization-wide communication without administrative authority"]
+  - id: ACT-004
+    name: "Administrator"
+    type: administrative_user
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["Manage programs, educators, schedules, enrollment, payments, rosters, communications, and website-linked content"]
+    authority: "Operational authority delegated by the owner."
+    restrictions: ["Does not replace the owner decision role", "Access must be role-appropriate and individually assigned"]
+  - id: ACT-005
+    name: "Public visitor or prospective parent"
+    type: public_user
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["Understand Home School Haven", "Explore programs, educators, schedules, and pricing", "Request guidance or a visit", "Begin registration and payment"]
+    authority: "May access only public information and public conversion paths."
+    restrictions: ["Cannot access private family, student, educator, roster, or operational information"]
+  - id: ACT-006
+    name: "Owner administrator — Samantha Dodson"
+    type: accountable_owner
+    status: approved
+    release: "Foundation Release Beta"
+    jobs: ["Exercise final product and operational authority", "Control administrator access", "Approve public policy, pricing, programs, and launch progression", "Evaluate beta evidence"]
+    authority: "Highest product and organization-level authority."
+    restrictions: ["Owner credentials must not be shared"]
+  - id: ACT-007
+    name: "Invited secondary guardian"
+    type: secondary_user
+    status: approved_optional
+    release: "Foundation Release Beta"
+    jobs: ["View or help manage an invited family account within owner-approved permissions"]
+    authority: "Receives access only through a primary parent invitation."
+    restrictions: ["Must not gain access without explicit family authorization", "Exact beta inclusion is subject to scope priority and implementation complexity"]
+  - id: ACT-008
+    name: "Payment processor"
+    type: affected_external_system
+    status: observed
+    release: "Foundation Release Beta"
+    jobs: ["Process payment details through the existing or approved provider"]
+    authority: "No Home School Haven product-policy authority."
+    restrictions: ["Platform must not expose unnecessary child or family data to the provider"]
+
+scope:
+  capabilities:
+    - {id: CAP-001, name: "Public website and discovery", status: approved, horizon: "product ecosystem", statement: "Present Home School Haven, programs, schedules, pricing, values, and pathways for local and remote families."}
+    - {id: CAP-002, name: "Flexible enrollment journey", status: approved, horizon: "product ecosystem", statement: "Let families inquire, request guidance or a visit, or proceed directly into registration and payment."}
+    - {id: CAP-003, name: "Program management portal", status: approved, horizon: "product ecosystem", statement: "Support administrators and educators in operating programs, enrollments, schedules, and family participation."}
+    - {id: CAP-004, name: "Blended learning hub", status: approved, horizon: "product ecosystem", statement: "Extend local in-person programs with connected digital learning and family support."}
+    - {id: CAP-005, name: "Full online learning", status: approved, horizon: "product ecosystem", statement: "Serve remote families through complete online learning experiences."}
+    - {id: CAP-006, name: "Parent-controlled family accounts", status: approved, horizon: "first release", statement: "Parents manage their family account and student profiles; students do not receive independent first-release accounts."}
+    - {id: CAP-007, name: "Educator and administrator accounts", status: approved, horizon: "first release", statement: "Educators and administrators receive authenticated role-appropriate platform access."}
+  features:
+    - {id: MPS-FEA-001, name: "Responsive public website", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-001, OUT-BIZ-002]}
+    - {id: MPS-FEA-002, name: "Program catalog and details", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-001, OUT-ADM-001]}
+    - {id: MPS-FEA-003, name: "Inquiry, tour, guidance, and assistance requests", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-001, OUT-BIZ-002]}
+    - {id: MPS-FEA-004, name: "Registration and existing-provider payment path", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-001, OUT-BIZ-002]}
+    - {id: MPS-FEA-005, name: "Parent family account and student profiles", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-002, OUT-FAM-003]}
+    - {id: MPS-FEA-006, name: "Family dashboard for enrollments, schedules, announcements, and resources", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-003]}
+    - {id: MPS-FEA-007, name: "Administrator program operations", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-ADM-001, OUT-ADM-002]}
+    - {id: MPS-FEA-008, name: "Educator assigned-program workspace", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-EDU-001, OUT-EDU-002]}
+    - {id: MPS-FEA-009, name: "Program announcements and learning resources", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-003, OUT-EDU-002]}
+    - {id: MPS-FEA-010, name: "Parental consent and role-appropriate privacy", status: approved, priority: must, release: REL-BETA-001, outcomes: [OUT-FAM-002, OUT-BIZ-001]}
+    - {id: MPS-FEA-011, name: "Attendance tracking", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-EDU-001, OUT-ADM-001]}
+    - {id: MPS-FEA-012, name: "Capacity and waitlist management", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-FAM-001, OUT-ADM-002]}
+    - {id: MPS-FEA-013, name: "Invited secondary guardian", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-FAM-002]}
+    - {id: MPS-FEA-014, name: "Email notifications", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-FAM-003, OUT-EDU-002]}
+    - {id: MPS-FEA-015, name: "Calendar download", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-FAM-003]}
+    - {id: MPS-FEA-016, name: "Payment-status visibility", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-FAM-003, OUT-ADM-001]}
+    - {id: MPS-FEA-017, name: "Basic beta activity reporting", status: approved, priority: should, release: REL-BETA-001, outcomes: [OUT-ADM-002]}
+    - {id: MPS-FEA-018, name: "Saved programs", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-FAM-001]}
+    - {id: MPS-FEA-019, name: "Sibling enrollment shortcuts", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-FAM-002]}
+    - {id: MPS-FEA-020, name: "Reusable program templates", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-ADM-002]}
+    - {id: MPS-FEA-021, name: "Scheduled announcements", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-EDU-002, OUT-ADM-002]}
+    - {id: MPS-FEA-022, name: "Downloadable documents", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-FAM-003]}
+    - {id: MPS-FEA-023, name: "Simple internal notes", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-ADM-001]}
+    - {id: MPS-FEA-024, name: "Structured owner feedback capture", status: approved, priority: could, release: REL-BETA-001, outcomes: [OUT-BIZ-001]}
+  mvp: []
+  now:
+    - {id: BETA-001, status: approved_direction, statement: "Upgrade the public website with programs, classes, schedules, pricing, educator profiles, and flexible conversion paths."}
+    - {id: BETA-002, status: approved_direction, statement: "Support direct registration and payment plus inquiry, tour, and guidance requests."}
+    - {id: BETA-003, status: approved_direction, statement: "Provide parent-controlled family accounts and student profiles."}
+    - {id: BETA-004, status: approved_direction, statement: "Provide authenticated administrator and educator accounts."}
+    - {id: BETA-005, status: approved_direction, statement: "Support program creation and management, schedules, enrollments, and rosters."}
+    - {id: BETA-006, status: approved_direction, statement: "Support family announcements and communication."}
+    - {id: BETA-007, status: approved_direction, statement: "Allow learning resources to be attached to enrolled programs."}
+  next:
+    - {id: LAUNCH-001, status: proposed, statement: "Use beta feedback from Samantha Dodson to define and approve the complete public launch platform."}
+    - {id: LAUNCH-002, status: approved_direction, statement: "The complete platform will support both scheduled live online learning and flexible self-paced learning."}
+  later: []
+  out_of_scope:
+    - {id: OOS-BETA-001, status: approved, statement: "Independent student accounts"}
+    - {id: OOS-BETA-002, status: approved, statement: "Full LMS course builder, assignments, assessments, grades, transcripts, and certificates"}
+    - {id: OOS-BETA-003, status: approved, statement: "Native live-video hosting and self-paced course storefront"}
+    - {id: OOS-BETA-004, status: approved, statement: "Memberships, subscriptions, and family bundle automation"}
+    - {id: OOS-BETA-005, status: approved, statement: "Automated scholarship, refund, cancellation, credit, or transfer decisions"}
+    - {id: OOS-BETA-006, status: approved, statement: "Community or social features, native mobile apps, AI learning tools, and advanced analytics"}
+  dependencies:
+    - {id: DEP-BETA-001, status: resolved, statement: "The product-definition collaborator confirmed that current website program and course listings are up to date and may serve as the authoritative beta import source; identified source anomalies remain content-QA items."}
+    - {id: DEP-BETA-002, status: resolved, statement: "The current program-specific external checkout procedure is sufficient for private beta review; the beta will not rebuild payment processing."}
+    - {id: DEP-BETA-003, status: open, statement: "Parental consent language and minimum student-profile data must be confirmed before real family data is used."}
+    - {id: DEP-BETA-004, status: open, statement: "Samantha must provide structured beta feedback before Complete Platform Launch scope is approved."}
+    - {id: DEP-BETA-005, status: open_nonblocking, statement: "Normalize duplicated or ambiguous source structure and confirm flagged date, phone, partner, and missing-field anomalies before public launch."}
+  experiments: []
+
+workflows:
+  - id: MPS-WFL-001
+    name: "Program discovery and conversion"
+    status: approved
+    goal: "Help a prospective family identify an appropriate program and choose guided help or direct enrollment."
+    actors: [ACT-005, ACT-004]
+    trigger: "A public visitor explores Home School Haven or its programs."
+    preconditions: ["Verified public program information is available"]
+    main_path: ["Browse or filter programs", "Review program details", "Choose inquiry, tour, assistance, or registration path", "Submit the selected action"]
+    alternate_paths: ["No matching program", "Program unavailable", "Visitor requests a visit or guidance"]
+    states: [browsing, program_selected, inquiry_submitted, registration_started, completed]
+    notifications: ["Notify administrator of submitted inquiry, tour, or assistance request"]
+    owner: ACT-004
+    completion: "The family receives confirmation and a clear next step."
+    recovery: "Preserve entered information where appropriate and show a retry or alternate contact path."
+  - id: MPS-WFL-002
+    name: "Family account and student-profile onboarding"
+    status: approved
+    goal: "Establish a parent-controlled family account and minimum necessary student profiles."
+    actors: [ACT-001, ACT-002, ACT-007]
+    trigger: "A parent creates an account or begins an authenticated enrollment."
+    preconditions: ["Parent can review required consent and privacy information"]
+    main_path: ["Create and verify account", "Accept required consent", "Create family profile", "Add student profile", "Reach family-ready state"]
+    alternate_paths: ["Duplicate email", "Incomplete profile", "Invite secondary guardian when enabled"]
+    failure_paths: ["Verification expired", "Consent not accepted", "Unauthorized guardian-access attempt"]
+    states: [account_pending, verified, consent_pending, family_incomplete, family_ready, blocked]
+    owner: ACT-001
+    completion: "The parent can use eligible family features and enroll a student."
+    recovery: "Allow verification resend, safe completion later, and administrator support without bypassing consent."
+  - id: MPS-WFL-003
+    name: "Enrollment and existing-provider payment"
+    status: approved
+    goal: "Enroll an eligible student using the program's confirmation and capacity rules."
+    actors: [ACT-001, ACT-002, ACT-004, ACT-008]
+    trigger: "A parent selects a student and program for registration."
+    preconditions: ["Family is ready", "Program registration is open", "Required program information is verified"]
+    main_path: ["Select student", "Check program capacity and confirmation mode", "Complete registration", "Use existing-provider payment or approved test path", "Record result", "Show enrollment in family and administrative views"]
+    alternate_paths: ["Administrator approval required", "Program full with waitlist", "Program full without waitlist"]
+    failure_paths: ["Payment pending", "Payment failed", "Payment canceled", "Duplicate enrollment", "Stale capacity"]
+    states: [started, approval_pending, payment_pending, waitlisted, confirmed, payment_failed, canceled, blocked]
+    notifications: ["Notify family and administrator of confirmed, pending, waitlisted, failed, or canceled state"]
+    owner: ACT-004
+    completion: "Enrollment has one visible authoritative state and appears in the correct roster when confirmed."
+    recovery: "Permit safe payment retry or administrative review without duplicate enrollment or double charging."
+  - id: MPS-WFL-004
+    name: "Discounted-class assistance"
+    status: approved
+    goal: "Let a family privately request support without automated eligibility decisions."
+    actors: [ACT-005, ACT-001, ACT-004, ACT-006]
+    trigger: "A prospective or current family submits an assistance request."
+    preconditions: ["The request explains privacy and expected follow-up"]
+    main_path: ["Submit private request", "Administrator reviews", "Administrator contacts family", "Request more information or determine next step", "Provide approved registration or payment path"]
+    alternate_paths: ["More information required", "Assistance unavailable", "Different program recommended"]
+    states: [submitted, under_review, awaiting_family, approved_path_provided, not_available, closed]
+    notifications: ["Confirm receipt privately", "Notify only authorized administrators"]
+    owner: ACT-006
+    completion: "The family receives a private outcome or next step."
+    recovery: "Allow authorized follow-up while preventing sensitive details from appearing in group communications."
+  - id: MPS-WFL-005
+    name: "Program administration and publishing"
+    status: approved
+    goal: "Maintain authoritative program information from creation through archival."
+    actors: [ACT-003, ACT-004, ACT-006]
+    trigger: "An administrator creates or changes a program offering."
+    preconditions: ["Actor has program-management authority"]
+    main_path: ["Create draft", "Add verified details, schedule, capacity, educator, pricing, and enrollment mode", "Review", "Publish", "Open enrollment", "Operate program", "Complete and archive"]
+    alternate_paths: ["Full with waitlist", "Full without waitlist", "Registration closed", "Rescheduled", "Canceled"]
+    states: [draft, review, published, enrollment_open, full, waitlist, closed, active, completed, canceled, archived]
+    notifications: ["Notify affected families of approved material schedule, status, or cancellation changes"]
+    owner: ACT-004
+    completion: "Public, family, educator, and administrative program information is consistent."
+    recovery: "Retain history, correct errors through authorized edits, and communicate material changes."
+  - id: MPS-WFL-006
+    name: "Educator program delivery"
+    status: approved
+    goal: "Let educators support assigned families and programs without authority over organization policy."
+    actors: [ACT-003, ACT-004, ACT-001]
+    trigger: "An educator is assigned to a program."
+    preconditions: ["Educator account is active", "Program assignment exists"]
+    main_path: ["View assigned schedule and roster", "Create resource or program announcement", "Publish within permitted scope", "Family views content"]
+    alternate_paths: ["Draft retained", "Resource removed", "Educator reassigned"]
+    failure_paths: ["Attempted unassigned-program access", "Unavailable or invalid resource"]
+    states: [assigned, active, draft_content, published_content, reassigned, completed]
+    notifications: ["Notify enrolled families when a permitted announcement is published"]
+    owner: ACT-003
+    completion: "Authorized enrolled families can access the published program content."
+    recovery: "Block unauthorized access and let an administrator correct assignment or content state."
+  - id: MPS-WFL-007
+    name: "Family participation"
+    status: approved
+    goal: "Keep an enrolled family informed and connected to its programs."
+    actors: [ACT-001, ACT-002, ACT-003, ACT-004]
+    trigger: "A student has a confirmed or relevant pending enrollment."
+    preconditions: ["Parent can access the family account"]
+    main_path: ["View enrollment", "Review schedule", "Read announcements", "Access learning resources"]
+    alternate_paths: ["Schedule change", "Cancellation notice", "Payment pending", "Waitlisted"]
+    states: [upcoming, active, changed, payment_pending, waitlisted, canceled, completed]
+    notifications: ["Present current state in dashboard", "Send email when enabled and appropriate"]
+    owner: ACT-001
+    completion: "The parent can identify the student's current program state and next action."
+    recovery: "Provide administrator contact or required action for unresolved states."
+  - id: MPS-WFL-008
+    name: "Foundation beta review"
+    status: approved
+    goal: "Collect Samantha's evidence-based decisions before Complete Platform Launch scope."
+    actors: [ACT-006, ACT-004]
+    trigger: "The Foundation Release beta is ready for owner walkthrough."
+    preconditions: ["Approved beta workflows can be demonstrated", "Known limitations are disclosed"]
+    main_path: ["Walk through success signals", "Record feedback", "Classify issue or idea", "Approve disposition", "Update affected MPS state"]
+    alternate_paths: ["Must-fix beta defect", "Launch requirement", "Next or Later idea", "Rejected change"]
+    states: [not_reviewed, in_review, feedback_recorded, decision_pending, disposition_approved, review_complete]
+    notifications: ["Record approved decisions and stale downstream dependencies"]
+    owner: ACT-006
+    completion: "Samantha approves the beta disposition and the next product-definition step."
+    recovery: "Unresolved items remain explicit gaps; they do not silently enter launch scope."
+business_rules:
+  - {id: MPS-RUL-001, status: approved, condition: "A program accepts enrollment", behavior: "The program uses either instant confirmation or administrator approval as configured by an administrator.", owner: ACT-006, workflows: [MPS-WFL-003, MPS-WFL-005]}
+  - {id: MPS-RUL-002, status: approved, condition: "A program reaches capacity", behavior: "The configured program state determines waitlist, closed, or other approved behavior; joining a waitlist does not collect payment unless Samantha later approves that policy.", owner: ACT-006, workflows: [MPS-WFL-003, MPS-WFL-005]}
+  - {id: MPS-RUL-003, status: approved, condition: "An announcement or sensitive family matter is communicated", behavior: "Program announcements remain within authorized program scope; sensitive family matters are handled privately.", owner: ACT-006, workflows: [MPS-WFL-004, MPS-WFL-006, MPS-WFL-007]}
+  - {id: MPS-RUL-004, status: approved, condition: "A cancellation, refund, credit, or transfer is requested in the beta", behavior: "An authorized administrator handles it manually under existing Home School Haven policy; the beta records status but does not decide or issue the outcome automatically.", owner: ACT-006, workflows: [MPS-WFL-003, MPS-WFL-007]}
+  - {id: MPS-RUL-005, status: approved, condition: "A program, price, public availability, registration state, or cancellation is published", behavior: "Only an administrator or Samantha may publish the change; educators may contribute content within assigned programs.", owner: ACT-006, workflows: [MPS-WFL-005, MPS-WFL-006]}
+  - {id: MPS-RUL-006, status: approved, condition: "A beta student profile is created", behavior: "Collect only the approved minimum fields; do not collect sensitive medical, behavioral, accommodation, emergency, or pickup information unless Samantha confirms necessity and policy.", owner: ACT-006, workflows: [MPS-WFL-002]}
+  - {id: MPS-RUL-007, status: approved, condition: "Required student-data and policy details remain unconfirmed", behavior: "Use sample or sanitized student data and do not enable real-family beta use.", owner: ACT-006, workflows: [MPS-WFL-002, MPS-WFL-003, MPS-WFL-008]}
+  - {id: MPS-RUL-008, status: approved, condition: "A parent creates a student profile or enrolls a student", behavior: "Require affirmation of parent or guardian authority and all applicable Samantha-approved consent.", owner: ACT-006, workflows: [MPS-WFL-002, MPS-WFL-003]}
+  - {id: MPS-RUL-009, status: approved, condition: "Consent is accepted", behavior: "Record the accepted policy version and acceptance time; require renewed consent when Samantha-approved policy changes demand it.", owner: ACT-006, workflows: [MPS-WFL-002, MPS-WFL-003]}
+  - {id: MPS-RUL-010, status: approved, condition: "Legal, waiver, privacy, financial-assistance, refund, or related policy language is required", behavior: "Use only Samantha-approved language; no agent may invent it.", owner: ACT-006, workflows: [MPS-WFL-002, MPS-WFL-003, MPS-WFL-004]}
+requirements:
+  - {id: MPS-REQ-001, status: approved, priority: must, release: REL-BETA-001, statement: "The product must support a parent-controlled student profile using only owner-approved minimum fields.", actors: [ACT-001, ACT-002], outcomes: [OUT-FAM-002], workflows: [MPS-WFL-002], rules: [MPS-RUL-006, MPS-RUL-007], acceptance: [MPS-ACC-001, MPS-ACC-004], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-002, status: approved, priority: must, release: REL-BETA-001, statement: "The product must require parent or guardian authority affirmation and applicable approved consent before student enrollment.", actors: [ACT-001], outcomes: [OUT-FAM-002], workflows: [MPS-WFL-002, MPS-WFL-003], rules: [MPS-RUL-008, MPS-RUL-010], acceptance: [MPS-ACC-002], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-003, status: approved, priority: must, release: REL-BETA-001, statement: "The product must retain the version and acceptance time for every required consent record.", actors: [ACT-001, ACT-004], outcomes: [OUT-FAM-002, OUT-BIZ-001], workflows: [MPS-WFL-002, MPS-WFL-003], rules: [MPS-RUL-009], acceptance: [MPS-ACC-003], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-004, status: approved, priority: must, release: REL-BETA-001, statement: "The product must prevent public visitors and unassigned educators from accessing private student or family information.", actors: [ACT-003, ACT-005], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-002, MPS-WFL-006], rules: [MPS-RUL-003, MPS-RUL-006], acceptance: [MPS-ACC-005], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-005, status: approved, priority: must, release: REL-BETA-001, statement: "The private beta must use sample or sanitized student data until Samantha confirms required data, consent, access, retention, and deletion policy.", actors: [ACT-004, ACT-006], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-008], rules: [MPS-RUL-007], acceptance: [MPS-ACC-004], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-006, status: approved, priority: must, release: REL-BETA-001, statement: "The product must present only Samantha-approved legal, consent, waiver, scholarship, refund, cancellation, transfer, credit, and related policy language.", actors: [ACT-004, ACT-006], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-002, MPS-WFL-003, MPS-WFL-004], rules: [MPS-RUL-004, MPS-RUL-010], acceptance: [MPS-ACC-006], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-007, status: approved, priority: must, release: REL-BETA-001, statement: "Present verified public pages explaining Home School Haven, its values, location, contact paths, programs, and educators.", actors: [ACT-005, ACT-004], outcomes: [OUT-FAM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-005], acceptance: [MPS-ACC-007, MPS-ACC-008], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-008, status: approved, priority: must, release: REL-BETA-001, statement: "Present published program title, description, audience, format, schedule, location, educator, price presentation, capacity state, enrollment period, and available next actions.", actors: [ACT-005, ACT-004], outcomes: [OUT-FAM-001, OUT-ADM-001], workflows: [MPS-WFL-001, MPS-WFL-005], acceptance: [MPS-ACC-009, MPS-ACC-010], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-009, status: approved, priority: must, release: REL-BETA-001, statement: "Let a family choose direct registration, general guidance, a visit request, or discounted-class assistance from the relevant public experience.", actors: [ACT-005, ACT-001], outcomes: [OUT-FAM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-004], acceptance: [MPS-ACC-011], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-010, status: approved, priority: must, release: REL-BETA-001, statement: "Record each inquiry with type, contact, time, state, and authorized owner while keeping assistance requests private.", actors: [ACT-005, ACT-004, ACT-006], outcomes: [OUT-ADM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-004], rules: [MPS-RUL-003], acceptance: [MPS-ACC-012, MPS-ACC-013, MPS-ACC-014], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-011, status: approved, priority: must, release: REL-BETA-001, statement: "Let a parent create and verify one family account, recover expired verification, and resume incomplete setup.", actors: [ACT-001], outcomes: [OUT-FAM-002], workflows: [MPS-WFL-002], acceptance: [MPS-ACC-015, MPS-ACC-016, MPS-ACC-017], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-012, status: approved, priority: must, release: REL-BETA-001, statement: "Before payment, evaluate program, capacity, waitlist, confirmation, duplicate enrollment, family readiness, student, and consent states.", actors: [ACT-001, ACT-004], outcomes: [OUT-FAM-001, OUT-ADM-002], workflows: [MPS-WFL-003], rules: [MPS-RUL-001, MPS-RUL-002, MPS-RUL-008], acceptance: [MPS-ACC-018, MPS-ACC-019, MPS-ACC-020], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-013, status: approved, priority: must, release: REL-BETA-001, statement: "Hand off eligible registration to the existing approved payment provider or beta test path without treating initiation as successful payment.", actors: [ACT-001, ACT-008], outcomes: [OUT-FAM-001, OUT-BIZ-002], workflows: [MPS-WFL-003], acceptance: [MPS-ACC-021], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-014, status: approved, priority: must, release: REL-BETA-001, statement: "Maintain one authoritative enrollment state and prevent duplicate enrollment or double-charge behavior during retries.", actors: [ACT-001, ACT-004], outcomes: [OUT-FAM-003, OUT-ADM-001], workflows: [MPS-WFL-003, MPS-WFL-007], rules: [MPS-RUL-001, MPS-RUL-002, MPS-RUL-004], acceptance: [MPS-ACC-022, MPS-ACC-023], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-015, status: approved, priority: must, release: REL-BETA-001, statement: "Give a parent a family dashboard showing each student's program state, schedules, changes, announcements, resources, and required action.", actors: [ACT-001], outcomes: [OUT-FAM-003], workflows: [MPS-WFL-007], acceptance: [MPS-ACC-024, MPS-ACC-025], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-016, status: approved, priority: must, release: REL-BETA-001, statement: "Let authorized administrators manage the full program lifecycle while preserving material state history.", actors: [ACT-004, ACT-006], outcomes: [OUT-ADM-001, OUT-ADM-002], workflows: [MPS-WFL-005], rules: [MPS-RUL-005], acceptance: [MPS-ACC-026, MPS-ACC-027], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-017, status: approved, priority: must, release: REL-BETA-001, statement: "Let authorized administrators manage educator assignments, enrollment states, and accurate rosters without granting educators organization-level control.", actors: [ACT-003, ACT-004], outcomes: [OUT-EDU-001, OUT-ADM-001], workflows: [MPS-WFL-003, MPS-WFL-005, MPS-WFL-006], rules: [MPS-RUL-005], acceptance: [MPS-ACC-028], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-018, status: approved, priority: must, release: REL-BETA-001, statement: "Restrict educators to assigned programs, schedules, rosters, approved student fields, resources, and program-scoped communications.", actors: [ACT-003], outcomes: [OUT-EDU-001, OUT-EDU-002], workflows: [MPS-WFL-006], rules: [MPS-RUL-003, MPS-RUL-005, MPS-RUL-006], acceptance: [MPS-ACC-029], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-019, status: approved, priority: must, release: REL-BETA-001, statement: "Let permitted educators and administrators manage program announcements and learning resources with a visible content state.", actors: [ACT-003, ACT-004], outcomes: [OUT-FAM-003, OUT-EDU-002], workflows: [MPS-WFL-006, MPS-WFL-007], rules: [MPS-RUL-003, MPS-RUL-005], acceptance: [MPS-ACC-030], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-020, status: approved, priority: must, release: REL-BETA-001, statement: "Keep authoritative program identity, schedule, educator, price presentation, availability, and state consistent across role experiences.", actors: [ACT-001, ACT-003, ACT-004, ACT-005], outcomes: [OUT-FAM-003, OUT-ADM-001], workflows: [MPS-WFL-001, MPS-WFL-005, MPS-WFL-006, MPS-WFL-007], acceptance: [MPS-ACC-031], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-021, status: approved, priority: must, release: REL-BETA-001, statement: "Provide observable confirmation, current state, and recovery for submitted, pending, failed, expired, waitlisted, blocked, canceled, and completed actions.", actors: [ACT-001, ACT-003, ACT-004, ACT-005, ACT-006], outcomes: [OUT-FAM-001, OUT-FAM-003, OUT-ADM-002], workflows: [MPS-WFL-001, MPS-WFL-002, MPS-WFL-003, MPS-WFL-004, MPS-WFL-005, MPS-WFL-006, MPS-WFL-007, MPS-WFL-008], acceptance: [MPS-ACC-014, MPS-ACC-017, MPS-ACC-022, MPS-ACC-025, MPS-ACC-031], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-022, status: approved, priority: must, release: REL-BETA-001, statement: "Preserve beta evidence for every success signal and classify Samantha's feedback without silently changing scope.", actors: [ACT-004, ACT-006], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-008], acceptance: [MPS-ACC-032], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-023, status: approved, priority: must, release: REL-BETA-001, statement: "Make Must-priority workflows usable across supported phone, tablet, and desktop contexts and meet the MDS-approved accessibility standard.", actors: [ACT-001, ACT-003, ACT-004, ACT-005, ACT-006], outcomes: [OUT-FAM-001, OUT-FAM-003, OUT-EDU-002], workflows: [MPS-WFL-001, MPS-WFL-002, MPS-WFL-003, MPS-WFL-004, MPS-WFL-005, MPS-WFL-006, MPS-WFL-007, MPS-WFL-008], acceptance: [MPS-ACC-032], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-024, status: approved, priority: must, release: REL-BETA-001, statement: "Preserve attributable history for material administrative changes to program, price, schedule, capacity, enrollment, assignment, consent, and published-content state.", actors: [ACT-004, ACT-006], outcomes: [OUT-ADM-001, OUT-BIZ-001], workflows: [MPS-WFL-003, MPS-WFL-005, MPS-WFL-006, MPS-WFL-008], acceptance: [MPS-ACC-026, MPS-ACC-032], implementation_status: absent, validation_status: unverified}
+acceptance_criteria:
+  - {id: MPS-ACC-001, status: approved, release: REL-BETA-001, requirement: MPS-REQ-001, statement: "Given a parent is creating a beta student profile, when the profile form is presented, then only approved minimum student fields are requested by default.", test_method: manual_and_automated}
+  - {id: MPS-ACC-002, status: approved, release: REL-BETA-001, requirement: MPS-REQ-002, statement: "Given required authority affirmation or consent is missing, when a parent attempts enrollment, then enrollment is blocked with a clear unresolved action and no payment is initiated.", test_method: manual_and_automated}
+  - {id: MPS-ACC-003, status: approved, release: REL-BETA-001, requirement: MPS-REQ-003, statement: "Given a parent accepts required consent, when the record is reviewed by an authorized administrator, then the accepted policy version and acceptance time are available.", test_method: manual_and_automated}
+  - {id: MPS-ACC-004, status: approved, release: REL-BETA-001, requirement: MPS-REQ-005, statement: "Given owner policy confirmation is incomplete, when the private beta is reviewed, then all displayed student records are demonstrably sample or sanitized data.", test_method: manual_review}
+  - {id: MPS-ACC-005, status: approved, release: REL-BETA-001, requirement: MPS-REQ-004, statement: "Given a public visitor or educator without assignment attempts to access private student or family information, when access is requested, then no private record or identifying content is disclosed.", test_method: security_and_manual}
+  - {id: MPS-ACC-006, status: approved, release: REL-BETA-001, requirement: MPS-REQ-006, statement: "Given policy language has not been approved by Samantha, when the applicable experience is reviewed, then the product does not present invented policy or enable a policy-dependent live action.", test_method: policy_review}
+  - {id: MPS-ACC-007, status: approved, release: REL-BETA-001, requirement: MPS-REQ-007, statement: "Verified public purpose, values, service area, contact, programs, and educators are reachable without authentication.", test_method: manual_and_automated}
+  - {id: MPS-ACC-008, status: approved, release: REL-BETA-001, requirement: MPS-REQ-007, statement: "Missing or unverified content is not silently presented as authoritative.", test_method: manual}
+  - {id: MPS-ACC-009, status: approved, release: REL-BETA-001, requirement: MPS-REQ-008, statement: "A published program shows every applicable approved field and current next action.", test_method: manual_and_automated}
+  - {id: MPS-ACC-010, status: approved, release: REL-BETA-001, requirement: MPS-REQ-008, statement: "An empty program result provides guidance or contact rather than a dead end.", test_method: manual}
+  - {id: MPS-ACC-011, status: approved, release: REL-BETA-001, requirement: MPS-REQ-009, statement: "Direct registration and relevant guided-help paths are distinguishable and available.", test_method: manual}
+  - {id: MPS-ACC-012, status: approved, release: REL-BETA-001, requirement: MPS-REQ-010, statement: "A valid inquiry creates one administrative record and gives the family confirmation.", test_method: manual_and_automated}
+  - {id: MPS-ACC-013, status: approved, release: REL-BETA-001, requirement: MPS-REQ-010, statement: "An assistance request is inaccessible to educators and unauthorized users.", test_method: security_and_manual}
+  - {id: MPS-ACC-014, status: approved, release: REL-BETA-001, requirement: MPS-REQ-010, statement: "Failed or timed-out submission does not claim success and offers retry or alternate contact.", test_method: manual_and_integration}
+  - {id: MPS-ACC-015, status: approved, release: REL-BETA-001, requirement: MPS-REQ-011, statement: "A verified unique parent identity creates one family account and can continue setup.", test_method: manual_and_automated}
+  - {id: MPS-ACC-016, status: approved, release: REL-BETA-001, requirement: MPS-REQ-011, statement: "An existing identity does not create a duplicate family and receives recovery guidance.", test_method: manual_and_automated}
+  - {id: MPS-ACC-017, status: approved, release: REL-BETA-001, requirement: MPS-REQ-011, statement: "Expired verification can be renewed and incomplete approved setup can be resumed safely.", test_method: manual_and_automated}
+  - {id: MPS-ACC-018, status: approved, release: REL-BETA-001, requirement: MPS-REQ-012, statement: "Invalid family, student, consent, program, capacity, or registration state blocks payment and identifies the blocker.", test_method: manual_and_automated}
+  - {id: MPS-ACC-019, status: approved, release: REL-BETA-001, requirement: MPS-REQ-012, statement: "A valid registration for an approval-required program becomes approval-pending rather than confirmed or paid.", test_method: manual_and_automated}
+  - {id: MPS-ACC-020, status: approved, release: REL-BETA-001, requirement: MPS-REQ-012, statement: "A full waitlist-enabled program creates a waitlisted state without collecting payment.", test_method: manual_and_automated}
+  - {id: MPS-ACC-021, status: approved, release: REL-BETA-001, requirement: MPS-REQ-013, statement: "Payment initiation uses the approved provider or test path and remains pending until a trustworthy result exists.", test_method: integration_and_manual}
+  - {id: MPS-ACC-022, status: approved, release: REL-BETA-001, requirement: MPS-REQ-014, statement: "Family and admin views show one consistent enrollment and payment state with the correct next action.", test_method: integration_and_automated}
+  - {id: MPS-ACC-023, status: approved, release: REL-BETA-001, requirement: MPS-REQ-014, statement: "Retry after timeout or stale response creates no duplicate confirmed enrollment or unintended duplicate charge.", test_method: integration_and_automated}
+  - {id: MPS-ACC-024, status: approved, release: REL-BETA-001, requirement: MPS-REQ-015, statement: "The parent dashboard distinguishes each student's program, schedule, state, announcements, resources, and actions.", test_method: manual_and_automated}
+  - {id: MPS-ACC-025, status: approved, release: REL-BETA-001, requirement: MPS-REQ-015, statement: "Rescheduled, canceled, waitlisted, pending, and completed states replace stale guidance without erasing history.", test_method: manual_and_automated}
+  - {id: MPS-ACC-026, status: approved, release: REL-BETA-001, requirement: MPS-REQ-016, statement: "Allowed program lifecycle transitions appear consistently and retain attributable material history.", test_method: manual_and_automated}
+  - {id: MPS-ACC-027, status: approved, release: REL-BETA-001, requirement: MPS-REQ-016, statement: "An educator without admin authority cannot publish a price, open registration, or cancel a program.", test_method: security_and_manual}
+  - {id: MPS-ACC-028, status: approved, release: REL-BETA-001, requirement: MPS-REQ-017, statement: "A confirmed student appears once in the correct roster and the assigned educator sees only approved fields.", test_method: automated_and_security}
+  - {id: MPS-ACC-029, status: approved, release: REL-BETA-001, requirement: MPS-REQ-018, statement: "An educator can access assigned program data and is denied unassigned private program data.", test_method: security_and_automated}
+  - {id: MPS-ACC-030, status: approved, release: REL-BETA-001, requirement: MPS-REQ-019, statement: "Current approved announcement and resource state reaches enrolled families only.", test_method: manual_and_security}
+  - {id: MPS-ACC-031, status: approved, release: REL-BETA-001, requirement: MPS-REQ-020, statement: "Material program and enrollment changes remain consistent across relevant views with an observable next action.", test_method: end_to_end}
+  - {id: MPS-ACC-032, status: approved, release: REL-BETA-001, requirement: MPS-REQ-022, statement: "The beta walkthrough records every success signal, applicable accessibility evidence, attributable material changes, and classified owner feedback.", test_method: manual_walkthrough_and_audit}
+metrics:
+  - {id: SIG-BETA-001, type: qualitative_beta_signal, status: approved, statement: "A prospective family can understand Home School Haven and identify an appropriate program.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-002, type: qualitative_beta_signal, status: approved, statement: "A family can request guidance or proceed directly into registration and payment.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-003, type: qualitative_beta_signal, status: approved, statement: "A parent can create a family account and manage student profiles.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-004, type: qualitative_beta_signal, status: approved, statement: "Samantha can create and manage programs, schedules, enrollment, and rosters.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-005, type: qualitative_beta_signal, status: approved, statement: "An educator can access assigned programs and appropriate enrolled-family information.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-006, type: qualitative_beta_signal, status: approved, statement: "An educator or administrator can publish an announcement or learning resource.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-007, type: qualitative_beta_signal, status: approved, statement: "Website, enrollment, and portal information remain consistent.", target: demonstrated, measurement_source: "Beta walkthrough and Samantha Dodson feedback"}
+  - {id: SIG-BETA-008, type: qualitative_beta_signal, status: approved, statement: "Samantha can identify what must be added, changed, or removed before complete-platform launch approval.", target: demonstrated, measurement_source: "Structured beta feedback log"}
+releases:
+  - id: REL-BETA-001
+    name: "Foundation Release Beta"
+    status: requirements_approved_policy_blocked
+    audience: "Samantha Dodson and invited reviewers"
+    intent: "Demonstrate the ecosystem foundation, validate workflows, and gather owner feedback before public launch."
+    public_launch: false
+    scope_refs: [BETA-001, BETA-002, BETA-003, BETA-004, BETA-005, BETA-006, BETA-007]
+    priority_model: "must | should | could | wont_this_release"
+    payment_boundary: "Use the current program-specific external checkout URLs or approved test paths during private review. The beta does not rebuild payment processing and must not treat handoff as successful payment without a trustworthy result."
+    content_boundary: "Use current Home School Haven website course and program listings as the approved import source. Normalize presentation without changing facts; flag structural ambiguity or anomalies and do not invent missing fields."
+    validation_signals: [SIG-BETA-001, SIG-BETA-002, SIG-BETA-003, SIG-BETA-004, SIG-BETA-005, SIG-BETA-006, SIG-BETA-007, SIG-BETA-008]
+  - id: REL-LAUNCH-001
+    name: "Complete Platform Launch"
+    status: proposed
+    audience: "Local in-person families and remote online families"
+    intent: "Launch the complete ecosystem after beta feedback, including program management, blended local learning, and live plus self-paced online learning."
+    dependencies: [REL-BETA-001, "Samantha Dodson feedback", "Gate 2-7 approvals"]
+
+downstream:
+  mds:
+    project_id: home-school-haven-learning-platform
+    version: "v1.0"
+    status: synchronized
+    last_synchronized: "2026-08-27"
+    open_product_gaps: [GAP-005, GAP-010]
+  mts:
+    project_id: home-school-haven-learning-platform
+    version: "v1.0"
+    status: synchronized_core_architecture
+    last_synchronized: "2026-08-27"
+    open_product_gaps: [GAP-005, GAP-010]
+  implementation:
+    status: not_started
+    manifest: mps/implementation/PRODUCT-IMPLEMENTATION.md
+    last_validated: null
+
+governance:
+  decisions:
+    - id: DEC-001
+      status: approved
+      statement: "Use the Mercurius Product System to define the upgraded website and learning platform before MDS, MTS, or implementation."
+      approved_at: "2026-08-26"
+    - id: DEC-002
+      status: approved
+      statement: "The initiative includes both an upgraded Home School Haven website and a learning platform."
+      approved_at: "2026-08-26"
+    - id: DEC-003
+      status: approved
+      statement: "Define both surfaces as one coordinated product ecosystem rather than unrelated projects."
+      approved_at: "2026-08-26"
+    - id: DEC-004
+      status: approved
+      statement: "Build toward a complete platform combining program management, blended learning for local families, and full online learning for remote families."
+      approved_at: "2026-08-26"
+    - id: DEC-005
+      status: approved
+      statement: "In the first release, parents control family accounts and student profiles while educators and administrators receive separate authenticated accounts; students do not sign in independently."
+      approved_at: "2026-08-26"
+    - id: DEC-006
+      status: approved
+      statement: "The upgraded website will provide a flexible enrollment journey supporting both guided lead capture and direct registration and payment."
+      approved_at: "2026-08-26"
+    - id: DEC-007
+      status: approved
+      statement: "The initial audience emphasis is existing Home School Haven programs, primarily elementary and middle-school learners."
+      approved_at: "2026-08-26"
+    - id: DEC-008
+      status: approved
+      statement: "Adopt the proposed Christ-centered product purpose as the foundational purpose statement."
+      approved_at: "2026-08-26"
+    - id: DEC-009
+      status: approved
+      statement: "Use the Foundation Release as a private beta for owner review; it is not the public launch, and the complete launch platform will be shaped by beta feedback."
+      approved_at: "2026-08-26"
+    - id: DEC-010
+      status: approved
+      statement: "The eventual online learning platform will support both live educator-led learning and self-paced learning."
+      approved_at: "2026-08-26"
+    - id: DEC-011
+      status: approved
+      statement: "Samantha Dodson, owner of Home School Haven, is the final product decision owner."
+      approved_at: "2026-08-26"
+    - id: DEC-012
+      status: approved
+      statement: "Approve the Gate 2 problem statement, family outcomes, educator outcomes, administrator and business outcomes, and qualitative Foundation Release beta validation standard."
+      approved_at: "2026-08-26"
+    - id: DEC-013
+      status: approved
+      statement: "Approve the proposed value proposition and a flexible hybrid business-model direction while preserving Home School Haven's existing class-payment and assistance practices pending exact owner-confirmed policy details."
+      approved_at: "2026-08-26"
+    - id: DEC-014
+      status: approved
+      statement: "Approve the Foundation Release beta role and authority model for public visitors, parents and guardians, student profiles, educators, administrators, and Samantha Dodson as owner administrator."
+      approved_at: "2026-08-26"
+    - id: DEC-015
+      status: approved
+      statement: "Approve the Foundation Release beta Must, Should, Could, and Won't scope plus the real-content verification, existing-payment-provider, test-transaction, manual-assistance, attendance, and light-learning boundaries."
+      approved_at: "2026-08-26"
+    - id: DEC-016
+      status: approved
+      statement: "Approve eight Foundation Release beta workflows and five operating policies covering enrollment confirmation, capacity and waitlists, communication, manual financial exceptions, and program publishing authority."
+      approved_at: "2026-08-26"
+    - id: DEC-017
+      status: approved
+      statement: "Approve minimum beta student-profile fields, parent authority and versioned-consent behavior, sample or sanitized beta data, prohibited policy invention, and creation of the Samantha Policy Confirmation Checklist as a pre-handoff requirement."
+      approved_at: "2026-08-26"
+    - id: DEC-018
+      status: approved
+      statement: "Approve Must-priority requirements MPS-REQ-007 through MPS-REQ-024 and acceptance criteria MPS-ACC-007 through MPS-ACC-032 as the Foundation Release beta functional and acceptance baseline."
+      approved_at: "2026-08-26"
+    - id: DEC-019
+      status: approved
+      statement: "Use the current Home School Haven program-specific external checkout procedure for the Foundation Release beta; rebuilding or internally integrating payment processing is not required for the beta."
+      approved_at: "2026-08-26"
+    - id: DEC-020
+      status: approved
+      statement: "Treat the courses, programs, and other information currently published on the Home School Haven website as the current and approved beta content-import source; presentation may be normalized without changing facts."
+      approved_at: "2026-08-26"
+    - id: DEC-021
+      status: approved_working_boundary
+      statement: "Continue MPS product-definition authority in this chat and conduct MDS experience work in a separate chat using approved MPS truth."
+      approved_at: "2026-08-26"
+  assumptions: []
+  gaps:
+    - {id: GAP-001, status: resolved, statement: "The Foundation Release beta direction is approved by DEC-009; formal release approval remains gated by outcome traceability and later MPS gates."}
+    - {id: GAP-002, status: resolved, statement: "Primary users, initial learner emphasis, and first-release account ownership are approved by DEC-005 and DEC-007."}
+    - {id: GAP-003, status: resolved, statement: "The flexible website conversion and enrollment journey is approved by DEC-006."}
+    - {id: GAP-004, status: resolved, statement: "Samantha Dodson is the final product decision owner under DEC-011."}
+    - {id: GAP-005, status: open_activation_blocker, statement: "Beta data-minimization, access, and consent behavior is approved; Samantha must still provide final consent language, real-data fields, retention, deletion, and operational policy before real-family activation. EXC-001 permits the sanitized Foundation Release handoff."}
+    - {id: GAP-006, status: resolved, statement: "The platform will support local blended learning and full remote online learning as approved by DEC-004."}
+    - {id: GAP-007, status: resolved, statement: "The Gate 2 value proposition is approved under DEC-013."}
+    - {id: GAP-008, status: resolved, statement: "The qualitative evidence Samantha must see in the Foundation Release beta is approved under DEC-012 and SIG-BETA-001 through SIG-BETA-008."}
+    - {id: GAP-009, status: resolved, statement: "A flexible hybrid business-model direction is approved under DEC-013, with existing operational practices preserved."}
+    - {id: GAP-010, status: open, statement: "Exact scholarship or discount eligibility and approval, payment-plan behavior, refunds, cancellations, transfers, credits, and financial-assistance privacy require Samantha Dodson's confirmation before authoritative payment-policy requirements or real-family activation. Published prices and current external checkout handoff may be used in the private beta under EXC-001."}
+    - {id: GAP-011, status: resolved, statement: "Must-priority requirements MPS-REQ-007 through MPS-REQ-024 and acceptance criteria MPS-ACC-007 through MPS-ACC-032 were approved under DEC-018."}
+    - {id: GAP-012, status: open_nonblocking, statement: "The beta content inventory identifies duplicated or ambiguous class-page structure, a calendar chronology anomaly, inconsistent phone digits, unavailable partner names, and incomplete catalog fields; these require content QA before public launch but do not block private beta import."}
+  risks:
+    - {id: RISK-001, status: open, statement: "Handling minor student data without explicit consent and access rules could harm families and create compliance exposure."}
+    - {id: RISK-002, status: open, statement: "Current public pages contain repeated content and apparent inconsistencies in dates, addresses, and contact details that may reduce trust or cause enrollment errors."}
+    - {id: RISK-003, status: monitored, statement: "The private Foundation Release beta reduces simultaneous-launch risk, but the complete launch scope must remain feedback-driven."}
+    - {id: RISK-004, status: monitored, statement: "Role overreach could expose minor or family information; beta access must remain limited to the approved authority model."}
+  exceptions:
+    - id: EXC-001
+      status: approved
+      statement: "Private beta design, approved website-content import, and owner walkthrough may proceed while GAP-005 and GAP-010 remain open, provided family and student data is sample or sanitized, checkout remains an external handoff, and no unresolved policy is invented or automated."
+      scope: REL-BETA-001
+      approved_at: "2026-08-26"
+  deviations: []
+  changes:
+    - id: CHG-001
+      status: applied
+      statement: "Promoted Must-priority functional requirements and acceptance criteria from proposed to approved."
+      approved_by: "User acting as product-definition collaborator"
+      approved_at: "2026-08-26"
+      affected: ["MPS state", "Requirements & Rules", "Acceptance Criteria", "REL-BETA-001", "MDS handoff readiness", "MTS handoff readiness", "implementation readiness"]
+      propagation: "Requirements and acceptance artifacts are current; MDS, MTS, and implementation remain not started with GAP-005 and GAP-010 explicitly open."
+    - id: CHG-002
+      status: applied
+      statement: "Approved the current website as the beta content source and the current external checkout procedure as the beta payment path; created the source inventory and recorded nonblocking content-QA flags."
+      approved_by: "User acting as product-definition collaborator"
+      approved_at: "2026-08-26"
+      affected: ["MPS state", "Requirements & Rules", "Beta Content Import Inventory", "REL-BETA-001", "MDS product-truth input", "beta readiness"]
+      propagation: "DEP-BETA-001 and DEP-BETA-002 are resolved. Private beta content import and MDS exploration may proceed under EXC-001; GAP-005 and GAP-010 still block real-family activation and authoritative policy handoff."
+  versions: []
+  validation_findings: []
+
+artifacts:
+  state: {path: mps/MPS-PROJECT-STATE.yaml, status: current}
+  product_blueprint: {path: mps/PRODUCT-BLUEPRINT.md, status: current}
+  outcomes_metrics: {path: mps/OUTCOMES-METRICS.md, status: current}
+  user_role_model: {path: mps/USER-ROLE-MODEL.md, status: current}
+  scope_release_plan: {path: mps/SCOPE-RELEASE-PLAN.md, status: current}
+  workflow_catalog: {path: mps/WORKFLOW-CATALOG.md, status: current}
+  requirements_rules: {path: mps/REQUIREMENTS-RULES.md, status: current, generated_from: [DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-009, DEC-012, DEC-014, DEC-015, DEC-016, DEC-017, DEC-018, DEC-019, DEC-020]}
+  acceptance_criteria: {path: mps/ACCEPTANCE-CRITERIA.md, status: current, generated_from: [MPS-REQ-001, MPS-REQ-002, MPS-REQ-003, MPS-REQ-004, MPS-REQ-005, MPS-REQ-006, MPS-REQ-007, MPS-REQ-008, MPS-REQ-009, MPS-REQ-010, MPS-REQ-011, MPS-REQ-012, MPS-REQ-013, MPS-REQ-014, MPS-REQ-015, MPS-REQ-016, MPS-REQ-017, MPS-REQ-018, MPS-REQ-019, MPS-REQ-020, MPS-REQ-021, MPS-REQ-022, MPS-REQ-023, MPS-REQ-024]}
+  product_implementation: {path: mps/implementation/PRODUCT-IMPLEMENTATION.md, status: current}
+  agents_md: {path: AGENTS.md, status: current}
+  qa_protocol: {path: mps/qa/MPS-QA.md, status: current}
+  validation_report: {path: mps/qa/MPS-VALIDATION.md, status: missing}
+  policy_confirmation_checklist: {path: mps/SAMANTHA-POLICY-CONFIRMATION-CHECKLIST.md, status: current, owner: "Samantha Dodson", required_before: "real-family activation"}
+  beta_content_import_inventory: {path: mps/BETA-CONTENT-IMPORT-INVENTORY.md, status: current, source: "https://homeschoolhaven.org/", captured_at: "2026-08-26", generated_from: [CTX-009, CTX-010, DEC-019, DEC-020]}
+
+gates:
+  discovery: {status: completed, requirements: ["Product context", "Initial ecosystem direction", "Primary audiences", "Beta boundary", "Decision owner"], blocking_items: [], completed_at: "2026-08-26T23:49:59Z"}
+  outcomes: {status: completed, requirements: ["Product purpose", "Problem statement", "User outcomes", "Business outcomes", "Value proposition", "Guardrails", "Directional beta success signals", "Business-model direction"], blocking_items: [], completed_at: "2026-08-26T23:56:25Z"}
+  users: {status: completed, requirements: ["Parent and guardian jobs and authority", "Student profile and beta-login intent", "Educator responsibilities and authority", "Administrator and owner authority", "Affected external actor"], blocking_items: [], completed_at: "2026-08-26T23:59:21Z"}
+  scope_priority: {status: completed, requirements: ["Must, Should, Could, and Won't beta priorities", "Explicit exclusions", "Dependencies and assumptions", "Beta content, payment, and review boundaries"], blocking_items: [], completed_at: "2026-08-27T00:02:49Z"}
+  workflows_states: {status: completed, requirements: ["Public discovery and conversion", "Family account and student profiles", "Enrollment and payment", "Program administration", "Educator delivery", "Announcements and resources", "Assistance request", "Alternate and recovery paths", "State transitions and notifications"], blocking_items: [], completed_at: "2026-08-27T00:05:32Z"}
+  requirements_acceptance: {status: completed, requirements: ["Approved Must-feature requirements", "Approved acceptance criteria", "Approved qualitative beta success signals"], blocking_items: [], exception: "EXC-001 permits the private Foundation Release handoff with sample or sanitized data while GAP-005 and GAP-010 remain real-family activation blockers", completed_at: "2026-08-27T03:40:00Z"}
+  approval_handoff: {status: completed, requirements: ["Canonical v1.0 state", "Current handoff artifacts", "MDS and MTS synchronization", "Combined AGENTS.md"], blocking_items: [], completed_at: "2026-08-27T03:40:00Z"}
+  product_validation: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+
+validation:
+  scope_compliance: null
+  workflow_state_compliance: null
+  rules_roles_acceptance: null
+  outcome_measurement_readiness: defined_not_instrumented
+  downstream_synchronization: null
+  overall_status: null
+  reviewed_at: null
