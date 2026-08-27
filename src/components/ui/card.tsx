@@ -16,6 +16,12 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card header section for grouping glyph and title.
+ * @param className - Additional CSS classes
+ * @param props - Standard div props
+ * @returns Card header component
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -42,6 +48,12 @@ function CardGlyph({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card title heading (h3).
+ * @param className - Additional CSS classes
+ * @param props - Standard h3 props
+ * @returns Card title component
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
@@ -52,6 +64,12 @@ function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   )
 }
 
+/**
+ * Card description text.
+ * @param className - Additional CSS classes
+ * @param props - Standard paragraph props
+ * @returns Card description component
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -62,6 +80,12 @@ function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
+/**
+ * Card content section.
+ * @param className - Additional CSS classes
+ * @param props - Standard div props
+ * @returns Card content component
+ */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -72,6 +96,12 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card footer section for actions.
+ * @param className - Additional CSS classes
+ * @param props - Standard div props
+ * @returns Card footer component
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

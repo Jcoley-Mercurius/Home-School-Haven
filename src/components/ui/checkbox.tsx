@@ -3,7 +3,12 @@ import { Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** MDS §6 checkbox. Forest 600 when checked; state is paired with its label. */
+/**
+ * MDS §6 checkbox. Forest 600 when checked; state is paired with its label.
+ * @param className - Additional CSS classes
+ * @param props - Checkbox primitive props
+ * @returns Checkbox component
+ */
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
     <CheckboxPrimitive.Root
@@ -28,7 +33,12 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   )
 }
 
-/** 44 px interactive row wrapping a 20 px control, per MDS §8 touch targets. */
+/**
+ * 44 px interactive row wrapping a 20 px control, per MDS §8 touch targets.
+ * @param className - Additional CSS classes
+ * @param props - Standard label props
+ * @returns Checkbox row component
+ */
 function CheckboxRow({ className, ...props }: React.ComponentProps<"label">) {
   return (
     <label

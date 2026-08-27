@@ -5,13 +5,24 @@ import { Check, ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** MDS §6 select. Trigger matches the 44 px / 10 px input treatment. */
+/**
+ * MDS §6 select. Trigger matches the 44 px / 10 px input treatment.
+ * @param props - Select primitive root props
+ * @returns Select root component
+ */
 function Select<Value, Multiple extends boolean | undefined = false>(
   props: SelectPrimitive.Root.Props<Value, Multiple>
 ) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
+/**
+ * Select trigger button that opens the select popup.
+ * @param className - Additional CSS classes
+ * @param children - Trigger content
+ * @param props - Select trigger primitive props
+ * @returns Select trigger component
+ */
 function SelectTrigger({
   className,
   children,
@@ -43,10 +54,22 @@ function SelectTrigger({
   )
 }
 
+/**
+ * Select value display within the trigger.
+ * @param props - Select value primitive props
+ * @returns Select value component
+ */
 function SelectValue(props: SelectPrimitive.Value.Props) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+/**
+ * Select popup content containing options.
+ * @param className - Additional CSS classes
+ * @param children - Select items
+ * @param props - Select popup primitive props
+ * @returns Select content component
+ */
 function SelectContent({
   className,
   children,
@@ -73,6 +96,13 @@ function SelectContent({
   )
 }
 
+/**
+ * Individual select option item.
+ * @param className - Additional CSS classes
+ * @param children - Item content
+ * @param props - Select item primitive props
+ * @returns Select item component
+ */
 function SelectItem({
   className,
   children,

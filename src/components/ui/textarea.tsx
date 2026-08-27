@@ -1,6 +1,11 @@
 import { cn } from "@/lib/utils"
 
-/** MDS §6 textarea. Height grows from the standard control height. */
+/**
+ * MDS §6 textarea. Height grows from the standard control height.
+ * @param className - Additional CSS classes
+ * @param props - Standard textarea props
+ * @returns Textarea component
+ */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea

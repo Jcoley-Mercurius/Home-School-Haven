@@ -17,6 +17,12 @@ function Field({ className, ...props }: FieldPrimitive.Root.Props) {
   )
 }
 
+/**
+ * Field label for associating text with form control.
+ * @param className - Additional CSS classes
+ * @param props - Field label primitive props
+ * @returns Field label component
+ */
 function FieldLabel({ className, ...props }: FieldPrimitive.Label.Props) {
   return (
     <FieldPrimitive.Label
@@ -27,6 +33,12 @@ function FieldLabel({ className, ...props }: FieldPrimitive.Label.Props) {
   )
 }
 
+/**
+ * Field description for providing helper text.
+ * @param className - Additional CSS classes
+ * @param props - Field description primitive props
+ * @returns Field description component
+ */
 function FieldDescription({
   className,
   ...props
@@ -40,6 +52,12 @@ function FieldDescription({
   )
 }
 
+/**
+ * Field error message for displaying validation errors.
+ * @param className - Additional CSS classes
+ * @param props - Field error primitive props
+ * @returns Field error component
+ */
 function FieldError({ className, ...props }: FieldPrimitive.Error.Props) {
   return (
     <FieldPrimitive.Error

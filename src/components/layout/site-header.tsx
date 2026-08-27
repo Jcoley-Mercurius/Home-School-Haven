@@ -18,6 +18,13 @@ import { cn } from "@/lib/utils"
  * aria-disabled items so the private review contains no broken links
  * (owner decision, 2026-08-27).
  */
+
+/**
+ * Navigation label component that renders available links or disabled text.
+ * @param item - Navigation item with label, href, and availability
+ * @param className - Additional CSS classes
+ * @returns Navigation label component
+ */
 function NavLabel({ item, className }: { item: NavItem; className?: string }) {
   if (!item.available) {
     /* Muted, non-navigating, and announced as unavailable. One visible notice
@@ -50,6 +57,10 @@ function NavLabel({ item, className }: { item: NavItem; className?: string }) {
   )
 }
 
+/**
+ * Site header with logo, navigation, and mobile menu.
+ * @returns Site header component
+ */
 function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
 

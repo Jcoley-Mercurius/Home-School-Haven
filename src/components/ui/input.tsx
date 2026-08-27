@@ -2,7 +2,12 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 
 import { cn } from "@/lib/utils"
 
-/** MDS §6 text input: 44 px control height, 10 px radius, Coral 700 focus ring. */
+/**
+ * MDS §6 text input: 44 px control height, 10 px radius, Coral 700 focus ring.
+ * @param className - Additional CSS classes
+ * @param props - Input primitive props
+ * @returns Input component
+ */
 function Input({ className, ...props }: InputPrimitive.Props) {
   return (
     <InputPrimitive

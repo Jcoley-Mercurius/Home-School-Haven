@@ -29,6 +29,15 @@ const textLinkVariants = cva(
   }
 )
 
+/**
+ * Text link component with optional arrow icon.
+ * @param className - Additional CSS classes
+ * @param tone - Link tone (default or accent)
+ * @param withArrow - Whether to display arrow icon
+ * @param children - Link content
+ * @param props - Next.js Link props
+ * @returns Text link component
+ */
 function TextLink({
   className,
   tone,

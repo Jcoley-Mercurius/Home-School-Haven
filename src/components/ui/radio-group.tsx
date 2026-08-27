@@ -3,7 +3,12 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 
 import { cn } from "@/lib/utils"
 
-/** MDS §6 radio group. Always render inside a labelled group or fieldset. */
+/**
+ * MDS §6 radio group. Always render inside a labelled group or fieldset.
+ * @param className - Additional CSS classes
+ * @param props - Radio group primitive props
+ * @returns Radio group component
+ */
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
     <RadioGroupPrimitive
@@ -14,6 +19,12 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   )
 }
 
+/**
+ * Individual radio button control.
+ * @param className - Additional CSS classes
+ * @param props - Radio primitive props
+ * @returns Radio component
+ */
 function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
   return (
     <RadioPrimitive.Root
@@ -36,7 +47,12 @@ function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
   )
 }
 
-/** 44 px interactive row wrapping a 20 px control, per MDS §8 touch targets. */
+/**
+ * 44 px interactive row wrapping a 20 px control, per MDS §8 touch targets.
+ * @param className - Additional CSS classes
+ * @param props - Standard label props
+ * @returns Radio row component
+ */
 function RadioRow({ className, ...props }: React.ComponentProps<"label">) {
   return (
     <label

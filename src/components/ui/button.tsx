@@ -52,6 +52,16 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Button component with support for variants, sizes, and loading state.
+ * @param className - Additional CSS classes
+ * @param variant - Visual variant (primary, secondary, accent, quiet, text, destructive)
+ * @param size - Button size (sm, md, lg, icon)
+ * @param loading - Whether button is in loading state with spinner
+ * @param children - Button content
+ * @param props - Additional button primitive props
+ * @returns Button component
+ */
 function Button({
   className,
   variant,
