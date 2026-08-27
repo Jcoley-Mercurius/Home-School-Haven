@@ -20,6 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+
 # 1. What you are building
 
 Home School Haven is a Christ-centered learning platform for families, educators, and administrators. The private Foundation Release gives Samantha Dodson a sanitized environment in which to review the experience and approve the path toward real-family activation.
@@ -225,7 +226,7 @@ Use this stack unless approved MTS state is formally changed:
 - Supabase Auth, Postgres, deny-by-default Row Level Security, and private Storage;
 - Resend through custom SMTP for authentication and transactional email;
 - MDS CSS variables, with constrained Tailwind CSS only when compatible with the inspected repository;
-- selective Radix Primitives for accessible interactive behavior;
+- selective Base UI primitives (`@base-ui/react`, installed through the repository's shadcn `base-nova` setup) for accessible interactive behavior; do not add Radix Primitives alongside it;
 - Lucide React icons using the approved 1.75 px rounded-stroke treatment;
 - TypeScript and repository-compatible ESLint;
 - Playwright, `@axe-core/playwright`, screenshot comparison, and ARIA snapshots;

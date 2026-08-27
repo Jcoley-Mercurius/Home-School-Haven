@@ -2,8 +2,8 @@
 
 **System:** Mercurius Design System  
 **Version:** 1.0  
-**Status:** Design handoff locked; MTS runtime selections approved; repository mapping pending inspection  
-**Date:** 2026-08-26
+**Status:** Design handoff locked; MTS runtime selections approved; repository mapped on 2026-08-27  
+**Date:** 2026-08-27
 
 ## Authoritative design resources
 
@@ -18,24 +18,50 @@
 
 ## Technical mapping status
 
-MTS v1.0 has approved the technology selections below. Exact installed versions and repository paths remain unresolved until the target repository is inspected:
+Recorded from the inspected repository at `/home/josh/home-school-haven` on
+2026-08-27. Every row below is repository evidence, not a placeholder.
 
-| Implementation concern | Status |
+| Implementation concern | Actual value |
 |---|---|
-| Framework and version | Next.js App Router; exact compatible version pending repository inspection |
-| Language | TypeScript |
-| Styling system | Canonical MDS CSS variables with constrained Tailwind CSS when repository-compatible |
-| Component system | MDS-owned components with selective Radix Primitives |
-| Runtime token location | Pending repository inspection |
-| Shared component directory | Pending repository inspection |
-| Global style/theme location | Pending repository inspection |
-| Font loading method and path | Lora and Manrope through the repository-compatible Next.js font strategy; path pending inspection |
-| Icon library and implementation | Lucide React configured to the approved rounded 1.75 px outline character |
-| Accessibility tooling | Playwright, `@axe-core/playwright`, ARIA snapshots, and required manual checks |
-| Testing and visual comparison tooling | Repository-compatible TypeScript/ESLint, Playwright, screenshots, canonical-reference comparison |
-| Deployment target | Vercel |
+| Framework and version | Next.js 16.3.3, App Router, Turbopack build (`next.config.ts` holds no overrides) |
+| Language | TypeScript 5, React 19.2.8 |
+| Styling system | Tailwind CSS v4 through `@tailwindcss/postcss` (`postcss.config.mjs`); no `tailwind.config` file — theme is CSS-first via `@theme inline` |
+| Component system | MDS-owned components over `@base-ui/react` 1.7, installed through the shadcn `base-nova` setup (`components.json`). MTS-DEC-025 supersedes MTS-DEC-022: do not add Radix. |
+| Runtime token location | `src/app/globals.css` — canonical `--hsh-*` token block plus the shadcn variable mapping and `@theme inline` exposure |
+| Shared component directory | `src/components/ui/` (alias `@/components/ui`); helpers in `src/lib/utils.ts` (`cn`) |
+| Global style/theme location | `src/app/globals.css`, imported once by the root layout `src/app/layout.tsx` |
+| Font loading method and path | `next/font/google` in `src/app/layout.tsx`: Lora 400/600 as `--font-lora`, Manrope 400/500/600/700 as `--font-manrope`, both `display: swap`, consumed by `--hsh-font-display` / `--hsh-font-ui` |
+| Icon library and implementation | `lucide-react` 1.34 with `strokeWidth={1.75}` set explicitly at each call site; Lucide's own default is 2 px |
+| Accessibility tooling | **Not installed.** Playwright, `@axe-core/playwright`, and ARIA snapshots remain required and unmet; accessibility verification is manual until they are added. |
+| Testing and visual comparison tooling | TypeScript (`npx tsc --noEmit`) and ESLint 9 (`npm run lint`, flat config in `eslint.config.mjs`) are available. **No test runner and no screenshot-comparison baseline exist**; there is no `test` script in `package.json`. |
+| Deployment target | Vercel. No `vercel.json` and no `.env*` file is committed; project settings live in the Vercel dashboard. |
 
-No path or technology may be invented to make this table appear complete.
+### Commands (WSL/Ubuntu bash)
+
+Node 24.17.0, npm 11.13.0, no `packageManager` field pinned.
+
+```bash
+npm run dev      # next dev
+npm run build    # next build
+npm run start    # next start
+npm run lint     # eslint (flat config)
+npx tsc --noEmit # type check; there is no typecheck script
+```
+
+### Design QA surface
+
+`src/app/design/foundations/page.tsx` renders MDS-REF-003 for comparison at
+`/design/foundations`. It calls `notFound()` when `NODE_ENV === "production"`,
+so it is reachable in development only (owner decision, 2026-08-27).
+
+### Approved deviation from MDS-REF-003
+
+The accent button and accent text links use Coral 700 `#A84248` with white text
+(about 5.9:1) rather than the Logo Coral `#ED7D7C` drawn on the reference sheet,
+which reaches only about 2.7:1 against white and fails the WCAG 2.2 AA
+requirement in `DESIGN-SYSTEM.md` §10. Logo Coral remains `#ED7D7C` and stays
+decorative. Approved by Josh Coley on 2026-08-27; **pending Samantha Dodson's
+awareness as a visible difference from the approved reference.**
 
 ## Required runtime foundations
 
@@ -81,4 +107,8 @@ Private beta references and validation may use sample or sanitized family and st
 
 ## Maintenance
 
-Update this manifest after repository inspection. Record actual versions, paths, and commands, then reconcile token and component locations, QA commands, and deployment guidance. Never retain placeholder paths after the implementation repository is known.
+Repository inspection is complete and the table above records actual versions,
+paths, and commands. Update it whenever those change. Outstanding reconciliation:
+install the accessibility and visual-comparison tooling named in
+`mds/qa/MDS-QA.md`, then replace the two "not installed" rows with real commands.
+Never retain placeholder paths.

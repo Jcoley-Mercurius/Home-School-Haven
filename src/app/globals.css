@@ -4,127 +4,544 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ---------------------------------------------------------------------------
+   Home School Haven MDS v1.0 — canonical token layer.
+   Values are copied verbatim from mds/tokens/tokens.css and mds/tokens/tokens.json.
+   Do not change a value or its semantic intent here; change it in the MDS.
+--------------------------------------------------------------------------- */
+:root {
+  /* Brand — forest */
+  --hsh-forest-700: #31483f;
+  --hsh-forest-600: #3f5c50;
+  --hsh-forest-500: #557467;
+  --hsh-forest-100: #dde7e1;
+  --hsh-forest-50: #eff4f1;
+
+  /* Brand — coral */
+  --hsh-coral-700: #a84248;
+  --hsh-coral-500: #ed7d7c;
+  --hsh-coral-100: #f9e2e1;
+
+  /* Brand — gold */
+  --hsh-gold-700: #7a5a20;
+  --hsh-gold-500: #b38a42;
+  --hsh-gold-100: #efe3c8;
+
+  /* Neutrals */
+  --hsh-ink-900: #1f2522;
+  --hsh-logo-ink: #292929;
+  --hsh-ink-700: #4f5954;
+  --hsh-ink-600: #626b67;
+  --hsh-neutral-400: #9aa29e;
+  --hsh-neutral-300: #c9cec9;
+  --hsh-neutral-200: #e2e5e2;
+  --hsh-ivory-100: #f4f1ec;
+  --hsh-ivory-50: #fbf9f6;
+  --hsh-white: #ffffff;
+
+  /* Semantic */
+  --hsh-success: #2f6b4f;
+  --hsh-warning: #8a5a12;
+  --hsh-error: #a43c3c;
+  --hsh-info: #356a85;
+
+  /* Surfaces */
+  --hsh-surface-page: var(--hsh-ivory-100);
+  --hsh-surface-elevated: var(--hsh-ivory-50);
+  --hsh-surface-card: var(--hsh-white);
+  --hsh-surface-quiet: var(--hsh-forest-50);
+  --hsh-surface-warm-highlight: var(--hsh-coral-100);
+
+  /* Text */
+  --hsh-text-primary: var(--hsh-ink-900);
+  --hsh-text-secondary: var(--hsh-ink-700);
+  --hsh-text-muted: var(--hsh-ink-600);
+  --hsh-text-inverse: var(--hsh-white);
+  --hsh-text-link: var(--hsh-forest-700);
+
+  /* Borders and focus */
+  --hsh-border-default: var(--hsh-neutral-200);
+  --hsh-border-strong: var(--hsh-neutral-300);
+  --hsh-focus: var(--hsh-coral-700);
+  --hsh-focus-width: 2px;
+  --hsh-focus-offset: 2px;
+
+  /* Type families. next/font supplies --font-lora / --font-manrope in layout.tsx. */
+  --hsh-font-display: var(--font-lora), Lora, Georgia, "Times New Roman", serif;
+  --hsh-font-ui: var(--font-manrope), Manrope, Inter, Arial, sans-serif;
+
+  /* Type sizes */
+  --hsh-size-display-xl-desktop: 56px;
+  --hsh-size-display-xl-mobile: 40px;
+  --hsh-size-display-lg-desktop: 44px;
+  --hsh-size-display-lg-mobile: 34px;
+  --hsh-size-h1-desktop: 40px;
+  --hsh-size-h1-mobile: 32px;
+  --hsh-size-h2-desktop: 32px;
+  --hsh-size-h2-mobile: 28px;
+  --hsh-size-h3: 24px;
+  --hsh-size-h4: 20px;
+  --hsh-size-body-lg: 18px;
+  --hsh-size-body: 16px;
+  --hsh-size-body-sm: 14px;
+  --hsh-size-label: 14px;
+  --hsh-size-caption: 12px;
+
+  /* Line heights, paired with the sizes above (MDS-REF-003 §3) */
+  --hsh-leading-display-xl-desktop: 64px;
+  --hsh-leading-display-xl-mobile: 46px;
+  --hsh-leading-display-lg-desktop: 52px;
+  --hsh-leading-display-lg-mobile: 40px;
+  --hsh-leading-h1-desktop: 48px;
+  --hsh-leading-h1-mobile: 38px;
+  --hsh-leading-h2-desktop: 40px;
+  --hsh-leading-h2-mobile: 35px;
+  --hsh-leading-h3: 32px;
+  --hsh-leading-h4: 28px;
+  --hsh-leading-body-lg: 30px;
+  --hsh-leading-body: 26px;
+  --hsh-leading-body-sm: 22px;
+  --hsh-leading-label: 20px;
+  --hsh-leading-caption: 18px;
+
+  /* Type weights */
+  --hsh-weight-regular: 400;
+  --hsh-weight-medium: 500;
+  --hsh-weight-semibold: 600;
+  --hsh-weight-bold: 700;
+
+  /* Spacing */
+  --hsh-space-1: 4px;
+  --hsh-space-2: 8px;
+  --hsh-space-3: 12px;
+  --hsh-space-4: 16px;
+  --hsh-space-5: 20px;
+  --hsh-space-6: 24px;
+  --hsh-space-8: 32px;
+  --hsh-space-10: 40px;
+  --hsh-space-12: 48px;
+  --hsh-space-16: 64px;
+  --hsh-space-20: 80px;
+  --hsh-space-24: 96px;
+
+  /* Radii */
+  --hsh-radius-small: 6px;
+  --hsh-radius-control: 10px;
+  --hsh-radius-card: 14px;
+  --hsh-radius-feature: 20px;
+  --hsh-radius-pill: 999px;
+
+  /* Elevation */
+  --hsh-shadow-subtle: 0 1px 2px rgb(31 37 34 / 6%);
+  --hsh-shadow-card: 0 8px 24px rgb(31 37 34 / 8%);
+  --hsh-shadow-overlay: 0 20px 48px rgb(31 37 34 / 16%);
+
+  /* Containers */
+  --hsh-content-public: 1200px;
+  --hsh-content-public-wide: 1280px;
+  --hsh-content-portal: 1280px;
+  --hsh-content-operations: 1440px;
+  --hsh-content-reading: 720px;
+
+  /* Layout gutters and grid gaps */
+  --hsh-gutter-desktop: 32px;
+  --hsh-gutter-tablet: 24px;
+  --hsh-gutter-mobile: 16px;
+  --hsh-grid-gap-desktop: 24px;
+  --hsh-grid-gap-tablet: 20px;
+  --hsh-grid-gap-mobile: 16px;
+
+  /* Controls */
+  --hsh-control-height-small: 36px;
+  --hsh-control-height-standard: 44px;
+  --hsh-control-height-large: 52px;
+  --hsh-touch-target: 44px;
+}
+
+/* ---------------------------------------------------------------------------
+   shadcn / Base UI variable contract, mapped onto MDS tokens.
+   This is an implementation mapping only; no new design values are introduced.
+--------------------------------------------------------------------------- */
+:root {
+  --background: var(--hsh-surface-page);
+  --foreground: var(--hsh-text-primary);
+  --card: var(--hsh-surface-card);
+  --card-foreground: var(--hsh-text-primary);
+  --popover: var(--hsh-surface-card);
+  --popover-foreground: var(--hsh-text-primary);
+  --primary: var(--hsh-forest-600);
+  --primary-foreground: var(--hsh-text-inverse);
+  --secondary: var(--hsh-forest-50);
+  --secondary-foreground: var(--hsh-forest-700);
+  --muted: var(--hsh-surface-elevated);
+  --muted-foreground: var(--hsh-text-muted);
+  --accent: var(--hsh-forest-100);
+  --accent-foreground: var(--hsh-forest-700);
+  --destructive: var(--hsh-error);
+  --border: var(--hsh-border-default);
+  --input: var(--hsh-border-default);
+  --ring: var(--hsh-focus);
+  --radius: var(--hsh-radius-control);
+  --sidebar: var(--hsh-surface-elevated);
+  --sidebar-foreground: var(--hsh-text-primary);
+  --sidebar-primary: var(--hsh-forest-600);
+  --sidebar-primary-foreground: var(--hsh-text-inverse);
+  --sidebar-accent: var(--hsh-forest-100);
+  --sidebar-accent-foreground: var(--hsh-forest-700);
+  --sidebar-border: var(--hsh-border-default);
+  --sidebar-ring: var(--hsh-focus);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* MDS palette exposed as Tailwind color utilities */
+  --color-forest-700: var(--hsh-forest-700);
+  --color-forest-600: var(--hsh-forest-600);
+  --color-forest-500: var(--hsh-forest-500);
+  --color-forest-100: var(--hsh-forest-100);
+  --color-forest-50: var(--hsh-forest-50);
+  --color-coral-700: var(--hsh-coral-700);
+  --color-coral-500: var(--hsh-coral-500);
+  --color-coral-100: var(--hsh-coral-100);
+  --color-gold-700: var(--hsh-gold-700);
+  --color-gold-500: var(--hsh-gold-500);
+  --color-gold-100: var(--hsh-gold-100);
+  --color-ink-900: var(--hsh-ink-900);
+  --color-logo-ink: var(--hsh-logo-ink);
+  --color-ink-700: var(--hsh-ink-700);
+  --color-ink-600: var(--hsh-ink-600);
+  --color-neutral-400: var(--hsh-neutral-400);
+  --color-neutral-300: var(--hsh-neutral-300);
+  --color-neutral-200: var(--hsh-neutral-200);
+  --color-ivory-100: var(--hsh-ivory-100);
+  --color-ivory-50: var(--hsh-ivory-50);
+  --color-surface-page: var(--hsh-surface-page);
+  --color-surface-elevated: var(--hsh-surface-elevated);
+  --color-surface-card: var(--hsh-surface-card);
+  --color-surface-quiet: var(--hsh-surface-quiet);
+  --color-surface-warm-highlight: var(--hsh-surface-warm-highlight);
+  --color-text-primary: var(--hsh-text-primary);
+  --color-text-secondary: var(--hsh-text-secondary);
+  --color-text-muted: var(--hsh-text-muted);
+  --color-text-inverse: var(--hsh-text-inverse);
+  --color-text-link: var(--hsh-text-link);
+  --color-border-default: var(--hsh-border-default);
+  --color-border-strong: var(--hsh-border-strong);
+  --color-success: var(--hsh-success);
+  --color-warning: var(--hsh-warning);
+  --color-error: var(--hsh-error);
+  --color-info: var(--hsh-info);
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Type families */
+  --font-sans: var(--hsh-font-ui);
+  --font-serif: var(--hsh-font-display);
+  --font-heading: var(--hsh-font-display);
+
+  /* Radii */
+  --radius-sm: var(--hsh-radius-small);
+  --radius-md: var(--hsh-radius-control);
+  --radius-lg: var(--hsh-radius-control);
+  --radius-xl: var(--hsh-radius-card);
+  --radius-2xl: var(--hsh-radius-feature);
+  --radius-3xl: var(--hsh-radius-feature);
+  --radius-4xl: var(--hsh-radius-pill);
+
+  /* Spacing scale */
+  --spacing-1: var(--hsh-space-1);
+  --spacing-2: var(--hsh-space-2);
+  --spacing-3: var(--hsh-space-3);
+  --spacing-4: var(--hsh-space-4);
+  --spacing-5: var(--hsh-space-5);
+  --spacing-6: var(--hsh-space-6);
+  --spacing-8: var(--hsh-space-8);
+  --spacing-10: var(--hsh-space-10);
+  --spacing-12: var(--hsh-space-12);
+  --spacing-16: var(--hsh-space-16);
+  --spacing-20: var(--hsh-space-20);
+  --spacing-24: var(--hsh-space-24);
+
+  /* Elevation */
+  --shadow-subtle: var(--hsh-shadow-subtle);
+  --shadow-card: var(--hsh-shadow-card);
+  --shadow-overlay: var(--hsh-shadow-overlay);
+
+  /* Containers */
+  --container-reading: var(--hsh-content-reading);
+  --container-public: var(--hsh-content-public);
+  --container-public-wide: var(--hsh-content-public-wide);
+  --container-portal: var(--hsh-content-portal);
+  --container-operations: var(--hsh-content-operations);
+
+  /* Approved breakpoints: mobile 0–639, tablet 640–1023, desktop 1024–1439, wide 1440+ */
+  --breakpoint-tablet: 640px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1440px;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+
   html {
-    @apply font-sans;
+    font-family: var(--hsh-font-ui);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--hsh-surface-page);
+    color: var(--hsh-text-primary);
+    font-family: var(--hsh-font-ui);
+    font-size: var(--hsh-size-body);
+    font-weight: var(--hsh-weight-regular);
+    line-height: var(--hsh-leading-body);
+  }
+
+  /* MDS §3 type roles. Mobile first; desktop sizes at the 1024 px breakpoint. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--hsh-font-display);
+    font-weight: var(--hsh-weight-semibold);
+    color: var(--hsh-text-primary);
+  }
+
+  h1 {
+    font-size: var(--hsh-size-h1-mobile);
+    line-height: var(--hsh-leading-h1-mobile);
+  }
+
+  h2 {
+    font-size: var(--hsh-size-h2-mobile);
+    line-height: var(--hsh-leading-h2-mobile);
+  }
+
+  h3 {
+    font-size: var(--hsh-size-h3);
+    line-height: var(--hsh-leading-h3);
+  }
+
+  h4 {
+    font-family: var(--hsh-font-ui);
+    font-size: var(--hsh-size-h4);
+    font-weight: var(--hsh-weight-bold);
+    line-height: var(--hsh-leading-h4);
+    color: var(--hsh-text-primary);
+  }
+
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: var(--hsh-size-h1-desktop);
+      line-height: var(--hsh-leading-h1-desktop);
+    }
+
+    h2 {
+      font-size: var(--hsh-size-h2-desktop);
+      line-height: var(--hsh-leading-h2-desktop);
+    }
+  }
+
+  /* MDS §10: visible 2 px Coral 700 focus ring with 2 px offset. */
+  :focus-visible {
+    outline: var(--hsh-focus-width) solid var(--hsh-focus);
+    outline-offset: var(--hsh-focus-offset);
+  }
+
+  /* MDS §8: touch targets remain at least 44 x 44 px. */
+  a[role="button"],
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  select,
+  summary,
+  [role="tab"] {
+    min-height: var(--hsh-touch-target);
+  }
+
+  /* MDS §10: motion is never required for meaning. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MDS type roles and layout containers as reusable classes.
+   Roles are the approved set; do not add a role without an MDS change.
+--------------------------------------------------------------------------- */
+@layer components {
+  .hsh-display-xl,
+  .hsh-display-lg,
+  .hsh-h1,
+  .hsh-h2,
+  .hsh-h3 {
+    font-family: var(--hsh-font-display);
+    font-weight: var(--hsh-weight-semibold);
+  }
+
+  .hsh-display-xl {
+    font-size: var(--hsh-size-display-xl-mobile);
+    line-height: var(--hsh-leading-display-xl-mobile);
+  }
+
+  .hsh-display-lg {
+    font-size: var(--hsh-size-display-lg-mobile);
+    line-height: var(--hsh-leading-display-lg-mobile);
+  }
+
+  .hsh-h1 {
+    font-size: var(--hsh-size-h1-mobile);
+    line-height: var(--hsh-leading-h1-mobile);
+  }
+
+  .hsh-h2 {
+    font-size: var(--hsh-size-h2-mobile);
+    line-height: var(--hsh-leading-h2-mobile);
+  }
+
+  .hsh-h3 {
+    font-size: var(--hsh-size-h3);
+    line-height: var(--hsh-leading-h3);
+  }
+
+  .hsh-h4 {
+    font-family: var(--hsh-font-ui);
+    font-size: var(--hsh-size-h4);
+    font-weight: var(--hsh-weight-bold);
+    line-height: var(--hsh-leading-h4);
+  }
+
+  .hsh-body-lg,
+  .hsh-body,
+  .hsh-body-sm {
+    font-family: var(--hsh-font-ui);
+    font-weight: var(--hsh-weight-regular);
+  }
+
+  .hsh-body-lg {
+    font-size: var(--hsh-size-body-lg);
+    line-height: var(--hsh-leading-body-lg);
+  }
+
+  .hsh-body {
+    font-size: var(--hsh-size-body);
+    line-height: var(--hsh-leading-body);
+  }
+
+  .hsh-body-sm {
+    font-size: var(--hsh-size-body-sm);
+    line-height: var(--hsh-leading-body-sm);
+  }
+
+  .hsh-label {
+    font-family: var(--hsh-font-ui);
+    font-size: var(--hsh-size-label);
+    font-weight: var(--hsh-weight-semibold);
+    line-height: var(--hsh-leading-label);
+  }
+
+  .hsh-caption {
+    font-family: var(--hsh-font-ui);
+    font-size: var(--hsh-size-caption);
+    font-weight: var(--hsh-weight-medium);
+    line-height: var(--hsh-leading-caption);
+  }
+
+  @media (min-width: 1024px) {
+    .hsh-display-xl {
+      font-size: var(--hsh-size-display-xl-desktop);
+      line-height: var(--hsh-leading-display-xl-desktop);
+    }
+
+    .hsh-display-lg {
+      font-size: var(--hsh-size-display-lg-desktop);
+      line-height: var(--hsh-leading-display-lg-desktop);
+    }
+
+    .hsh-h1 {
+      font-size: var(--hsh-size-h1-desktop);
+      line-height: var(--hsh-leading-h1-desktop);
+    }
+
+    .hsh-h2 {
+      font-size: var(--hsh-size-h2-desktop);
+      line-height: var(--hsh-leading-h2-desktop);
+    }
+  }
+
+  /* MDS §7 containers with the approved responsive gutters. */
+  .hsh-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--hsh-gutter-mobile);
+  }
+
+  .hsh-container-reading {
+    max-width: calc(var(--hsh-content-reading) + 2 * var(--hsh-gutter-desktop));
+  }
+
+  .hsh-container-public {
+    max-width: calc(var(--hsh-content-public) + 2 * var(--hsh-gutter-desktop));
+  }
+
+  .hsh-container-public-wide {
+    max-width: calc(
+      var(--hsh-content-public-wide) + 2 * var(--hsh-gutter-desktop)
+    );
+  }
+
+  .hsh-container-portal {
+    max-width: calc(var(--hsh-content-portal) + 2 * var(--hsh-gutter-desktop));
+  }
+
+  .hsh-container-operations {
+    max-width: calc(
+      var(--hsh-content-operations) + 2 * var(--hsh-gutter-desktop)
+    );
+  }
+
+  @media (min-width: 640px) {
+    .hsh-container {
+      padding-inline: var(--hsh-gutter-tablet);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hsh-container {
+      padding-inline: var(--hsh-gutter-desktop);
+    }
   }
 }

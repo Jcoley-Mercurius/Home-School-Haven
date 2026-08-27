@@ -518,10 +518,10 @@ research:
   - id: MTS-RES-004
     capability: "MDS implementation and accessibility"
     candidates: ["MDS CSS variables with constrained Tailwind and selective Radix/Lucide", "CSS Modules with custom primitives"]
-    approved_direction: "MDS CSS variables, constrained Tailwind if repository-compatible, selective Radix Primitives, Lucide React"
+    approved_direction: "MDS CSS variables, constrained Tailwind if repository-compatible, selective Base UI primitives via the installed shadcn base-nova setup, Lucide React"
     status: approved
-    verified_at: "2026-08-26"
-    sources: ["https://tailwindcss.com/docs/guides/nextjs", "https://www.radix-ui.com/primitives/docs/overview/introduction", "https://lucide.dev/guide/react/"]
+    verified_at: "2026-08-27"
+    sources: ["https://tailwindcss.com/docs/guides/nextjs", "https://base-ui.com/react/overview/quick-start", "https://lucide.dev/guide/react/"]
   - id: MTS-RES-005
     capability: "Engineering and accessibility QA"
     candidates: ["Playwright plus axe", "Repository-native equivalent"]
@@ -574,8 +574,9 @@ governance:
     - {id: MTS-DEC-019, area: security, key: bot_protection, value: "Cloudflare Turnstile for public forms and Supabase auth before public or real-family activation", status: approved, source: "Supabase/Cloudflare first-party research and Josh Coley blanket MTS approval", rationale: "Reduces form and email-auth abuse using a supported, accessible, free control", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-002, MTS-CAP-007, MTS-CAP-009]}
     - {id: MTS-DEC-020, area: recovery, key: storage_object_backup, value: "Schedule an independent copy of private Supabase Storage objects to Cloudflare R2 before real-family activation", status: approved, source: "Supabase/Cloudflare first-party research and Josh Coley blanket MTS approval", rationale: "Supabase database backups do not restore deleted Storage objects; R2 fits the scale and budget", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-008, MTS-CAP-012]}
     - {id: MTS-DEC-021, area: observability, key: foundation_error_visibility, value: "Use Vercel runtime logs plus privacy-scrubbed PostHog browser errors; defer Sentry until deeper server tracing is evidenced", status: approved, source: "Vercel/PostHog first-party research and Josh Coley blanket MTS approval", rationale: "Closes basic visibility needs without adding another vendor during the 2–5 day review build", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-012]}
-    - {id: MTS-DEC-022, area: ui_implementation, key: styling_primitives_icons, value: "MDS CSS variables with repository-compatible constrained Tailwind, selective Radix Primitives, and Lucide React at 1.75 px rounded strokes", status: approved, source: "MTS selection research and Josh Coley blanket MTS approval", rationale: "Implements approved MDS quickly without importing competing visual decisions", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-001]}
+    - {id: MTS-DEC-022, area: ui_implementation, key: styling_primitives_icons, value: "MDS CSS variables with repository-compatible constrained Tailwind, selective Radix Primitives, and Lucide React at 1.75 px rounded strokes", status: superseded, source: "MTS selection research and Josh Coley blanket MTS approval", rationale: "Implements approved MDS quickly without importing competing visual decisions", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: "v1.0", superseded_by: MTS-DEC-025, dependencies: [MTS-CAP-001]}
     - {id: MTS-DEC-023, area: quality, key: engineering_mds_qa, value: "Repository-compatible TypeScript and ESLint plus Playwright, @axe-core/playwright, screenshot comparison, and ARIA snapshots", status: approved, source: "MTS selection research and Josh Coley blanket MTS approval", rationale: "Supports deterministic engineering, accessibility, and visual verification", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: [MTS-CAP-012]}
+    - {id: MTS-DEC-025, area: ui_implementation, key: styling_primitives_icons, value: "MDS CSS variables with constrained Tailwind v4, the accessible primitives already installed in the repository (@base-ui/react via the shadcn base-nova setup), and Lucide React at 1.75 px rounded strokes; do not add Radix Primitives", status: approved, source: "Repository inspection on 2026-08-27 and Josh Coley explicit approval", rationale: "The repository already ships @base-ui/react and no Radix package; adding Radix would duplicate the primitive layer that MTS forbids, and Base UI supplies the same focus, keyboard, and WAI-ARIA behavior without visual opinions", approved_at: "2026-08-27", introduced_version: "v1.0", deprecated_version: null, supersedes: MTS-DEC-022, dependencies: [MTS-CAP-001]}
     - {id: MTS-DEC-024, area: ai, key: foundation_runtime_ai, value: "No runtime AI capability in Foundation Release", status: approved, source: "MPS capability evidence and Josh Coley blanket MTS approval", rationale: "No approved Foundation requirement needs runtime AI", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: []}
   gaps:
     - {id: MTS-GAP-001, area: inspection, statement: "The target application repository will be supplied later; manifests, schemas, deployment configuration, tests, and environment-variable names cannot yet be inspected.", severity: high, status: open, owner: "Project team", resolution_trigger: "Repository supplied"}
@@ -633,6 +634,14 @@ governance:
       reason: "Josh Coley explicitly approved everything and requested final AGENTS.md reconciliation"
       version_impact: "Activates MTS v1.0 as the complete approved architecture without clearing MPS real-family policy gates"
       affected_artifacts: [state, technology_blueprint, capability_matrix, integration_manifest, security_architecture, implementation_plan, selection_record, architecture_addendum, agents_md, qa_protocol]
+      recorded_at: "2026-08-26"
+    - id: MTS-CHG-006
+      area: ui_implementation
+      previous_value: "Selective Radix Primitives supply accessible interaction behavior (MTS-DEC-022)"
+      new_value: "The installed @base-ui/react primitives (shadcn base-nova) supply accessible interaction behavior; Radix must not be added (MTS-DEC-025)"
+      reason: "Repository inspection found @base-ui/react installed and no Radix package; Josh Coley approved Base UI and the current shadcn setup on 2026-08-27"
+      version_impact: "Backward-compatible substitution within MTS v1.0; no change to architecture, data, security, or deployment decisions"
+      affected_artifacts: [state, selection_record, mds_implementation_manifest, agents_md]
       recorded_at: "2026-08-26"
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
