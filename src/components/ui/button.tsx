@@ -1,3 +1,4 @@
+import { cloneElement, isValidElement, type ReactElement } from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -49,8 +50,27 @@ const buttonVariants = cva(
       variant: "primary",
       size: "md",
     },
-  }
+  },
 )
+
+/**
+ * A `render` element that is not a real <button> — a Next.js `Link`, which
+ * produces an <a> — is a navigation styled as a button, not a button.
+ *
+ * Passing it through Base UI's Button is wrong in both directions: leaving
+ * `nativeButton` at its `true` default warns and strips native semantics, while
+ * setting it to `false` stamps `role="button"` onto the anchor, so screen
+ * readers announce "button" for something that navigates and users lose the
+ * link affordances that come with it.
+ *
+ * So render those directly, carrying only the visual variant across. Real
+ * buttons keep going through the primitive and its loading/disabled handling.
+ */
+function isLinkLikeRender(
+  render: ButtonPrimitive.Props["render"],
+): render is ReactElement<{ className?: string } & Record<string, unknown>> {
+  return isValidElement(render) && render.type !== "button"
+}
 
 /**
  * Button component with support for variants, sizes, and loading state.
@@ -58,6 +78,10 @@ const buttonVariants = cva(
  * @param variant - Visual variant (primary, secondary, accent, quiet, text, destructive)
  * @param size - Button size (sm, md, lg, icon)
  * @param loading - Whether button is in loading state with spinner
+ * @param disabled - Whether the button is disabled; implied while loading
+ * @param nativeButton - Base UI native-button semantics. Ignored for a link-like
+ *   `render`, which is rendered directly to keep its link semantics.
+ * @param render - Element to render as, e.g. a Next.js `Link`
  * @param children - Button content
  * @param props - Additional button primitive props
  * @returns Button component
@@ -67,18 +91,37 @@ function Button({
   variant,
   size,
   loading = false,
+  disabled,
+  nativeButton,
+  render,
   children,
   ...props
 }: ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & { loading?: boolean }) {
+  const classes = cn(buttonVariants({ variant, size, className }))
+
+  if (isLinkLikeRender(render)) {
+    return cloneElement(
+      render,
+      {
+        "data-slot": "button",
+        ...props,
+        className: cn(classes, render.props.className),
+      },
+      children,
+    )
+  }
+
   return (
     <ButtonPrimitive
       data-slot="button"
       data-loading={loading || undefined}
       aria-busy={loading || undefined}
-      disabled={loading || props.disabled}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={classes}
       {...props}
+      render={render}
+      nativeButton={nativeButton}
+      disabled={loading || disabled}
     >
       {loading ? (
         <>

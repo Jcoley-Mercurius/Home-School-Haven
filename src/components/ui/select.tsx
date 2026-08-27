@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
  * @returns Select root component
  */
 function Select<Value, Multiple extends boolean | undefined = false>(
-  props: SelectPrimitive.Root.Props<Value, Multiple>
+  props: SelectPrimitive.Root.Props<Value, Multiple>,
 ) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
@@ -40,9 +40,9 @@ function SelectTrigger({
         "transition-colors outline-none",
         "hover:border-[var(--hsh-border-strong)]",
         "focus-visible:outline-[length:var(--hsh-focus-width)] focus-visible:outline-solid",
-        "focus-visible:outline-[color:var(--hsh-focus)] focus-visible:outline-offset-[var(--hsh-focus-offset)]",
+        "focus-visible:outline-offset-[var(--hsh-focus-offset)] focus-visible:outline-[color:var(--hsh-focus)]",
         "data-[disabled]:cursor-not-allowed data-[disabled]:bg-[var(--hsh-surface-elevated)]",
-        className
+        className,
       )}
       {...props}
     >
@@ -85,7 +85,7 @@ function SelectContent({
             "rounded-[var(--hsh-radius-control)] border border-[var(--hsh-border-default)]",
             "bg-[var(--hsh-surface-card)] shadow-[var(--hsh-shadow-overlay)]",
             "outline-none",
-            className
+            className,
           )}
           {...props}
         >
@@ -118,7 +118,7 @@ function SelectItem({
         "data-[highlighted]:bg-[var(--hsh-forest-50)]",
         "data-[selected]:bg-[var(--hsh-forest-100)]",
         "data-[disabled]:opacity-50",
-        className
+        className,
       )}
       {...props}
     >

@@ -81,7 +81,7 @@ The About Us page contains a “Who we Collaborate with” section, but partner 
 | Area | Published content or approved behavior |
 |---|---|
 | Location | 2930 Del Prado Boulevard South, Suite D, Cape Coral, Florida. Preserve source formatting only after contact QA. |
-| General phone | 239-347-9356 appears on the Contact page. |
+| General phone | **239-347-9356** — canonical, per QA-003 resolved 2026-08-27. Appears on the Contact page. |
 | Assistance | The contact experience invites requests for support or help with discounted classes. Keep these requests private and manually reviewed. |
 | Privacy | The public policy describes collection of registration/event information, contact details, child name and age, and third-party payment processing; it states child information is collected with parental consent for operational purposes. |
 | Checkout | Continue program-specific “Register & Pay” or “Pay Now” links to `pay.homeschoolhaven.org` for the private beta. |
@@ -90,11 +90,13 @@ The About Us page contains a “Who we Collaborate with” section, but partner 
 
 These items do not block private beta design or content import, but they should be reconciled before a public launch or before the affected detail is treated as corrected authoritative content.
 
+Resolved flags record the approved decision in the Required handling column and stay listed for traceability.
+
 | Flag | Observation | Required handling |
 |---|---|---|
 | QA-001 | The Classes page repeats headings and labels, and some descriptions, dates, prices, and titles have ambiguous structural associations. | Normalize the content model manually; do not guess associations. |
 | QA-002 | The Calendar page publishes “August 2026–May 2026” for Ready Set Prep. | Ask Samantha whether the end year should be 2027 before correcting it. |
-| QA-003 | The Privacy Policy footer shows 239-347-93556, while the Contact page shows 239-347-9356. | Use the Contact-page number provisionally and request confirmation before public launch. |
+| QA-003 | **Resolved 2026-08-27 (owner authorization).** The Privacy Policy footer showed 239-347-93556, while the Contact page showed 239-347-9356. | Canonical published phone number is **239-347-9356**. Use it everywhere; the 239-347-93556 variant is superseded and must not be reintroduced. |
 | QA-004 | The collaborator section did not expose partner names in retrieved text. | Leave partner records empty until verified. |
 | QA-005 | Some offerings do not publish every desired catalog field, including age/grade, price, capacity, educator, location, or enrollment window. | Leave missing fields unset or use a truthful contact-for-details action. |
 | QA-006 | Seasonal content may remain published after its active window. | Store explicit seasonal and publication states rather than deleting source history. |

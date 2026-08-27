@@ -35,10 +35,10 @@ function Radio({ className, ...props }: RadioPrimitive.Root.Props) {
         "transition-colors outline-none",
         "hover:border-[var(--hsh-forest-500)]",
         "focus-visible:outline-[length:var(--hsh-focus-width)] focus-visible:outline-solid",
-        "focus-visible:outline-[color:var(--hsh-focus)] focus-visible:outline-offset-[var(--hsh-focus-offset)]",
+        "focus-visible:outline-offset-[var(--hsh-focus-offset)] focus-visible:outline-[color:var(--hsh-focus)]",
         "data-[checked]:border-[var(--hsh-forest-600)]",
         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
-        className
+        className,
       )}
       {...props}
     >
@@ -60,7 +60,7 @@ function RadioRow({ className, ...props }: React.ComponentProps<"label">) {
       className={cn(
         "hsh-body flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-3)]",
         "text-[var(--hsh-text-secondary)]",
-        className
+        className,
       )}
       {...props}
     />
