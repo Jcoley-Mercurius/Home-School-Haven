@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { MapPin, Phone } from "lucide-react"
 
 import { contact, positioning, primaryNav } from "@/content/foundation-content"
@@ -44,9 +45,10 @@ function SiteFooter() {
               className="size-5 shrink-0 text-[var(--hsh-forest-500)]"
               strokeWidth={1.75}
             />
+            {/* Standalone action, so it carries the MDS §8 44 px target. */}
             <a
               href={`tel:${contact.phone.replace(/-/g, "")}`}
-              className="hover:text-[var(--hsh-forest-700)]"
+              className="inline-flex min-h-[var(--hsh-touch-target)] items-center rounded-[var(--hsh-radius-small)] hover:text-[var(--hsh-forest-700)]"
             >
               {contact.phone}
             </a>
@@ -62,12 +64,12 @@ function SiteFooter() {
             {primaryNav.map((item) => (
               <li key={item.label}>
                 {item.available ? (
-                  <a
+                  <Link
                     href={item.href}
-                    className="hsh-body text-[var(--hsh-text-secondary)] hover:text-[var(--hsh-forest-700)]"
+                    className="hsh-body inline-flex min-h-[var(--hsh-touch-target)] items-center rounded-[var(--hsh-radius-small)] text-[var(--hsh-text-secondary)] hover:text-[var(--hsh-forest-700)]"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 ) : (
                   <span
                     aria-disabled="true"
@@ -88,7 +90,9 @@ function SiteFooter() {
           <p className="hsh-caption text-[var(--hsh-text-muted)]">
             Private Foundation Review environment. Program details reflect
             currently published content and are confirmed directly with Home
-            School Haven.
+            School Haven. Photography on this site is placeholder art for layout
+            review only — it is not approved photography and does not show real
+            students.
           </p>
         </div>
       </div>

@@ -7,25 +7,41 @@ import { Dialog } from "@base-ui/react/dialog"
 import { Menu, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { accountNav, primaryNav, type NavItem } from "@/content/foundation-content"
+import {
+  accountNav,
+  guidanceHref,
+  primaryNav,
+  programsHref,
+  type NavItem,
+} from "@/content/foundation-content"
 import { cn } from "@/lib/utils"
 
 /**
  * Public site header. MDS-REF-005 §4: 72 px sticky desktop header;
  * 60 px mobile header with a full menu panel that keeps every destination.
  *
- * Destinations whose routes do not exist yet render as non-navigating,
- * aria-disabled items so the private review contains no broken links
- * (owner decision, 2026-08-27).
+ * Programs is live. The destinations still without routes (Calendar, About,
+ * Resources, Contact, Sign In) render as non-navigating, aria-disabled text so
+ * the review contains no broken links (owner decision, 2026-08-27).
  */
 
 /**
  * Navigation label component that renders available links or disabled text.
  * @param item - Navigation item with label, href, and availability
  * @param className - Additional CSS classes
+ * @param onNavigate - Called when an available item is activated, so the mobile
+ *   menu panel can close itself
  * @returns Navigation label component
  */
-function NavLabel({ item, className }: { item: NavItem; className?: string }) {
+function NavLabel({
+  item,
+  className,
+  onNavigate,
+}: {
+  item: NavItem
+  className?: string
+  onNavigate?: () => void
+}) {
   if (!item.available) {
     /* Muted, non-navigating, and announced as unavailable. One visible notice
        explains the state for the whole group rather than repeating a badge on
@@ -35,7 +51,7 @@ function NavLabel({ item, className }: { item: NavItem; className?: string }) {
         aria-disabled="true"
         className={cn(
           "hsh-body whitespace-nowrap text-[var(--hsh-neutral-400)]",
-          className
+          className,
         )}
       >
         {item.label}
@@ -45,15 +61,16 @@ function NavLabel({ item, className }: { item: NavItem; className?: string }) {
   }
 
   return (
-    <a
+    <Link
       href={item.href}
+      onClick={onNavigate}
       className={cn(
-        "hsh-body text-[var(--hsh-text-secondary)] hover:text-[var(--hsh-forest-700)]",
-        className
+        "hsh-body inline-flex min-h-[var(--hsh-touch-target)] items-center rounded-[var(--hsh-radius-small)] text-[var(--hsh-text-secondary)] hover:text-[var(--hsh-forest-700)]",
+        className,
       )}
     >
       {item.label}
-    </a>
+    </Link>
   )
 }
 
@@ -93,9 +110,12 @@ function SiteHeader() {
 
         <div className="hidden items-center gap-[var(--hsh-space-4)] lg:flex">
           <NavLabel item={accountNav} />
-          <Button variant="primary" size="md" disabled>
+          <Button
+            variant="primary"
+            size="md"
+            render={<Link href={guidanceHref} />}
+          >
             Request Guidance
-            <span className="sr-only">— coming soon</span>
           </Button>
         </div>
 
@@ -141,15 +161,22 @@ function SiteHeader() {
                       key={item.label}
                       className="flex min-h-[var(--hsh-touch-target)] items-center border-b border-[var(--hsh-border-default)]"
                     >
-                      <NavLabel item={item} />
+                      <NavLabel
+                        item={item}
+                        onNavigate={() => setMenuOpen(false)}
+                      />
                     </li>
                   ))}
                 </ul>
               </nav>
 
-              <Button variant="primary" size="lg" disabled className="w-full">
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full"
+                render={<Link href={programsHref} />}
+              >
                 Explore Programs
-                <span className="sr-only">— coming soon</span>
               </Button>
             </Dialog.Popup>
           </Dialog.Portal>

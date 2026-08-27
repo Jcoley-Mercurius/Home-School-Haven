@@ -1,0 +1,26 @@
+# Build and vendor output
+.next
+node_modules
+package-lock.json
+tsconfig.tsbuildinfo
+test-results
+playwright-report
+
+# Approved governance artifacts — MPS, MDS, and MTS are authority.
+# Never reformat them; change them only in the governing system.
+mps
+mds
+mts
+prompts
+AGENTS.md
+CLAUDE.md
+README.md
+
+# Vendored skill packages
+.agents
+.claude
+skills-lock.json
+
+# Binary / reference assets
+design
+public

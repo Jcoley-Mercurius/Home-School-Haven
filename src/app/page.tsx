@@ -1,12 +1,19 @@
-import { Leaf, Sparkles, Sprout, Users } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { Heart, Leaf, Sprout, User, Users } from "lucide-react"
 
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
+import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramCard } from "@/components/program/program-card"
 import { Button } from "@/components/ui/button"
 import {
+  communityImage,
   featuredPrograms,
+  guidanceHref,
+  heroImage,
   positioning,
+  programsHref,
   values,
 } from "@/content/foundation-content"
 
@@ -18,39 +25,49 @@ import {
  * no availability, capacity, or enrollment state, and carries no register, pay,
  * or checkout action — checkout is an external handoff handled elsewhere.
  *
- * Hero imagery: approved photography is not yet available, so the hero is
- * editorial rather than photographic (owner decision, 2026-08-27). Generated
- * people must never be presented as real students (DESIGN-SYSTEM.md §5).
+ * Hero and story imagery is DEMO-ONLY placeholder art reused from MDS-REF-006
+ * (owner decision, 2026-08-27). It is not approved photography and the people in
+ * it are not real students (DESIGN-SYSTEM.md §5); every alt text says so and the
+ * footer states it on the page. See `public/placeholder/README.md` for the
+ * replacement procedure — swapping the files needs no change here.
  */
 
+/* One mark per `values` entry, in order, matching MDS-REF-006's value band:
+   heart on coral, sprig on forest, person on gold, group on forest. */
 const valueMarks = [
-  { icon: Sparkles, surface: "var(--hsh-coral-100)", ink: "var(--hsh-coral-700)" },
-  { icon: Sprout, surface: "var(--hsh-forest-50)", ink: "var(--hsh-forest-600)" },
-  { icon: Users, surface: "var(--hsh-gold-100)", ink: "var(--hsh-gold-700)" },
-  { icon: Leaf, surface: "var(--hsh-forest-100)", ink: "var(--hsh-forest-600)" },
+  { icon: Heart, surface: "var(--hsh-coral-100)", ink: "var(--hsh-coral-700)" },
+  {
+    icon: Sprout,
+    surface: "var(--hsh-forest-50)",
+    ink: "var(--hsh-forest-600)",
+  },
+  { icon: User, surface: "var(--hsh-gold-100)", ink: "var(--hsh-gold-700)" },
+  {
+    icon: Users,
+    surface: "var(--hsh-forest-100)",
+    ink: "var(--hsh-forest-600)",
+  },
 ] as const
 
 export default function Home() {
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-[var(--hsh-space-4)] focus:left-[var(--hsh-space-4)] focus:z-100 focus:rounded-[var(--hsh-radius-control)] focus:bg-[var(--hsh-surface-card)] focus:px-[var(--hsh-space-4)] focus:py-[var(--hsh-space-3)] focus:shadow-[var(--hsh-shadow-card)]"
-      >
-        Skip to main content
-      </a>
+      <SkipLink />
 
       <SiteHeader />
 
       <main id="main" className="flex-1">
         {/* Editorial hero */}
+        {/* MDS-REF-006: from the desktop breakpoint the hero photo bleeds to the
+            top and right viewport edges. Below that it returns to an inset,
+            rounded panel in normal flow so it stays legible when stacked.
+            `overflow-hidden` keeps the bleed from creating horizontal scroll. */}
         <section className="relative overflow-hidden bg-[var(--hsh-surface-page)]">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-24 -right-24 size-[420px] rounded-full bg-[var(--hsh-surface-quiet)] opacity-70 blur-3xl"
-          />
-          <div className="hsh-container hsh-container-public relative grid gap-[var(--hsh-space-12)] py-[var(--hsh-space-12)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:py-[var(--hsh-space-20)]">
-            <div className="flex flex-col gap-[var(--hsh-space-6)]">
+          {/* The grid must NOT be a positioning ancestor: the photo below anchors
+              to this section, which spans the viewport, so `right-0` reaches the
+              viewport edge rather than the 1200 px container edge. */}
+          <div className="hsh-container hsh-container-public grid gap-[var(--hsh-space-12)] py-[var(--hsh-space-12)] lg:min-h-[480px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:py-[var(--hsh-space-20)]">
+            <div className="flex flex-col gap-[var(--hsh-space-6)] lg:pr-[var(--hsh-space-8)]">
               <p className="hsh-label tracking-wide text-[var(--hsh-text-muted)] uppercase">
                 {positioning.eyebrow}
               </p>
@@ -64,33 +81,36 @@ export default function Home() {
                 {positioning.learningCharacter}
               </p>
               <div className="flex flex-wrap gap-[var(--hsh-space-4)]">
-                <Button variant="primary" size="lg" disabled>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  render={<Link href={programsHref} />}
+                >
                   Explore Programs
-                  <span className="sr-only">— coming soon</span>
                 </Button>
-                <Button variant="secondary" size="lg" disabled>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  render={<Link href={guidanceHref} />}
+                >
                   Request Guidance
-                  <span className="sr-only">— coming soon</span>
                 </Button>
               </div>
             </div>
 
-            {/* Reserved for approved photography. Samantha supplies released
-                images before public launch; no generated people are used. */}
-            <div className="relative flex min-h-[280px] items-end justify-center overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-quiet)] p-[var(--hsh-space-8)] lg:min-h-[420px]">
-              <Leaf
-                aria-hidden="true"
-                className="absolute top-[12%] left-[14%] size-24 text-[var(--hsh-forest-500)] opacity-30"
-                strokeWidth={1.75}
+            {/* Demo-only placeholder art — see the module header. */}
+            {/* The container is centred, so a 50vw box anchored to the section's
+                right edge starts exactly on the container's midpoint — flush
+                with the text column, never over it, at any viewport width. */}
+            <div className="relative min-h-[280px] overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-quiet)] lg:absolute lg:inset-y-0 lg:right-0 lg:w-[50vw] lg:rounded-none">
+              <Image
+                src={heroImage.src}
+                alt={heroImage.alt}
+                fill
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
               />
-              <Sprout
-                aria-hidden="true"
-                className="absolute right-[16%] bottom-[22%] size-32 text-[var(--hsh-forest-500)] opacity-25"
-                strokeWidth={1.75}
-              />
-              <p className="hsh-caption relative text-center text-[var(--hsh-text-muted)]">
-                Approved photography pending
-              </p>
             </div>
           </div>
         </section>
@@ -169,9 +189,12 @@ export default function Home() {
             >
               Not sure where to begin?
             </h2>
-            <Button variant="secondary" size="md" disabled>
+            <Button
+              variant="secondary"
+              size="md"
+              render={<Link href={guidanceHref} />}
+            >
               Request Guidance
-              <span className="sr-only">— coming soon</span>
             </Button>
           </div>
         </section>
@@ -198,15 +221,15 @@ export default function Home() {
           </div>
 
           {/* Reserved for approved photography, as above. */}
-          <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-elevated)] p-[var(--hsh-space-8)]">
-            <Sprout
-              aria-hidden="true"
-              className="absolute left-[18%] size-28 text-[var(--hsh-forest-500)] opacity-25"
-              strokeWidth={1.75}
+          {/* Demo-only placeholder art — see the module header. */}
+          <div className="relative min-h-[240px] overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-elevated)] lg:min-h-[360px]">
+            <Image
+              src={communityImage.src}
+              alt={communityImage.alt}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
             />
-            <p className="hsh-caption relative text-[var(--hsh-text-muted)]">
-              Approved photography pending
-            </p>
           </div>
         </section>
       </main>

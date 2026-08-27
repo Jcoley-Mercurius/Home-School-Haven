@@ -9,7 +9,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
         "flex flex-col gap-[var(--hsh-space-4)] p-[var(--hsh-space-6)]",
         "rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)]",
         "bg-[var(--hsh-surface-card)] shadow-[var(--hsh-shadow-card)]",
-        className
+        className,
       )}
       {...props}
     />
@@ -41,7 +41,7 @@ function CardGlyph({ className, ...props }: React.ComponentProps<"div">) {
       className={cn(
         "flex size-10 items-center justify-center rounded-full",
         "bg-[var(--hsh-surface-quiet)] text-[var(--hsh-forest-500)]",
-        className
+        className,
       )}
       {...props}
     />
@@ -108,7 +108,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="card-footer"
       className={cn(
         "flex flex-wrap items-center gap-[var(--hsh-space-4)]",
-        className
+        className,
       )}
       {...props}
     />

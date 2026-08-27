@@ -11,7 +11,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "hsh-body flex w-full min-h-[calc(var(--hsh-control-height-standard)*2)]",
+        "hsh-body flex min-h-[calc(var(--hsh-control-height-standard)*2)] w-full",
         "px-[var(--hsh-space-4)] py-[var(--hsh-space-3)]",
         "rounded-[var(--hsh-radius-control)] border border-[var(--hsh-border-default)]",
         "bg-[var(--hsh-surface-card)] text-[var(--hsh-text-primary)]",
@@ -19,10 +19,10 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
         "transition-colors outline-none",
         "hover:border-[var(--hsh-border-strong)]",
         "focus-visible:outline-[length:var(--hsh-focus-width)] focus-visible:outline-solid",
-        "focus-visible:outline-[color:var(--hsh-focus)] focus-visible:outline-offset-[var(--hsh-focus-offset)]",
+        "focus-visible:outline-offset-[var(--hsh-focus-offset)] focus-visible:outline-[color:var(--hsh-focus)]",
         "disabled:cursor-not-allowed disabled:bg-[var(--hsh-surface-elevated)] disabled:text-[var(--hsh-neutral-400)]",
         "aria-invalid:border-[var(--hsh-error)]",
-        className
+        className,
       )}
       {...props}
     />

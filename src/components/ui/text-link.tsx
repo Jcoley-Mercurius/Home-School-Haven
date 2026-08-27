@@ -26,7 +26,7 @@ const textLinkVariants = cva(
     defaultVariants: {
       tone: "default",
     },
-  }
+  },
 )
 
 /**
