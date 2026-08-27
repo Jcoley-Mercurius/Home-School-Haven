@@ -1,0 +1,14 @@
+interface:
+  display_name: Mercurius Design System
+  short_description: Define and govern product experience design
+  default_prompt: Use $mercurius-design-system to create or continue the approved
+    experience design for this product.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

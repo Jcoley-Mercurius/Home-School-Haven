@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Mercurius skills bundle (regenerated from .agents/)
+Home-School-Haven-Mercurius-Project-Skills.zip

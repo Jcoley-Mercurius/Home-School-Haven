@@ -1,0 +1,113 @@
+mts:
+  system: Mercurius Technology System
+  schema_version: "1.1"
+  project_id: null
+  project_name: null
+  lifecycle: draft
+  mts_version: null
+  current_gate: discovery
+  mps_project_id: null
+  mps_version: null
+  mds_project_id: null
+  mds_version: null
+  created_at: null
+  updated_at: null
+
+project:
+  name: null
+  description: null
+  product_type: null
+  users: []
+  platforms: []
+  business_stage: null
+  scope: []
+  out_of_scope: []
+  constraints: []
+  scale_assumptions: []
+  regulatory_context: []
+
+existing_system:
+  repositories: []
+  runtime: {}
+  deployment: {}
+  packages: []
+  services: []
+  data_stores: []
+  integrations: []
+  agent_capabilities: []
+  environment_variable_names: []
+
+capabilities: []
+
+architecture:
+  environments: []
+  runtime: {}
+  deployment: {}
+  data: {}
+  identity: {}
+  authorization: {}
+  tenancy: {}
+  services: []
+  integrations: []
+  apis: []
+  events: []
+  jobs: []
+  observability: {}
+  analytics: {}
+  ai: {}
+  reliability: {}
+  recovery: {}
+
+security:
+  actors: []
+  roles: []
+  assets: []
+  data_classes: []
+  trust_boundaries: []
+  secret_controls: []
+  access_controls: []
+  privacy_controls: []
+  ai_controls: []
+  operational_controls: []
+
+research: []
+
+governance:
+  decisions: []
+  gaps: []
+  risks: []
+  exceptions: []
+  deviations: []
+  changes: []
+  versions: []
+
+artifacts:
+  state: {path: mts/MTS-PROJECT-STATE.yaml, status: current}
+  technology_blueprint: {path: mts/TECHNOLOGY-BLUEPRINT.md, status: missing}
+  capability_matrix: {path: mts/CAPABILITY-MATRIX.md, status: missing}
+  integration_manifest: {path: mts/INTEGRATION-MANIFEST.md, status: missing}
+  security_architecture: {path: mts/SECURITY-ARCHITECTURE.md, status: missing}
+  implementation_plan: {path: mts/IMPLEMENTATION-PLAN.md, status: missing}
+  agents_md: {path: AGENTS.md, status: missing}
+  qa_protocol: {path: mts/qa/MTS-QA.md, status: missing}
+  verification_report: {path: mts/qa/MTS-VERIFICATION.md, status: missing}
+
+gates:
+  discovery: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  inspection: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  capability_mapping: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  research: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  recommendation: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  approval: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  implementation_readiness: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  verification: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+
+verification:
+  architecture: null
+  integration_data: null
+  security_privacy: null
+  reliability_operations: null
+  mps_synchronization: null
+  mds_synchronization: null
+  overall_status: null
+  reviewed_at: null

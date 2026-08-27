@@ -1,0 +1,112 @@
+mps:
+  system: Mercurius Product System
+  schema_version: "1.0"
+  project_id: null
+  project_name: null
+  lifecycle: draft
+  mps_version: null
+  current_gate: discovery
+  created_at: null
+  updated_at: null
+
+project:
+  name: null
+  description: null
+  product_type: null
+  business_stage: null
+  geography: []
+  platforms: []
+  decision_owners: []
+  context: []
+  constraints: []
+  non_goals: []
+
+purpose:
+  statement: null
+  problem_statement: null
+  value_proposition: null
+  principles: []
+  guardrails: []
+
+outcomes: []
+actors: []
+
+scope:
+  capabilities: []
+  features: []
+  mvp: []
+  now: []
+  next: []
+  later: []
+  out_of_scope: []
+  dependencies: []
+  experiments: []
+
+workflows: []
+business_rules: []
+requirements: []
+acceptance_criteria: []
+metrics: []
+releases: []
+
+downstream:
+  mds:
+    project_id: null
+    version: null
+    status: not_started
+    last_synchronized: null
+    open_product_gaps: []
+  mts:
+    project_id: null
+    version: null
+    status: not_started
+    last_synchronized: null
+    open_product_gaps: []
+  implementation:
+    status: not_started
+    manifest: mps/implementation/PRODUCT-IMPLEMENTATION.md
+    last_validated: null
+
+governance:
+  decisions: []
+  assumptions: []
+  gaps: []
+  risks: []
+  exceptions: []
+  deviations: []
+  changes: []
+  versions: []
+  validation_findings: []
+
+artifacts:
+  state: {path: mps/MPS-PROJECT-STATE.yaml, status: current}
+  product_blueprint: {path: mps/PRODUCT-BLUEPRINT.md, status: missing}
+  outcomes_metrics: {path: mps/OUTCOMES-METRICS.md, status: missing}
+  user_role_model: {path: mps/USER-ROLE-MODEL.md, status: missing}
+  scope_release_plan: {path: mps/SCOPE-RELEASE-PLAN.md, status: missing}
+  workflow_catalog: {path: mps/WORKFLOW-CATALOG.md, status: missing}
+  requirements_rules: {path: mps/REQUIREMENTS-RULES.md, status: missing}
+  acceptance_criteria: {path: mps/ACCEPTANCE-CRITERIA.md, status: missing}
+  product_implementation: {path: mps/implementation/PRODUCT-IMPLEMENTATION.md, status: missing}
+  agents_md: {path: AGENTS.md, status: missing}
+  qa_protocol: {path: mps/qa/MPS-QA.md, status: missing}
+  validation_report: {path: mps/qa/MPS-VALIDATION.md, status: missing}
+
+gates:
+  discovery: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  outcomes: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  users: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  scope_priority: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  workflows_states: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  requirements_acceptance: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  approval_handoff: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  product_validation: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+
+validation:
+  scope_compliance: null
+  workflow_state_compliance: null
+  rules_roles_acceptance: null
+  outcome_measurement_readiness: null
+  downstream_synchronization: null
+  overall_status: null
+  reviewed_at: null

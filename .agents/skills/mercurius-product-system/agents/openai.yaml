@@ -1,0 +1,14 @@
+interface:
+  display_name: Mercurius Product System
+  short_description: Define and validate build-ready products
+  default_prompt: Use $mercurius-product-system to define this product before design
+    and technology decisions.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

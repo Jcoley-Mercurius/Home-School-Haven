@@ -1,0 +1,214 @@
+mds:
+  system: Mercurius Design System
+  schema_version: "1.1"
+  project_id: null
+  project_name: null
+  lifecycle: draft
+  mds_version: null
+  current_gate: discovery
+  mps_project_id: null
+  mps_version: null
+  created_at: null
+  updated_at: null
+
+project:
+  name: null
+  description: null
+  product_type: null
+  audience: []
+  platforms: []
+  primary_experience: null
+  scope: []
+  out_of_scope: []
+  status: draft
+
+identity:
+  logo: null
+  personality: []
+  brand_adjectives: []
+  emotional_response: []
+  visual_direction: null
+  principles: []
+  references: []
+
+color:
+  primary: {}
+  secondary: {}
+  accent: {}
+  neutrals: {}
+  semantic:
+    success: {}
+    warning: {}
+    error: {}
+    info: {}
+  surfaces: {}
+  text: {}
+  borders: {}
+  usage_rules: []
+
+typography:
+  display_family: null
+  ui_family: null
+  mono_family: null
+  weights: {}
+  scale: {}
+  line_heights: {}
+  letter_spacing: {}
+  roles: {}
+  usage_rules: []
+
+spacing:
+  base_unit: null
+  scale: {}
+  page_rules: {}
+  section_rules: {}
+  component_rules: {}
+
+shape:
+  radius: {}
+  borders: {}
+  dividers: {}
+  shadows: {}
+  elevation: {}
+
+icons:
+  family: null
+  implementation: null
+  stroke_style: null
+  fill_style: null
+  sizes: {}
+  custom_icon_rules: []
+  usage_rules: []
+
+components: {}
+
+layout:
+  max_content_width: null
+  grid: {}
+  gutters:
+    desktop: null
+    tablet: null
+    mobile: null
+  header: null
+  sidebar: null
+  footer: null
+  section_spacing: null
+  page_shells: {}
+
+responsive:
+  breakpoints:
+    mobile: null
+    tablet: null
+    desktop: null
+    wide: null
+  rules:
+    stacking: []
+    navigation: []
+    sidebar: []
+    grid: []
+    typography: []
+    spacing: []
+    visibility: []
+    media: []
+    touch: []
+
+patterns:
+  landing: null
+  dashboard: null
+  search_results: null
+  detail: null
+  forms: null
+  authentication: null
+  empty: null
+  error: null
+  loading: null
+  custom: {}
+
+visual_language:
+  personality: null
+  density: null
+  contrast: null
+  surface_philosophy: null
+  border_philosophy: null
+  shadow_philosophy: null
+  color_philosophy: null
+  typography_character: null
+  icon_character: null
+  whitespace_philosophy: null
+
+guidance:
+  do: []
+  dont: []
+
+accessibility:
+  target: null
+  contrast: null
+  focus: null
+  keyboard: null
+  touch_targets: null
+  motion: null
+  semantic_markup: null
+  screen_reader: null
+  image_alternatives: null
+  additional_rules: []
+
+references: []
+
+technical:
+  framework: null
+  framework_version: null
+  language: null
+  styling_system: null
+  component_system: null
+  icon_implementation: null
+  font_implementation: null
+  repository_structure: null
+  token_location: null
+  component_location: null
+  global_style_location: null
+  layout_location: null
+  deployment_target: null
+  accessibility_tools: []
+  test_tools: []
+
+governance:
+  decisions: []
+  gaps: []
+  exceptions: []
+  deviations: []
+  changes: []
+  versions: []
+
+artifacts:
+  design_specification: {path: null, status: missing}
+  principles: {path: null, status: missing}
+  do_dont: {path: null, status: missing}
+  tokens: {path: null, status: missing}
+  core_reference: {path: null, status: missing}
+  layout_reference: {path: null, status: missing}
+  component_reference: {path: null, status: missing}
+  ui_references: []
+  agents_md: {path: null, status: missing}
+  implementation_manifest: {path: null, status: missing}
+  qa_protocol: {path: null, status: missing}
+  compliance_report: {path: null, status: missing}
+
+gates:
+  discovery: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  foundations: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  components: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  composition: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  references: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  approval: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  implementation_readiness: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+  compliance: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
+
+compliance:
+  gate_1: null
+  gate_2: null
+  gate_3: null
+  overall_status: null
+  open_gaps: 0
+  approved_exceptions: 0
+  open_deviations: 0
+  reviewed_at: null

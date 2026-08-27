@@ -1,0 +1,14 @@
+interface:
+  display_name: Mercurius Technology System
+  short_description: Select and govern secure application technology
+  default_prompt: Use $mercurius-technology-system to create a secure technology blueprint
+    for this product.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
