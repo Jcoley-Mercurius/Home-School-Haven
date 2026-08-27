@@ -1,5 +1,8 @@
 /**
- * Foundation Release public content.
+ * Foundation Release public content — brand, contact, and navigation.
+ *
+ * The published program catalog lives in `./programs` and is re-exported here
+ * so existing imports keep working.
  *
  * Every value here is a fact published on https://homeschoolhaven.org/ and
  * recorded in `mps/BETA-CONTENT-IMPORT-INVENTORY.md` (captured 2026-08-26).
@@ -11,99 +14,23 @@
  * data store and must not accumulate facts that lack a source row.
  */
 
-export type ImportStatus = "import" | "import-title-review-detail"
+import type { PlaceholderImage } from "./programs"
 
-/**
- * Demo-only placeholder imagery. Owner decision 2026-08-27: reuse the generated
- * art direction already in MDS-REF-006 so Samantha can review layout now.
- *
- * These are NOT approved photography and the people in them are NOT real
- * students (DESIGN-SYSTEM.md §5, DO-DONT.md). Alt text always says so, and the
- * files must not ship to a live environment. When released photography arrives,
- * replace the files in `public/placeholder/` and update `alt` here — the layout
- * does not change. See `public/placeholder/README.md`.
- */
-export type PlaceholderImage = {
-  src: string
-  alt: string
-  width: number
-  height: number
-  /** Always true while the asset is generated art direction, never approved. */
-  isPlaceholder: true
-}
-
-export type Program = {
-  slug: string
-  name: string
-  /** Published schedule text, preserved as written in the source. */
-  publishedDates: string | null
-  /** Published duration text. */
-  publishedDuration: string | null
-  /** Published price text. Never derived or estimated. */
-  publishedPrice: string | null
-  importStatus: ImportStatus
-  /** Inventory rows this entry is drawn from. */
-  source: string
-  /** Demo-only placeholder art. Replace the file, not the layout. */
-  image: PlaceholderImage
-  /** Detail route. Stubbed within the programs page until that screen is built. */
-  href: string
-}
-
-/** The three programs MDS-REF-006 features on the home page. */
-export const featuredPrograms: Program[] = [
-  {
-    slug: "art-lab",
-    name: "Art Lab",
-    publishedDates: "August 22–September 26, 2026",
-    publishedDuration: null,
-    publishedPrice: null,
-    importStatus: "import",
-    source: "BETA-CONTENT-IMPORT-INVENTORY — Published program inventory",
-    href: "/programs#art-lab",
-    image: {
-      src: "/placeholder/program-art-lab.jpg",
-      alt: "Placeholder photo — demo only. Watercolour paints and brushes on a table.",
-      width: 456,
-      height: 474,
-      isPlaceholder: true,
-    },
-  },
-  {
-    slug: "haven-days-enrichment",
-    name: "Haven Days Enrichment",
-    publishedDates: "September 2026–June 2027",
-    publishedDuration: null,
-    publishedPrice: null,
-    importStatus: "import",
-    source: "BETA-CONTENT-IMPORT-INVENTORY — Published program inventory",
-    href: "/programs#haven-days-enrichment",
-    image: {
-      src: "/placeholder/program-haven-days-enrichment.jpg",
-      alt: "Placeholder photo — demo only. Potted plants beside a window.",
-      width: 498,
-      height: 474,
-      isPlaceholder: true,
-    },
-  },
-  {
-    slug: "harvest-explorers",
-    name: "Harvest Explorers",
-    publishedDates: "August 20–September 24",
-    publishedDuration: "Six weeks",
-    publishedPrice: "$180 for all six weeks",
-    importStatus: "import",
-    source: "BETA-CONTENT-IMPORT-INVENTORY — Published program inventory",
-    href: "/programs#harvest-explorers",
-    image: {
-      src: "/placeholder/program-harvest-explorers.jpg",
-      alt: "Placeholder photo — demo only. A woven basket with a eucalyptus sprig.",
-      width: 474,
-      height: 474,
-      isPlaceholder: true,
-    },
-  },
-]
+export {
+  featuredPrograms,
+  featuredSlugs,
+  getProgram,
+  programHref,
+  programs,
+  publishedFacts,
+  relatedPrograms,
+} from "./programs"
+export type {
+  AvailabilityState,
+  ImportStatus,
+  PlaceholderImage,
+  Program,
+} from "./programs"
 
 /** Demo-only placeholder art for the two reserved home panels. */
 export const heroImage: PlaceholderImage = {

@@ -92,7 +92,7 @@ test.describe("structure", () => {
     const ctas = [
       { name: "Explore Programs", href: "/programs" },
       { name: "Request Guidance", href: "/guidance" },
-      { name: /^View Details for /, href: "/programs#art-lab" },
+      { name: /^View Details for /, href: "/programs/art-lab" },
     ]
 
     for (const cta of ctas) {
