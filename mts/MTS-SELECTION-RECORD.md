@@ -12,7 +12,7 @@
 
 ## Bottom line
 
-The approved core is a TypeScript/Next.js application deployed on Vercel, with Supabase consolidating authentication, Postgres data, row-level authorization, and file storage, and Resend providing transactional and authentication email through the controlled domain. MDS tokens remain canonical and are implemented through CSS variables plus a constrained styling layer; Radix Primitives and Lucide may supply accessible behavior and the approved icon character without importing a competing visual system.
+The approved core is a TypeScript/Next.js application deployed on Vercel, with Supabase consolidating authentication, Postgres data, row-level authorization, and file storage, and Resend providing transactional and authentication email through the controlled domain. MDS tokens remain canonical and are implemented through CSS variables plus a constrained styling layer; The accessible primitives already installed in the repository (`@base-ui/react`, through the shadcn `base-nova` setup) and Lucide may supply accessible behavior and the approved icon character without importing a competing visual system.
 
 The providers are **approved, subject to repository compatibility inspection**. The target repository must still be inspected before MTS can finalize versions, paths, dependencies, and deployment commands. Optional additions and plan upgrades remain separately governed.
 
@@ -29,7 +29,7 @@ The providers are **approved, subject to repository compatibility inspection**. 
 | Public content operations | Custom admin publishing inside the application | Approved; Sanity deferred | Avoids a separate CMS, reduces cost and vendor sprawl, and directly enforces Samantha/admin publishing authority. Sanity may be revisited for future public editorial workflows, never as enrollment or child-data truth. |
 | External checkout | Store approved per-program URLs; explicit handoff; manual admin verification | Approved until provider evidence supports an authoritative integration | Preserves approved beta behavior without inventing APIs, webhooks, or successful-payment truth. |
 | UI styling | Canonical MDS CSS variables with a constrained Tailwind CSS layer if compatible with the repository | Approved | Supports rapid composition while keeping exact MDS values authoritative. Tailwind must not introduce default design decisions. |
-| Accessible interaction primitives | Radix Primitives, selectively | Approved | Supplies focus management, keyboard behavior, and WAI-ARIA-oriented primitives without imposing visual styling. |
+| Accessible interaction primitives | Base UI (`@base-ui/react`), selectively | Approved (MTS-DEC-025, supersedes MTS-DEC-022 on 2026-08-27) | Already installed via the repository's shadcn `base-nova` setup. Supplies focus management, keyboard behavior, and WAI-ARIA-oriented primitives without imposing visual styling. Radix must not be added alongside it. |
 | Icons | Lucide React configured to 1.75 px rounded strokes | Approved | Tree-shakable and customizable to the approved MDS icon character. |
 | Engineering and MDS QA | TypeScript, ESLint, Playwright, `@axe-core/playwright`, and screenshot/ARIA snapshots | Approved | Covers deterministic checks, primary-flow testing, accessibility automation, and visual/reference comparison. Manual WCAG and MDS checks remain required. |
 | Product analytics | PostHog Free after core flow stability; public routes only, cookieless, no person profiles, no session replay | Approved staged | Adds public funnel analytics and feature flags without sending private family/student data. |
@@ -136,7 +136,7 @@ These are implementation mappings of existing MDS trust/error patterns, not chan
 - Supabase custom SMTP: https://supabase.com/docs/guides/auth/auth-smtp
 - Resend pricing: https://resend.com/pricing
 - Tailwind with Next.js: https://tailwindcss.com/docs/guides/nextjs
-- Radix accessibility: https://www.radix-ui.com/primitives/docs/overview/introduction
+- Base UI accessibility: https://base-ui.com/react/overview/quick-start
 - Lucide React: https://lucide.dev/guide/react/
 - Playwright accessibility testing: https://playwright.dev/docs/accessibility-testing
 - Cloudflare Workers, D1, and R2 pricing: https://developers.cloudflare.com/workers/platform/pricing/, https://developers.cloudflare.com/d1/platform/pricing/, and https://developers.cloudflare.com/r2/pricing/
