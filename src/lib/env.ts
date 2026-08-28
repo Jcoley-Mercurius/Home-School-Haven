@@ -37,6 +37,10 @@ import { z } from "zod"
 
 export type ReleaseTarget = "local" | "preview" | "production"
 
+/**
+ * Determines the current release environment target.
+ * @returns The release target based on HSH_RELEASE_TARGET or VERCEL_ENV environment variables.
+ */
 export function releaseTarget(): ReleaseTarget {
   const raw = process.env.HSH_RELEASE_TARGET ?? process.env.VERCEL_ENV
   if (raw === "production") return "production"
@@ -83,6 +87,10 @@ export function supabaseConfig(): SupabaseConfig | null {
   return parsed.data
 }
 
+/**
+ * Checks whether Supabase is configured in the current environment.
+ * @returns `true` if Supabase configuration is available, `false` otherwise.
+ */
 export function isSupabaseConfigured(): boolean {
   return supabaseConfig() !== null
 }

@@ -21,6 +21,12 @@ import { supabaseConfig } from "@/lib/env"
 
 import type { Database } from "./database.types"
 
+/**
+ * Creates a server-side Supabase client for use in Server Components, Server
+ * Actions, and Route Handlers.
+ * @returns A configured Supabase server client with cookie-based session management.
+ * @throws When Supabase is not configured in the current environment.
+ */
 export async function createClient() {
   const config = supabaseConfig()
   if (!config) {
