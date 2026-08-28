@@ -6,16 +6,17 @@ Requested by owner, 2026-08-27. Approved as canonical MDS by the owner on
 
 ## 0. Authority notice (read first)
 
-`mds/references/proposed/README.md` marks this image **Proposed — not approved,
-not canonical**, with no MDS-REF ID. It therefore has no design authority. This
-prompt treats it as *layout intent* only. The authority for every visual
-decision below remains `mds/specification/DESIGN-SYSTEM.md`, `mds/tokens/`, and
-the canonical references (MDS-REF-004 components, MDS-REF-005 shell/grid,
-MDS-REF-006 public hierarchy).
+`mds/references/assets/public-calendar-reference.png` is the approved,
+canonical **MDS-REF-010** reference for this page. It authorizes the calendar
+shell, month grid, notes rail, programs panel, and guidance pathway. The
+written MDS sources remain authoritative for every visual decision, including
+`mds/specification/DESIGN-SYSTEM.md`, `mds/tokens/`, and the canonical
+component, shell/grid, and public-hierarchy references (MDS-REF-004 through
+MDS-REF-006).
 
-Approving this prompt authorizes building the page. It does **not** promote the
-image into `mds/references/assets/` or the reference index — that stays an MDS
-governance action for the owner.
+MDS-REF-010 does not authorize inferred content, taxonomy, chronology, or
+unseen interaction states. Its promotion is recorded in MDS-CHG-008; any
+future version bump remains an MDS governance action for the owner.
 
 ## 1. Goal and scope
 
@@ -196,9 +197,9 @@ npm run dev
 - GAP: A Supabase-backed calendar entity does not exist and is not requested.
   If administrators must publish calendar entries, that is a separate MPS/MTS
   step.
-- Owner action still required: decide whether to promote
-  `public-calendar-proposed.png` into the canonical MDS reference set, and
-  answer QA-002.
+- Owner action still required: answer QA-002. MDS-REF-010 is already
+  canonical; its associated minor-version bump remains an MDS governance
+  action.
 
 ## 13. As built (2026-08-28)
 

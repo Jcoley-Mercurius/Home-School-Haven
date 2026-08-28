@@ -877,7 +877,7 @@ governance:
 
 artifacts:
   handoff_index: {path: "mds/MDS-HANDOFF-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
-  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
+  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-08-28T00:00:00Z"}
   principles: {path: "mds/specification/PRINCIPLES.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   do_dont: {path: "mds/specification/DO-DONT.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   tokens: {path: "mds/tokens", status: current, last_updated: "2026-08-27T02:37:26Z"}
