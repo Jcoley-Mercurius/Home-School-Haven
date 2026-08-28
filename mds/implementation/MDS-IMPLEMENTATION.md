@@ -2,7 +2,7 @@
 
 **System:** Mercurius Design System  
 **Version:** 1.0  
-**Status:** Design handoff locked; MTS runtime selections approved; repository mapped on 2026-08-27  
+**Status:** Design handoff locked; MTS runtime selections approved; repository mapped on 2026-08-27; verification tooling rows refreshed 2026-08-27  
 **Date:** 2026-08-27
 
 ## Authoritative design resources
@@ -32,8 +32,8 @@ Recorded from the inspected repository at `/home/josh/home-school-haven` on
 | Global style/theme location | `src/app/globals.css`, imported once by the root layout `src/app/layout.tsx` |
 | Font loading method and path | `next/font/google` in `src/app/layout.tsx`: Lora 400/600 as `--font-lora`, Manrope 400/500/600/700 as `--font-manrope`, both `display: swap`, consumed by `--hsh-font-display` / `--hsh-font-ui` |
 | Icon library and implementation | `lucide-react` 1.34 with `strokeWidth={1.75}` set explicitly at each call site; Lucide's own default is 2 px |
-| Accessibility tooling | **Not installed.** Playwright, `@axe-core/playwright`, and ARIA snapshots remain required and unmet; accessibility verification is manual until they are added. |
-| Testing and visual comparison tooling | TypeScript (`npx tsc --noEmit`) and ESLint 9 (`npm run lint`, flat config in `eslint.config.mjs`) are available. **No test runner and no screenshot-comparison baseline exist**; there is no `test` script in `package.json`. |
+| Accessibility tooling | Playwright 1.62 + `@axe-core/playwright` 4.13, installed. `npm run test:e2e` runs axe with the `wcag2a/2aa/21a/21aa/22aa` tag set at the four approved viewports on every implemented public route. |
+| Testing and visual comparison tooling | TypeScript (`npm run typecheck`), ESLint 9 (`npm run lint`), Prettier (`npm run format:check`), Playwright (`npm run test:e2e`) with `toHaveScreenshot` baselines committed under `tests/e2e/*-snapshots/`, and `node --test` unit tests (`npm run test:unit`). |
 | Deployment target | Vercel. No `vercel.json` and no `.env*` file is committed; project settings live in the Vercel dashboard. |
 
 ### Commands (WSL/Ubuntu bash)
@@ -41,11 +41,14 @@ Recorded from the inspected repository at `/home/josh/home-school-haven` on
 Node 24.17.0, npm 11.13.0, no `packageManager` field pinned.
 
 ```bash
-npm run dev      # next dev
-npm run build    # next build
-npm run start    # next start
-npm run lint     # eslint (flat config)
-npx tsc --noEmit # type check; there is no typecheck script
+npm run dev          # next dev
+npm run build        # next build (prebuild runs the demo-placeholder gate)
+npm run start        # next start
+npm run lint         # eslint (flat config)
+npm run typecheck    # tsc --noEmit
+npm run format:check # prettier
+npm run test:unit    # node --test tests/*.test.mjs
+npm run test:e2e     # playwright: axe, keyboard, responsive, visual baselines
 ```
 
 ### Design QA surface
@@ -108,7 +111,6 @@ Private beta references and validation may use sample or sanitized family and st
 ## Maintenance
 
 Repository inspection is complete and the table above records actual versions,
-paths, and commands. Update it whenever those change. Outstanding reconciliation:
-install the accessibility and visual-comparison tooling named in
-`mds/qa/MDS-QA.md`, then replace the two "not installed" rows with real commands.
-Never retain placeholder paths.
+paths, and commands. Update it whenever those change. The accessibility and visual-comparison
+tooling named in `mds/qa/MDS-QA.md` is installed and the rows above record its
+real commands (updated 2026-08-27). Never retain placeholder paths.

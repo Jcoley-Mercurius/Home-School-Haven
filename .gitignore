@@ -48,3 +48,6 @@ Home-School-Haven-Mercurius-Project-Skills.zip
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Local design working folder (canonical references live in mds/references/)
+/design/
