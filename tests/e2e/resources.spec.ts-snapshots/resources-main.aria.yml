@@ -1,0 +1,78 @@
+- main:
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+      - listitem: Resources
+  - paragraph: Resources
+  - heading "Support for every step of the journey" [level=1]
+  - paragraph: Useful guidance for exploring programs, preparing for participation, and staying connected.
+  - text: Find a resource
+  - paragraph: Searching narrows the entries shown below on this page.
+  - searchbox "Find a resource"
+  - paragraph: 5 sample entries
+  - region "Resource categories":
+    - heading "Resource categories" [level=2]
+    - list:
+      - listitem:
+        - heading "Getting Started" [level=3]
+        - paragraph: New to Home School Haven? Start here with the basics.
+        - button "Explore resources — Getting Started"
+      - listitem:
+        - heading "Program Information" [level=3]
+        - paragraph: Learn about our programs, enrollment, and expectations.
+        - button "Explore resources — Program Information"
+      - listitem:
+        - heading "Homeschool Support" [level=3]
+        - paragraph: Practical help, planning tools, and encouragement.
+        - button "Explore resources — Homeschool Support"
+      - listitem:
+        - heading "Family Guides" [level=3]
+        - paragraph: Tips and ideas for thriving together at home.
+        - button "Explore resources — Family Guides"
+  - region "Explore helpful resources":
+    - heading "Explore helpful resources" [level=2]
+    - button "View all resources" [disabled]
+    - paragraph: Sample entries for layout review
+    - paragraph: These are placeholder entries that show how resources will be arranged. They are not published Home School Haven resources, and they do not open, download, or link anywhere.
+    - list:
+      - listitem:
+        - paragraph: Guide
+        - 'heading "Sample resource: Getting Started Guide" [level=3]'
+        - paragraph: A gentle overview to help you begin with confidence.
+        - paragraph: Read more — not available for a sample entry
+      - listitem:
+        - paragraph: Guide
+        - 'heading "Sample resource: Program Overview" [level=3]'
+        - paragraph: Understand our programs and how they work.
+        - paragraph: Read more — not available for a sample entry
+      - listitem:
+        - paragraph: Link
+        - 'heading "Sample resource: Helpful Link Collection" [level=3]'
+        - paragraph: Curated tools and references to support your homeschool.
+        - paragraph: Visit resource — not available for a sample entry
+      - listitem:
+        - paragraph: Download
+        - 'heading "Sample resource: Planning Worksheet" [level=3]'
+        - paragraph: A simple worksheet to help you get organized.
+        - paragraph: View details — not available for a sample entry
+      - listitem:
+        - paragraph: Guide
+        - 'heading "Sample resource: Community Connection" [level=3]'
+        - paragraph: Ways to connect, participate, and stay in the loop.
+        - paragraph: Read more — not available for a sample entry
+  - region "Resources for enrolled families":
+    - heading "Resources for enrolled families" [level=2]
+    - paragraph: Program-specific materials and classroom resources are available securely in your family account.
+    - link "Sign In":
+      - /url: /sign-in
+    - link "Learn more about access":
+      - /url: /sign-in
+  - region "Looking for something specific?":
+    - heading "Looking for something specific?" [level=2]
+    - paragraph: Our team is here to help you find the right information for your family's needs.
+    - link "Request Guidance":
+      - /url: /guidance
+    - link "Contact Us":
+      - /url: /guidance

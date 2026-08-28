@@ -17,6 +17,7 @@ const ROUTES = [
   { path: "/programs/art-lab", h1: "Art Lab" },
   { path: "/programs/etiquette-series", h1: "Etiquette Series" },
   { path: "/guidance", h1: "Not sure where to begin?" },
+  { path: "/resources", h1: "Support for every step of the journey" },
 ] as const
 
 for (const route of ROUTES) {
