@@ -249,7 +249,8 @@ npm run dev
 6. Tab through: skip link → header → search → category cards → entries → band
    actions. Focus is always visible; nothing is reachable only by pointer.
 7. Confirm "Sign In" reaches `/sign-in` and both guidance actions reach
-   `/guidance` and `/contact`'s stand-in (guidance, until Contact ships).
+   `/guidance`; the secondary "Contact Us" action is the `/contact` stand-in
+   until `/contact` exists.
 8. Resize to 768 and 390 px: sections stack, nothing scrolls horizontally, all
    targets stay ≥ 44 px.
 9. Confirm Resources is active in the desktop header, in the mobile menu, and
