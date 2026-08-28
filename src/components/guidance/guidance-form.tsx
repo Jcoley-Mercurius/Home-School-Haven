@@ -140,6 +140,7 @@ function GuidanceForm() {
       ) : null}
 
       <form
+        key={state.status === "recorded" ? "reset" : "active"}
         action={formAction}
         noValidate
         className="flex flex-col gap-[var(--hsh-space-6)]"
@@ -193,7 +194,7 @@ function GuidanceForm() {
         <Field invalid={Boolean(state.fieldErrors.email)}>
           <FieldLabel>Email</FieldLabel>
           <FieldDescription>
-            We use this only to reply to this request.
+            When requests are open, we use this only to reply.
           </FieldDescription>
           <Input
             name="email"
@@ -292,10 +293,9 @@ function GuidanceForm() {
             strokeWidth={1.75}
           />
           <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
-            Requests for help with the cost of a class are read privately by
-            Home School Haven and reviewed by a person. Sending one does not
-            create an enrollment and does not decide any discount — we will talk
-            it through with you.
+            When requests are open, they are read privately by Home School Haven
+            and reviewed by a person. Sending one does not create an enrollment
+            and does not decide any discount — we will talk it through with you.
           </p>
         </div>
 

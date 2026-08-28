@@ -7,11 +7,11 @@
 import { spawnSync } from "node:child_process"
 import assert from "node:assert/strict"
 import { test } from "node:test"
+import { fileURLToPath } from "node:url"
 
-const SCRIPT = new URL(
-  "../scripts/check-demo-placeholders.mjs",
-  import.meta.url,
-).pathname
+const SCRIPT = fileURLToPath(
+  new URL("../scripts/check-demo-placeholders.mjs", import.meta.url),
+)
 
 function run(env) {
   return spawnSync(process.execPath, [SCRIPT], {
