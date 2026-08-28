@@ -234,6 +234,7 @@ The approved reference set includes:
 5. Home school dashboard with pending payment warning.
 6. Home School Haven course builder dashboard — future platform.
 7. Home School Haven admin dashboard — Foundation Release.
+8. Home School Haven public calendar — Foundation Release.
 
 The state and this written specification outrank generated imagery if a conflict exists. Static references establish only what they clearly show; they do not define unseen states or technical architecture.
 

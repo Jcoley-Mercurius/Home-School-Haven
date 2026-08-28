@@ -92,7 +92,7 @@ export type NavItem = {
 
 export const primaryNav: NavItem[] = [
   { label: "Programs", href: "/programs", available: true },
-  { label: "Calendar", href: "/calendar", available: false },
+  { label: "Calendar", href: "/calendar", available: true },
   { label: "About", href: "/about", available: false },
   { label: "Resources", href: "/resources", available: false },
   { label: "Contact", href: "/contact", available: false },

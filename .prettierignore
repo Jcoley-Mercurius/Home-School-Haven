@@ -6,6 +6,10 @@ src/lib/supabase/database.types.ts
 # Supabase CLI scratch state (already gitignored)
 supabase/.temp
 
+# Playwright-generated baselines. Rewritten verbatim by `--update-snapshots`,
+# so formatting them only makes the next run report a diff.
+tests/e2e/*.spec.ts-snapshots
+
 # Build and vendor output
 .next
 node_modules

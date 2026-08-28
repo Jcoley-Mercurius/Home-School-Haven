@@ -2,7 +2,7 @@
 
 **MDS version:** 1.0  
 **Status:** Approved and canonical  
-**Date:** 2026-08-26
+**Date:** 2026-08-28
 
 The written MDS state and specification outrank generated imagery if a conflict appears. References are authoritative only for what they clearly show.
 
@@ -16,6 +16,7 @@ The written MDS state and specification outrank generated imagery if a conflict 
 | MDS-REF-007 | Home school dashboard with pending payment warning | Family shell, student context, trust states | Foundation Release | `libfile_9ac613ffcb508191bfb9f045b3015fe7` |
 | MDS-REF-008 | Home School Haven course builder dashboard | Educator Content Studio visual architecture only | Future platform | `libfile_abbb23022eb88191a4e650b6ba3c9322` |
 | MDS-REF-009 | Home School Haven admin dashboard | Administrator operations shell and hierarchy | Foundation Release | `libfile_b2ede9df68988191a47c28de82268ee7` |
+| MDS-REF-010 | Home School Haven public calendar | Public calendar shell, month grid, published-detail notes, guidance pathway | Foundation Release | Local asset only |
 
 ## Reference protocol
 
@@ -43,3 +44,20 @@ Generated people and scenes are art direction, not real records or approved prod
 | MDS-REF-007 | `mds/references/assets/family-dashboard-reference.png` |
 | MDS-REF-008 | `mds/references/assets/course-builder-future-reference.png` |
 | MDS-REF-009 | `mds/references/assets/admin-dashboard-reference.png` |
+| MDS-REF-010 | `mds/references/assets/public-calendar-reference.png` |
+
+## MDS-REF-010 implementation notes
+
+Approved by the owner on 2026-08-28, promoted from the proposed set. It was
+drawn before the published calendar content was reconciled, so three parts of
+the image are layout intent rather than approved content, and the implementation
+records each as a deviation in `prompts/public-calendar-page.md`:
+
+- the category chips (All / Classes / Workshops / Community) show a taxonomy no
+  approved source assigns to any offering;
+- the May 2026 month and its event dot correspond to no published entry;
+- the right panel is titled "Upcoming", but most published program ranges carry
+  no year and cannot be ordered in time.
+
+The reference is authoritative for the calendar shell, month grid, notes rail,
+programs panel, and guidance band. It does not authorize inventing content.
