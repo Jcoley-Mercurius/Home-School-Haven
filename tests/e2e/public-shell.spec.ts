@@ -13,6 +13,7 @@ import { expect, test } from "./fixtures"
 const ROUTES = [
   { path: "/programs", h1: "Published programs" },
   { path: "/calendar", h1: "Plan your learning season" },
+  { path: "/about", h1: "A haven for curious learners and connected families" },
   { path: "/programs/art-lab", h1: "Art Lab" },
   { path: "/programs/etiquette-series", h1: "Etiquette Series" },
   { path: "/guidance", h1: "Not sure where to begin?" },

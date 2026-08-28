@@ -1,12 +1,13 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Heart, Leaf, Sprout, User, Users } from "lucide-react"
+import { Leaf } from "lucide-react"
 
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramCard } from "@/components/program/program-card"
 import { ProgramDataError } from "@/components/program/program-data-error"
+import { ValueBand } from "@/components/public/value-band"
 import { Button } from "@/components/ui/button"
 import {
   communityImage,
@@ -14,7 +15,6 @@ import {
   heroImage,
   positioning,
   programsHref,
-  values,
 } from "@/content/foundation-content"
 import { listFeaturedPrograms } from "@/lib/programs/repository"
 
@@ -32,23 +32,6 @@ import { listFeaturedPrograms } from "@/lib/programs/repository"
  * footer states it on the page. See `public/placeholder/README.md` for the
  * replacement procedure — swapping the files needs no change here.
  */
-
-/* One mark per `values` entry, in order, matching MDS-REF-006's value band:
-   heart on coral, sprig on forest, person on gold, group on forest. */
-const valueMarks = [
-  { icon: Heart, surface: "var(--hsh-coral-100)", ink: "var(--hsh-coral-700)" },
-  {
-    icon: Sprout,
-    surface: "var(--hsh-forest-50)",
-    ink: "var(--hsh-forest-600)",
-  },
-  { icon: User, surface: "var(--hsh-gold-100)", ink: "var(--hsh-gold-700)" },
-  {
-    icon: Users,
-    surface: "var(--hsh-forest-100)",
-    ink: "var(--hsh-forest-600)",
-  },
-] as const
 
 /**
  * Deliberately statically rendered, with no `revalidate`.
@@ -148,26 +131,7 @@ export default async function Home() {
           <h2 id="values-heading" className="sr-only">
             What we value
           </h2>
-          <ul className="grid gap-[var(--hsh-space-4)] rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-elevated)] p-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-4">
-            {values.map((value, index) => {
-              const { icon: Icon, surface, ink } = valueMarks[index]
-              return (
-                <li
-                  key={value}
-                  className="hsh-body flex items-center gap-[var(--hsh-space-3)] text-[var(--hsh-text-primary)]"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="flex size-11 shrink-0 items-center justify-center rounded-full"
-                    style={{ backgroundColor: surface, color: ink }}
-                  >
-                    <Icon className="size-5" strokeWidth={1.75} />
-                  </span>
-                  {value}
-                </li>
-              )
-            })}
-          </ul>
+          <ValueBand />
         </section>
 
         {/* Featured programs */}
