@@ -8,7 +8,8 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { ProgramCard } from "@/components/program/program-card"
 import { Button } from "@/components/ui/button"
-import { contact, guidanceHref, programs } from "@/content/foundation-content"
+import { contact, guidanceHref } from "@/content/foundation-content"
+import { listPublishedPrograms } from "@/lib/programs/repository"
 
 /**
  * Program catalog (MPS-REQ-007, MPS-REQ-008, MPS-ACC-009, MPS-ACC-010;
@@ -27,6 +28,11 @@ import { contact, guidanceHref, programs } from "@/content/foundation-content"
  *
  * The catalog carries no register, pay, or checkout action. Checkout is a
  * handoff that lives on the detail page behind its trust notice.
+ *
+ * Programs come from Supabase (MTS-ARCHITECTURE-ADDENDUM: Supabase is the
+ * single source of truth). `listPublishedPrograms` returns `null` when the
+ * system of record cannot be read, which renders the error state rather than a
+ * stale or empty catalog.
  */
 export const metadata: Metadata = {
   title: "Programs — Home School Haven of SWFL",
@@ -34,8 +40,39 @@ export const metadata: Metadata = {
     "Published Home School Haven programs. Details not published here are confirmed directly with Home School Haven.",
 }
 
-export default function ProgramsPage() {
+/**
+ * Deliberately statically rendered, with no `revalidate`.
+ *
+ * Time-based ISR was tried here and removed: with `revalidate` set, Next.js
+ * 16.3.3 left the RSC payload requests it issues when prefetching links in
+ * flight for 25+ seconds each. Hovering a link would hang a request, which is a
+ * far worse defect than the staleness ISR was meant to fix.
+ *
+ * The staleness is real and stays recorded: a static prerender captures the
+ * database as it was at build time, so an administrator publishing a program
+ * will not change this page until the next deploy. That is acceptable only
+ * because the Foundation Release has no administrator write surface yet — every
+ * program change already goes through a migration or seed, followed by a
+ * deploy.
+ *
+ * When the administrator write surface lands (MTS IMPLEMENTATION-PLAN Phase 4),
+ * the fix is on-demand revalidation — `revalidatePath()` called from the server
+ * action that publishes the change — not a timer. It is precise, it keeps
+ * MPS-REQ-020 consistency across surfaces, and it does not reintroduce this
+ * prefetch behavior.
+ */
+
+export default async function ProgramsPage() {
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
+  const programs = await listPublishedPrograms()
+
+  // Fail prerendering rather than caching a database error as static output.
+  if (programs === null) {
+    throw new Error(
+      "Failed to fetch programs from the system of record. " +
+        "This page cannot be prerendered without database access.",
+    )
+  }
 
   return (
     <>

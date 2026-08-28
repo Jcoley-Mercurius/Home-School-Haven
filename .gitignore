@@ -32,6 +32,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# The environment contract carries names and empty values only.
+!.env.example
 
 # vercel
 .vercel
