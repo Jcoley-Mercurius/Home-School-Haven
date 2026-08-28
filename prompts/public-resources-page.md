@@ -249,7 +249,7 @@ npm run dev
 6. Tab through: skip link → header → search → category cards → entries → band
    actions. Focus is always visible; nothing is reachable only by pointer.
 7. Confirm "Sign In" reaches `/sign-in` and both guidance actions reach
-   `/guidance` and `/contact`'s stand-in (guidance, until Contact ships).
+   `/contact`.
 8. Resize to 768 and 390 px: sections stack, nothing scrolls horizontally, all
    targets stay ≥ 44 px.
 9. Confirm Resources is active in the desktop header, in the mobile menu, and
@@ -273,7 +273,8 @@ below. Nothing in §12 remains an assumption.
    `mds/references/assets/` or the reference index until the owner says so. It
    stays in `mds/references/proposed/` with no MDS-REF ID, and it remains layout
    intent rather than design authority.
-3. **"Contact Us" keeps pointing at `/guidance`** until `/contact` exists.
+3. **Contact now exists at `/contact`.** Both guidance actions use the shared
+   `guidanceHref`, which now points to `/contact`.
 4. **D-R3 stands: category cards filter in place.** Category routes are not
    wanted.
 5. The image's copy is Home School Haven's own words, as it was for About
@@ -316,6 +317,6 @@ illustrations are omitted.
 
 Checks run and their real results are recorded in the completion report. The
 public visual baselines for home, about, calendar, programs, guidance, and
-sign-in were re-recorded; the diff was inspected first and confirmed the only
-change is the Resources nav item, now a live link in the header and footer
-rather than dimmed text.
+sign-in were re-recorded for the Resources navigation change. Contact later
+shipped at `/contact`, and `guidanceHref` changed from `/guidance` to `/contact`
+so both guidance actions now use the live Contact destination.

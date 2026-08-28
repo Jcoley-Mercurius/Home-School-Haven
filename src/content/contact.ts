@@ -96,7 +96,7 @@ export const reassurancePanel = {
   points: [
     {
       glyph: "people" as const,
-      text: "Every message is read by a real person who cares.",
+      text: "Online requests are not open yet, so submitted messages are not recorded or seen.",
     },
     {
       glyph: "heart" as const,

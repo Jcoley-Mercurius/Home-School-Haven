@@ -149,7 +149,7 @@ test.describe("approved content", () => {
       "Have a general inquiry? We're happy to help and point you in the right direction.",
       "Request a confidential conversation with our care team.",
       "We're here for you.",
-      "Every message is read by a real person who cares.",
+      "Online requests are not open yet, so submitted messages are not recorded or seen.",
     ]) {
       expect(body).toContain(line)
     }

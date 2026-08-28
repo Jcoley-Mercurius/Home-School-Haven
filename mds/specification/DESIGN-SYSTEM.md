@@ -1,6 +1,6 @@
 # Home School Haven Mercurius Design System
 
-**Version:** 1.0  
+**Version:** 1.1\
 **Status:** Approved and locked  
 **Active gate:** Implementation readiness  
 **Product source:** Current approved Home School Haven MPS state (unversioned draft, Library version 11)  
@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Home School Haven MDS v1.0 defines the visual language, responsive composition, components, interaction states, and design-accessibility behavior for a connected Christ-centered ecosystem spanning the public website and family, educator, and administrator experiences.
+Home School Haven MDS v1.1 defines the visual language, responsive composition, components, interaction states, and design-accessibility behavior for a connected Christ-centered ecosystem spanning the public website and family, educator, and administrator experiences.
 
 The design direction is a **warm boutique learning community**. It preserves and thoughtfully refines the existing identity, while integrating faith in a balanced and natural way.
 
@@ -248,6 +248,6 @@ The state and this written specification outrank generated imagery if a conflict
 
 ## 13. Change control
 
-MDS v1.0 is locked. A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
+MDS v1.1 is locked. A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
 
 No coding agent may redesign, modernize, embellish, simplify, or “improve” this system without explicit approval and state propagation.
