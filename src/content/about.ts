@@ -28,7 +28,8 @@ export type AboutContentSource =
 const OWNER: AboutContentSource = "owner-approved-about-reference"
 
 export const aboutHero = {
-  eyebrow: "About Home School Haven",
+  // Drawn verbatim in the owner-approved image copy (2026-08-28).
+  eyebrow: "ABOUT HOME SCHOOL HAVEN",
   heading: "A haven for curious learners and connected families",
   summary:
     "Home School Haven is a Christ-centered homeschool community offering enrichment classes, hands-on workshops, small-group learning, and family support.",
@@ -118,6 +119,7 @@ export const communityIntro = {
 } as const
 
 export const aboutClosing = {
+  // Drawn verbatim in the owner-approved image copy (2026-08-28).
   prompt: "Ready to learn more about our programs and community?",
   source: OWNER,
 } as const
