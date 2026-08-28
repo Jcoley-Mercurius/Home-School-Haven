@@ -145,9 +145,9 @@ export default function ResourcesPage() {
               >
                 {resourcesGuidanceBand.primaryAction}
               </Button>
-              {/* The reference draws a second action to a Contact page. That
-                  route does not exist yet, so it points at the same approved
-                  guidance pathway rather than at a dead link (prompt A-3). */}
+              {/* The reference draws a second action to a Contact page. Since
+                  2026-08-28 that page exists and `guidanceHref` points at it,
+                  so both actions reach the one approved inquiry surface. */}
               <Button
                 variant="secondary"
                 size="md"

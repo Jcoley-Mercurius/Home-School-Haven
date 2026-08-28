@@ -262,6 +262,6 @@ test.describe("navigation", () => {
       .getByRole("link", { name: "Request Guidance" })
       .first()
       .click()
-    await expect(page).toHaveURL(/\/guidance$/)
+    await expect(page).toHaveURL(/\/contact$/)
   })
 })

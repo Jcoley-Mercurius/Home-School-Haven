@@ -73,6 +73,6 @@
     - heading "Looking for something specific?" [level=2]
     - paragraph: Our team is here to help you find the right information for your family's needs.
     - link "Request Guidance":
-      - /url: /guidance
+      - /url: /contact
     - link "Contact Us":
-      - /url: /guidance
+      - /url: /contact

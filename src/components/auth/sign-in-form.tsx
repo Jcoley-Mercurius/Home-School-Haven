@@ -122,7 +122,11 @@ export function SignInForm({ redirectTo }: { redirectTo: string }) {
 
         <Field invalid={Boolean(state.fieldErrors.email)}>
           <FieldLabel>Email</FieldLabel>
+          {/* Keyed on the echoed value: Base UI warns when the default value
+              of an uncontrolled control changes after mount, so a re-render
+              carrying a new echoed email remounts the control instead. */}
           <Input
+            key={state.values.email}
             name="email"
             type="email"
             autoComplete="email"

@@ -419,7 +419,7 @@ test.describe("navigation", () => {
     await expect(page).toHaveURL(/\/sign-in$/)
   })
 
-  test("the guidance band reaches the approved guidance pathway", async ({
+  test("the guidance band reaches the one inquiry surface", async ({
     page,
   }) => {
     await gotoResources(page)
@@ -428,6 +428,6 @@ test.describe("navigation", () => {
       .getByRole("link", { name: "Request Guidance" })
       .first()
       .click()
-    await expect(page).toHaveURL(/\/guidance$/)
+    await expect(page).toHaveURL(/\/contact$/)
   })
 })
