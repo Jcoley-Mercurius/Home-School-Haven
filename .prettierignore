@@ -1,3 +1,11 @@
+# Generated — rewritten verbatim by `npm run db:types`. Formatting it would
+# make `npm run db:types:check` report drift on every run (Prettier adds
+# clarifying parens to the generic scaffolding), hiding real schema drift.
+src/lib/supabase/database.types.ts
+
+# Supabase CLI scratch state (already gitignored)
+supabase/.temp
+
 # Build and vendor output
 .next
 node_modules

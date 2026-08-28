@@ -6,16 +6,17 @@ import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramCard } from "@/components/program/program-card"
+import { ProgramDataError } from "@/components/program/program-data-error"
 import { Button } from "@/components/ui/button"
 import {
   communityImage,
-  featuredPrograms,
   guidanceHref,
   heroImage,
   positioning,
   programsHref,
   values,
 } from "@/content/foundation-content"
+import { listFeaturedPrograms } from "@/lib/programs/repository"
 
 /**
  * Foundation Release public home page (MPS-REQ-007, MPS-REQ-009, MPS-ACC-007).
@@ -49,7 +50,31 @@ const valueMarks = [
   },
 ] as const
 
-export default function Home() {
+/**
+ * Deliberately statically rendered, with no `revalidate`.
+ *
+ * Time-based ISR was tried here and removed: with `revalidate` set, Next.js
+ * 16.3.3 left the RSC payload requests it issues when prefetching links in
+ * flight for 25+ seconds each. Hovering a link would hang a request, which is a
+ * far worse defect than the staleness ISR was meant to fix.
+ *
+ * The staleness is real and stays recorded: a static prerender captures the
+ * database as it was at build time, so an administrator publishing a program
+ * will not change this page until the next deploy. That is acceptable only
+ * because the Foundation Release has no administrator write surface yet — every
+ * program change already goes through a migration or seed, followed by a
+ * deploy.
+ *
+ * When the administrator write surface lands (MTS IMPLEMENTATION-PLAN Phase 4),
+ * the fix is on-demand revalidation — `revalidatePath()` called from the server
+ * action that publishes the change — not a timer. It is precise, it keeps
+ * MPS-REQ-020 consistency across surfaces, and it does not reintroduce this
+ * prefetch behavior.
+ */
+
+export default async function Home() {
+  const featuredPrograms = await listFeaturedPrograms()
+
   return (
     <>
       <SkipLink />
@@ -163,13 +188,17 @@ export default function Home() {
             </p>
           </div>
 
-          <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
-            {featuredPrograms.map((program) => (
-              <li key={program.slug} className="flex">
-                <ProgramCard program={program} />
-              </li>
-            ))}
-          </ul>
+          {featuredPrograms === null ? (
+            <ProgramDataError />
+          ) : (
+            <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
+              {featuredPrograms.map((program) => (
+                <li key={program.slug} className="flex">
+                  <ProgramCard program={program} />
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         {/* Guidance pathway */}

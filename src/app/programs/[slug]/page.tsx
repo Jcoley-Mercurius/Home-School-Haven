@@ -10,12 +10,13 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramActionRail } from "@/components/program/program-action-rail"
 import { ProgramCard } from "@/components/program/program-card"
 import { VerifiedFacts } from "@/components/program/verified-facts"
+import { ProgramDataError } from "@/components/program/program-data-error"
+import { positioning } from "@/content/foundation-content"
 import {
-  getProgram,
-  positioning,
-  programs,
-  relatedPrograms,
-} from "@/content/foundation-content"
+  getPublishedProgram,
+  listPublishedProgramSlugs,
+  listRelatedPrograms,
+} from "@/lib/programs/repository"
 
 /**
  * Program detail (DESIGN-SYSTEM.md §7 "Program detail: identity and verified
@@ -33,9 +34,48 @@ import {
  * Details whose source association is unproven (QA-001 — the Etiquette Series
  * dates, the Gardening session length) live in `Program.unverifiedDetails` and
  * are deliberately not rendered.
+ *
+ * Programs come from Supabase. `getPublishedProgram` distinguishes three
+ * answers that must not be collapsed into one: a program (render it),
+ * `undefined` (no such published program — 404), and `null` (the system of
+ * record could not be read — error state, never a 404, because "not found"
+ * would tell a family the program was withdrawn).
  */
-export function generateStaticParams() {
-  return programs.map((program) => ({ slug: program.slug }))
+
+/**
+ * Deliberately statically rendered, with no `revalidate`.
+ *
+ * Time-based ISR was tried here and removed: with `revalidate` set, Next.js
+ * 16.3.3 left the RSC payload requests it issues when prefetching links in
+ * flight for 25+ seconds each. Hovering a link would hang a request, which is a
+ * far worse defect than the staleness ISR was meant to fix.
+ *
+ * The staleness is real and stays recorded: a static prerender captures the
+ * database as it was at build time, so an administrator publishing a program
+ * will not change this page until the next deploy. That is acceptable only
+ * because the Foundation Release has no administrator write surface yet — every
+ * program change already goes through a migration or seed, followed by a
+ * deploy.
+ *
+ * When the administrator write surface lands (MTS IMPLEMENTATION-PLAN Phase 4),
+ * the fix is on-demand revalidation — `revalidatePath()` called from the server
+ * action that publishes the change — not a timer. It is precise, it keeps
+ * MPS-REQ-020 consistency across surfaces, and it does not reintroduce this
+ * prefetch behavior.
+ */
+
+/**
+ * Pre-renders the programs published at build time. `dynamicParams` stays at
+ * its default `true`, so a program published in Supabase after the build still
+ * resolves on request rather than 404ing until the next deploy.
+ *
+ * This reads through the anonymous build-time client, not the request-scoped
+ * one: `generateStaticParams` runs without an HTTP request, so `cookies()` is
+ * unavailable there.
+ */
+export async function generateStaticParams() {
+  const slugs = await listPublishedProgramSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({
@@ -44,7 +84,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const program = getProgram(slug)
+  const program = await getPublishedProgram(slug)
   if (!program)
     return { title: "Program not found — Home School Haven of SWFL" }
 
@@ -60,10 +100,26 @@ export default async function ProgramDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const program = getProgram(slug)
-  if (!program) notFound()
+  const program = await getPublishedProgram(slug)
+  if (program === undefined) notFound()
 
-  const related = relatedPrograms(program.slug)
+  if (program === null) {
+    return (
+      <>
+        <SkipLink />
+        <SiteHeader />
+        <main
+          id="main"
+          className="hsh-container hsh-container-public flex-1 py-[var(--hsh-space-16)]"
+        >
+          <ProgramDataError heading="We could not load this program just now" />
+        </main>
+        <SiteFooter />
+      </>
+    )
+  }
+
+  const related = await listRelatedPrograms(program.slug)
 
   return (
     <>

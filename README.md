@@ -20,6 +20,41 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to load Lora and Manrope, the approved MDS typefaces.
 
+## Supabase
+
+Data, identity, and authorization live in Supabase. The app runs **without it** —
+public pages fall back to the committed staging catalog in
+`src/content/programs.ts` — so you can work on public surfaces with no
+credentials at all.
+
+To run the authenticated surfaces you need a database. Full setup, the schema and
+authorization model, sample accounts, migration and rollback procedure:
+**[`supabase/README.md`](supabase/README.md)**.
+
+```bash
+# Hosted project (current setup)
+supabase link --project-ref <ref>
+supabase db push                             # apply migrations
+supabase db query --linked -f supabase/seed.sql   # sanitized fixtures
+npm run db:types                             # regenerate database types
+
+# Local stack instead (needs Docker)
+npm run db:start
+npm run db:reset       # migrations + sanitized seed
+npm run db:test        # pgTAP authorization tests
+```
+
+The project is linked to the hosted Supabase project `Home-School-Haven`
+(`uedgcwoxyhtirsihvrnf`). All five migrations are applied there, the sanitized
+seed is loaded, and `npm run db:types` / `db:types:check` run against
+`--linked`, not `--local`.
+
+> `npm run db:test` (the pgTAP authorization suite) still needs a local stack,
+> which needs Docker. Those assertions remain unexecuted. The equivalent
+> boundary has been verified against the live project by signing in as each
+> seeded role and probing the REST API directly — see the finding notes in
+> `mts/INTEGRATION-MANIFEST.md`.
+
 ## Checks
 
 ```bash
@@ -27,9 +62,16 @@ npm run format:check   # Prettier
 npm run typecheck      # tsc --noEmit
 npm run lint           # ESLint
 npm run build          # production build
-npm run test:unit      # node:test (release gate)
+npm run test:unit      # node:test — env contract, program mapping, release gate
 npm run test:e2e       # Playwright + @axe-core/playwright
+npm run db:test        # pgTAP RLS tests          (needs a running database)
+npm run db:advisors    # Supabase security advisors (needs a running database)
+npm run db:types:check # database type drift       (needs a running database)
 ```
+
+The cross-role authorization tests in `tests/e2e/authorization.spec.ts` skip
+themselves when no Supabase project is configured. A skipped test is not a
+passing one — run them with a seeded local stack before trusting the boundary.
 
 `npm run test:e2e` builds and serves the app on port 3100 itself. If a stale
 `next start -p 3100` is already running it will be reused and you will test the

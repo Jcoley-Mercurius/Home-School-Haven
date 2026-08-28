@@ -104,8 +104,13 @@ export const guidanceHref = "/guidance"
 /** Destination for the Explore Programs action. */
 export const programsHref = "/programs"
 
+/**
+ * Sign In became reachable when Supabase Auth landed. The Foundation Release
+ * provisions accounts rather than offering self-service sign-up, so the page it
+ * opens says so plainly.
+ */
 export const accountNav: NavItem = {
   label: "Sign In",
   href: "/sign-in",
-  available: false,
+  available: true,
 }
