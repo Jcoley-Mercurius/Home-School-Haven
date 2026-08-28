@@ -41,11 +41,15 @@ begin
     where n.nspname = 'public' and c.relkind = 'r'
   loop
     execute format(
-      'revoke all on public.%I from anon, authenticated', t.relname
+      'revoke all on public.%I from anon, authenticated, public', t.relname
     );
   end loop;
 end;
 $$;
+
+-- Revoke default privileges that would apply to future tables.
+alter default privileges in schema public
+  revoke all on tables from anon, authenticated, public;
 
 -- Re-grant exactly what the RLS matrix needs, and nothing more.
 -- RLS then decides which rows; these decide which verbs are reachable at all.
