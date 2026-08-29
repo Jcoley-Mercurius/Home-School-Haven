@@ -9,9 +9,11 @@
 --     `src/content/programs.ts`. Unpublished facts stay NULL (import rule 3).
 --   * People are synthetic: every address is on the reserved `example.com`
 --     domain (RFC 2606) and every name is prefixed "Sample".
---   * No student rows exist. MPS GAP-005 leaves the approved minimum student
---     fields and consent policy unconfirmed and MPS-RUL-006 forbids inventing
---     them, so the table is not modelled in this release.
+--   * Student rows are demo fixtures, added under the owner decision of
+--     2026-08-29 while MPS GAP-005 is open (deviation D-FF1). Every one is
+--     `is_sample`, which the table's check constraint makes mandatory, and
+--     carries the `demo-unapproved-v0` affirmation version. No name below
+--     belongs to a real child.
 --
 -- This file is applied by `supabase db reset` against a LOCAL stack, and may be
 -- applied to the private preview. It must never run against production.
@@ -129,7 +131,18 @@ insert into public.programs (
     'unknown', 'draft', 'import',
     'Sample data — not published content',
     '[]'::jsonb, null, null, null, null, false, 99
-  );
+  )
+-- Without this the whole file stops here on any re-run: the programs insert
+-- raises a duplicate key, and every statement after it -- the sample accounts,
+-- role grants, families, students, and educator assignments -- never executes.
+-- That is exactly how a re-seed came to look like it had succeeded while
+-- silently adding nothing. Every other insert in this file is already
+-- idempotent; this one was the outlier.
+--
+-- `do nothing` rather than `do update`: this file seeds fixtures, and quietly
+-- rewriting published program content on an unrelated re-seed would be a
+-- surprise. To refresh program content, reset the rows deliberately.
+on conflict (id) do nothing;
 
 
 -- ---------------------------------------------------------------------------
@@ -143,6 +156,16 @@ declare
   sample_password text := 'SampleFoundationReview2026';
   parent_a  uuid := '20000000-0000-4000-8000-00000000000a';
   parent_b  uuid := '20000000-0000-4000-8000-00000000000b';
+  -- Two parents holding the role and NO family, so the family_incomplete state
+  -- of MPS-WFL-002 is reachable without mutating parents A or B.
+  --
+  -- Two rather than one because completing setup consumes the fixture. parent_c
+  -- is used by the tests that must *stay* family-less -- validation, keyboard,
+  -- accessibility, screenshots -- and parent_d by the one test that actually
+  -- completes setup. Sharing a single account made those tests order-dependent:
+  -- whichever ran after the completion test found a family already there.
+  parent_c  uuid := '20000000-0000-4000-8000-00000000000c';
+  parent_d  uuid := '20000000-0000-4000-8000-00000000000d';
   educator  uuid := '20000000-0000-4000-8000-00000000000e';
   admin     uuid := '20000000-0000-4000-8000-000000000ad0';
   family_a  uuid := '30000000-0000-4000-8000-00000000000a';
@@ -153,6 +176,8 @@ begin
     select * from (values
       (parent_a,  'sample.parent.one@example.com',   'Sample Parent One'),
       (parent_b,  'sample.parent.two@example.com',   'Sample Parent Two'),
+      (parent_c,  'sample.parent.three@example.com', 'Sample Parent Three'),
+      (parent_d,  'sample.parent.four@example.com',  'Sample Parent Four'),
       (educator,  'sample.educator@example.com',     'Sample Educator'),
       (admin,     'sample.admin@example.com',        'Sample Administrator')
     ) as t(user_id, email, display_name)
@@ -206,6 +231,8 @@ begin
   insert into public.user_roles (user_id, role) values
     (parent_a, 'parent'),
     (parent_b, 'parent'),
+    (parent_c, 'parent'),
+    (parent_d, 'parent'),
     (educator, 'educator'),
     (admin,    'admin')
   on conflict do nothing;
@@ -219,6 +246,33 @@ begin
   insert into public.family_members (family_id, user_id, member_role) values
     (family_a, parent_a, 'primary_guardian'),
     (family_b, parent_b, 'primary_guardian')
+  on conflict do nothing;
+
+  -- parent_c and parent_d must always start with NO family -- that is the
+  -- entire point of these fixtures. The end-to-end suite completes setup for
+  -- parent_d, so a re-seed has to put the fixture back rather than inherit
+  -- whatever state the last run happened to leave. `on conflict do nothing`
+  -- cannot express that: the row it must remove is one nothing else will
+  -- conflict with. Cascades take the membership and any student rows with it.
+  delete from public.families f
+    where exists (
+      select 1 from public.family_members m
+      where m.family_id = f.id and m.user_id in (parent_c, parent_d)
+    );
+
+  -- Demo student profiles (D-FF1). Family A has two so "each child is
+  -- distinguishable" is testable; family B has one so "parent A cannot read
+  -- family B's children" is testable. Preferred name, grade, and relationship
+  -- only -- no legal name, date of birth, medical, or emergency information
+  -- (MPS-RUL-006).
+  insert into public.students
+    (id, family_id, preferred_name, grade_level, guardian_relationship) values
+    ('40000000-0000-4000-8000-000000000001', family_a,
+     'Sample Student A1', 'Grade 3', 'Parent'),
+    ('40000000-0000-4000-8000-000000000002', family_a,
+     'Sample Student A2', 'Grade 6', 'Parent'),
+    ('40000000-0000-4000-8000-000000000003', family_b,
+     'Sample Student B1', 'Grade 1', 'Parent')
   on conflict do nothing;
 
   -- Assigned to exactly one published program and to the draft, so both
