@@ -24,7 +24,7 @@ function Breadcrumbs({ trail }: { trail: { label: string; href?: string }[] }) {
             {crumb.href ? (
               <Link
                 href={crumb.href}
-                className="inline-flex min-h-[var(--hsh-touch-target)] items-center rounded-[var(--hsh-radius-small)] hover:text-[var(--hsh-forest-700)]"
+                className="inline-flex min-h-[var(--hsh-touch-target)] min-w-[var(--hsh-touch-target)] items-center justify-center rounded-[var(--hsh-radius-small)] hover:text-[var(--hsh-forest-700)]"
               >
                 {crumb.label}
               </Link>

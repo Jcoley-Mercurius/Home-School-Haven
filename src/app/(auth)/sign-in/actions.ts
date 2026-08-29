@@ -43,6 +43,7 @@ const schema = z.object({
 function safeRedirect(raw: FormDataEntryValue | null): string {
   if (typeof raw !== "string") return "/account"
   if (!raw.startsWith("/") || raw.startsWith("//")) return "/account"
+  if (raw.includes("\\")) return "/account"
   return raw
 }
 

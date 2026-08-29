@@ -10,7 +10,6 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramActionRail } from "@/components/program/program-action-rail"
 import { ProgramCard } from "@/components/program/program-card"
 import { VerifiedFacts } from "@/components/program/verified-facts"
-import { ProgramDataError } from "@/components/program/program-data-error"
 import { positioning } from "@/content/foundation-content"
 import {
   getPublishedProgram,
@@ -103,19 +102,11 @@ export default async function ProgramDetailPage({
   const program = await getPublishedProgram(slug)
   if (program === undefined) notFound()
 
+  // Fail prerendering rather than caching a database error as static output.
   if (program === null) {
-    return (
-      <>
-        <SkipLink />
-        <SiteHeader />
-        <main
-          id="main"
-          className="hsh-container hsh-container-public flex-1 py-[var(--hsh-space-16)]"
-        >
-          <ProgramDataError heading="We could not load this program just now" />
-        </main>
-        <SiteFooter />
-      </>
+    throw new Error(
+      `Failed to fetch program '${slug}' from the system of record. ` +
+        "This page cannot be prerendered without database access.",
     )
   }
 

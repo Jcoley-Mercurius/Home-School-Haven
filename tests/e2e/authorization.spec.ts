@@ -73,6 +73,12 @@ test.describe("signed out", () => {
     expect(await page.locator('input[name="redirectTo"]').inputValue()).toBe(
       "/account",
     )
+
+    // Backslash-encoded paths must also be rejected.
+    await page.goto("/sign-in?redirectTo=/\\evil.example")
+    expect(await page.locator('input[name="redirectTo"]').inputValue()).toBe(
+      "/account",
+    )
   })
 })
 
