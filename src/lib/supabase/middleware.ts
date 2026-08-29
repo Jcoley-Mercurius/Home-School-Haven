@@ -17,6 +17,11 @@ import { supabaseConfig } from "@/lib/env"
 
 import type { Database } from "./database.types"
 
+/**
+ * Updates the authentication session for incoming requests in Next.js middleware.
+ * @param request - The incoming Next.js request.
+ * @returns A Next.js response with refreshed authentication cookies if applicable.
+ */
 export async function updateSession(
   request: NextRequest,
 ): Promise<NextResponse> {

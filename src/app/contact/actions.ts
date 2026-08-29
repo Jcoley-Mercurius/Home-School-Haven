@@ -77,6 +77,12 @@ function readString(formData: FormData, key: string): string {
   return typeof value === "string" ? value : ""
 }
 
+/**
+ * Server action for submitting a guidance request.
+ * @param _previous - The previous form state (unused but required by useActionState).
+ * @param formData - The submitted form data containing the guidance request.
+ * @returns The updated form state with validation errors or submission status.
+ */
 export async function submitGuidanceRequest(
   _previous: GuidanceFormState,
   formData: FormData,

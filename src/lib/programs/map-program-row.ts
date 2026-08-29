@@ -44,6 +44,11 @@ export type ProgramRow = Pick<
   | "sort_order"
 >
 
+/**
+ * Maps a database program row to the application Program type.
+ * @param row - The program row from the database.
+ * @returns A Program object with camelCase properties.
+ */
 export function mapProgramRow(row: ProgramRow): Program {
   return {
     slug: row.slug,

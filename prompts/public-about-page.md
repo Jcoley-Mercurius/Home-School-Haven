@@ -46,7 +46,7 @@ Two provenances, both approved, both recorded in `src/content/about.ts`:
 |---|---|
 | Inventory — Values | Values band (verbatim, order preserved) |
 | Inventory — Primary public conversion paths | Explore Programs / Request Guidance |
-| Owner-approved image copy (see §4) | Hero heading, mission and summary paragraphs, approach items, faith panel and Matthew 5:16 quote, community cards |
+| Owner-approved image copy (see §4) | Hero eyebrow, heading, mission and summary paragraphs, approach items, faith panel and Matthew 5:16 quote, community cards, closing guidance prompt |
 
 Nothing outside these two sources appears on the page. No published price,
 schedule, capacity, educator assignment, enrollment state, or partner name is
@@ -63,6 +63,7 @@ provenance of every string on the page stays traceable.
 Owner-supplied strings (source: the proposed image, approved by the owner on
 2026-08-28):
 
+- the hero eyebrow "ABOUT HOME SCHOOL HAVEN";
 - the h1 "A haven for curious learners and connected families";
 - the hero mission paragraph "Our mission is simple: to cultivate calm,
   confident, and compassionate learners through creativity, curiosity, and
@@ -72,11 +73,15 @@ Owner-supplied strings (source: the proposed image, approved by the owner on
   card;
 - the four "Meet our community" cards — Educators, Mentors, Families, Community
   — and their descriptions, and the section's supporting line.
+- the closing guidance prompt "Ready to learn more about our programs and
+  community?".
 
-`src/content/about.ts` marks each of these `source: "owner-approved (proposed
-about reference, 2026-08-28)"`, distinct from the `source: "beta-content-import
--inventory"` rows, so a later content review can tell them apart. The Values
-band still renders the inventory `values` array verbatim.
+`src/content/about.ts` marks each of these `source:
+"owner-approved-about-reference"`, whose module-level provenance records the
+proposed image, approval date, and exact approval answer. This is distinct from
+the `"beta-content-import-inventory"` provenance, so a later content review can
+tell them apart. The Values band still renders the inventory `values` array
+verbatim.
 
 Deviations that remain, each with its reason:
 
@@ -100,7 +105,9 @@ Deviations that remain, each with its reason:
 ## 5. Repository evidence inspected
 
 - `src/app/page.tsx` — public hero, values band, guidance band, community story
-  composition and its token usage; the `valueMarks` array this page reuses.
+  composition and its token usage.
+- `src/components/public/value-band.tsx` — the extracted value-band mapping,
+  including the `valueMarks` array reused by the public pages.
 - `src/app/calendar/page.tsx`, `src/app/programs/page.tsx` — public shell
   pattern: `SkipLink` + `SiteHeader` + `main#main` + `SiteFooter`,
   `hsh-container hsh-container-public`, static render with no `revalidate`.
@@ -207,7 +214,7 @@ npm run dev
   3. supply approved photography to replace the demo placeholder hero;
   4. QA-004 — collaborator/partner names remain unverified and are omitted.
 
-## 13. As built (2026-08-28)
+## 13. As-built (2026-08-28)
 
 Implemented as specified, with two refinements made while comparing the render
 with the proposed image, and one shell convention added:
