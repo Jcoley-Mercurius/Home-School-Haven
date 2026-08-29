@@ -1,0 +1,68 @@
+<!--
+  Invitation email for an account provisioned by Home School Haven.
+
+  Sent only when an administrator provisions an account through Supabase. The
+  application has no invitation UI and defines no invitation policy: who may be
+  invited, on what evidence, is an unresolved product question (MPS-REQ-011
+  account creation, ACT-007 invited secondary guardian). This template exists so
+  that an administrator-issued invite is not a dead link.
+
+  See `supabase/templates/recovery.html` for why the link is built from
+  `{{ .TokenHash }}` rather than `{{ .ConfirmationURL }}`.
+-->
+<div
+  style="
+    font-family: Georgia, &quot;Times New Roman&quot;, serif;
+    color: #1f2522;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px;
+  "
+>
+  <h1 style="font-size: 24px; line-height: 1.3; margin: 0 0 16px">
+    You have been invited to Home School Haven
+  </h1>
+
+  <p
+    style="
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 16px;
+    "
+  >
+    Home School Haven has set up an account for you. Accept the invitation to
+    confirm your email address:
+  </p>
+
+  <p style="margin: 0 0 24px">
+    <a
+      href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=%2Faccount"
+      style="
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        background-color: #3f5c50;
+        color: #ffffff;
+        padding: 14px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+      "
+      >Accept the invitation</a
+    >
+  </p>
+
+  <p
+    style="
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4f5954;
+      margin: 0;
+    "
+  >
+    This link works once and expires in one hour. If you were not expecting it,
+    you can ignore this email.
+  </p>
+</div>

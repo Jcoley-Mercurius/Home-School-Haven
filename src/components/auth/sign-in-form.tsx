@@ -13,6 +13,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { TextLink } from "@/components/ui/text-link"
 import { contact } from "@/content/foundation-content"
 
 /**
@@ -25,6 +26,10 @@ import { contact } from "@/content/foundation-content"
  * Every failure reads the same way on purpose. A message that distinguished
  * "no such account" from "wrong password" would confirm to any visitor whether
  * a particular family has an account here.
+ *
+ * The recovery link carries `redirectTo` with it, so a parent who was heading
+ * for `/family`, forgot their password, and went the long way round still lands
+ * on `/family` at the end of it rather than on a generic page.
  */
 export function SignInForm({ redirectTo }: { redirectTo: string }) {
   const [state, formAction, pending] = useActionState(
@@ -158,6 +163,13 @@ export function SignInForm({ redirectTo }: { redirectTo: string }) {
         <Button type="submit" variant="primary" size="lg" disabled={pending}>
           {pending ? "Signing in…" : "Sign In"}
         </Button>
+
+        {/* MDS patterns.authentication requires a recovery/help element. */}
+        <TextLink
+          href={`/forgot-password?redirectTo=${encodeURIComponent(redirectTo)}`}
+        >
+          Forgot your password?
+        </TextLink>
 
         <p
           id={`${ids}-privacy`}

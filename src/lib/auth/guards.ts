@@ -17,6 +17,7 @@ import "server-only"
 
 import { notFound, redirect } from "next/navigation"
 
+import { safeReturnTo } from "./return-to"
 import {
   getViewer,
   hasRole,
@@ -25,16 +26,10 @@ import {
   type Viewer,
 } from "./session"
 
-/** Only relative, single-slash paths survive — never an open redirect. */
-function safeRedirectTarget(pathname: string): string {
-  if (!pathname.startsWith("/") || pathname.startsWith("//")) return "/account"
-  return pathname
-}
-
 export async function requireViewer(returnTo: string): Promise<Viewer> {
   const viewer = await getViewer()
   if (!viewer) {
-    const target = encodeURIComponent(safeRedirectTarget(returnTo))
+    const target = encodeURIComponent(safeReturnTo(returnTo))
     redirect(`/sign-in?redirectTo=${target}`)
   }
   return viewer

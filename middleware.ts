@@ -38,5 +38,12 @@ export const config = {
     "/educator/:path*",
     "/admin/:path*",
     "/sign-in",
+    /* The recovery round trip: `/auth/confirm` establishes a session from an
+       emailed link, and `/reset-password` reads it. Both need the refreshed
+       token, and `/forgot-password` is matched so a signed-in visitor using it
+       from a second device is not working against an expiring session. */
+    "/forgot-password",
+    "/reset-password",
+    "/auth/:path*",
   ],
 }

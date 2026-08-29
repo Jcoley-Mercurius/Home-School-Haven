@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
 import { SignInForm } from "@/components/auth/sign-in-form"
+import { safeReturnTo } from "@/lib/auth/return-to"
 import { getViewer, homeRouteFor } from "@/lib/auth/session"
 
 /**
@@ -20,19 +21,13 @@ export const metadata: Metadata = {
   description: "Sign in to your Home School Haven family account.",
 }
 
-/** Only a relative, single-slash path is honoured — never an open redirect. */
-function safeRedirect(raw: string | undefined): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/account"
-  return raw
-}
-
 export default async function SignInPage({
   searchParams,
 }: {
   searchParams: Promise<{ redirectTo?: string }>
 }) {
   const { redirectTo } = await searchParams
-  const destination = safeRedirect(redirectTo)
+  const destination = safeReturnTo(redirectTo)
 
   /* Already signed in: send them where they belong rather than showing a form
      that would sign them in as themselves again. */

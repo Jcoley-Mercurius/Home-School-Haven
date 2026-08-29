@@ -63,16 +63,28 @@ test.describe("signed out", () => {
     })
   }
 
-  test("an off-site redirectTo is refused", async ({ page }) => {
-    // An open redirect on a sign-in page is a phishing primitive.
-    await page.goto("/sign-in?redirectTo=https://example.com/steal")
-    const value = await page.locator('input[name="redirectTo"]').inputValue()
-    expect(value).toBe("/account")
+  test("an off-site redirectTo is refused on every auth surface", async ({
+    page,
+  }) => {
+    // An open redirect on an authentication page is a phishing primitive, and
+    // the recovery flow added two more places that carry a destination. The
+    // rule itself is unit-tested in `tests/auth-return-to.test.mts`; this
+    // pins that each surface actually applies it.
+    const hostile = [
+      "https://example.com/steal",
+      "//example.com/steal",
+      "/\\example.com/steal",
+    ]
 
-    await page.goto("/sign-in?redirectTo=//example.com/steal")
-    expect(await page.locator('input[name="redirectTo"]').inputValue()).toBe(
-      "/account",
-    )
+    for (const surface of ["/sign-in", "/forgot-password"]) {
+      for (const target of hostile) {
+        await page.goto(`${surface}?redirectTo=${encodeURIComponent(target)}`)
+        expect(
+          await page.locator('input[name="redirectTo"]').inputValue(),
+          `${surface} must refuse ${target}`,
+        ).toBe("/account")
+      }
+    }
   })
 })
 

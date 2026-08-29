@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
+import { safeReturnTo } from "@/lib/auth/return-to"
 import { isSupabaseConfigured } from "@/lib/env"
 import { createClient } from "@/lib/supabase/server"
 
@@ -39,19 +40,12 @@ const schema = z.object({
   password: z.string().min(1, "Enter your password."),
 })
 
-/** Only a relative, single-slash path is honoured — never an open redirect. */
-function safeRedirect(raw: FormDataEntryValue | null): string {
-  if (typeof raw !== "string") return "/account"
-  if (!raw.startsWith("/") || raw.startsWith("//")) return "/account"
-  return raw
-}
-
 export async function signIn(
   _previous: SignInFormState,
   formData: FormData,
 ): Promise<SignInFormState> {
   const emailValue = String(formData.get("email") ?? "")
-  const destination = safeRedirect(formData.get("redirectTo"))
+  const destination = safeReturnTo(formData.get("redirectTo"))
 
   const parsed = schema.safeParse({
     email: emailValue,
@@ -78,15 +72,34 @@ export async function signIn(
     }
   }
 
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  })
+  /* A transport or configuration failure is a different state from a refused
+     credential, and the visitor is owed a different sentence: "try again"
+     rather than "check your password" (MPS-REQ-021). `redirect()` is called
+     after the block, never inside it — it signals by throwing, and catching
+     that here would turn a successful sign-in into a "failed" message.
 
-  if (error) {
-    /* One message for every cause. The error object is deliberately not
-       inspected further and never logged. */
+     The caught error is not logged. It can carry the request that produced it,
+     and that request holds a password. */
+  let rejected = false
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    })
+    /* One message for every cause — unknown address, wrong password,
+       unconfirmed address. The error is deliberately not inspected further:
+       distinguishing them would confirm whether a family has an account here. */
+    rejected = Boolean(error)
+  } catch {
+    return {
+      status: "failed",
+      fieldErrors: {},
+      values: { email: emailValue },
+    }
+  }
+
+  if (rejected) {
     return {
       status: "rejected",
       fieldErrors: {},
