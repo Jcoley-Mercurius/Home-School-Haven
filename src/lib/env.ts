@@ -90,6 +90,7 @@ export function supabaseConfig(): SupabaseConfig | null {
 /**
  * Checks whether Supabase is configured in the current environment.
  * @returns `true` if Supabase configuration is available, `false` otherwise.
+ * @throws When Supabase configuration is partial or malformed.
  */
 export function isSupabaseConfigured(): boolean {
   return supabaseConfig() !== null

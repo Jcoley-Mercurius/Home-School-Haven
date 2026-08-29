@@ -105,7 +105,9 @@ Deviations that remain, each with its reason:
 ## 5. Repository evidence inspected
 
 - `src/app/page.tsx` — public hero, values band, guidance band, community story
-  composition and its token usage; the `valueMarks` array this page reuses.
+  composition and its token usage.
+- `src/components/public/value-band.tsx` — the extracted value-band mapping,
+  including the `valueMarks` array reused by the public pages.
 - `src/app/calendar/page.tsx`, `src/app/programs/page.tsx` — public shell
   pattern: `SkipLink` + `SiteHeader` + `main#main` + `SiteFooter`,
   `hsh-container hsh-container-public`, static render with no `revalidate`.
@@ -212,7 +214,7 @@ npm run dev
   3. supply approved photography to replace the demo placeholder hero;
   4. QA-004 — collaborator/partner names remain unverified and are omitted.
 
-## 13. As built (2026-08-28)
+## 13. As-built (2026-08-28)
 
 Implemented as specified, with two refinements made while comparing the render
 with the proposed image, and one shell convention added:

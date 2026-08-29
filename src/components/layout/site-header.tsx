@@ -20,8 +20,8 @@ import { cn } from "@/lib/utils"
  * Public site header. MDS-REF-005 §4: 72 px sticky desktop header;
  * 60 px mobile header with a full menu panel that keeps every destination.
  *
- * Programs, Calendar, and Sign In are live. The destinations still without
- * routes (About, Resources, Contact) render as non-navigating, aria-disabled
+ * Programs, Calendar, About, and Sign In are live. The destinations still
+ * without routes (Resources, Contact) render as non-navigating, aria-disabled
  * text so the review contains no broken links (owner decision, 2026-08-27).
  */
 
@@ -151,7 +151,7 @@ function SiteHeader() {
               </div>
 
               <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
-                Section pages open later in this review.
+                Resources and Contact open later in this review.
               </p>
 
               <nav aria-label="Primary mobile">

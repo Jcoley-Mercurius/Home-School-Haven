@@ -49,7 +49,8 @@ export async function requireViewer(returnTo: string): Promise<Viewer> {
  * Requires an authenticated viewer with a specific role.
  * @param role - The required role.
  * @param returnTo - The path to return to after authentication.
- * @returns The authenticated viewer with the required role.
+ * @returns The authenticated viewer authorized by the required role or the
+ *   administrator policy.
  */
 export async function requireRole(
   role: AppRole,
