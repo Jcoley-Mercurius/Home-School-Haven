@@ -16,9 +16,13 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-000000000ad0","r
 -- POSITIVE: delegated operational reach (MPS-REQ-017).
 select is((select count(*)::int from public.families), 2,
   'an administrator reads every family');
-select is((select count(*)::int from public.profiles), 4,
+-- Six, not four: the seed gained two family-less parents, so the
+-- `family_incomplete` state of MPS-WFL-002 is reachable without mutating the
+-- other fixtures -- one for the tests that must stay family-less, one for the
+-- test that completes setup.
+select is((select count(*)::int from public.profiles), 6,
   'an administrator reads every profile');
-select is((select count(*)::int from public.user_roles), 4,
+select is((select count(*)::int from public.user_roles), 6,
   'an administrator reads every role grant');
 
 -- POSITIVE: administrators manage educator assignments.

@@ -1,22 +1,30 @@
 import type { Metadata } from "next"
+import Link from "next/link"
+import { CircleAlert, TriangleAlert } from "lucide-react"
 
+import { removeStudentAction } from "@/app/(portal)/family/students/new/actions"
+import { Button } from "@/components/ui/button"
 import { PortalNav } from "@/components/layout/portal-nav"
-import { createClient } from "@/lib/supabase/server"
 import { requireRole } from "@/lib/auth/guards"
+import { getFamilyState } from "@/lib/family/repository"
 
 /**
- * Family area (ACT-001, MPS-REQ-004).
+ * Family area (ACT-001, MPS-REQ-004, MPS-WFL-002).
  *
- * Foundation scope: this proves the ownership boundary end to end — a signed-in
- * parent reaches their own family and nothing else — and is not yet the family
- * dashboard. The dashboard of MPS-REQ-015 and MDS-REF-002 (enrollments,
- * schedule, announcements, resources) is MTS IMPLEMENTATION-PLAN Phase 3, and it
- * needs the student and enrollment records that MPS GAP-005 and GAP-010 still
- * block. Rendering a dashboard shell with invented student rows would be the
- * simulated data DO-DONT forbids.
+ * This is the family *foundation*, not the family dashboard. MPS-REQ-015 and
+ * MDS-REF-007 want enrollments, schedules, announcements, and resources; those
+ * need the enrollment records MPS GAP-010 still blocks, so rendering that shell
+ * here would be the simulated data DO-DONT forbids.
  *
- * The query below asks for every family. RLS returns only the viewer's own —
- * which is the point: the boundary holds in the database, not in this file.
+ * What it does render is every state MPS-WFL-002 names, told truthfully:
+ * `family_incomplete` invites setup, `family_ready` shows the family and its
+ * students, and a failed read says so instead of looking empty. An empty read
+ * and a broken read must never look the same — one is a fact about the family,
+ * the other is a fact about us.
+ *
+ * The student list comes back through RLS, which returns only this family's
+ * rows. There is no `.eq()` filtering it in the repository, on purpose: the
+ * boundary lives in the database, not in a query we could forget to write.
  */
 export const metadata: Metadata = {
   title: "Family — Home School Haven of SWFL",
@@ -24,52 +32,144 @@ export const metadata: Metadata = {
 
 export default async function FamilyPage() {
   const viewer = await requireRole("parent", "/family")
-  const supabase = await createClient()
-
-  const { data: families, error } = await supabase
-    .from("families")
-    .select("id,name")
-    .order("name")
+  const state = await getFamilyState()
 
   return (
     <>
       <PortalNav viewer={viewer} area="family" />
       <main
         id="main"
-        className="hsh-container hsh-container-public flex flex-1 flex-col gap-[var(--hsh-space-6)] py-[var(--hsh-space-12)]"
+        className="hsh-container hsh-container-public flex flex-1 flex-col gap-[var(--hsh-space-8)] py-[var(--hsh-space-12)]"
       >
         <h1 className="hsh-display-sm text-[var(--hsh-text-primary)]">
-          Your family
+          {state.status === "ready" ? state.family.name : "Your family"}
         </h1>
 
-        {error ? (
-          <p role="alert" className="hsh-body text-[var(--hsh-text-secondary)]">
-            We could not load your family details just now. Nothing was lost —
-            please refresh in a moment.
-          </p>
-        ) : families && families.length > 0 ? (
-          <ul className="flex flex-col gap-[var(--hsh-space-3)]">
-            {families.map((family) => (
-              <li
-                key={family.id}
-                className="hsh-body rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)] text-[var(--hsh-text-primary)]"
-              >
-                {family.name}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="hsh-body text-[var(--hsh-text-secondary)]">
-            No family record is linked to your account yet.
-          </p>
-        )}
+        {state.status === "failed" || state.status === "unavailable" ? (
+          <div
+            role="alert"
+            className="flex max-w-[var(--hsh-content-reading)] gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-strong)] bg-[var(--hsh-surface-elevated)] p-[var(--hsh-space-5)]"
+          >
+            <TriangleAlert
+              aria-hidden="true"
+              className="mt-1 size-5 shrink-0 text-[var(--hsh-warning)]"
+              strokeWidth={1.75}
+            />
+            <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+              {state.status === "unavailable"
+                ? "Family records are not connected in this review environment yet."
+                : "We could not load your family details just now. Nothing was lost — please refresh in a moment."}
+            </p>
+          </div>
+        ) : null}
 
-        <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-          Student profiles, enrollments, schedules, announcements, and learning
-          resources are not part of this review yet. They depend on the parental
-          consent and student-data decisions Home School Haven has still to
-          confirm.
-        </p>
+        {/* MPS-WFL-002 `family_incomplete`. A truthful empty state with the one
+            action that resolves it, rather than a blank page. */}
+        {state.status === "incomplete" ? (
+          <div className="flex max-w-[var(--hsh-content-reading)] flex-col items-start gap-[var(--hsh-space-4)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-6)]">
+            <h2 className="hsh-h3 text-[var(--hsh-text-primary)]">
+              Let&rsquo;s set up your family
+            </h2>
+            <p className="hsh-body text-[var(--hsh-text-secondary)]">
+              No family record is linked to your account yet. Setting one up
+              takes a moment, and you can come back to finish at any time.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              render={<Link href="/family/setup" />}
+            >
+              Set Up My Family
+            </Button>
+          </div>
+        ) : null}
+
+        {state.status === "ready" ? (
+          <>
+            <section
+              aria-labelledby="students-heading"
+              className="flex flex-col gap-[var(--hsh-space-4)]"
+            >
+              <h2
+                id="students-heading"
+                className="hsh-h3 text-[var(--hsh-text-primary)]"
+              >
+                Students
+              </h2>
+
+              {/* Deviation D-FF1 made visible. The /resources demo surface set
+                  this precedent on 2026-08-28: a demo surface says so on the
+                  page, not only in a commit message. */}
+              <div className="flex max-w-[var(--hsh-content-reading)] gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-strong)] bg-[var(--hsh-surface-elevated)] p-[var(--hsh-space-5)]">
+                <CircleAlert
+                  aria-hidden="true"
+                  className="mt-1 size-5 shrink-0 text-[var(--hsh-info)]"
+                  strokeWidth={1.75}
+                />
+                <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+                  Student profiles are sample records for this review. Home
+                  School Haven has still to confirm what student information it
+                  will keep, who may see it, and how long it is held, so please
+                  use sample names rather than a real child&rsquo;s.
+                </p>
+              </div>
+
+              {state.students.length === 0 ? (
+                <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+                  No students have been added yet.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-[var(--hsh-space-3)]">
+                  {state.students.map((student) => (
+                    <li
+                      key={student.id}
+                      className="flex flex-col gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)] sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="flex flex-col gap-[var(--hsh-space-1)]">
+                        <span className="hsh-body font-semibold text-[var(--hsh-text-primary)]">
+                          {student.preferredName}
+                        </span>
+                        {student.gradeLevel ? (
+                          <span className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+                            {student.gradeLevel}
+                          </span>
+                        ) : null}
+                      </div>
+                      {/* A recovery path for a mistyped sample record, not a
+                          deletion policy — retention and deletion remain
+                          Samantha's checklist §11. */}
+                      <form action={removeStudentAction}>
+                        <input
+                          type="hidden"
+                          name="studentId"
+                          value={student.id}
+                        />
+                        <Button type="submit" variant="secondary" size="md">
+                          Remove {student.preferredName}
+                        </Button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <Button
+                variant="primary"
+                size="lg"
+                className="self-start"
+                render={<Link href="/family/students/new" />}
+              >
+                Add A Student
+              </Button>
+            </section>
+
+            <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+              Enrollments, schedules, announcements, and learning resources are
+              not part of this review yet. They depend on the enrollment and
+              payment decisions Home School Haven has still to confirm.
+            </p>
+          </>
+        ) : null}
       </main>
     </>
   )
