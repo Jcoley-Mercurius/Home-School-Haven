@@ -35,7 +35,7 @@ Three specific conflicts between the image and approved state:
    `primaryNav` has Contact `available: false`.
 2. **A fourth request type.** The four cards are Request Guidance, Plan a Visit,
    General Question, Private Assistance. The approved type union is
-   `guidance | visit | assistance` (`src/lib/guidance/recorder.ts`), from
+   `guidance | visit | assistance` (`src/lib/contact/recorder.ts`), from
    MPS-REQ-009's "general guidance, a visit request, or discounted-class
    assistance" (its fourth path, direct registration, is the program checkout
    handoff and already lives on the program pages). "General Question" has no
@@ -137,9 +137,11 @@ Deviations from the image, each with its reason:
 - **D-C4 — The success panel is a submission state, not a resting section.**
   §1 above; MPS-ACC-014.
 - **D-C5 — The message counter shows the real server limit.** The image draws
-  `0 / 1000`; the approved schema allows 2000 (`src/app/guidance/actions.ts`).
-  The counter renders the schema's limit so the two cannot disagree; changing
-  the limit itself would be a product change, not a layout one.
+  `0 / 1000`; the shared server limit is 2000
+  (`src/app/contact/form-state.ts`) and is enforced by the schema in
+  `src/app/contact/actions.ts`. The counter renders that same limit so the two
+  cannot disagree; changing the limit itself would be a product change, not a
+  layout one.
 - **D-C6 — The request type stays a labelled control, and the assistance notice
   stays.** The image replaces the radio group with a "What can we help with?"
   select; that is adopted. The existing private-assistance explanation
@@ -156,25 +158,22 @@ Deviations from the image, each with its reason:
 - **D-C9 — A breadcrumb trail (Home / Contact) is added,** which the image does
   not draw, matching every other public page and `public-shell.spec.ts`.
 
-### Open product decision — the consent checkbox and the fourth type
+### Product decision outcomes — the consent checkbox and the fourth type
 
-Two items in the image are product decisions, not layout, and are called out in
-§12 for the owner rather than decided here:
+Two items in the image are product decisions, not layout, and were resolved by
+the owner in §12:
 
 - **"Yes, you may contact me about my inquiry."** Recorded consent is
-  policy-sensitive (AGENTS.md §10: consent decisions remain Samantha's). The
-  recommendation is to build it as a required, server-validated acknowledgement
-  that carries no new personal data and is not stored anywhere until a
-  destination exists.
+  policy-sensitive (AGENTS.md §10: consent decisions remain Samantha's), so the
+  checkbox is omitted until those decisions are recorded.
 - **"General Question"** requires a fourth type, `question`, in the approved
-  union. The recommendation is to add it; the alternative is to drop that card
-  to three and keep the union as approved.
+  union. The owner approved adding it, so all four pathway cards are retained.
 
 ## 5. Repository evidence inspected
 
-- `src/app/guidance/{page,actions,form-state}.ts(x)`,
-  `src/components/guidance/guidance-form.tsx`, `src/lib/guidance/recorder.ts` —
-  the approved inquiry flow, its states, and the single destination boundary.
+- `src/app/contact/{page,actions,form-state}.ts(x)`,
+  `src/components/contact/contact-form.tsx`, `src/lib/contact/recorder.ts` — the
+  approved inquiry flow, its states, and the single destination boundary.
 - `src/app/resources/page.tsx`, `src/content/resources.ts`,
   `prompts/public-resources-page.md` — the proposed-image precedent, the
   content-provenance pattern, and the deviation-recording convention.
@@ -206,13 +205,13 @@ New:
   `unavailable` outcome, screenshots at 1440 / 1280 / 768 / 390.
 
 Changed:
-- `src/components/guidance/guidance-form.tsx` — request type moves from the
+- `src/components/contact/contact-form.tsx` — request type moves from the
   radio fieldset to the drawn labelled select; the character counter is added;
-  the consent acknowledgement is added (pending §12); the layout becomes the
-  drawn two-column grid at `lg`. States and validation are untouched.
-- `src/app/guidance/{actions.ts,form-state.ts}`, `src/lib/guidance/recorder.ts`
-  — move to `src/app/contact/` alongside the page, with the `question` type and
-  the consent field added (pending §12). Behaviour otherwise unchanged.
+  the layout becomes the drawn two-column grid at `lg`. States and validation
+  are untouched; the unapproved consent acknowledgement is omitted.
+- `src/app/contact/{actions.ts,form-state.ts}`, `src/lib/contact/recorder.ts` —
+  the resolved action, schema state, and recorder locations, with the `question`
+  type added and no consent field. Behaviour otherwise remains unchanged.
 - `src/app/guidance/page.tsx` — replaced by a redirect to `/contact`.
 - `src/content/foundation-content.ts` — Contact `available: true`;
   `guidanceHref = "/contact"`.
@@ -252,11 +251,12 @@ Public route. No authentication, no `cookies()`, no Supabase read, no storage
 access, no analytics, no new logging. Adult contact details only — no child or
 student field is added (MPS-RUL-006). Validation stays server-side in the
 existing action; the client adds no native constraint, so the server boundary is
-always exercised. Submitted values are still never logged, never placed in a
-URL, and echoed only back to the sender's own form. The recorder still returns
-`unavailable`, so nothing is transmitted or persisted anywhere. The consent
-acknowledgement, if approved, is validated and discarded with the rest until a
-destination exists; it is not a marketing opt-in and no list is created.
+always exercised. Submitted values reach the application server through
+`submitGuidanceRequest`, where they are validated and the validated values are
+passed to `recordGuidanceRequest`. They are never logged or placed in a URL and
+are echoed only back to the sender's own form. The recorder still returns
+`unavailable`; it does not forward the values to an external destination or
+persist them.
 
 ## 9. Rollback
 
@@ -298,8 +298,8 @@ npm run dev
    keystroke; exceeding the limit is reported by the server, not silently
    truncated.
 7. Open http://localhost:3000/guidance — it redirects to `/contact`.
-8. Tab through: skip link → header → pathway cards → every field → consent →
-   submit. Focus is always visible; nothing is pointer-only.
+8. Tab through: skip link → header → pathway cards → every field → submit.
+   Focus is always visible; nothing is pointer-only.
 9. Resize to 768 and 390 px: columns stack, nothing scrolls horizontally, all
    targets stay ≥ 44 px.
 10. Confirm Contact is live in the desktop header, in the mobile menu, and in
@@ -335,8 +335,8 @@ The original wording of each item, for the record:
 - **A-2 — The fourth request type.** Add `question` to the approved
   `guidance | visit | assistance` union so the drawn "General Question" card has
   a type to record (MPS-REQ-010 records a type), or drop that card.
-- **A-3 — The consent acknowledgement.** Build the drawn checkbox as a required
-  acknowledgement, or omit it until Samantha's consent decisions are recorded.
+- **A-3 — The consent acknowledgement.** Omit the drawn checkbox until
+  Samantha's consent decisions are recorded.
 - **A-4 — Image copy.** As for About and Resources: the image's wording is
   treated as Home School Haven's own words and rendered verbatim.
 - **A-5 — "View tips".** Build as an in-page disclosure (D-C8) or omit.
@@ -382,9 +382,10 @@ with the reference:
   sentence had become false. The disabled-item treatment in `NavLabel` and the
   footer list is untouched and still applies to any future item.
 
-`src/lib/guidance/recorder.ts`, `src/app/guidance/{actions,form-state}.ts`, and
-`src/components/guidance/guidance-form.tsx` moved to their `contact`
-equivalents so the whole flow lives with the page that hosts it;
+The former guidance modules moved to `src/lib/contact/recorder.ts`,
+`src/app/contact/{actions,form-state}.ts`, and
+`src/components/contact/contact-form.tsx` so the whole flow lives with the page
+that hosts it;
 `tests/e2e/guidance.spec.ts` was replaced by `tests/e2e/contact.spec.ts`, which
 keeps every rule the old spec pinned and adds the page, pathway, redirect, and
 counter checks. The exported symbol names (`GuidanceRequest`,

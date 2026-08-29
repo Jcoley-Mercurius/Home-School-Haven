@@ -32,14 +32,30 @@ select is(
 );
 
 -- NEGATIVE: no private table is readable.
-select is((select count(*)::int from public.families), 0,
-  'anon cannot read families');
-select is((select count(*)::int from public.family_members), 0,
-  'anon cannot read family members');
-select is((select count(*)::int from public.user_roles), 0,
-  'anon cannot read role grants');
-select is((select count(*)::int from public.audit_events), 0,
-  'anon cannot read audit history');
+select throws_ok(
+  'select * from public.families',
+  '42501',
+  null,
+  'anon cannot read families'
+);
+select throws_ok(
+  'select * from public.family_members',
+  '42501',
+  null,
+  'anon cannot read family members'
+);
+select throws_ok(
+  'select * from public.user_roles',
+  '42501',
+  null,
+  'anon cannot read role grants'
+);
+select throws_ok(
+  'select * from public.audit_events',
+  '42501',
+  null,
+  'anon cannot read audit history'
+);
 
 reset role;
 

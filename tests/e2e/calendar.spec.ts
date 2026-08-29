@@ -23,7 +23,7 @@ const VIEWPORTS = {
 } as const
 
 /** Inside the published August 2026 window, so the grid has entries to show. */
-const AUGUST_2026 = new Date("2026-08-27T12:00:00")
+const AUGUST_2026 = new Date("2026-08-27T12:00:00+00:00")
 
 async function gotoCalendar(page: Page, at: Date = AUGUST_2026) {
   await page.clock.setFixedTime(at)
@@ -116,7 +116,7 @@ test.describe("published content", () => {
     page,
   }) => {
     await page.setViewportSize(VIEWPORTS.wide)
-    await gotoCalendar(page, new Date("2027-01-15T12:00:00"))
+    await gotoCalendar(page, new Date("2027-01-15T12:00:00+00:00"))
     await page.getByRole("button", { name: "List", exact: true }).click()
     await expect(
       page.getByText("Nothing is published for January 2027"),

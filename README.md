@@ -100,6 +100,8 @@ npm run typecheck      # tsc --noEmit
 npm run lint           # ESLint
 npm run build          # production build
 npm run test:unit      # node:test — env contract, program mapping, release gate
+npm run build          # local/demo build (use HSH_RELEASE_TARGET=production for production)
+npm run test:unit      # node:test (release gate)
 npm run test:e2e       # Playwright + @axe-core/playwright
 npm run db:test        # pgTAP RLS tests          (needs a running database)
 npm run db:advisors    # Supabase security advisors (needs a running database)
@@ -153,9 +155,10 @@ The production target is detected from `HSH_RELEASE_TARGET=production` or
 Vercel's own `VERCEL_ENV=production`, so no configuration is needed on Vercel —
 preview deploys build, production deploys fail until the assets are replaced.
 
-To ship for real: follow `public/placeholder/README.md`, then delete
-`public/placeholder/` and the `image` entries pointing into it. Do not bypass
-the gate.
+To ship for real: follow `public/placeholder/README.md`, update the image
+records consumed as `heroImage`, `communityImage`, and each program's `image`
+with the new source, metadata, and placeholder state, then delete
+`public/placeholder/`. Do not bypass the gate.
 
 ## Learn More
 

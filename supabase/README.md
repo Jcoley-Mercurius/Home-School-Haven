@@ -74,13 +74,16 @@ supabase db push           # apply migrations
 ```
 
 `seed.sql` is **not** applied by `db push`. To load sanitized fixtures into a
-preview, run it deliberately:
+preview, run it deliberately after setting the environment guard:
 
 ```bash
+psql "$PREVIEW_DB_URL" -c "ALTER DATABASE postgres SET app.environment = 'preview';"
 psql "$PREVIEW_DB_URL" -f supabase/seed.sql
 ```
 
-It refuses to run when `app.environment` is set to `production`.
+The seed script will only execute when `app.environment` is explicitly set to
+`local` or `preview`. It refuses to run if the setting is unset, empty, or set
+to any other value (including `production`).
 
 Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in
 Vercel, **scoped to Preview only**. Local, preview, and production credentials
@@ -135,7 +138,7 @@ values ('<user-uuid>', 'educator', '<granting-admin-uuid>');
 ## Sample accounts (local and preview only)
 
 Every address is on the reserved `example.com` domain and every record is
-synthetic (MPS-RUL-007). Password: `SampleFoundationReview2026`.
+synthetic (MPS-RUL-007).
 
 | Email | Role | Reaches |
 |---|---|---|
@@ -143,6 +146,8 @@ synthetic (MPS-RUL-007). Password: `SampleFoundationReview2026`.
 | `sample.parent.two@example.com` | parent | Sample Family B |
 | `sample.educator@example.com` | educator | Art Lab + the sample draft |
 | `sample.admin@example.com` | admin | every program and the audit history |
+
+Passwords are set during local seeding only and are not documented here.
 
 ## What is deliberately not modelled
 

@@ -8,7 +8,6 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { ProgramCard } from "@/components/program/program-card"
 import { Button } from "@/components/ui/button"
-import { ProgramDataError } from "@/components/program/program-data-error"
 import { contact, guidanceHref } from "@/content/foundation-content"
 import { listPublishedPrograms } from "@/lib/programs/repository"
 
@@ -67,6 +66,14 @@ export default async function ProgramsPage() {
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
   const programs = await listPublishedPrograms()
 
+  // Fail prerendering rather than caching a database error as static output.
+  if (programs === null) {
+    throw new Error(
+      "Failed to fetch programs from the system of record. " +
+        "This page cannot be prerendered without database access.",
+    )
+  }
+
   return (
     <>
       <SkipLink />
@@ -98,9 +105,7 @@ export default async function ProgramsPage() {
             Program results
           </h2>
 
-          {programs === null ? (
-            <ProgramDataError />
-          ) : programs.length > 0 ? (
+          {programs.length > 0 ? (
             <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
               {programs.map((program) => (
                 <li key={program.slug} className="flex">

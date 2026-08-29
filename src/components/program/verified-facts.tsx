@@ -51,11 +51,16 @@ function VerifiedFacts({ program }: { program: Program }) {
         </h2>
       </div>
 
-      <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
-        These are the details Home School Haven publishes today. Anything shown
-        as “{FALLBACK}” is confirmed directly with Home School Haven rather than
-        estimated here.
-      </p>
+      <div className="flex flex-col gap-[var(--hsh-space-2)]">
+        <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
+          These are the details Home School Haven publishes today. Anything
+          shown as &ldquo;{FALLBACK}&rdquo; is confirmed directly with Home
+          School Haven rather than estimated here.
+        </p>
+        <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
+          Source: {program.source}
+        </p>
+      </div>
 
       <dl className="grid gap-x-[var(--hsh-space-6)] gap-y-[var(--hsh-space-4)] sm:grid-cols-2">
         {rows.map((row) => (

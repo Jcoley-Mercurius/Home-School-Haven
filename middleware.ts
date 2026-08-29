@@ -12,6 +12,11 @@ import type { NextRequest } from "next/server"
 
 import { updateSession } from "@/lib/supabase/middleware"
 
+/**
+ * Next.js middleware that refreshes authentication sessions for protected routes.
+ * @param request - The incoming Next.js request.
+ * @returns The response with refreshed session cookies if applicable.
+ */
 export async function middleware(request: NextRequest) {
   return updateSession(request)
 }

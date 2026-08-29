@@ -22,10 +22,13 @@
 create extension if not exists pgcrypto with schema extensions;
 
 do $$
+declare
+  env text := coalesce(current_setting('app.environment', true), '');
 begin
-  if coalesce(current_setting('app.environment', true), 'local') = 'production' then
+  if env not in ('local', 'preview') then
     raise exception
-      'supabase/seed.sql contains sample data and must not run against production';
+      'supabase/seed.sql contains sample data and may only run when app.environment is explicitly set to "local" or "preview". Current value: "%"',
+      env;
   end if;
 end;
 $$;

@@ -170,7 +170,12 @@ function SiteHeader() {
                 variant="primary"
                 size="lg"
                 className="w-full"
-                render={<Link href={programsHref} />}
+                render={
+                  <Link
+                    href={programsHref}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                }
               >
                 Explore Programs
               </Button>
