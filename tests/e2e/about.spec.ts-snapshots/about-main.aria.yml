@@ -12,7 +12,7 @@
   - link "Explore Programs":
     - /url: /programs
   - link "Request Guidance":
-    - /url: /guidance
+    - /url: /contact
   - img "Placeholder photo — demo only. Children painting at a sunlit table surrounded by plants."
   - region "What we value":
     - heading "What we value" [level=2]
@@ -57,4 +57,4 @@
     - link "Explore Programs":
       - /url: /programs
     - link "Request Guidance":
-      - /url: /guidance
+      - /url: /contact

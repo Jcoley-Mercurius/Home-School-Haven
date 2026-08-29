@@ -1,5 +1,5 @@
 /**
- * Guidance-request recording boundary (MPS-REQ-010, MPS-WFL-001/004).
+ * Contact-request recording boundary (MPS-REQ-010, MPS-WFL-001/004).
  *
  * MPS-REQ-010 requires each submitted inquiry to be recorded once with its
  * type, contact information, time, current state, and an authorized
@@ -17,7 +17,7 @@
  * behind it is the false confirmation MPS-ACC-014 forbids.
  *
  * Server-only module. It is imported solely by the `"use server"` action in
- * `src/app/guidance/actions.ts`, so nothing here reaches a browser bundle. The
+ * `src/app/contact/actions.ts`, so nothing here reaches a browser bundle. The
  * `server-only` package is not a dependency of this repository, so that
  * boundary is maintained by review rather than enforced by the compiler — do
  * not import this module from a client component.
@@ -27,7 +27,15 @@
  * handle the `recorded` outcome. Nothing else changes.
  */
 
-export type GuidanceRequestType = "guidance" | "visit" | "assistance"
+/**
+ * The request types MPS-REQ-009 offers from the public experience. `question`
+ * was added by owner decision on 2026-08-28 for the "General Question" pathway
+ * on `/contact`; the remaining three are the approved general-guidance, visit,
+ * and discounted-class-assistance paths. MPS-REQ-009's fourth path, direct
+ * registration, is the program checkout handoff and is not an inquiry type.
+ */
+export type GuidanceRequestType =
+  "guidance" | "question" | "visit" | "assistance"
 
 /**
  * A validated request. Contact details of the requesting adult only — this

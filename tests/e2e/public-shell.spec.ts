@@ -16,7 +16,8 @@ const ROUTES = [
   { path: "/about", h1: "A haven for curious learners and connected families" },
   { path: "/programs/art-lab", h1: "Art Lab" },
   { path: "/programs/etiquette-series", h1: "Etiquette Series" },
-  { path: "/guidance", h1: "Not sure where to begin?" },
+  { path: "/contact", h1: "How can we support your family?" },
+  { path: "/resources", h1: "Support for every step of the journey" },
 ] as const
 
 for (const route of ROUTES) {
@@ -53,7 +54,7 @@ for (const route of ROUTES) {
     test("asks for no child or student information", async ({ page }) => {
       await page.goto(route.path)
       /* AGENTS.md §11 and MPS-RUL-006: the public journey collects nothing
-         about a child. The guidance form collects adult contact details only. */
+         about a child. The contact form collects adult contact details only. */
       const fieldNames = await page
         .locator("input, textarea, select")
         .evaluateAll((nodes) =>

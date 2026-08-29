@@ -324,7 +324,7 @@ test.describe("keyboard journey", () => {
     await guidance.focus()
     await expect(guidance).toBeFocused()
     await guidance.press("Enter")
-    await expect(page).toHaveURL(/\/guidance$/)
+    await expect(page).toHaveURL(/\/contact$/)
   })
 })
 

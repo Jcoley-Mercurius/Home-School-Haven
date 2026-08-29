@@ -57,9 +57,6 @@ function SiteFooter() {
 
         <div className="flex flex-col gap-[var(--hsh-space-3)]">
           <h2 className="hsh-label text-[var(--hsh-text-primary)]">Explore</h2>
-          <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
-            Section pages open later in this review.
-          </p>
           <ul className="flex flex-col gap-[var(--hsh-space-2)]">
             {primaryNav.map((item) => (
               <li key={item.label}>

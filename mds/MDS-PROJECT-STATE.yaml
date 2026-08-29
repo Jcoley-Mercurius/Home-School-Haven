@@ -4,7 +4,7 @@ mds:
   project_id: "home-school-haven-learning-platform"
   project_name: "Home School Haven Learning Platform"
   lifecycle: active
-  mds_version: "v1.0"
+  mds_version: "v1.1"
   current_gate: implementation_readiness
   mps_project_id: "home-school-haven-learning-platform"
   mps_version: "unversioned draft; Library version 11 consumed"
@@ -866,14 +866,18 @@ governance:
       previous_value: "Public calendar — proposed, no MDS-REF ID, not canonical"
       new_value: "Public calendar — approved and canonical as MDS-REF-010"
       reason: "Owner approved the public calendar as official MDS on 2026-08-28 and directed promotion into the canonical reference set"
-      version_impact: "Backward-compatible reference addition. Per DESIGN-SYSTEM.md §13 this is a minor release; the version bump itself is an MDS governance action and is not applied here."
+      version_impact: "Backward-compatible reference addition released as MDS v1.1 per DESIGN-SYSTEM.md §13."
       affected_artifacts: [reference_index, design_specification, ui_references, project_state]
       approved_at: "2026-08-28"
   versions:
     - version: "v1.0"
-      status: active
+      status: superseded
       activated_at: "2026-08-26"
       scope: "Approved Home School Haven visual foundations, components, composition, and canonical public, family, educator-future, and administrator references"
+    - version: "v1.1"
+      status: active
+      activated_at: "2026-08-28"
+      scope: "Approved and locked v1.0 system plus the canonical MDS-REF-010 public calendar reference"
 
 artifacts:
   handoff_index: {path: "mds/MDS-HANDOFF-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}

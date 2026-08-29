@@ -6,17 +6,15 @@ Requested by owner, 2026-08-27. Approved as canonical MDS by the owner on
 
 ## 0. Authority notice (read first)
 
-`mds/references/assets/public-calendar-reference.png` is the approved,
-canonical **MDS-REF-010** reference for this page. It authorizes the calendar
-shell, month grid, notes rail, programs panel, and guidance pathway. The
-written MDS sources remain authoritative for every visual decision, including
-`mds/specification/DESIGN-SYSTEM.md`, `mds/tokens/`, and the canonical
-component, shell/grid, and public-hierarchy references (MDS-REF-004 through
-MDS-REF-006).
+`mds/references/assets/public-calendar-reference.png` is the owner-approved,
+canonical **MDS-REF-010** reference. It is authoritative for the public calendar
+shell and layout alongside `mds/specification/DESIGN-SYSTEM.md`, `mds/tokens/`,
+and the other canonical references (MDS-REF-004 components, MDS-REF-005
+shell/grid, MDS-REF-006 public hierarchy).
 
-MDS-REF-010 does not authorize inferred content, taxonomy, chronology, or
-unseen interaction states. Its promotion is recorded in MDS-CHG-008; any
-future version bump remains an MDS governance action for the owner.
+Its authority does not extend to inferred content. The category chips, May 2026
+event marker, and "Upcoming" ordering remain subject to the content-inference
+limits recorded in §14 and `mds/references/REFERENCE-INDEX.md`.
 
 ## 1. Goal and scope
 
@@ -197,9 +195,7 @@ npm run dev
 - GAP: A Supabase-backed calendar entity does not exist and is not requested.
   If administrators must publish calendar entries, that is a separate MPS/MTS
   step.
-- Owner action still required: answer QA-002. MDS-REF-010 is already
-  canonical; its associated minor-version bump remains an MDS governance
-  action.
+- Owner action still required: answer QA-002.
 
 ## 13. As built (2026-08-28)
 
@@ -237,7 +233,6 @@ Recorded as MDS-CHG-008:
   to DESIGN-SYSTEM.md §11;
 - removed from `mds/references/proposed/README.md`.
 
-Two governance items are left for the owner: DESIGN-SYSTEM.md §13 makes a
-reference addition a minor release, and the v1.0 → v1.1 bump is an MDS
-governance action not applied here; and QA-002 remains open, so Ready Set Prep
-dates are unchanged and still render as published.
+The backward-compatible reference addition is released as MDS v1.1 under
+DESIGN-SYSTEM.md §13. QA-002 remains open, so Ready Set Prep dates are unchanged
+and still render as published.

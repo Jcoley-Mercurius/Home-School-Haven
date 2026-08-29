@@ -1,11 +1,19 @@
 /**
- * Shape and initial value of the Request Guidance form state.
+ * Shape and initial value of the contact request form state.
  *
  * This lives outside `actions.ts` on purpose: a `"use server"` module may only
  * export async functions, so a shared constant exported from there arrives as
  * `undefined` in the client bundle and breaks the first render.
  */
-import type { GuidanceRequest } from "@/lib/guidance/recorder"
+import type { GuidanceRequest } from "@/lib/contact/recorder"
+
+/**
+ * Server-side message limit. It lives here rather than in `actions.ts` because
+ * the form renders a counter against it, and a `"use server"` module may only
+ * export async functions. One constant means the counter and the validation
+ * can never disagree (prompt §4, D-C5).
+ */
+export const MESSAGE_MAX_LENGTH = 2000
 
 export type GuidanceFormState = {
   /**

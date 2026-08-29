@@ -20,9 +20,9 @@ import { cn } from "@/lib/utils"
  * Public site header. MDS-REF-005 §4: 72 px sticky desktop header;
  * 60 px mobile header with a full menu panel that keeps every destination.
  *
- * Programs, Calendar, About, and Sign In are live. The destinations still
- * without routes (Resources, Contact) render as non-navigating, aria-disabled
- * text so the review contains no broken links (owner decision, 2026-08-27).
+ * Every primary destination is now live. `NavLabel` keeps the non-navigating,
+ * aria-disabled treatment for any future item added before its route exists, so
+ * the review contains no broken links (owner decision, 2026-08-27).
  */
 
 /**
@@ -150,10 +150,6 @@ function SiteHeader() {
                 </Dialog.Close>
               </div>
 
-              <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
-                Resources and Contact open later in this review.
-              </p>
-
               <nav aria-label="Primary mobile">
                 <ul className="flex flex-col">
                   {[...primaryNav, accountNav].map((item) => (
@@ -174,7 +170,12 @@ function SiteHeader() {
                 variant="primary"
                 size="lg"
                 className="w-full"
-                render={<Link href={programsHref} />}
+                render={
+                  <Link
+                    href={programsHref}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                }
               >
                 Explore Programs
               </Button>
