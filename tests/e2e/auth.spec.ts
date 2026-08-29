@@ -55,6 +55,21 @@ test.describe("/sign-in", () => {
     await expect(page.getByLabel("Password")).toBeFocused()
     await page.keyboard.press("Tab")
     await expect(page.getByRole("button", { name: "Sign In" })).toBeFocused()
+    // The recovery affordance is part of the form's tab order, not an
+    // afterthought parked outside it.
+    await page.keyboard.press("Tab")
+    await expect(
+      page.getByRole("link", { name: "Forgot your password?" }),
+    ).toBeFocused()
+  })
+
+  test("offers the MDS recovery affordance", async ({ page }) => {
+    // MDS patterns.authentication requires a recovery/help element alongside
+    // the account form. Its absence was the gap this slice closed.
+    await page.goto("/sign-in")
+    await expect(
+      page.getByRole("link", { name: "Forgot your password?" }),
+    ).toBeVisible()
   })
 
   test("meets the 44px minimum target size on the submit action", async ({

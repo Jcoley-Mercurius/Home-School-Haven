@@ -160,7 +160,15 @@ site_url = "http://127.0.0.1:3000"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# The local dev server is http, so the http callback must be listed or the
+# recovery round trip cannot complete locally. The https entry is kept for the
+# environments that serve it. Preview and production origins are dashboard
+# state rather than config.toml, and are listed as owner-owned setup in
+# prompts/authentication-vertical-slice.md section 12.
+additional_redirect_urls = [
+  "http://127.0.0.1:3000/auth/confirm",
+  "https://127.0.0.1:3000",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -244,16 +252,33 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Committed templates build their links from the token hash pointed at our own
+# /auth/confirm, instead of the default ConfirmationURL. The default routes
+# through the Auth server and returns tokens in the URL fragment, which the
+# server cannot read - the session could then only be established by
+# client-side JavaScript holding a recovery token. See
+# src/app/auth/confirm/route.ts.
+[auth.email.template.recovery]
+subject = "Choose a new Home School Haven password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.invite]
+subject = "You have been invited to Home School Haven"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your Home School Haven email address"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new Home School Haven email address"
+content_path = "./supabase/templates/email-change.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
 # subject = "Your password has been changed"
-# content_path = "./templates/password_changed_notification.html"
+# content_path = "./supabase/templates/password_changed_notification.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

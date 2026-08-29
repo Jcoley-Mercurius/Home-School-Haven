@@ -55,6 +55,43 @@ seed is loaded, and `npm run db:types` / `db:types:check` run against
 > seeded role and probing the REST API directly — see the finding notes in
 > `mts/INTEGRATION-MANIFEST.md`.
 
+## Authentication
+
+Provisioned accounts only — there is no self-service sign-up (`enable_signup =
+false`, enforced at the Auth server), and students never sign in.
+
+| Route | What it does |
+|---|---|
+| `/sign-in` | Password sign-in; every failure reads the same, so the form is not an account oracle |
+| `/forgot-password` | Requests a recovery email; the same confirmation for a known and an unknown address |
+| `/auth/confirm` | Verifies an emailed link on the server and redirects; never renders |
+| `/reset-password` | Choose a new password; reachable only from a verified recovery link |
+| `/link-expired` | Expired, used, or invalid link, with a route to a new one |
+
+Recovery emails use the committed templates in `supabase/templates/`, which
+build their link from the token hash pointed at `/auth/confirm` rather than the
+default confirmation URL. The default returns tokens in the URL fragment, which
+the server cannot read — the session could then only be established by
+client-side JavaScript holding a recovery token.
+
+Exercising the full round trip needs a mailbox, so it needs the **local** stack:
+
+```bash
+npm run db:start && npm run db:reset
+# point .env.local at the local stack, then:
+npm run dev
+# request a reset, then read the email at http://127.0.0.1:54324 (Mailpit)
+```
+
+> Do not run the recovery round trip against the hosted project. It emails a
+> real address through a sender limited to two per hour
+> (`[auth.rate_limit] email_sent`). The Playwright tests that send email detect
+> Mailpit and skip loudly when it is absent, for that reason.
+
+**Delivery is not production-ready.** Resend + Supabase custom SMTP is approved
+but not configured (`mts/INTEGRATION-MANIFEST.md`). Until it is, hosted email
+uses Supabase's shared sender. That is an activation gate, not a code gap.
+
 ## Checks
 
 ```bash
