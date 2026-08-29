@@ -22,6 +22,11 @@ import { supabaseConfig } from "@/lib/env"
 
 import type { Database } from "./database.types"
 
+/**
+ * Creates a session-less Supabase client for build-time or anonymous reads.
+ * @returns A configured anonymous Supabase client without session persistence.
+ * @throws When Supabase is not configured in the current environment.
+ */
 export function createAnonymousClient() {
   const config = supabaseConfig()
   if (!config) {

@@ -91,21 +91,26 @@ supabase db push           # apply migrations
 ```
 
 `seed.sql` is **not** applied by `db push`. To load sanitized fixtures into a
-preview, run it deliberately — **always with `ON_ERROR_STOP`**:
+preview, run it deliberately — set the environment guard first, and **always
+run with `ON_ERROR_STOP`**:
 
 ```bash
+psql "$PREVIEW_DB_URL" -c "ALTER DATABASE postgres SET app.environment = 'preview';"
 psql "$PREVIEW_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
 echo "psql exit: $?"
 ```
 
-Without that flag psql reports an error and carries on, so a partial seed looks
-like a successful one. That is not hypothetical: the programs insert lacked an
-`on conflict` clause, so on a second run the file died at the programs block and
-silently skipped every account, role grant, family, and student after it. The
-insert is idempotent now, but keep the flag — it is the difference between a
-failure you can see and one you cannot.
+The seed script only executes when `app.environment` is explicitly set to
+`local` or `preview`. It refuses to run if the setting is unset, empty, or set
+to any other value (including `production`). `ALTER DATABASE` takes effect for
+new sessions, so the guard is in place by the time the second command connects.
 
-It refuses to run when `app.environment` is set to `production`.
+Without `ON_ERROR_STOP` psql reports an error and carries on, so a partial seed
+looks like a successful one. That is not hypothetical: the programs insert
+lacked an `on conflict` clause, so on a second run the file died at the programs
+block and silently skipped every account, role grant, family, and student after
+it. The insert is idempotent now, but keep the flag — it is the difference
+between a failure you can see and one you cannot.
 
 Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in
 Vercel, **scoped to Preview only**. Local, preview, and production credentials
@@ -160,7 +165,7 @@ values ('<user-uuid>', 'educator', '<granting-admin-uuid>');
 ## Sample accounts (local and preview only)
 
 Every address is on the reserved `example.com` domain and every record is
-synthetic (MPS-RUL-007). Password: `SampleFoundationReview2026`.
+synthetic (MPS-RUL-007).
 
 | Email | Role | Reaches |
 |---|---|---|
@@ -170,6 +175,8 @@ synthetic (MPS-RUL-007). Password: `SampleFoundationReview2026`.
 | `sample.parent.four@example.com` | parent | No family — the account the end-to-end suite completes setup with |
 | `sample.educator@example.com` | educator | Art Lab + the sample draft |
 | `sample.admin@example.com` | admin | every program and the audit history |
+
+Passwords are set during local seeding only and are not documented here.
 
 ## What is deliberately not modelled
 

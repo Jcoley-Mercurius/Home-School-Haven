@@ -37,22 +37,22 @@ select is(
 select is(
   (
     select coalesce(string_agg(distinct table_name, ', ' order by table_name), '')
-    from information_schema.role_table_grants
-    where table_schema = 'public' and grantee = 'anon'
+    from information_schema.table_privileges
+    where table_schema = 'public' and grantee in ('anon', 'public')
       and privilege_type in ('INSERT', 'UPDATE', 'DELETE', 'TRUNCATE')
   ),
   '',
-  'anon holds no write privilege on any table'
+  'anon and PUBLIC hold no write privilege on any table'
 );
 
 select is(
   (
     select coalesce(string_agg(distinct table_name, ', ' order by table_name), '')
-    from information_schema.role_table_grants
-    where table_schema = 'public' and grantee = 'anon'
+    from information_schema.table_privileges
+    where table_schema = 'public' and grantee in ('anon', 'public')
   ),
   'programs',
-  'anon reaches exactly one table: programs'
+  'anon and PUBLIC reach exactly one table: programs'
 );
 
 -- No client role may write a role grant. This is the privilege-layer half of
@@ -60,13 +60,13 @@ select is(
 select is(
   (
     select count(*)::int
-    from information_schema.role_table_grants
+    from information_schema.table_privileges
     where table_schema = 'public' and table_name = 'user_roles'
-      and grantee in ('anon', 'authenticated')
+      and grantee in ('anon', 'authenticated', 'public')
       and privilege_type in ('INSERT', 'UPDATE', 'DELETE', 'TRUNCATE')
   ),
   0,
-  'no client role can write a role grant'
+  'no client role or PUBLIC can write a role grant'
 );
 
 -- The regression guard for the defect repaired by

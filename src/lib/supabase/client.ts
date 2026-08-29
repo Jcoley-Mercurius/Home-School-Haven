@@ -19,6 +19,11 @@ import { supabaseConfig } from "@/lib/env"
 
 import type { Database } from "./database.types"
 
+/**
+ * Creates a browser-side Supabase client for use in Client Components.
+ * @returns A configured Supabase browser client.
+ * @throws When Supabase is not configured in the current environment.
+ */
 export function createClient() {
   const config = supabaseConfig()
   if (!config) {

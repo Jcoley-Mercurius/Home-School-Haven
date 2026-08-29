@@ -6,7 +6,6 @@ import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramCard } from "@/components/program/program-card"
-import { ProgramDataError } from "@/components/program/program-data-error"
 import { ValueBand } from "@/components/public/value-band"
 import { Button } from "@/components/ui/button"
 import {
@@ -57,6 +56,16 @@ import { listFeaturedPrograms } from "@/lib/programs/repository"
 
 export default async function Home() {
   const featuredPrograms = await listFeaturedPrograms()
+
+  // Fail prerendering rather than caching a database error as static output.
+  // A runtime failure on an already-deployed static page still shows the error
+  // UI, but the build must not succeed while the database is unreachable.
+  if (featuredPrograms === null) {
+    throw new Error(
+      "Failed to fetch featured programs from the system of record. " +
+        "This page cannot be prerendered without database access.",
+    )
+  }
 
   return (
     <>
@@ -152,17 +161,13 @@ export default async function Home() {
             </p>
           </div>
 
-          {featuredPrograms === null ? (
-            <ProgramDataError />
-          ) : (
-            <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
-              {featuredPrograms.map((program) => (
-                <li key={program.slug} className="flex">
-                  <ProgramCard program={program} />
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
+            {featuredPrograms.map((program) => (
+              <li key={program.slug} className="flex">
+                <ProgramCard program={program} />
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Guidance pathway */}

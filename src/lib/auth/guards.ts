@@ -26,6 +26,11 @@ import {
   type Viewer,
 } from "./session"
 
+/**
+ * Requires an authenticated viewer, redirecting to sign-in if not authenticated.
+ * @param returnTo - The path to return to after authentication.
+ * @returns The authenticated viewer.
+ */
 export async function requireViewer(returnTo: string): Promise<Viewer> {
   const viewer = await getViewer()
   if (!viewer) {
@@ -35,6 +40,13 @@ export async function requireViewer(returnTo: string): Promise<Viewer> {
   return viewer
 }
 
+/**
+ * Requires an authenticated viewer with a specific role.
+ * @param role - The required role.
+ * @param returnTo - The path to return to after authentication.
+ * @returns The authenticated viewer authorized by the required role or the
+ *   administrator policy.
+ */
 export async function requireRole(
   role: AppRole,
   returnTo: string,
@@ -47,6 +59,11 @@ export async function requireRole(
   return viewer
 }
 
+/**
+ * Requires an authenticated viewer with administrator privileges.
+ * @param returnTo - The path to return to after authentication.
+ * @returns The authenticated administrator viewer.
+ */
 export async function requireAdmin(returnTo: string): Promise<Viewer> {
   const viewer = await requireViewer(returnTo)
   if (!isAdmin(viewer)) notFound()

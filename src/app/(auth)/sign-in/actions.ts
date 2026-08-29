@@ -40,6 +40,12 @@ const schema = z.object({
   password: z.string().min(1, "Enter your password."),
 })
 
+/**
+ * Server action for password-based sign-in.
+ * @param _previous - The previous form state (unused but required by useActionState).
+ * @param formData - The submitted form data containing email and password.
+ * @returns The updated form state with validation errors or success.
+ */
 export async function signIn(
   _previous: SignInFormState,
   formData: FormData,
@@ -110,6 +116,9 @@ export async function signIn(
   redirect(destination)
 }
 
+/**
+ * Server action for signing out the current user.
+ */
 export async function signOut(): Promise<void> {
   if (isSupabaseConfigured()) {
     const supabase = await createClient()

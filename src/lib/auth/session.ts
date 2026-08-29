@@ -70,6 +70,12 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   }
 })
 
+/**
+ * Checks if a viewer has a specific role.
+ * @param viewer - The viewer to check, or null if not authenticated.
+ * @param role - The role to check for.
+ * @returns `true` if the viewer has the specified role, `false` otherwise.
+ */
 export function hasRole(viewer: Viewer | null, role: AppRole): boolean {
   return viewer?.roles.includes(role) ?? false
 }
