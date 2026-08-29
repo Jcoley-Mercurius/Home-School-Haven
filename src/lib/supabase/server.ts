@@ -4,7 +4,7 @@
  *
  * Server-only: the `server-only` import makes the boundary a compile error
  * rather than a review convention (the gap noted in
- * `src/lib/guidance/recorder.ts`).
+ * `src/lib/contact/recorder.ts`).
  *
  * This client also carries the publishable key. The Foundation Release has no
  * service-role code path at all (SECURITY-ARCHITECTURE "least privilege"), so

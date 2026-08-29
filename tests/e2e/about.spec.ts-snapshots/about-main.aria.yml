@@ -1,0 +1,60 @@
+- main:
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+      - listitem: About
+  - paragraph: About Home School Haven
+  - heading "A haven for curious learners and connected families" [level=1]
+  - paragraph: Home School Haven is a Christ-centered homeschool community offering enrichment classes, hands-on workshops, small-group learning, and family support.
+  - paragraph: "Our mission is simple: to cultivate calm, confident, and compassionate learners through creativity, curiosity, and connection."
+  - link "Explore Programs":
+    - /url: /programs
+  - link "Request Guidance":
+    - /url: /contact
+  - img "Placeholder photo — demo only. Children painting at a sunlit table surrounded by plants."
+  - region "What we value":
+    - heading "What we value" [level=2]
+    - list:
+      - listitem: Creativity over conformity
+      - listitem: Curiosity over perfection
+      - listitem: Character over performance
+      - listitem: Community over competition
+  - region "Our approach":
+    - heading "Our approach" [level=2]
+    - list:
+      - listitem:
+        - heading "Calm, hands-on learning" [level=3]
+        - paragraph: Our classes and workshops encourage hands-on experiences that spark imagination, build skills, and nurture a love of learning.
+      - listitem:
+        - heading "Relationship-centered community" [level=3]
+        - paragraph: We believe learning happens best in community. Small classes, meaningful connections, and supportive families help every child thrive.
+  - region "Faith expressed through character":
+    - heading "Faith expressed through character" [level=2]
+    - paragraph: We are a Christ-centered community shaping hearts as well as minds. Through prayer, service, and Scripture-inspired teaching, we encourage children to reflect God's love in their words, choices, and relationships.
+    - figure:
+      - blockquote: “Let your light shine before others, that they may see your good deeds and glorify your Father in heaven.”
+      - text: /Matthew 5:\d+/
+  - region "Meet our community":
+    - heading "Meet our community" [level=2]
+    - paragraph: A diverse group of educators, mentors, and families who are passionate about nurturing the whole child.
+    - list:
+      - listitem:
+        - heading "Educators" [level=3]
+        - paragraph: Experienced, caring educators who love to teach, mentor, and inspire.
+      - listitem:
+        - heading "Mentors" [level=3]
+        - paragraph: Skilled mentors guiding projects, skills, and personal growth.
+      - listitem:
+        - heading "Families" [level=3]
+        - paragraph: Supportive families building friendships and learning together.
+      - listitem:
+        - heading "Community" [level=3]
+        - paragraph: A welcoming community united by faith, values, and purpose.
+  - region "Ready to learn more about our programs and community?":
+    - heading "Ready to learn more about our programs and community?" [level=2]
+    - link "Explore Programs":
+      - /url: /programs
+    - link "Request Guidance":
+      - /url: /contact

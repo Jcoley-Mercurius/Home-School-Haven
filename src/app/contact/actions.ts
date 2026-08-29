@@ -2,16 +2,20 @@
 
 import { z } from "zod"
 
-import { emptyGuidanceFormState, type GuidanceFormState } from "./form-state"
+import {
+  emptyGuidanceFormState,
+  MESSAGE_MAX_LENGTH,
+  type GuidanceFormState,
+} from "./form-state"
 import {
   recordGuidanceRequest,
   type GuidanceRequest,
-} from "@/lib/guidance/recorder"
+} from "@/lib/contact/recorder"
 import { programs } from "@/content/programs"
 
 /**
- * Request Guidance submission (MPS-REQ-009, MPS-REQ-010, MPS-ACC-012,
- * MPS-ACC-014).
+ * Contact / Request Guidance submission (MPS-REQ-009, MPS-REQ-010,
+ * MPS-ACC-012, MPS-ACC-014).
  *
  * All validation happens here, on the server: client input is untrusted
  * (AGENTS.md §11, MTS INTEGRATION-MANIFEST "validate all external and form
@@ -24,7 +28,7 @@ import { programs } from "@/content/programs"
  * sender's own form so a failed submission does not lose their work
  * (MDS-QA manual scenario 8).
  */
-const REQUEST_TYPES = ["guidance", "visit", "assistance"] as const
+const REQUEST_TYPES = ["guidance", "question", "visit", "assistance"] as const
 
 const schema = z.object({
   type: z.enum(REQUEST_TYPES, {
@@ -62,7 +66,10 @@ const schema = z.object({
     .string()
     .trim()
     .min(1, "Tell us a little about what you are looking for.")
-    .max(2000, "Please keep this under 2000 characters."),
+    .max(
+      MESSAGE_MAX_LENGTH,
+      `Please keep this under ${MESSAGE_MAX_LENGTH} characters.`,
+    ),
 })
 
 function readString(formData: FormData, key: string): string {

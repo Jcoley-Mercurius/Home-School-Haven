@@ -91,7 +91,7 @@ test.describe("structure", () => {
     /* Owner decision 2026-08-27: no grey 50% buttons. Every CTA navigates. */
     const ctas = [
       { name: "Explore Programs", href: "/programs" },
-      { name: "Request Guidance", href: "/guidance" },
+      { name: "Request Guidance", href: "/contact" },
       { name: /^View Details for /, href: "/programs/art-lab" },
     ]
 
@@ -115,8 +115,10 @@ test.describe("structure", () => {
 
     await gotoHome(page)
     await page.getByRole("link", { name: "Request Guidance" }).first().click()
-    await expect(page).toHaveURL(/\/guidance$/)
-    await expect(page.locator("h1")).toHaveText("Not sure where to begin?")
+    await expect(page).toHaveURL(/\/contact$/)
+    await expect(page.locator("h1")).toHaveText(
+      "How can we support your family?",
+    )
   })
 })
 

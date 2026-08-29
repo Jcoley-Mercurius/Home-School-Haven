@@ -92,14 +92,19 @@ export type NavItem = {
 
 export const primaryNav: NavItem[] = [
   { label: "Programs", href: "/programs", available: true },
-  { label: "Calendar", href: "/calendar", available: false },
-  { label: "About", href: "/about", available: false },
-  { label: "Resources", href: "/resources", available: false },
-  { label: "Contact", href: "/contact", available: false },
+  { label: "Calendar", href: "/calendar", available: true },
+  { label: "About", href: "/about", available: true },
+  { label: "Resources", href: "/resources", available: true },
+  { label: "Contact", href: "/contact", available: true },
 ]
 
-/** Destination for every Request Guidance action (MPS-REQ-009). */
-export const guidanceHref = "/guidance"
+/**
+ * Destination for every Request Guidance action (MPS-REQ-009).
+ *
+ * `/contact` is the single public inquiry surface (owner decision 2026-08-28);
+ * `/guidance` redirects there. The visible CTA label stays "Request Guidance".
+ */
+export const guidanceHref = "/contact"
 
 /** Destination for the Explore Programs action. */
 export const programsHref = "/programs"
