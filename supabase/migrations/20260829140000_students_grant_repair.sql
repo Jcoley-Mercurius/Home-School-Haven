@@ -1,0 +1,63 @@
+-- Foundation Release — repair the `students` Data API grant
+--
+-- THE SYMPTOM
+--
+-- `20260829120000_family_setup_and_demo_students.sql` creates `public.students`
+-- and grants SELECT on it to `authenticated`. On the linked review project that
+-- grant is not in effect: every signed-in parent, and the administrator, gets
+--
+--     42501  permission denied for table students
+--     hint:  GRANT SELECT ON public.students TO authenticated;
+--
+-- The table, its columns, its foreign key, and all three functions are present
+-- and correct, and the EXECUTE grants from the *same* privileges block of that
+-- migration did apply. So the table grant was applied and then taken away,
+-- rather than never applied. RLS was never the problem — the policies are
+-- right, and a policy no privilege can reach is not a boundary, it is an
+-- outage: `/family` showed every parent a load error instead of their children.
+--
+-- THE CAUSE
+--
+-- Two candidates, and this migration is written to survive either, because they
+-- cannot be told apart without direct database access:
+--
+--  1. **Statement order (most likely).** In `20260829120000` the grants are
+--     followed by more DDL on the same table — `alter table ... enable row
+--     level security` and four `create policy` statements. A Supabase project
+--     that enforces the "new tables are not exposed" default does so with an
+--     event trigger on `ddl_command_end`, which fires again on that trailing
+--     DDL and re-revokes the table privileges granted moments earlier. This
+--     explains the asymmetry exactly: function EXECUTE grants are untouched by
+--     a table-privilege trigger, and they survived.
+--
+--  2. **The bulk revoke loop.** `20260828010906_foundation_least_privilege_
+--     grants.sql` revokes ALL on every table in `public` and re-grants a
+--     hardcoded list. `students` is not on that list — it did not exist when
+--     that file was written — and that file's own header says "WHEN YOU ADD A
+--     TABLE: add it below." The family-setup migration added a table and did
+--     not. Any re-run of that deliberately idempotent migration strips this
+--     grant again.
+--
+-- WHY THE FIX IS NOT "ADD students TO THAT OTHER FILE"
+--
+-- That was the first instinct and it is wrong. `20260828010906` runs *before*
+-- `20260829120000`, so `grant ... on public.students` inside it would fail with
+-- "relation does not exist" on every fresh `npm run db:reset`. The grant has to
+-- run after the table exists, and after all DDL against it — which is what this
+-- migration is: privileges only, no DDL, running last.
+--
+-- Nothing here weakens the boundary. SELECT for `authenticated` is what
+-- `20260829120000` always intended. RLS still decides which rows; there is
+-- still no INSERT, UPDATE, or DELETE policy or privilege for any client role;
+-- and `anon` still holds nothing on this table.
+--
+-- `supabase/tests/database/00_setup.test.sql` now asserts the grant itself, so
+-- a silent revocation fails a test instead of reaching a parent.
+--
+-- rollback:
+--   revoke select on public.students from authenticated;
+
+-- Idempotent: re-granting an existing privilege is a no-op, and this migration
+-- contains no DDL, so nothing here can trigger the revocation it repairs.
+revoke all on public.students from anon;
+grant select on public.students to authenticated;

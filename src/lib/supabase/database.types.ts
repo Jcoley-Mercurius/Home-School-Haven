@@ -26,10 +26,54 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_sample: boolean
+          program_id: string
+          published: boolean
+          published_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          program_id: string
+          published?: boolean
+          published_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          program_id?: string
+          published?: boolean
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
@@ -89,6 +133,67 @@ export type Database = {
           },
         ]
       }
+      enrollments: {
+        Row: {
+          created_at: string
+          family_id: string
+          id: string
+          is_sample: boolean
+          program_id: string
+          state: Database["public"]["Enums"]["enrollment_state"]
+          state_changed_at: string
+          state_note: string | null
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          family_id: string
+          id?: string
+          is_sample?: boolean
+          program_id: string
+          state?: Database["public"]["Enums"]["enrollment_state"]
+          state_changed_at?: string
+          state_note?: string | null
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          family_id?: string
+          id?: string
+          is_sample?: boolean
+          program_id?: string
+          state?: Database["public"]["Enums"]["enrollment_state"]
+          state_changed_at?: string
+          state_note?: string | null
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       families: {
         Row: {
           created_at: string
@@ -135,6 +240,50 @@ export type Database = {
             columns: ["family_id"]
             isOneToOne: false
             referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_sample: boolean
+          program_id: string
+          published: boolean
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_sample?: boolean
+          program_id: string
+          published?: boolean
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_sample?: boolean
+          program_id?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_resources_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
             referencedColumns: ["id"]
           },
         ]
@@ -256,6 +405,53 @@ export type Database = {
         }
         Relationships: []
       }
+      students: {
+        Row: {
+          affirmation_version: string
+          affirmed_at: string
+          created_at: string
+          family_id: string
+          grade_level: string | null
+          guardian_relationship: string | null
+          id: string
+          is_sample: boolean
+          preferred_name: string
+          updated_at: string
+        }
+        Insert: {
+          affirmation_version?: string
+          affirmed_at?: string
+          created_at?: string
+          family_id: string
+          grade_level?: string | null
+          guardian_relationship?: string | null
+          id?: string
+          is_sample?: boolean
+          preferred_name: string
+          updated_at?: string
+        }
+        Update: {
+          affirmation_version?: string
+          affirmed_at?: string
+          created_at?: string
+          family_id?: string
+          grade_level?: string | null
+          guardian_relationship?: string | null
+          id?: string
+          is_sample?: boolean
+          preferred_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           granted_at: string
@@ -282,11 +478,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_student_to_own_family: {
+        Args: {
+          grade_level?: string
+          guardian_relationship?: string
+          preferred_name: string
+        }
+        Returns: string
+      }
+      create_family_for_current_user: {
+        Args: { family_name: string }
+        Returns: string
+      }
+      remove_student_from_own_family: {
+        Args: { student_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "parent" | "educator" | "admin" | "owner"
       availability_state: "open" | "limited" | "waitlist" | "closed" | "unknown"
+      enrollment_state:
+        | "started"
+        | "approval_pending"
+        | "payment_pending"
+        | "waitlisted"
+        | "confirmed"
+        | "payment_failed"
+        | "canceled"
+        | "blocked"
       family_member_role: "primary_guardian" | "invited_guardian"
       program_publication_state: "draft" | "published" | "archived"
     }
@@ -418,6 +638,16 @@ export const Constants = {
     Enums: {
       app_role: ["parent", "educator", "admin", "owner"],
       availability_state: ["open", "limited", "waitlist", "closed", "unknown"],
+      enrollment_state: [
+        "started",
+        "approval_pending",
+        "payment_pending",
+        "waitlisted",
+        "confirmed",
+        "payment_failed",
+        "canceled",
+        "blocked",
+      ],
       family_member_role: ["primary_guardian", "invited_guardian"],
       program_publication_state: ["draft", "published", "archived"],
     },

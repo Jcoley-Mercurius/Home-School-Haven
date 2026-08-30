@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 
 import { PortalNav } from "@/components/layout/portal-nav"
+import { SiteFooter } from "@/components/layout/site-footer"
+import { SiteHeader } from "@/components/layout/site-header"
 import { createClient } from "@/lib/supabase/server"
 import { requireAdmin } from "@/lib/auth/guards"
 
@@ -38,6 +40,7 @@ export default async function AdminPage() {
 
   return (
     <>
+      <SiteHeader />
       <PortalNav viewer={viewer} area="admin" />
       <main
         id="main"
@@ -122,6 +125,7 @@ export default async function AdminPage() {
           )}
         </section>
       </main>
+      <SiteFooter />
     </>
   )
 }

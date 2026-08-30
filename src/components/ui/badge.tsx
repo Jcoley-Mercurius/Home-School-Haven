@@ -29,6 +29,11 @@ const badgeVariants = cva(
         limited: "bg-[var(--hsh-gold-100)] text-[var(--hsh-gold-700)]",
         waitlist: "bg-[var(--hsh-coral-100)] text-[var(--hsh-coral-700)]",
         pending: "bg-[var(--hsh-gold-100)] text-[var(--hsh-gold-700)]",
+        /* Reserved for a confirmed outcome. `open` says a program accepts
+           registrations; this says something actually completed, and the two
+           must not be spelled the same way. Success #2F6B4F on Forest 100
+           measures 4.91:1 — AA for the 14 px semibold label above. */
+        success: "bg-[var(--hsh-forest-100)] text-[var(--hsh-success)]",
         info: "bg-[var(--hsh-forest-50)] text-[var(--hsh-info)]",
       },
     },

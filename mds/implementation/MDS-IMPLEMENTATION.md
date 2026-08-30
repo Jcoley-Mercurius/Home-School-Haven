@@ -106,7 +106,7 @@ Private beta references and validation may use sample or sanitized family and st
 
 - Real-family activation: blocked by MPS-GAP-005 covering child data, consent, retention, deletion, and related policy.
 - Authoritative financial automation: blocked by MPS-GAP-010 covering pricing, scholarships, discounts, refunds, cancellations, credits, and transfers.
-- Production implementation activation: MTS is approved; repository inspection and reconciliation remain required.
+- Production implementation activation: no longer blocked on reconciliation. MTS is approved, and repository inspection and reconciliation completed 2026-08-27; the table above is the record. Activation remains gated by MPS-GAP-005 and MPS-GAP-010 above, and by the MTS activation gate.
 
 ## Maintenance
 

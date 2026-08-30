@@ -19,7 +19,18 @@ import { expect, test } from "./fixtures"
  *   cp .env.example .env.local   # fill in the local stack's URL and key
  *   npm run test:e2e
  */
-const PROTECTED = ["/family", "/educator", "/admin", "/account"] as const
+const PROTECTED = [
+  "/family",
+  "/family/household",
+  "/family/schedule",
+  "/family/announcements",
+  "/family/resources",
+  "/family/setup",
+  "/family/students/new",
+  "/educator",
+  "/admin",
+  "/account",
+] as const
 
 const SUPABASE_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
 
@@ -100,11 +111,16 @@ test.describe("cross-role denial", () => {
   }) => {
     await signIn(page, ACCOUNTS.parent)
     await expect(page).toHaveURL(/\/family$/)
+    /* `/family` is the dashboard now, so the heading is the destination name
+       and the family's own name sits in the line beneath it. Both are still
+       checked, and the ownership check is the one that matters: parent A is
+       shown family A and never family B. */
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Your family",
+      "Family Overview",
     )
-    // Their own family only — the sample seed has two.
-    await expect(page.getByText("Sample Family A")).toBeVisible()
+    await expect(
+      page.getByText("Sample Family A", { exact: false }).first(),
+    ).toBeVisible()
     await expect(page.getByText("Sample Family B")).toHaveCount(0)
 
     // A 404 rather than a 403: a wrong-role visitor is not told that an
@@ -123,7 +139,18 @@ test.describe("cross-role denial", () => {
     // Assigned to two of nine programs; the rest must not appear.
     await expect(page.getByText("Harvest Explorers")).toHaveCount(0)
 
-    for (const route of ["/family", "/admin"]) {
+    // Every family route, not only its root: an educator must not reach the
+    // setup or student surfaces either.
+    for (const route of [
+      "/family",
+      "/family/household",
+      "/family/schedule",
+      "/family/announcements",
+      "/family/resources",
+      "/family/setup",
+      "/family/students/new",
+      "/admin",
+    ]) {
       await expectStatus(page, route, 404)
     }
   })

@@ -17,6 +17,23 @@ Approved by MTS: `TECHNOLOGY-BLUEPRINT.md`, `SECURITY-ARCHITECTURE.md`,
 | `seed.sql` | Sanitized local/preview fixtures. Real published program content; synthetic people. |
 | `tests/database/` | pgTAP authorization tests — positive and negative, per role. |
 
+## Running the pgTAP tests without Docker
+
+`npm run db:test` needs the local stack. When Docker is unavailable, the test
+files can be run straight against a database with `psql` — each one wraps
+itself in `begin … rollback`, including its own `create extension`, so it
+leaves nothing behind:
+
+```bash
+for f in supabase/tests/database/*.test.sql; do
+  echo "### $f"
+  psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$f" | grep -E "^ (not )?ok "
+done
+```
+
+Check both the `not ok` lines **and** the exit code: a file that raises stops
+early, and the assertions after the error never run at all.
+
 ## Requirements
 
 The Supabase CLI drives a **local stack in Docker**. Docker is required and is
@@ -74,16 +91,26 @@ supabase db push           # apply migrations
 ```
 
 `seed.sql` is **not** applied by `db push`. To load sanitized fixtures into a
-preview, run it deliberately after setting the environment guard:
+preview, run it deliberately — set the environment guard first, and **always
+run with `ON_ERROR_STOP`**:
 
 ```bash
 psql "$PREVIEW_DB_URL" -c "ALTER DATABASE postgres SET app.environment = 'preview';"
-psql "$PREVIEW_DB_URL" -f supabase/seed.sql
+psql "$PREVIEW_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+echo "psql exit: $?"
 ```
 
-The seed script will only execute when `app.environment` is explicitly set to
+The seed script only executes when `app.environment` is explicitly set to
 `local` or `preview`. It refuses to run if the setting is unset, empty, or set
-to any other value (including `production`).
+to any other value (including `production`). `ALTER DATABASE` takes effect for
+new sessions, so the guard is in place by the time the second command connects.
+
+Without `ON_ERROR_STOP` psql reports an error and carries on, so a partial seed
+looks like a successful one. That is not hypothetical: the programs insert
+lacked an `on conflict` clause, so on a second run the file died at the programs
+block and silently skipped every account, role grant, family, and student after
+it. The insert is idempotent now, but keep the flag — it is the difference
+between a failure you can see and one you cannot.
 
 Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in
 Vercel, **scoped to Preview only**. Local, preview, and production credentials
@@ -144,6 +171,8 @@ synthetic (MPS-RUL-007).
 |---|---|---|
 | `sample.parent.one@example.com` | parent | Sample Family A |
 | `sample.parent.two@example.com` | parent | Sample Family B |
+| `sample.parent.three@example.com` | parent | No family — the `family_incomplete` state |
+| `sample.parent.four@example.com` | parent | No family — the account the end-to-end suite completes setup with |
 | `sample.educator@example.com` | educator | Art Lab + the sample draft |
 | `sample.admin@example.com` | admin | every program and the audit history |
 
@@ -153,10 +182,50 @@ Passwords are set during local seeding only and are not documented here.
 
 | Missing | Why |
 |---|---|
-| `students` | MPS-RUL-006 permits only "approved minimum fields", and MPS GAP-005 leaves that list unconfirmed. Choosing columns here would be inventing child-data policy. |
 | `consents` | MPS GAP-005: consent language, retention, and deletion policy are Samantha's to confirm. |
 | `enrollments`, payment state | MPS GAP-010: financial policy and the authoritative checkout signal are unresolved. `programs.checkout_url` holds the external handoff link only, which is never evidence of payment. |
 | Storage buckets | MTS IMPLEMENTATION-PLAN Phase 4, and gated on the upload-safety and R2 recovery controls. |
 
 `tests/database/00_setup.test.sql` asserts these tables are absent, so their
 arrival is a deliberate decision rather than a quiet one.
+
+## `students` — a demo table, on purpose
+
+`students` used to be on the list above. It exists now under an explicit owner
+decision of 2026-08-29 (deviation D-FF1 in
+`prompts/family-foundation-vertical-slice.md`), taken while MPS GAP-005 is still
+open. Samantha has not confirmed the approved minimum fields (checklist §7) or
+the consent and guardian-authority language (checklist §6).
+
+Two CHECK constraints hold that boundary instead of a comment:
+
+* `students_sample_only` — `is_sample` must be true. A non-sample student row
+  cannot be stored at all while the policy is unconfirmed (MPS-RUL-007).
+* `students_affirmation_unapproved` — `affirmation_version` must be
+  `demo-unapproved-v0`. No row can record that Samantha-approved language was
+  accepted, because no approved version string is storable (MPS-RUL-010).
+
+Columns are preferred name, grade level, and guardian relationship. Legal name,
+date of birth, allergies, medical needs, accommodations, emergency contacts,
+authorized pickup, and photographs are absent, and
+`tests/database/25_family_setup.test.sql` asserts each one stays absent
+(MPS-RUL-006).
+
+Before real-family activation, re-derive the field set and the affirmation from
+Samantha's answers and replace both constraints deliberately.
+
+## Family writes
+
+`families`, `family_members`, and `students` have **no client write policy** at
+any verb. Every write arrives through a SECURITY DEFINER function that derives
+the caller from `auth.uid()` rather than from an argument:
+
+| Function | Guarantee |
+|---|---|
+| `create_family_for_current_user(text)` | Requires the `parent` role. Returns the existing family on a repeat call; a unique index on `family_members.user_id` is the backstop under concurrency. |
+| `add_student_to_own_family(text, text, text)` | Family is derived from the caller's membership, never passed in. Returns the existing profile when the same preferred name is resubmitted. |
+| `remove_student_from_own_family(uuid)` | Deletes only within the caller's own family, and answers the same way for another family's id as for one that never existed. |
+
+An RLS INSERT policy was deliberately not used: one that let a caller insert
+their own `user_id` into `family_members` would also let them insert themselves
+into any family id they could guess.

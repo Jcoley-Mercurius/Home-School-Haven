@@ -9,9 +9,11 @@
 --     `src/content/programs.ts`. Unpublished facts stay NULL (import rule 3).
 --   * People are synthetic: every address is on the reserved `example.com`
 --     domain (RFC 2606) and every name is prefixed "Sample".
---   * No student rows exist. MPS GAP-005 leaves the approved minimum student
---     fields and consent policy unconfirmed and MPS-RUL-006 forbids inventing
---     them, so the table is not modelled in this release.
+--   * Student rows are demo fixtures, added under the owner decision of
+--     2026-08-29 while MPS GAP-005 is open (deviation D-FF1). Every one is
+--     `is_sample`, which the table's check constraint makes mandatory, and
+--     carries the `demo-unapproved-v0` affirmation version. No name below
+--     belongs to a real child.
 --
 -- This file is applied by `supabase db reset` against a LOCAL stack, and may be
 -- applied to the private preview. It must never run against production.
@@ -132,7 +134,18 @@ insert into public.programs (
     'unknown', 'draft', 'import',
     'Sample data — not published content',
     '[]'::jsonb, null, null, null, null, false, 99
-  );
+  )
+-- Without this the whole file stops here on any re-run: the programs insert
+-- raises a duplicate key, and every statement after it -- the sample accounts,
+-- role grants, families, students, and educator assignments -- never executes.
+-- That is exactly how a re-seed came to look like it had succeeded while
+-- silently adding nothing. Every other insert in this file is already
+-- idempotent; this one was the outlier.
+--
+-- `do nothing` rather than `do update`: this file seeds fixtures, and quietly
+-- rewriting published program content on an unrelated re-seed would be a
+-- surprise. To refresh program content, reset the rows deliberately.
+on conflict (id) do nothing;
 
 
 -- ---------------------------------------------------------------------------
@@ -146,6 +159,16 @@ declare
   sample_password text := 'SampleFoundationReview2026';
   parent_a  uuid := '20000000-0000-4000-8000-00000000000a';
   parent_b  uuid := '20000000-0000-4000-8000-00000000000b';
+  -- Two parents holding the role and NO family, so the family_incomplete state
+  -- of MPS-WFL-002 is reachable without mutating parents A or B.
+  --
+  -- Two rather than one because completing setup consumes the fixture. parent_c
+  -- is used by the tests that must *stay* family-less -- validation, keyboard,
+  -- accessibility, screenshots -- and parent_d by the one test that actually
+  -- completes setup. Sharing a single account made those tests order-dependent:
+  -- whichever ran after the completion test found a family already there.
+  parent_c  uuid := '20000000-0000-4000-8000-00000000000c';
+  parent_d  uuid := '20000000-0000-4000-8000-00000000000d';
   educator  uuid := '20000000-0000-4000-8000-00000000000e';
   admin     uuid := '20000000-0000-4000-8000-000000000ad0';
   family_a  uuid := '30000000-0000-4000-8000-00000000000a';
@@ -156,6 +179,8 @@ begin
     select * from (values
       (parent_a,  'sample.parent.one@example.com',   'Sample Parent One'),
       (parent_b,  'sample.parent.two@example.com',   'Sample Parent Two'),
+      (parent_c,  'sample.parent.three@example.com', 'Sample Parent Three'),
+      (parent_d,  'sample.parent.four@example.com',  'Sample Parent Four'),
       (educator,  'sample.educator@example.com',     'Sample Educator'),
       (admin,     'sample.admin@example.com',        'Sample Administrator')
     ) as t(user_id, email, display_name)
@@ -209,6 +234,8 @@ begin
   insert into public.user_roles (user_id, role) values
     (parent_a, 'parent'),
     (parent_b, 'parent'),
+    (parent_c, 'parent'),
+    (parent_d, 'parent'),
     (educator, 'educator'),
     (admin,    'admin')
   on conflict do nothing;
@@ -224,11 +251,137 @@ begin
     (family_b, parent_b, 'primary_guardian')
   on conflict do nothing;
 
+  -- parent_c and parent_d must always start with NO family -- that is the
+  -- entire point of these fixtures. The end-to-end suite completes setup for
+  -- parent_d, so a re-seed has to put the fixture back rather than inherit
+  -- whatever state the last run happened to leave. `on conflict do nothing`
+  -- cannot express that: the row it must remove is one nothing else will
+  -- conflict with. Cascades take the membership and any student rows with it.
+  delete from public.families f
+    where exists (
+      select 1 from public.family_members m
+      where m.family_id = f.id and m.user_id in (parent_c, parent_d)
+    );
+
+  -- Demo student profiles (D-FF1). Family A has two so "each child is
+  -- distinguishable" is testable; family B has one so "parent A cannot read
+  -- family B's children" is testable. Preferred name, grade, and relationship
+  -- only -- no legal name, date of birth, medical, or emergency information
+  -- (MPS-RUL-006).
+  insert into public.students
+    (id, family_id, preferred_name, grade_level, guardian_relationship) values
+    ('40000000-0000-4000-8000-000000000001', family_a,
+     'Sample Student A1', 'Grade 3', 'Parent'),
+    ('40000000-0000-4000-8000-000000000002', family_a,
+     'Sample Student A2', 'Grade 6', 'Parent'),
+    ('40000000-0000-4000-8000-000000000003', family_b,
+     'Sample Student B1', 'Grade 1', 'Parent')
+  on conflict do nothing;
+
   -- Assigned to exactly one published program and to the draft, so both
   -- "sees assigned" and "cannot see unassigned" are testable.
   insert into public.educator_assignments (educator_user_id, program_id) values
     (educator, '10000000-0000-4000-8000-000000000004'),
     (educator, '10000000-0000-4000-8000-0000000000ff')
   on conflict do nothing;
+
+  -- -------------------------------------------------------------------------
+  -- Enrollments (sample)
+  -- -------------------------------------------------------------------------
+  -- Chosen so the dashboard's trust states are demonstrable rather than
+  -- described. MDS-REF-007 is named for its pending-payment warning, so family
+  -- A carries exactly that alongside a confirmed enrollment: the two states
+  -- must be distinguishable side by side, and only one of them may read as
+  -- success.
+  --
+  -- Family B's row exists so "parent A reads none of family B's enrollments"
+  -- has a target. Every row is is_sample, which the table's check constraint
+  -- makes mandatory. No row here is evidence that anyone paid anything.
+  insert into public.enrollments
+    (id, family_id, student_id, program_id, state, state_note) values
+    -- Art Lab, payment verification pending. Not confirmed enrollment.
+    ('50000000-0000-4000-8000-000000000001', family_a,
+     '40000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000004', 'payment_pending',
+     'Sample record. Awaiting verification by an authorized administrator.'),
+    -- Haven Days Enrichment, confirmed by an authorized administrator.
+    ('50000000-0000-4000-8000-000000000002', family_a,
+     '40000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000002', 'confirmed',
+     'Sample record.'),
+    -- The second child, so per-student context is demonstrable.
+    ('50000000-0000-4000-8000-000000000003', family_a,
+     '40000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000007', 'approval_pending',
+     'Sample record.'),
+    -- Family B. The cross-family denial target.
+    ('50000000-0000-4000-8000-000000000004', family_b,
+     '40000000-0000-4000-8000-000000000003',
+     '10000000-0000-4000-8000-000000000005', 'waitlisted',
+     'Sample record. A waitlist place is not enrollment.')
+  on conflict (id) do nothing;
+
+  -- -------------------------------------------------------------------------
+  -- Announcements and learning resources (sample)
+  -- -------------------------------------------------------------------------
+  -- Copy is deliberately generic. An announcement that named a date, a room, a
+  -- price, or a policy would be inventing a published fact (import rule 3,
+  -- DO-DONT "Trust states"). Each row states that it is a sample.
+  --
+  -- Coverage: one published row family A can reach, one unpublished row it must
+  -- not, and one row on a program only family B is enrolled in, which it must
+  -- not reach either.
+  insert into public.announcements
+    (id, program_id, title, body, published, published_at) values
+    ('60000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample announcement — welcome to the review',
+     'This is sample content for the Foundation Review. Home School Haven has '
+     'not published a real announcement here yet.',
+     true, now() - interval '2 days'),
+    ('60000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000002',
+     'Sample announcement — what this space is for',
+     'Program announcements from Home School Haven will appear here. This entry '
+     'is sample content for the Foundation Review.',
+     true, now() - interval '9 days'),
+    -- Unpublished: proves the `published` filter, not the family boundary.
+    ('60000000-0000-4000-8000-0000000000f1',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample unpublished announcement (test fixture)',
+     'Never visible to a family. Present so the published filter is testable.',
+     false, null),
+    -- Family B only: proves the family boundary, not the published filter.
+    ('60000000-0000-4000-8000-0000000000f2',
+     '10000000-0000-4000-8000-000000000005',
+     'Sample announcement for another family (test fixture)',
+     'Present so cross-family announcement denial is testable.',
+     true, now() - interval '1 day')
+  on conflict (id) do nothing;
+
+  insert into public.learning_resources
+    (id, program_id, title, description, url, published) values
+    ('70000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000002',
+     'Sample resource — Home School Haven resource library',
+     'Sample content for the Foundation Review, linking to the published '
+     'public resource page.',
+     'https://www.homeschoolhaven.org/', true),
+    ('70000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample resource — program information',
+     'Sample content for the Foundation Review.',
+     'https://www.homeschoolhaven.org/', true),
+    ('70000000-0000-4000-8000-0000000000f1',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample unpublished resource (test fixture)',
+     'Never visible to a family. Present so the published filter is testable.',
+     'https://www.homeschoolhaven.org/', false),
+    ('70000000-0000-4000-8000-0000000000f2',
+     '10000000-0000-4000-8000-000000000005',
+     'Sample resource for another family (test fixture)',
+     'Present so cross-family resource denial is testable.',
+     'https://www.homeschoolhaven.org/', true)
+  on conflict (id) do nothing;
 end;
 $$;

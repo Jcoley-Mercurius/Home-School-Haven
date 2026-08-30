@@ -41,12 +41,19 @@ select throws_ok(
 );
 
 -- NEGATIVE: nor unassign themselves from oversight.
+--
+-- Run as a top-level statement: Postgres refuses a data-modifying CTE inside a
+-- subquery expression ("WITH clause containing a data-modifying statement must
+-- be at the top level"), so the previous form raised before it could assert
+-- anything. The educator holds the DELETE privilege but no DELETE policy, so
+-- this affects zero rows rather than raising -- and the assignments survive.
+delete from public.educator_assignments
+  where educator_user_id = :'educator'::uuid;
+
 select is(
-  (with deleted as (
-     delete from public.educator_assignments
-       where educator_user_id = :'educator'::uuid returning 1
-   ) select count(*)::int from deleted),
-  0,
+  (select count(*)::int from public.educator_assignments
+     where educator_user_id = :'educator'::uuid),
+  2,
   'an educator cannot delete their own assignment'
 );
 
