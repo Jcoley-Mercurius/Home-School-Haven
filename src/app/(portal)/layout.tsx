@@ -1,9 +1,14 @@
-import { SiteFooter } from "@/components/layout/site-footer"
-import { SiteHeader } from "@/components/layout/site-header"
 import { SkipLink } from "@/components/layout/skip-link"
 
 /**
  * Portal shell for the authenticated family, educator, and administrator areas.
+ *
+ * It renders the skip link and nothing else. Chrome belongs to each area, not
+ * to this layout: the family area has its own role sidebar, rail, and bottom
+ * navigation (MDS-REF-007), while the educator and administrator areas still
+ * use the public header until their own shells are built. A shared header here
+ * would have to be one or the other, and would be wrong for whichever area it
+ * was not built for.
  *
  * This layout intentionally performs NO authorization. Each page calls its own
  * guard, so authorization cannot be lost by a layout being skipped, by a route
@@ -34,9 +39,7 @@ export default function PortalLayout({
   return (
     <>
       <SkipLink />
-      <SiteHeader />
       {children}
-      <SiteFooter />
     </>
   )
 }

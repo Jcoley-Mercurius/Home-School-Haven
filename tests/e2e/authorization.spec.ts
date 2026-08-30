@@ -21,6 +21,10 @@ import { expect, test } from "./fixtures"
  */
 const PROTECTED = [
   "/family",
+  "/family/household",
+  "/family/schedule",
+  "/family/announcements",
+  "/family/resources",
   "/family/setup",
   "/family/students/new",
   "/educator",
@@ -107,12 +111,16 @@ test.describe("cross-role denial", () => {
   }) => {
     await signIn(page, ACCOUNTS.parent)
     await expect(page).toHaveURL(/\/family$/)
-    /* Once setup is complete the page is titled with the family's own name
-       rather than a generic label, so this is both the heading check and the
-       ownership check: parent A is shown family A and never family B. */
+    /* `/family` is the dashboard now, so the heading is the destination name
+       and the family's own name sits in the line beneath it. Both are still
+       checked, and the ownership check is the one that matters: parent A is
+       shown family A and never family B. */
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Sample Family A",
+      "Family Overview",
     )
+    await expect(
+      page.getByText("Sample Family A", { exact: false }).first(),
+    ).toBeVisible()
     await expect(page.getByText("Sample Family B")).toHaveCount(0)
 
     // A 404 rather than a 403: a wrong-role visitor is not told that an
@@ -135,6 +143,10 @@ test.describe("cross-role denial", () => {
     // setup or student surfaces either.
     for (const route of [
       "/family",
+      "/family/household",
+      "/family/schedule",
+      "/family/announcements",
+      "/family/resources",
       "/family/setup",
       "/family/students/new",
       "/admin",

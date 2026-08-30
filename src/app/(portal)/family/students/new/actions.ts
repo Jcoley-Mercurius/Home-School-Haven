@@ -79,7 +79,7 @@ export async function addStudentAction(
     }
   }
 
-  redirect("/family")
+  redirect("/family/household")
 }
 
 /**
@@ -92,9 +92,9 @@ export async function addStudentAction(
  */
 export async function removeStudentAction(formData: FormData): Promise<void> {
   const studentId = String(formData.get("studentId") ?? "")
-  if (!studentId) redirect("/family")
+  if (!studentId) redirect("/family/household")
 
   await requireRole("parent", "/family")
   await removeStudent(studentId)
-  redirect("/family")
+  redirect("/family/household")
 }

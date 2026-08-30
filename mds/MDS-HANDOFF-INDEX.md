@@ -15,7 +15,7 @@
 - `references/REFERENCE-INDEX.md` — canonical logo and visual reference map.
 - `implementation/MDS-IMPLEMENTATION.md` — design-to-code manifest and unresolved technical mapping.
 - `qa/MDS-QA.md` — three-gate validation protocol.
-- `../AGENTS.md` — approved combined MPS/MDS/MTS implementation instructions awaiting repository reconciliation.
+- `../AGENTS.md` — approved combined MPS/MDS/MTS implementation instructions. Repository reconciliation completed 2026-08-27; the inspected versions, paths, and commands are recorded in `implementation/MDS-IMPLEMENTATION.md`.
 
 ## Locked decisions
 

@@ -284,5 +284,104 @@ begin
     (educator, '10000000-0000-4000-8000-000000000004'),
     (educator, '10000000-0000-4000-8000-0000000000ff')
   on conflict do nothing;
+
+  -- -------------------------------------------------------------------------
+  -- Enrollments (sample)
+  -- -------------------------------------------------------------------------
+  -- Chosen so the dashboard's trust states are demonstrable rather than
+  -- described. MDS-REF-007 is named for its pending-payment warning, so family
+  -- A carries exactly that alongside a confirmed enrollment: the two states
+  -- must be distinguishable side by side, and only one of them may read as
+  -- success.
+  --
+  -- Family B's row exists so "parent A reads none of family B's enrollments"
+  -- has a target. Every row is is_sample, which the table's check constraint
+  -- makes mandatory. No row here is evidence that anyone paid anything.
+  insert into public.enrollments
+    (id, family_id, student_id, program_id, state, state_note) values
+    -- Art Lab, payment verification pending. Not confirmed enrollment.
+    ('50000000-0000-4000-8000-000000000001', family_a,
+     '40000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000004', 'payment_pending',
+     'Sample record. Awaiting verification by an authorized administrator.'),
+    -- Haven Days Enrichment, confirmed by an authorized administrator.
+    ('50000000-0000-4000-8000-000000000002', family_a,
+     '40000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000002', 'confirmed',
+     'Sample record.'),
+    -- The second child, so per-student context is demonstrable.
+    ('50000000-0000-4000-8000-000000000003', family_a,
+     '40000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000007', 'approval_pending',
+     'Sample record.'),
+    -- Family B. The cross-family denial target.
+    ('50000000-0000-4000-8000-000000000004', family_b,
+     '40000000-0000-4000-8000-000000000003',
+     '10000000-0000-4000-8000-000000000005', 'waitlisted',
+     'Sample record. A waitlist place is not enrollment.')
+  on conflict (id) do nothing;
+
+  -- -------------------------------------------------------------------------
+  -- Announcements and learning resources (sample)
+  -- -------------------------------------------------------------------------
+  -- Copy is deliberately generic. An announcement that named a date, a room, a
+  -- price, or a policy would be inventing a published fact (import rule 3,
+  -- DO-DONT "Trust states"). Each row states that it is a sample.
+  --
+  -- Coverage: one published row family A can reach, one unpublished row it must
+  -- not, and one row on a program only family B is enrolled in, which it must
+  -- not reach either.
+  insert into public.announcements
+    (id, program_id, title, body, published, published_at) values
+    ('60000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample announcement — welcome to the review',
+     'This is sample content for the Foundation Review. Home School Haven has '
+     'not published a real announcement here yet.',
+     true, now() - interval '2 days'),
+    ('60000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000002',
+     'Sample announcement — what this space is for',
+     'Program announcements from Home School Haven will appear here. This entry '
+     'is sample content for the Foundation Review.',
+     true, now() - interval '9 days'),
+    -- Unpublished: proves the `published` filter, not the family boundary.
+    ('60000000-0000-4000-8000-0000000000f1',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample unpublished announcement (test fixture)',
+     'Never visible to a family. Present so the published filter is testable.',
+     false, null),
+    -- Family B only: proves the family boundary, not the published filter.
+    ('60000000-0000-4000-8000-0000000000f2',
+     '10000000-0000-4000-8000-000000000005',
+     'Sample announcement for another family (test fixture)',
+     'Present so cross-family announcement denial is testable.',
+     true, now() - interval '1 day')
+  on conflict (id) do nothing;
+
+  insert into public.learning_resources
+    (id, program_id, title, description, url, published) values
+    ('70000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000002',
+     'Sample resource — Home School Haven resource library',
+     'Sample content for the Foundation Review, linking to the published '
+     'public resource page.',
+     'https://www.homeschoolhaven.org/', true),
+    ('70000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample resource — program information',
+     'Sample content for the Foundation Review.',
+     'https://www.homeschoolhaven.org/', true),
+    ('70000000-0000-4000-8000-0000000000f1',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample unpublished resource (test fixture)',
+     'Never visible to a family. Present so the published filter is testable.',
+     'https://www.homeschoolhaven.org/', false),
+    ('70000000-0000-4000-8000-0000000000f2',
+     '10000000-0000-4000-8000-000000000005',
+     'Sample resource for another family (test fixture)',
+     'Present so cross-family resource denial is testable.',
+     'https://www.homeschoolhaven.org/', true)
+  on conflict (id) do nothing;
 end;
 $$;

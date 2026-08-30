@@ -6,7 +6,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(23);
 
 -- Every table in the exposed `public` schema must have RLS enabled. A new table
 -- without RLS is reachable through the Data API, so this test is the guard
@@ -95,13 +95,66 @@ select has_table('public', 'programs', 'programs exists');
 select has_table('public', 'educator_assignments', 'educator_assignments exists');
 select has_table('public', 'audit_events', 'audit_events exists');
 
--- Consent and enrollment data is deliberately absent while MPS GAP-005 and
--- GAP-010 are open. If one of these appears, the policy question was answered
--- somewhere other than the MPS.
+-- Consent data is deliberately absent while MPS GAP-005 is open. If it
+-- appears, the policy question was answered somewhere other than the MPS.
 select hasnt_table('public', 'consents',
   'no consents table: MPS GAP-005 leaves consent language unconfirmed');
-select hasnt_table('public', 'enrollments',
-  'no enrollments table: MPS GAP-010 leaves financial policy unconfirmed');
+
+-- `enrollments` DOES exist, which this file previously asserted it must not.
+-- The same thing happened here as happened to `students`: the tripwire fired,
+-- and it fired correctly. The answer is that GAP-010 blocks automated financial
+-- *decisions* -- scholarships, refunds, cancellations, credits -- and not the
+-- existence of a record whose state an authorized human set. MTS Phase 3 names
+-- the family dashboard, and EXC-001 permits it with sanitized data (owner
+-- approval, 2026-08-29).
+--
+-- So the assertion is replaced rather than deleted, because the boundary it
+-- guarded still needs guarding. Three things must remain true: the rows are
+-- sample only, no client role can write one, and nothing here decides a
+-- financial outcome. The first two are asserted below; the third is a property
+-- of there being no write path at all.
+select has_table('public', 'enrollments', 'enrollments exists');
+select has_table('public', 'announcements', 'announcements exists');
+select has_table('public', 'learning_resources', 'learning_resources exists');
+
+select col_has_check('public', 'enrollments', 'is_sample',
+  'enrollments.is_sample carries a CHECK: sample rows only while GAP-010 is open');
+select col_has_check('public', 'announcements', 'is_sample',
+  'announcements.is_sample carries a CHECK: sample rows only');
+select col_has_check('public', 'learning_resources', 'is_sample',
+  'learning_resources.is_sample carries a CHECK: sample rows only');
+
+-- The DEFECT-FF1 lesson, applied before it can bite again: a policy no
+-- privilege can reach is not a boundary, it is an outage. The bulk revoke loop
+-- in the least-privilege migration cannot mention a table created after it, so
+-- these grants live in the dashboard migration and are asserted here.
+select is(
+  (
+    select count(*)::int
+    from information_schema.role_table_grants
+    where table_schema = 'public'
+      and table_name in ('enrollments', 'announcements', 'learning_resources')
+      and grantee = 'authenticated' and privilege_type = 'SELECT'
+  ),
+  3,
+  'authenticated can actually reach the three dashboard tables'
+);
+
+-- No client role may write any of them. Enrollment creation is MPS-REQ-012/013
+-- and content authoring is MPS-REQ-019; neither exists in this release, so
+-- neither has a privilege.
+select is(
+  (
+    select count(*)::int
+    from information_schema.role_table_grants
+    where table_schema = 'public'
+      and table_name in ('enrollments', 'announcements', 'learning_resources')
+      and grantee in ('anon', 'authenticated', 'public')
+      and privilege_type in ('INSERT', 'UPDATE', 'DELETE', 'TRUNCATE')
+  ),
+  0,
+  'no client role can write an enrollment, announcement, or resource'
+);
 
 -- `students` DOES exist, which this file previously asserted it must not. That
 -- assertion fired exactly as intended: the policy question was answered

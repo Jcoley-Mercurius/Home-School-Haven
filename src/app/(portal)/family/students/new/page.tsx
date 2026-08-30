@@ -4,6 +4,8 @@ import { redirect } from "next/navigation"
 
 import { StudentForm } from "@/components/family/student-form"
 import { PortalNav } from "@/components/layout/portal-nav"
+import { SiteFooter } from "@/components/layout/site-footer"
+import { SiteHeader } from "@/components/layout/site-header"
 import { requireRole } from "@/lib/auth/guards"
 import { getFamilyState } from "@/lib/family/repository"
 
@@ -26,6 +28,7 @@ export default async function NewStudentPage() {
 
   return (
     <>
+      <SiteHeader />
       <PortalNav viewer={viewer} area="family" />
       <main
         id="main"
@@ -52,6 +55,7 @@ export default async function NewStudentPage() {
           Back to your family
         </Link>
       </main>
+      <SiteFooter />
     </>
   )
 }

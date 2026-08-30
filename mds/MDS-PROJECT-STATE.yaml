@@ -895,7 +895,7 @@ artifacts:
     - {id: MDS-UI-REF-003, name: "Educator Content Workspace", path: "/Home School Haven Learning Platform/Home School Haven course builder dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Future platform"}
     - {id: MDS-UI-REF-004, name: "Administrator Operations", path: "/Home School Haven Learning Platform/Home School Haven admin dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Foundation Beta"}
     - {id: MDS-UI-REF-005, name: "Public Calendar", path: "mds/references/assets/public-calendar-reference.png", status: current, last_updated: "2026-08-28T00:00:00Z", horizon: "Foundation Release"}
-  agents_md: {path: "AGENTS.md", status: draft, last_updated: "2026-08-27T02:37:26Z", note: "MDS guardrails current; requires MTS and repository reconciliation before implementation activation"}
+  agents_md: {path: "AGENTS.md", status: current, last_updated: "2026-08-29T00:00:00Z", note: "MDS guardrails current; MTS approved and repository reconciliation completed 2026-08-27 — real versions, paths, and commands recorded in mds/implementation/MDS-IMPLEMENTATION.md"}
   implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled; exact repository versions, paths, and commands pending inspection"}
   qa_protocol: {path: "mds/qa/MDS-QA.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   compliance_report: {path: "mds/qa/MDS-COMPLIANCE.md", status: missing}

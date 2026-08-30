@@ -89,14 +89,11 @@ test.describe("family setup", () => {
     page,
   }) => {
     await signIn(page, ACCOUNTS.parentCompletingSetup)
+
+    /* MPS-WFL-002 `family_incomplete`. The Overview does not render six empty
+       cards for a parent who has no family yet; it sends them to the one
+       action that resolves the state. */
     await page.goto("/family")
-
-    // MPS-WFL-002 `family_incomplete`: a truthful empty state, not a blank page.
-    await expect(
-      page.getByRole("heading", { name: "Let’s set up your family" }),
-    ).toBeVisible()
-
-    await page.getByRole("link", { name: "Set Up My Family" }).click()
     await expect(page).toHaveURL(/\/family\/setup$/)
 
     await page.getByLabel("Family name").fill("Sample Family Four")
@@ -104,8 +101,11 @@ test.describe("family setup", () => {
 
     await page.waitForURL("**/family")
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Sample Family Four",
+      "Family Overview",
     )
+    await expect(
+      page.getByText("Sample Family Four", { exact: false }).first(),
+    ).toBeVisible()
   })
 
   test("returning to setup after completing it does not offer a second family", async ({
@@ -190,7 +190,7 @@ test.describe("demo student profiles", () => {
     // MPS-REQ-004 / MPS-ACC-005. The seed gives family A two students and
     // family B one; RLS is what keeps B's out of this page.
     await signIn(page, ACCOUNTS.parentWithFamily)
-    await page.goto("/family")
+    await page.goto("/family/household")
 
     /* Count rows, not text matches. Each row prints the name twice -- as the
        row label and inside its "Remove <name>" button -- so a text locator
@@ -206,7 +206,7 @@ test.describe("demo student profiles", () => {
     // Deviation D-FF1: a demo surface says so where a parent can read it, not
     // only in a commit message.
     await signIn(page, ACCOUNTS.parentWithFamily)
-    await page.goto("/family")
+    await page.goto("/family/household")
     await expect(
       page.getByText("sample records for this review", { exact: false }),
     ).toBeVisible()
@@ -246,7 +246,7 @@ test.describe("demo student profiles", () => {
         .getByRole("checkbox", { name: /parent or legal guardian/ })
         .check()
       await page.getByRole("button", { name: "Add Student" }).click()
-      await page.waitForURL("**/family")
+      await page.waitForURL("**/family/household")
     }
 
     /* One row, after two identical submissions. This is the assertion the
@@ -259,7 +259,7 @@ test.describe("demo student profiles", () => {
 
     // Leave the seeded fixture as it was found, so this suite can run twice.
     await page.getByRole("button", { name: "Remove Sample Student A4" }).click()
-    await page.waitForURL("**/family")
+    await page.waitForURL("**/family/household")
     await expect(
       page.getByRole("listitem").filter({ hasText: "Sample Student A4" }),
     ).toHaveCount(0)
@@ -279,7 +279,7 @@ test.describe("demo student profiles", () => {
     test(`the family area matches the ${name} baseline`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await signIn(page, ACCOUNTS.parentWithFamily)
-      await page.goto("/family")
+      await page.goto("/family/household")
       await page.waitForLoadState("networkidle")
       await expect(page).toHaveScreenshot(`family-ready-${name}.png`, {
         fullPage: true,
