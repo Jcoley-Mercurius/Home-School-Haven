@@ -160,6 +160,33 @@ insert into public.user_roles (user_id, role, granted_by)
 values ('<user-uuid>', 'educator', '<granting-admin-uuid>');
 ```
 
+`public.app_role` also defines `owner`, and `isAdmin()` in
+`src/lib/auth/session.ts` accepts it, but no account holds it and no approved
+requirement distinguishes owner-only from delegated-administrator authority in
+the Foundation Release (MPS-GAP-ADMIN-002). Until one does, an administrator and
+the owner have the same reach, and the operations overview states the
+distinction in words rather than enforcing one it has not been given.
+
+### What the administrator operations overview reads
+
+`/admin` performs exactly seven reads, all of them permitted by existing
+`*_select_admin` policies with existing grants — the slice added no migration,
+no policy, and no privilege:
+
+| Table | Selected | Why not more |
+|---|---|---|
+| `programs` | identity, publication state, checkout presence, import flag, published-detail nullability, imagery | — |
+| `educator_assignments` | `educator_user_id`, `program_id` | — |
+| `enrollments` | `state` only | An aggregate needs no note, student, or family, and what is never read cannot leak. |
+| `families` | `id` only | Counted, never named. |
+| `students` | `affirmation_version` only | The consent signal. No name, grade, or relationship. |
+| `user_roles` | `role` only | Counted, never attributed. |
+| `audit_events` | time, entity type, action, whether an actor is attributed | `changed_fields` holds enum labels and is not rendered. |
+
+`supabase/tests/database/60_rls_admin_overview.test.sql` runs each of these as an
+administrator, a parent, an educator, an account with no role grant, and a caller
+whose JWT metadata falsely claims `admin`.
+
 ---
 
 ## Sample accounts (local and preview only)
@@ -183,7 +210,8 @@ Passwords are set during local seeding only and are not documented here.
 | Missing | Why |
 |---|---|
 | `consents` | MPS GAP-005: consent language, retention, and deletion policy are Samantha's to confirm. |
-| `enrollments`, payment state | MPS GAP-010: financial policy and the authoritative checkout signal are unresolved. `programs.checkout_url` holds the external handoff link only, which is never evidence of payment. |
+| An authoritative payment record | MPS GAP-010: financial policy and the trustworthy checkout signal are unresolved. `public.enrollments` stores an enrollment *state* that an authorized human set; nothing stores or infers a payment outcome. `programs.checkout_url` holds the external handoff link only, which is never evidence of payment. |
+| Administrator provisioning | MPS-GAP-ADMIN-001: no approved requirement or workflow defines who grants an administrator role, through what authorized path, or what evidence is retained. Granting one is the manual operation below. |
 | Storage buckets | MTS IMPLEMENTATION-PLAN Phase 4, and gated on the upload-safety and R2 recovery controls. |
 
 `tests/database/00_setup.test.sql` asserts these tables are absent, so their

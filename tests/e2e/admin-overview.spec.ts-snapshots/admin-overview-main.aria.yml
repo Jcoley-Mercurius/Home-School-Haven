@@ -1,0 +1,124 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - heading "Operations Overview" [level=1]
+  - paragraph: "Here’s what needs attention across Home School Haven. This review is read-only: nothing on this page changes a record."
+  - region "Programs":
+    - heading "Programs" [level=3]
+    - text: All programs 9 Published 8 Draft 1 Archived 0
+  - region "Enrollments":
+    - heading "Enrollments" [level=3]
+    - text: All records 0
+    - paragraph: Every enrollment record in this review is a sanitized sample. None of them is evidence that anyone has paid.
+  - region "Families":
+    - heading "Families" [level=3]
+    - text: Family accounts 3 Student profiles 3
+    - paragraph: Sanitized sample families and student profiles. No real child or family record exists in this environment.
+  - region "Educators":
+    - heading "Educators" [level=3]
+    - text: Educator accounts 1 Program assignments 2 Published, no educator 7
+  - region "Programs":
+    - heading "Programs" [level=3]
+    - table "Every program, with its publication state, educator assignment, and registration path.":
+      - caption: Every program, with its publication state, educator assignment, and registration path.
+      - rowgroup:
+        - row "Program Publication Educator Registration path":
+          - columnheader "Program"
+          - columnheader "Publication"
+          - columnheader "Educator"
+          - columnheader "Registration path"
+      - rowgroup:
+        - row "Ready Set Prep & Learn Published Not assigned No checkout link published":
+          - rowheader "Ready Set Prep & Learn"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Haven Days Enrichment Published Not assigned No checkout link published":
+          - rowheader "Haven Days Enrichment"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Etiquette Series Published Not assigned No checkout link published":
+          - rowheader "Etiquette Series"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Art Lab Published Assigned No checkout link published":
+          - rowheader "Art Lab"
+          - cell "Published"
+          - cell "Assigned"
+          - cell "No checkout link published"
+        - row "Sewing Published Not assigned No checkout link published":
+          - rowheader "Sewing"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Gardening Published Not assigned No checkout link published":
+          - rowheader "Gardening"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Harvest Explorers Published Not assigned No checkout link published":
+          - rowheader "Harvest Explorers"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "History Explorers Published Not assigned No checkout link published":
+          - rowheader "History Explorers"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+        - row "Sample Unpublished Draft (test fixture) Draft Assigned No checkout link published":
+          - rowheader "Sample Unpublished Draft (test fixture)"
+          - cell "Draft"
+          - cell "Assigned"
+          - cell "No checkout link published"
+  - region "Needs attention":
+    - heading "Needs attention" [level=3]
+    - list:
+      - listitem:
+        - paragraph: Consent policy not yet approved
+        - paragraph: Student profiles carry a demo authority affirmation because Samantha Dodson has not yet approved the consent language. Real-family activation stays blocked until she does.
+        - text: 3 student profiles
+      - listitem:
+        - paragraph: Missing educator assignment
+        - paragraph: Published programs have no assigned educator, so no educator can reach their schedule, roster, or announcements.
+        - text: 7 published programs
+      - listitem:
+        - paragraph: Content review required
+        - paragraph: The approved content import flagged these programs for a title or detail review before public launch.
+        - text: 2 programs
+      - listitem:
+        - paragraph: Program details not published
+        - paragraph: Published programs have no published price, schedule, or dates in the approved source. Families see “Contact for details” rather than an invented value.
+        - text: 8 published programs
+  - region "Recent activity":
+    - heading "Recent activity" [level=3]
+    - list:
+      - listitem:
+        - text: Student profile removed
+        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+      - listitem:
+        - text: Student profile added
+        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+      - listitem:
+        - text: Student profile removed
+        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+      - listitem:
+        - text: Student profile added
+        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+      - listitem:
+        - text: Student profile removed
+        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+      - listitem:
+        - text: Student profile added
+        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+      - listitem:
+        - text: Student profile removed
+        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+      - listitem:
+        - text: Student profile added
+        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+  - complementary "Authority and environment":
+    - paragraph: This is a private beta environment with sample data. Continuing to external checkout is a handoff to Home School Haven’s payment provider — it is not payment confirmation, and payment activity is not confirmed enrollment.
+    - paragraph: Samantha Dodson remains the final decision owner. Administrators hold delegated operational authority, and only an administrator or Samantha publishes program, price, availability, registration, or cancellation changes.
+  - paragraph: Program, enrollment, family, educator, schedule, communication, report, and settings operations are not part of this review yet. They arrive in later slices, and no link to them is shown until they work.

@@ -1,131 +1,137 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
-import { PortalNav } from "@/components/layout/portal-nav"
-import { SiteFooter } from "@/components/layout/site-footer"
-import { SiteHeader } from "@/components/layout/site-header"
-import { createClient } from "@/lib/supabase/server"
+import {
+  AttentionPanel,
+  OwnerAuthorityBand,
+  SummaryTiles,
+} from "@/components/admin/overview-cards"
+import { OverviewSkeleton } from "@/components/admin/overview-skeleton"
+import { ProgramOperations } from "@/components/admin/program-operations-table"
+import { RecentActivity } from "@/components/admin/recent-activity"
+import { ReviewDataBanner } from "@/components/family/section-states"
+import { AdminPortalShell } from "@/components/layout/admin-portal-shell"
 import { requireAdmin } from "@/lib/auth/guards"
+import { getAdminOverview } from "@/lib/admin/repository"
 
 /**
- * Administration area (ACT-004, MPS-REQ-016, MPS-REQ-017).
+ * Administrator operations overview (ACT-004, ACT-006; MPS-REQ-016/017/020/021/
+ * 024, MPS-RUL-004/005; MDS `page_shells.admin_operations`,
+ * `custom.admin_operations`, MDS-REF-009).
  *
- * Foundation scope: read-only. It shows every program at every publication
- * state — the reach an administrator has and a parent or educator does not —
- * plus the attributable history of material changes (MPS-REQ-024).
+ * WHERE AUTHORIZATION LIVES
  *
- * Create, publish, reschedule, cancel, and archive actions are MTS
- * IMPLEMENTATION-PLAN Phase 4. The RLS write policies they will use already
- * exist and are already tested, so those actions add a UI, not a new trust
- * boundary.
+ * `requireAdmin()` decides whether this page renders: a signed-out visitor is
+ * redirected to sign-in carrying their destination, and a signed-in viewer
+ * without an `admin` or `owner` grant gets `notFound()` — a 404, so the
+ * existence of an administrator area is not confirmed to the wrong person. RLS
+ * then decides independently what every read returns. Neither control depends
+ * on the other, and neither depends on anything the browser sent: this route
+ * accepts no route parameter and no query parameter at all, which removes the
+ * validation surface rather than defending it.
+ *
+ * Because the role is read from `public.user_roles` on every request and is
+ * never cached in a cookie or a token claim, revoking a grant denies the very
+ * next request. `tests/e2e/authorization.spec.ts` asserts that rather than
+ * assuming it.
+ *
+ * WHAT THIS PAGE REFUSES TO DO
+ *
+ * It is read-only, by boundary and not by omission. It confirms no payment,
+ * confirms no enrollment, approves no consent, and decides no scholarship,
+ * refund, cancellation, credit, or transfer (MPS-RUL-004). Every count comes
+ * from an authoritative query; nothing is estimated or padded to make the
+ * dashboard look populated. Capacity, revenue, and consent-acceptance figures
+ * are absent because no authoritative source for them exists — an absent figure
+ * is honest, an invented one is not.
+ *
+ * WHAT IT SHOWS ABOUT PEOPLE
+ *
+ * Aggregates. No student name, family name, parent email, or enrollment note
+ * reaches this page; `src/lib/admin/repository.ts` never selects them. An
+ * operator learns how many, not who, which is also the cheapest way to keep a
+ * child's name off a screenshot.
+ *
+ * DEVIATIONS FROM MDS-REF-009
+ *
+ * The reference's Quick Actions panel (D-AO1) and its NEXT ACTION column
+ * (D-AO2) are omitted: every target is a workflow this release does not
+ * implement, and a control that leads nowhere implies an available workflow.
+ * The sidebar carries the two destinations that exist rather than the nine the
+ * reference draws (D-AO3). The time-of-day greeting is replaced with a fixed
+ * heading (D-AO5), because a server-rendered greeting is wrong for any viewer
+ * outside the server's timezone and a client-rendered one hydrates differently
+ * than it rendered. All are recorded in
+ * `prompts/admin-operations-foundation.md` §9.
  */
 export const metadata: Metadata = {
-  title: "Administration — Home School Haven of SWFL",
+  title: "Operations Overview — Home School Haven of SWFL",
 }
 
-export default async function AdminPage() {
-  const viewer = await requireAdmin("/admin")
-  const supabase = await createClient()
-
-  const [{ data: programs }, { data: events }] = await Promise.all([
-    supabase
-      .from("programs")
-      .select("id,name,slug,publication_state")
-      .order("sort_order"),
-    supabase
-      .from("audit_events")
-      .select("id,occurred_at,entity_type,action")
-      .order("occurred_at", { ascending: false })
-      .limit(10),
-  ])
+/**
+ * The authorized reads and the sections they feed.
+ *
+ * Separated from the page so it can suspend on its own: the guard resolves
+ * first and the page header renders immediately, so the response status is
+ * settled before anything streams (see the header of `OverviewSkeleton`).
+ *
+ * @returns The overview sections.
+ */
+async function OverviewSections() {
+  const overview = await getAdminOverview()
 
   return (
-    <>
-      <SiteHeader />
-      <PortalNav viewer={viewer} area="admin" />
+    <div className="flex flex-col gap-[var(--hsh-space-6)]">
+      <SummaryTiles
+        programs={overview.programSummary}
+        enrollments={overview.enrollments}
+        families={overview.families}
+        educators={overview.educators}
+      />
+
+      <ProgramOperations state={overview.programs} />
+
+      <div className="grid grid-cols-1 gap-[var(--hsh-grid-gap-mobile)] sm:gap-[var(--hsh-grid-gap-tablet)] lg:grid-cols-2 lg:gap-[var(--hsh-grid-gap-desktop)]">
+        <AttentionPanel state={overview.attention} />
+        <RecentActivity state={overview.activity} />
+      </div>
+    </div>
+  )
+}
+
+export default async function AdminOverviewPage() {
+  const viewer = await requireAdmin("/admin")
+
+  return (
+    <AdminPortalShell viewerLabel={viewer.displayName ?? viewer.email ?? ""}>
       <main
         id="main"
-        className="hsh-container hsh-container-public flex flex-1 flex-col gap-[var(--hsh-space-10)] py-[var(--hsh-space-12)]"
+        className="hsh-container hsh-container-operations flex flex-1 flex-col gap-[var(--hsh-space-6)] py-[var(--hsh-space-8)]"
       >
-        <div className="flex flex-col gap-[var(--hsh-space-3)]">
-          <h1 className="hsh-display-sm text-[var(--hsh-text-primary)]">
-            Program operations
+        <ReviewDataBanner />
+
+        <header className="flex flex-col gap-[var(--hsh-space-2)]">
+          <h1 className="hsh-display-lg text-[var(--hsh-text-primary)]">
+            Operations Overview
           </h1>
-          {/* MDS admin_operations composition includes an owner-authority
-              reminder. Samantha Dodson is the final decision owner. */}
-          <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-            Program, price, availability, and registration changes are published
-            by an administrator or by Samantha Dodson, who holds final
-            authority.
+          <p className="hsh-body-lg max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+            Here&rsquo;s what needs attention across Home School Haven. This
+            review is read-only: nothing on this page changes a record.
           </p>
-        </div>
+        </header>
 
-        <section
-          aria-labelledby="programs-heading"
-          className="flex flex-col gap-[var(--hsh-space-4)]"
-        >
-          <h2
-            id="programs-heading"
-            className="hsh-h3 text-[var(--hsh-text-primary)]"
-          >
-            All programs
-          </h2>
-          {/* MDS: operational tables become labeled record cards when column
-              integrity cannot be preserved. Two fields fit at every breakpoint,
-              so this stays a list. */}
-          <ul className="flex flex-col gap-[var(--hsh-space-2)]">
-            {(programs ?? []).map((program) => (
-              <li
-                key={program.id}
-                className="flex flex-wrap items-baseline justify-between gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)]"
-              >
-                <span className="hsh-body text-[var(--hsh-text-primary)]">
-                  {program.name}
-                </span>
-                <span className="hsh-body-sm text-[var(--hsh-text-secondary)]">
-                  {program.publication_state === "published"
-                    ? "Published"
-                    : program.publication_state === "draft"
-                      ? "Draft"
-                      : "Archived"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Suspense fallback={<OverviewSkeleton />}>
+          <OverviewSections />
+        </Suspense>
 
-        <section
-          aria-labelledby="history-heading"
-          className="flex flex-col gap-[var(--hsh-space-4)]"
-        >
-          <h2
-            id="history-heading"
-            className="hsh-h3 text-[var(--hsh-text-primary)]"
-          >
-            Recent activity
-          </h2>
-          {events && events.length > 0 ? (
-            <ul className="flex flex-col gap-[var(--hsh-space-2)]">
-              {events.map((event) => (
-                <li
-                  key={event.id}
-                  className="hsh-body-sm rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-4)] text-[var(--hsh-text-secondary)]"
-                >
-                  <time dateTime={event.occurred_at}>
-                    {new Date(event.occurred_at).toLocaleString("en-US")}
-                  </time>
-                  {" — "}
-                  {event.entity_type} {event.action}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="hsh-body text-[var(--hsh-text-secondary)]">
-              No recorded changes yet.
-            </p>
-          )}
-        </section>
+        <OwnerAuthorityBand />
+
+        <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+          Program, enrollment, family, educator, schedule, communication,
+          report, and settings operations are not part of this review yet. They
+          arrive in later slices, and no link to them is shown until they work.
+        </p>
       </main>
-      <SiteFooter />
-    </>
+    </AdminPortalShell>
   )
 }
