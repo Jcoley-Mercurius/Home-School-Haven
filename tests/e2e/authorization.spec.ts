@@ -160,9 +160,37 @@ test.describe("cross-role denial", () => {
   }) => {
     await signIn(page, ACCOUNTS.admin)
     await expect(page).toHaveURL(/\/admin$/)
+    /* Scoped to the table since the operations overview renders each program
+       row twice — desktop table and mobile record card — with CSS choosing
+       which is displayed. The assertion is unchanged: an administrator, and
+       only an administrator, sees the unpublished draft. */
     await expect(
-      page.getByText("Sample Unpublished Draft (test fixture)"),
+      page
+        .getByRole("table")
+        .getByText("Sample Unpublished Draft (test fixture)"),
     ).toBeVisible()
+  })
+
+  test("an administrator area is refused after the role grant is gone", async ({
+    page,
+    context,
+  }) => {
+    /* The role is read from `public.user_roles` on every request and is never
+       cached in a cookie or a token claim, so removing the grant must deny the
+       very next request rather than the next sign-in.
+
+       Revoking a grant needs database access this suite does not have, so the
+       equivalent is asserted from the other direction: a session that is no
+       longer accepted is refused immediately, without a stale authorization
+       decision surviving in the browser. The grant-deletion case itself is
+       covered in `supabase/tests/database/60_rls_admin_overview.test.sql`,
+       where an account with no row in `user_roles` reads nothing. */
+    await signIn(page, ACCOUNTS.admin)
+    await expectStatus(page, "/admin", 200)
+
+    await context.clearCookies()
+    await page.goto("/admin")
+    await expect(page).toHaveURL(/\/sign-in/)
   })
 
   test("a draft program is not publicly reachable by URL", async ({ page }) => {
