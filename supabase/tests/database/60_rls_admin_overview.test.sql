@@ -124,11 +124,11 @@ select is((select count(*)::int from public.families), 0,
 -- The student read is NARROWER than the enrollment read, and deliberately so.
 -- `enrollments_select_assigned_educator` returns every state on an assigned
 -- program, because an operator needs to see that a place is unsettled.
--- `students_select_assigned_educator` returns only children whose enrollment is
+-- `educator_roster_students` returns only preferred names whose enrollment is
 -- CONFIRMED: a family whose arrangement is still pending is not an educator's
 -- business (MPS-RUL-003). So of the two enrollments above, exactly one names a
--- child this educator may identify.
-select is((select count(*)::int from public.students), 1,
+-- child this educator may identify, while the unrestricted table returns none.
+select is((select count(*)::int from public.educator_roster_students), 1,
   'an educator reads only the students confirmed on an assigned program');
 
 select is((select count(*)::int from public.audit_events), 0,

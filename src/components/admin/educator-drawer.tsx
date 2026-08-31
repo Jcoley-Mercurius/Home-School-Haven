@@ -100,6 +100,8 @@ function EducatorDrawer({
   )
   const [removing, setRemoving] = useState<AssignableProgram | null>(null)
   const [chosenProgram, setChosenProgram] = useState("")
+  const educatorId = educator?.userId ?? null
+  const [renderedEducatorId, setRenderedEducatorId] = useState(educatorId)
 
   const programFieldId = useId()
   const assignNoteId = useId()
@@ -120,6 +122,28 @@ function EducatorDrawer({
     }
   }
 
+  /* The drawer instance survives closing and switching records. Tie its
+     controlled selection to the rendered educator, including the closed
+     `null` state, so one session cannot lend its choice to another. */
+  if (educatorId !== renderedEducatorId) {
+    setRenderedEducatorId(educatorId)
+    setChosenProgram("")
+  }
+
+  const assignOutcome =
+    educatorId && assignState.educatorUserId === educatorId
+      ? assignState.status
+      : "idle"
+  const removeOutcome =
+    educatorId && removeState.educatorUserId === educatorId
+      ? removeState.status
+      : "idle"
+  const [settledAssignState, setSettledAssignState] = useState(assignState)
+  if (assignState !== settledAssignState) {
+    setSettledAssignState(assignState)
+    if (assignOutcome === "assigned") setChosenProgram("")
+  }
+
   if (!educator) return null
 
   /* An outcome from a different educator must not be shown against this one —
@@ -128,11 +152,6 @@ function EducatorDrawer({
   const assigned = educator.assignments.map(
     (assignment) => assignment.programId,
   )
-  const assignOutcome =
-    assignState.educatorUserId === educator.userId ? assignState.status : "idle"
-  const removeOutcome =
-    removeState.educatorUserId === educator.userId ? removeState.status : "idle"
-
   /* Only programs the educator does not already hold. A control that offers a
      duplicate is a control that invites a no-op. */
   const available = programs.filter((program) => !assigned.includes(program.id))

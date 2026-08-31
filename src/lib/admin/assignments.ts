@@ -19,8 +19,8 @@
  * WHAT AN ASSIGNMENT GRANTS, AND WHAT IT CANNOT
  *
  * Assignment grants an educator read scope over one program: its record, its
- * enrollments, its announcements and resources, and — through
- * `students_select_assigned_educator` — the children with a CONFIRMED
+ * enrollments, its announcements and resources, and — through the restricted
+ * `educator_roster_students` view — the children with a CONFIRMED
  * enrollment on it. It grants nothing else. It confers no price control, no
  * availability control, no cancellation authority, no organization-wide
  * communication, no reach into an unassigned program, no administrator

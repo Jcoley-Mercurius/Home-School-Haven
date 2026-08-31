@@ -37,7 +37,7 @@ depends on.
 
 **In:** family directory + detail, educator directory + detail, assign/unassign
 an educator, program roster derived from `public.enrollments`, the
-`students_select_assigned_educator` RLS boundary, attributable history.
+restricted `educator_roster_students` access boundary, attributable history.
 
 **Out:** every family and student mutation; educator invitation, activation,
 suspension, promotion, deletion; manual roster add/remove/transfer/export;
@@ -176,7 +176,7 @@ pgTAP files), `supabase/config.toml`, `src/lib/admin/*`, `src/lib/auth/*`,
 | `src/lib/admin/filters.ts` | add roster/educator-directory param parsing | one parser module already owns untrusted query values |
 | `src/lib/admin/validation.ts` | add `assignmentSchema` (two uuids + note) | one zod module already owns admin input |
 | `src/components/layout/admin-portal-shell.tsx` | add **Families** and **Educators** destinations | narrows deviation **D-AO3** from five missing destinations to three |
-| `public.students` RLS | **add** `students_select_assigned_educator` | additive; **weakens no family policy** |
+| educator roster student access | **add** restricted `educator_roster_students` view | exposes only program scope and preferred name; **weakens no family policy** |
 | `public.educator_assignments` privileges | revoke `insert, delete` from `authenticated`; route writes through SECURITY DEFINER functions | matches the ADM-02 §11 option-A precedent that removed program write verbs |
 | `src/lib/admin/repository.ts` | reuse `AdminRead`; no change to `getAdminOverview` | overview already counts assignments |
 | `supabase/seed.sql` | one confirmed enrollment inside an educator-assigned program | see §13 — MPS-ACC-028 is **currently undemonstrable** |
@@ -218,14 +218,14 @@ following the header/rollback-comment convention of `20260830090000`.
    The two admin INSERT/DELETE **policies stay** — a policy without a privilege
    grants nothing, and leaving them documents the intended reach and keeps a
    future re-grant safe. This mirrors `20260830090000` line 524 exactly.
-5. `create policy "students_select_assigned_educator" on public.students for
-   select to authenticated using (exists (select 1 from public.enrollments e
-   join public.educator_assignments a on a.program_id = e.program_id where
-   e.student_id = students.id and e.state = 'confirmed' and a.educator_user_id
-   = (select auth.uid())));`
-   Confirmed enrollments in assigned programs only. A pending or waitlisted
-   child is **not** disclosed to an educator. Removing the assignment removes
-   the read on the next request — no sign-out required (§9).
+5. Create the security-barrier view `public.educator_roster_students` from
+   `students`, confirmed `enrollments`, and the current user's
+   `educator_assignments`; expose only `program_id` and `preferred_name`, revoke
+   all access from `public`/`anon`, and grant SELECT to `authenticated`. Do not
+   add an educator SELECT policy to `public.students`: RLS cannot restrict
+   columns, and every application role maps to the same database role. A pending
+   or waitlisted child is **not** disclosed. Removing the assignment removes the
+   view row on the next request — no sign-out required (§9).
 
 **Constraints/indexes:** none added. The composite PK already prevents duplicate
 assignments; `educator_assignments_program_idx` and
@@ -235,7 +235,7 @@ introduces. No speculative index.
 **Rollback** (recorded in the migration header, per convention):
 
 ```sql
-drop policy if exists "students_select_assigned_educator" on public.students;
+drop view if exists public.educator_roster_students;
 grant insert, delete on public.educator_assignments to authenticated;
 drop function if exists public.admin_unassign_educator(uuid, uuid, text);
 drop function if exists public.admin_assign_educator(uuid, uuid, text);
@@ -271,7 +271,7 @@ every read runs under the publishable key with RLS genuinely in force.
 Required rules and where each is proven: public denial → pgTAP `anon` blocks;
 parent isolation → `20_rls_family` unchanged + new cross-family assertions;
 parent denied educator administration → pgTAP `42501` on both new functions;
-unassigned-educator denial → new `students_select_assigned_educator` negative
+unassigned-educator denial → new `educator_roster_students` negative
 tests; assigned-educator access → positive test, `preferred_name` only; removed
 assignment revokes → delete-then-read in one pgTAP transaction; manipulated ids
 → `notFound` parity tests; deny-by-default → `db:advisors`.

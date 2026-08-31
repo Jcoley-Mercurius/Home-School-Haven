@@ -27,7 +27,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(55);
+select plan(60);
 
 \set admin    '20000000-0000-4000-8000-000000000ad0'
 \set parent_a '20000000-0000-4000-8000-00000000000a'
@@ -88,6 +88,26 @@ select ok(
   not has_table_privilege('authenticated', 'public.user_roles', 'INSERT'),
   'authenticated holds no INSERT on user_roles (no self-promotion)'
 );
+select ok(
+  not has_function_privilege(
+    'authenticated', 'private.educator_has_role(uuid)', 'EXECUTE'),
+  'authenticated cannot execute the private educator-role helper directly'
+);
+select ok(
+  has_table_privilege(
+    'authenticated', 'public.educator_roster_students', 'SELECT'),
+  'authenticated can reach the restricted educator roster view'
+);
+select is(
+  (
+    select string_agg(column_name, ', ' order by ordinal_position)
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'educator_roster_students'
+  ),
+  'program_id, preferred_name',
+  'the educator roster view exposes only approved roster columns'
+);
 
 
 -- ===========================================================================
@@ -113,6 +133,11 @@ select ok(
 select ok(
   not has_table_privilege('anon', 'public.profiles', 'SELECT'),
   'anon holds no SELECT on profiles'
+);
+select ok(
+  not has_table_privilege(
+    'anon', 'public.educator_roster_students', 'SELECT'),
+  'anon holds no SELECT on the educator roster view'
 );
 
 set local role anon;
@@ -215,25 +240,30 @@ select throws_ok(
 
 select is(
   (select count(*)::int from public.students),
+  0,
+  'an assigned educator reads no row from the unrestricted student table'
+);
+select is(
+  (select count(*)::int from public.educator_roster_students),
   1,
   'an assigned educator reads exactly one student — the confirmed one'
 );
 select is(
-  (select preferred_name from public.students),
+  (select preferred_name from public.educator_roster_students),
   'Sample Student A2',
   'and it is the child with the confirmed enrollment'
 );
 
 -- MPS-RUL-003: an unsettled arrangement is not an educator's business.
 select is(
-  (select count(*)::int from public.students
-     where id = '40000000-0000-4000-8000-000000000001'::uuid),
+  (select count(*)::int from public.educator_roster_students
+     where preferred_name = 'Sample Student A1'),
   0,
   'a payment_pending child in the SAME assigned program is not disclosed'
 );
 select is(
-  (select count(*)::int from public.students
-     where id = '40000000-0000-4000-8000-000000000003'::uuid),
+  (select count(*)::int from public.educator_roster_students
+     where preferred_name = 'Sample Student B1'),
   0,
   'a waitlisted child in an unassigned program is not disclosed'
 );
@@ -462,8 +492,8 @@ select is(
   'the removed assignment revokes the roster read on the next statement'
 );
 select is(
-  (select count(*)::int from public.students
-     where id = '40000000-0000-4000-8000-000000000001'::uuid),
+  (select count(*)::int from public.educator_roster_students
+     where program_id = '10000000-0000-4000-8000-000000000002'::uuid),
   0,
   'and the student it named is unreachable again'
 );
@@ -474,7 +504,7 @@ select is(
   'the educator''s other two assignments survive'
 );
 select is(
-  (select preferred_name from public.students),
+  (select preferred_name from public.educator_roster_students),
   'Sample Student A2',
   'and the surviving assignment still yields its confirmed roster'
 );

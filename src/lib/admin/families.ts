@@ -88,6 +88,9 @@ type AdminFamily = {
   enrollments: FamilyEnrollment[]
 }
 
+/** Related reads that failed while the family directory itself remained usable. */
+type AdminFamilyDataGap = "guardians" | "students" | "enrollments"
+
 /* One unbroken literal each — see the note in `programs.ts`. */
 // prettier-ignore
 const FAMILY_COLUMNS = "id,name,created_at"
@@ -126,7 +129,9 @@ const UNAPPROVED_AFFIRMATION = "demo-unapproved-v0"
  *
  * @returns The families, or a state explaining why not.
  */
-async function listAdminFamilies(): Promise<AdminRead<AdminFamily[]>> {
+async function listAdminFamilies(): Promise<
+  AdminRead<AdminFamily[], AdminFamilyDataGap>
+> {
   if (!isSupabaseConfigured()) return { status: "unavailable" }
 
   const supabase = await createClient()
@@ -146,6 +151,11 @@ async function listAdminFamilies(): Promise<AdminRead<AdminFamily[]>> {
   /* The family list is the page. Without it there is nothing to attach to, so
      its failure is the only one that fails the whole read. */
   if (familyRows.error) return { status: "failed" }
+
+  const gaps: AdminFamilyDataGap[] = []
+  if (memberRows.error || profileRows.error) gaps.push("guardians")
+  if (studentRows.error) gaps.push("students")
+  if (enrollmentRows.error) gaps.push("enrollments")
 
   const nameById = new Map(
     (profileRows.data ?? []).map((row) => [row.id, row.display_name ?? ""]),
@@ -200,6 +210,7 @@ async function listAdminFamilies(): Promise<AdminRead<AdminFamily[]>> {
 
   return {
     status: "ready",
+    gaps,
     data: (familyRows.data ?? []).map((row) => ({
       id: row.id,
       name: row.name,
@@ -212,4 +223,10 @@ async function listAdminFamilies(): Promise<AdminRead<AdminFamily[]>> {
 }
 
 export { listAdminFamilies, UNAPPROVED_AFFIRMATION }
-export type { AdminFamily, FamilyEnrollment, FamilyGuardian, FamilyStudent }
+export type {
+  AdminFamily,
+  AdminFamilyDataGap,
+  FamilyEnrollment,
+  FamilyGuardian,
+  FamilyStudent,
+}

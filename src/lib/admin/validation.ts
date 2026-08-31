@@ -214,7 +214,7 @@ const publicationSchema = z.object({
 const assignmentNote = z
   .string()
   .trim()
-  .min(1, "Say why this assignment is changing. This is recorded.")
+  .min(1, "Say why this assignment is changing.")
   .max(NOTE_MAX, `Use ${NOTE_MAX} characters or fewer.`)
 
 /**

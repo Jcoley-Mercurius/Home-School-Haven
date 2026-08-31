@@ -304,6 +304,9 @@ test.describe("the program roster", () => {
   })
 
   test("has no axe violations", async ({ page }) => {
+    await expect(page.getByRole("region", { name: "Roster" })).toContainText(
+      "Sample Student A2",
+    )
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
       .analyze()
@@ -324,6 +327,7 @@ test.describe("responsive and accessibility", () => {
     test(`has no axe violations at ${name}`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await page.goto("/admin/educators")
+      await expect(page.locator("main")).toContainText("Sample Educator")
       const results = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
         .analyze()
@@ -363,7 +367,7 @@ test.describe("visual baselines", () => {
       await page.setViewportSize(viewport)
       await page.goto("/admin/educators")
       await expect(page.locator("main")).toBeVisible()
-      await expect(page.getByRole("status")).toBeVisible()
+      await expect(page.locator("main")).toContainText("Sample Educator")
       await expect(page).toHaveScreenshot(`admin-educators-${name}.png`, {
         fullPage: true,
       })

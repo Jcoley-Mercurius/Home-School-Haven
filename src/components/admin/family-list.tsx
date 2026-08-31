@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/family/section-states"
 import { Button } from "@/components/ui/button"
 import { matchesSearch } from "@/lib/admin/filters"
 
-import type { AdminFamily } from "@/lib/admin/families"
+import type { AdminFamily, AdminFamilyDataGap } from "@/lib/admin/families"
 
 /**
  * The family directory (MDS-REF-009 admin operations; `components.table`
@@ -49,7 +49,13 @@ import type { AdminFamily } from "@/lib/admin/families"
  * every test locator over this component must be scoped to one of them
  * (DEFECT-AO3).
  */
-function FamilyList({ families }: { families: AdminFamily[] }) {
+function FamilyList({
+  families,
+  gaps,
+}: {
+  families: AdminFamily[]
+  gaps: AdminFamilyDataGap[]
+}) {
   const [query, setQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -78,11 +84,21 @@ function FamilyList({ families }: { families: AdminFamily[] }) {
     ) ?? family.guardians[0]
 
   const guardianLabel = (family: AdminFamily) =>
-    primaryGuardian(family)?.displayName || "No guardian linked"
+    gaps.includes("guardians")
+      ? "Guardian data unavailable"
+      : primaryGuardian(family)?.displayName || "No guardian linked"
 
   const confirmedCount = (family: AdminFamily) =>
     family.enrollments.filter((enrollment) => enrollment.state === "confirmed")
       .length
+
+  const studentCount = (family: AdminFamily) =>
+    gaps.includes("students") ? "Unavailable" : family.students.length
+
+  const enrollmentCount = (family: AdminFamily) =>
+    gaps.includes("enrollments")
+      ? "Unavailable"
+      : `${confirmedCount(family)} of ${family.enrollments.length}`
 
   /* The control's accessible name says whose record it opens, so a list of
      controls read out of the row's context is still unambiguous. Applied as
@@ -155,10 +171,10 @@ function FamilyList({ families }: { families: AdminFamily[] }) {
                       {guardianLabel(family)}
                     </td>
                     <td className="hsh-body-sm px-[var(--hsh-space-3)] py-[var(--hsh-space-4)] text-[var(--hsh-text-secondary)]">
-                      {family.students.length}
+                      {studentCount(family)}
                     </td>
                     <td className="hsh-body-sm px-[var(--hsh-space-3)] py-[var(--hsh-space-4)] text-[var(--hsh-text-secondary)]">
-                      {confirmedCount(family)} of {family.enrollments.length}
+                      {enrollmentCount(family)}
                     </td>
                     <td className="px-[var(--hsh-space-3)] py-[var(--hsh-space-4)] text-right">
                       <Button
@@ -201,7 +217,7 @@ function FamilyList({ families }: { families: AdminFamily[] }) {
                       Students
                     </dt>
                     <dd className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
-                      {family.students.length}
+                      {studentCount(family)}
                     </dd>
                   </div>
                   <div className="flex flex-col gap-[var(--hsh-space-1)]">
@@ -209,7 +225,7 @@ function FamilyList({ families }: { families: AdminFamily[] }) {
                       Confirmed enrollments
                     </dt>
                     <dd className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
-                      {confirmedCount(family)} of {family.enrollments.length}
+                      {enrollmentCount(family)}
                     </dd>
                   </div>
                 </dl>
@@ -230,7 +246,11 @@ function FamilyList({ families }: { families: AdminFamily[] }) {
         </>
       )}
 
-      <FamilyDrawer family={selected} onClose={() => setSelectedId(null)} />
+      <FamilyDrawer
+        family={selected}
+        gaps={gaps}
+        onClose={() => setSelectedId(null)}
+      />
     </div>
   )
 }

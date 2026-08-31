@@ -137,18 +137,22 @@ function RosterTable({
               {/* The state label is never dropped on a narrow screen: it is the
                   fact that distinguishes a roster member from a child whose
                   place is unsettled. */}
+              {showState ? (
+                <div className="flex flex-col gap-[var(--hsh-space-1)]">
+                  <dt className="hsh-label text-[var(--hsh-text-secondary)]">
+                    State
+                  </dt>
+                  <dd className="m-0">
+                    <EnrollmentStateBadge state={entry.state} />
+                  </dd>
+                </div>
+              ) : null}
               <div className="flex flex-col gap-[var(--hsh-space-1)]">
                 <dt className="hsh-label text-[var(--hsh-text-secondary)]">
-                  {showState ? "State" : "Confirmed"}
+                  {showState ? "Changed" : "Confirmed"}
                 </dt>
-                <dd className="m-0">
-                  {showState ? (
-                    <EnrollmentStateBadge state={entry.state} />
-                  ) : (
-                    <span className="hsh-body-sm text-[var(--hsh-text-secondary)]">
-                      {new Date(entry.stateChangedAt).toLocaleDateString()}
-                    </span>
-                  )}
+                <dd className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
+                  {new Date(entry.stateChangedAt).toLocaleDateString()}
                 </dd>
               </div>
             </dl>

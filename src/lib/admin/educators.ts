@@ -89,7 +89,9 @@ async function listAdminEducators(): Promise<AdminRead<AdminEducator[]>> {
   /* The role grant is the definition of the list. Without it there is no
      directory, and guessing one from profiles would answer a different
      question — "who has an account" rather than "who is an educator". */
-  if (roleRows.error) return { status: "failed" }
+  if (roleRows.error || profileRows.error || assignmentRows.error) {
+    return { status: "failed" }
+  }
 
   const nameById = new Map(
     (profileRows.data ?? []).map((row) => [row.id, row.display_name ?? ""]),

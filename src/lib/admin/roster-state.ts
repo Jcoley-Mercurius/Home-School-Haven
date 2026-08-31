@@ -42,11 +42,9 @@ import type { EnrollmentState } from "@/lib/admin/transitions"
  * The only student columns an assigned educator may be shown, pending
  * checklist §9 (GAP-ADMIN-014).
  *
- * RLS grants rows, not columns, so `students_select_assigned_educator` exposes
- * every column of a matched row. The narrowing has to happen in the select
- * list, which is why this list is exported and commented rather than left
- * implicit: the educator workspace slice reuses it, and must not widen it on
- * its own authority.
+ * The `educator_roster_students` view enforces this same boundary in the
+ * database. This list remains the application-side contract for the educator
+ * workspace slice and must not be widened on its own authority.
  */
 const EDUCATOR_ROSTER_COLUMNS = ["preferred_name"] as const
 

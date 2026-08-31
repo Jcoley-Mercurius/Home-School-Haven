@@ -189,7 +189,7 @@ export async function assignEducatorAction(
       educatorUserId: input.educatorUserId,
       fieldErrors:
         result.reason === "rejected"
-          ? { note: "Say why this assignment is changing. This is recorded." }
+          ? { note: "Say why this assignment is changing." }
           : {},
       values,
     }
@@ -238,7 +238,7 @@ export async function unassignEducatorAction(
       educatorUserId: input.educatorUserId,
       fieldErrors:
         result.reason === "rejected"
-          ? { note: "Say why this assignment is changing. This is recorded." }
+          ? { note: "Say why this assignment is changing." }
           : {},
       values,
     }

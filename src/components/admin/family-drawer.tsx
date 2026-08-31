@@ -12,7 +12,7 @@ import {
   DialogPopup,
 } from "@/components/ui/dialog"
 
-import type { AdminFamily } from "@/lib/admin/families"
+import type { AdminFamily, AdminFamilyDataGap } from "@/lib/admin/families"
 
 /**
  * The family detail drawer (MDS `page_shells.admin_operations` detail drawer,
@@ -53,9 +53,11 @@ import type { AdminFamily } from "@/lib/admin/families"
  */
 function FamilyDrawer({
   family,
+  gaps,
   onClose,
 }: {
   family: AdminFamily | null
+  gaps: AdminFamilyDataGap[]
   onClose: () => void
 }) {
   /* Same shape as the enrollment drawer: one reused instance, rendered only
@@ -100,7 +102,12 @@ function FamilyDrawer({
                 Parents and guardians
               </h3>
 
-              {family.guardians.length === 0 ? (
+              {gaps.includes("guardians") ? (
+                <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
+                  Guardian information could not be loaded. Reload the page to
+                  try again.
+                </p>
+              ) : family.guardians.length === 0 ? (
                 <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
                   No guardian account is linked to this family yet.
                 </p>
@@ -129,7 +136,12 @@ function FamilyDrawer({
                 Students
               </h3>
 
-              {family.students.length === 0 ? (
+              {gaps.includes("students") ? (
+                <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
+                  Student information could not be loaded. Reload the page to
+                  try again.
+                </p>
+              ) : family.students.length === 0 ? (
                 <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
                   This family has not added a student profile yet. Only the
                   family&rsquo;s parent or guardian can add one.
@@ -174,7 +186,12 @@ function FamilyDrawer({
                 Enrollments
               </h3>
 
-              {family.enrollments.length === 0 ? (
+              {gaps.includes("enrollments") ? (
+                <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
+                  Enrollment information could not be loaded. Reload the page to
+                  try again.
+                </p>
+              ) : family.enrollments.length === 0 ? (
                 <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
                   This family has no enrollments.
                 </p>
@@ -208,7 +225,14 @@ function FamilyDrawer({
                 Consent
               </h3>
 
-              {family.students.every((student) => !student.consentApproved) ? (
+              {gaps.includes("students") ? (
+                <Alert tone="warning" title="Consent information unavailable">
+                  Student information could not be loaded, so consent records
+                  cannot be reported. Reload the page to try again.
+                </Alert>
+              ) : family.students.every(
+                  (student) => !student.consentApproved,
+                ) ? (
                 <Alert tone="info" title="No approved consent record">
                   <p className="m-0">
                     Home School Haven has not yet approved the parent authority

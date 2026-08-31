@@ -60,11 +60,12 @@
 -- re-grants a verb.
 --
 -- rollback:
---   drop policy if exists "students_select_assigned_educator" on public.students;
+--   drop view if exists public.educator_roster_students;
 --   revoke all on function public.admin_unassign_educator(uuid, uuid, text) from authenticated;
 --   revoke all on function public.admin_assign_educator(uuid, uuid, text) from authenticated;
 --   drop function if exists public.admin_unassign_educator(uuid, uuid, text);
 --   drop function if exists public.admin_assign_educator(uuid, uuid, text);
+--   private.educator_has_role has no authenticated EXECUTE grant to restore;
 --   drop function if exists private.educator_has_role(uuid);
 --   grant insert, delete on public.educator_assignments to authenticated;
 
@@ -94,11 +95,11 @@ as $$
   );
 $$;
 
-revoke all on function private.educator_has_role(uuid) from public;
-grant execute on function private.educator_has_role(uuid) to authenticated;
+revoke all on function private.educator_has_role(uuid)
+  from public, anon, authenticated;
 
 comment on function private.educator_has_role(uuid) is
-  'Whether an account holds the educator grant. Used by the assignment '
+  'Whether an account holds the educator grant. Used only by the assignment '
   'functions so eligibility is decided from the authoritative role table '
   'rather than from client input (MPS-REQ-017).';
 
@@ -270,13 +271,13 @@ revoke insert, delete on public.educator_assignments from authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- students_select_assigned_educator
+-- educator_roster_students
 -- ---------------------------------------------------------------------------
 -- MPS-ACC-028: "given a confirmed enrollment, when the roster is viewed, then
 -- the student appears exactly once in the correct program and only approved
 -- fields are visible to the assigned educator."
 --
--- Until this policy, an assigned educator could read the enrollment row through
+-- Until this view, an assigned educator could read the enrollment row through
 -- `enrollments_select_assigned_educator` but not the student it names, so a
 -- roster was not reachable at all and MPS-ACC-028 could not be satisfied. This
 -- is the boundary the later Educator Assigned-Program Workspace depends on. It
@@ -296,25 +297,31 @@ revoke insert, delete on public.educator_assignments from authenticated;
 --
 -- WHICH FIELDS THIS ACTUALLY EXPOSES
 --
--- RLS grants rows, not columns, so this policy technically exposes every
--- column of a matched row: `preferred_name`, `grade_level`,
--- `guardian_relationship`, and the sample/affirmation bookkeeping. Checklist §9
--- does not confirm which student fields an educator may see (GAP-ADMIN-014), so
--- the server-side roster read selects `preferred_name` alone and the educator
--- surface that will consume it must do the same. That column restriction lives
--- in `src/lib/admin/roster.ts`; this comment records that the policy is the
--- coarser of the two controls and that the narrower one is not optional.
-create policy "students_select_assigned_educator"
-  on public.students for select
-  to authenticated
-  using (
-    exists (
-      select 1
-      from public.enrollments e
-      join public.educator_assignments a
-        on a.program_id = e.program_id
-      where e.student_id = students.id
-        and e.state = 'confirmed'
-        and a.educator_user_id = (select auth.uid())
-    )
-  );
+-- RLS grants rows, not columns. Adding educator reach to `public.students`
+-- would therefore expose grade, guardian relationship, and affirmation
+-- bookkeeping for every matched child. All signed-in application roles share
+-- the Postgres `authenticated` role, so column grants on that table cannot
+-- distinguish an educator from a parent or administrator without breaking
+-- their existing reads. This security-barrier view is the separate educator
+-- boundary: it exposes only program scope and the one approved student field,
+-- while the base table keeps its own-family and administrator policies.
+create view public.educator_roster_students
+with (security_barrier = true)
+as
+select
+  e.program_id,
+  s.preferred_name
+from public.students s
+join public.enrollments e
+  on e.student_id = s.id
+join public.educator_assignments a
+  on a.program_id = e.program_id
+where e.state = 'confirmed'
+  and a.educator_user_id = (select auth.uid());
+
+revoke all on public.educator_roster_students from public, anon, authenticated;
+grant select on public.educator_roster_students to authenticated;
+
+comment on view public.educator_roster_students is
+  'Confirmed students in programs assigned to the current educator. Exposes '
+  'only program scope and preferred name (MPS-REQ-018, MPS-ACC-028).';

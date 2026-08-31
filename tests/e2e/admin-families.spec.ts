@@ -255,6 +255,7 @@ test.describe("search", () => {
      hold is that the announcement reports the narrowed count, and that it
      changes when the search does. */
   test("announces the result count", async ({ page }) => {
+    await expect(page.getByRole("table")).toContainText("Sample Family A")
     const status = page.getByRole("status")
     await expect(status).toContainText(/^Showing all \d+ families\.$/)
 
@@ -288,6 +289,7 @@ test.describe("responsive and accessibility", () => {
     test(`has no axe violations at ${name}`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await page.goto("/admin/families")
+      await expect(page.locator("main")).toContainText("Sample Family A")
       const results = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
         .analyze()
@@ -344,7 +346,7 @@ test.describe("visual baselines", () => {
       await page.setViewportSize(viewport)
       await page.goto("/admin/families")
       await expect(page.locator("main")).toBeVisible()
-      await expect(page.getByRole("status")).toBeVisible()
+      await expect(page.locator("main")).toContainText("Sample Family A")
       await expect(page).toHaveScreenshot(`admin-families-${name}.png`, {
         fullPage: true,
       })

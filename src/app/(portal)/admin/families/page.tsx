@@ -83,7 +83,7 @@ async function FamilySection() {
     )
   }
 
-  const families = result.data
+  const { data: families, gaps } = result
 
   if (families.length === 0) {
     return (
@@ -101,12 +101,31 @@ async function FamilySection() {
      profile could not be read is still a real account an administrator is
      responsible for, and dropping it to tidy the table would hide it from the
      person accountable for it. */
-  const missingGuardian = families.filter(
-    (family) => family.guardians.length === 0,
-  ).length
+  const missingGuardian = gaps.includes("guardians")
+    ? 0
+    : families.filter((family) => family.guardians.length === 0).length
+
+  const gapLabels = gaps.map((gap) => {
+    switch (gap) {
+      case "guardians":
+        return "guardian information"
+      case "students":
+        return "student information"
+      case "enrollments":
+        return "enrollment information"
+    }
+  })
 
   return (
     <div className="flex flex-col gap-[var(--hsh-space-4)]">
+      {gapLabels.length > 0 ? (
+        <Alert tone="warning" title="Some family details could not be loaded">
+          {gapLabels.join(", ")} {gapLabels.length === 1 ? "is" : "are"}{" "}
+          unavailable. Reload the page to try again; unavailable relationships
+          are labeled below instead of being reported as empty.
+        </Alert>
+      ) : null}
+
       {missingGuardian > 0 ? (
         <Alert tone="warning" title="Some accounts have no linked guardian">
           {missingGuardian === 1 ? "One family" : `${missingGuardian} families`}{" "}
@@ -117,7 +136,7 @@ async function FamilySection() {
         </Alert>
       ) : null}
 
-      <FamilyList families={families} />
+      <FamilyList families={families} gaps={gaps} />
     </div>
   )
 }
