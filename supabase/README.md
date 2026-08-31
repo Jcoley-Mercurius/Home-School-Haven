@@ -90,27 +90,28 @@ supabase link --project-ref <preview-project-ref>
 supabase db push           # apply migrations
 ```
 
-`seed.sql` is **not** applied by `db push`. To load sanitized fixtures into a
-preview, run it deliberately — set the environment guard first, and **always
-run with `ON_ERROR_STOP`**:
+Automatic seeding is disabled so fixture loading always uses an explicit,
+guarded workflow. To load sanitized fixtures into a preview, run the file
+deliberately with its psql-only marker and **always use `ON_ERROR_STOP`**:
 
 ```bash
-psql "$PREVIEW_DB_URL" -c "ALTER DATABASE postgres SET app.environment = 'preview';"
-psql "$PREVIEW_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+psql "$PREVIEW_DB_URL" -v ON_ERROR_STOP=1 \
+  -v hsh_seed_environment=preview -f supabase/seed.sql
 echo "psql exit: $?"
 ```
 
-The seed script only executes when `app.environment` is explicitly set to
-`local` or `preview`. It refuses to run if the setting is unset, empty, or set
-to any other value (including `production`). `ALTER DATABASE` takes effect for
-new sessions, so the guard is in place by the time the second command connects.
+The seed script only executes when psql receives `hsh_seed_environment` as
+`local` or `preview`. The SQL file never sets that marker itself, and Supabase's
+linked seed runner cannot supply it. `npm run db:reset` supplies `local` only
+after verifying the fixed local database address.
 
-Without `ON_ERROR_STOP` psql reports an error and carries on, so a partial seed
-looks like a successful one. That is not hypothetical: the programs insert
-lacked an `on conflict` clause, so on a second run the file died at the programs
-block and silently skipped every account, role grant, family, and student after
-it. The insert is idempotent now, but keep the flag — it is the difference
-between a failure you can see and one you cannot.
+The file also forces `ON_ERROR_STOP` internally; the command repeats it
+defensively. Without that behavior psql reports an error and carries on, so a
+partial seed looks like a successful one. That is not hypothetical: the
+programs insert lacked an `on conflict` clause, so on a second run the file died
+at the programs block and silently skipped every account, role grant, family,
+and student after it. The insert is idempotent now, but the stop-on-error guard
+still ensures failures are visible.
 
 Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in
 Vercel, **scoped to Preview only**. Local, preview, and production credentials

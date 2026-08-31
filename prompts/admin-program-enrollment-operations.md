@@ -269,7 +269,7 @@ needed, it stops and reports an MDS gap (DO-DONT).
 | `src/components/admin/enrollment-drawer.tsx` | Detail drawer + actions |
 | `src/components/admin/list-skeleton.tsx` | Suspense fallbacks |
 | `supabase/migrations/20260830090000_admin_program_enrollment_operations.sql` | §11 |
-| `supabase/tests/database/70_rls_admin_operations.test.sql` | pgTAP for every RPC × 5 callers |
+| `supabase/tests/database/70_admin_program_enrollment_ops.test.sql` | pgTAP for every RPC × 5 callers |
 | `tests/admin-transitions.test.mts` | Unit tests: transitions, validation, filters |
 | `tests/e2e/admin-programs.spec.ts`, `tests/e2e/admin-enrollments.spec.ts` | E2E, axe, keyboard, responsive, visual, ARIA |
 
@@ -443,7 +443,7 @@ written and will be reported as **NOT RUN** unless Docker becomes available. It
 must pass before merge. `supabase/tests/database/60_rls_admin_overview.test.sql`
 from the previous slice is also still unexecuted.
 
-**pgTAP coverage (`70_rls_admin_operations.test.sql`)** — each RPC called as an
+**pgTAP coverage (`70_admin_program_enrollment_ops.test.sql`)** — each RPC called as an
 administrator, a parent, an assigned educator, an unassigned educator, a
 role-less account, and a caller whose JWT metadata falsely claims `admin`;
 plus: every §8 transition allowed, every §8 transition refused, the stale-token

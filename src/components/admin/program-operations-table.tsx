@@ -325,7 +325,8 @@ function ProgramOperations({
       ) : state.data.length === 0 ? (
         <div className="rounded-[var(--hsh-radius-card)] bg-[var(--hsh-surface-quiet)] p-[var(--hsh-space-5)]">
           <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
-            No programs exist yet. Creating one is not part of this review.
+            No programs exist yet. Use New program draft in Quick Actions to
+            create one.
           </p>
         </div>
       ) : (

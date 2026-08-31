@@ -15,6 +15,19 @@ import { ENROLLMENT_STATE_VALUES } from "@/lib/admin/filters"
 
 import type { EnrollmentFilters } from "@/lib/admin/filters"
 
+/** Filter labels distinguish stored states that share one display vocabulary. */
+const ENROLLMENT_FILTER_LABEL = {
+  all: "All states",
+  started: ENROLLMENT_STATE.started.label,
+  approval_pending: ENROLLMENT_STATE.approval_pending.label,
+  payment_pending: ENROLLMENT_STATE.payment_pending.label,
+  waitlisted: ENROLLMENT_STATE.waitlisted.label,
+  confirmed: ENROLLMENT_STATE.confirmed.label,
+  payment_failed: "Payment failed — not confirmed",
+  canceled: ENROLLMENT_STATE.canceled.label,
+  blocked: "Blocked — not confirmed",
+} as const satisfies Record<(typeof ENROLLMENT_STATE_VALUES)[number], string>
+
 /**
  * Enrollment list filters (MDS `components.search` variant `filtered`,
  * `patterns.search_results`).
@@ -78,7 +91,7 @@ function EnrollmentFilterBar({
                    the chip unreachable by keyboard. */
                 className="sr-only"
               />
-              {value === "all" ? "All states" : ENROLLMENT_STATE[value].label}
+              {ENROLLMENT_FILTER_LABEL[value]}
             </label>
           ))}
         </div>

@@ -23,7 +23,8 @@
  * Refuses to touch anything but a local stack. See `assertLocalStack`.
  */
 
-import { execFileSync, spawnSync } from "node:child_process"
+import { spawnSync } from "node:child_process"
+import { randomUUID } from "node:crypto"
 
 const DB = {
   host: "127.0.0.1",
@@ -35,17 +36,38 @@ const DB = {
 
 const STORAGE_CONTAINER = "supabase_storage_home-school-haven"
 
-/** What `supabase/seed.sql` is expected to leave behind. */
+/** Canonical values that `supabase/seed.sql` is expected to leave behind. */
 const EXPECTED = [
-  { query: "select count(*) from auth.users;", count: 6, label: "users" },
   {
-    query: "select count(*) from public.enrollments;",
-    count: 4,
+    query: `select string_agg(id::text || '=' || email, ',' order by id)
+      from auth.users;`,
+    expected:
+      "20000000-0000-4000-8000-00000000000a=sample.parent.one@example.com," +
+      "20000000-0000-4000-8000-00000000000b=sample.parent.two@example.com," +
+      "20000000-0000-4000-8000-00000000000c=sample.parent.three@example.com," +
+      "20000000-0000-4000-8000-00000000000d=sample.parent.four@example.com," +
+      "20000000-0000-4000-8000-00000000000e=sample.educator@example.com," +
+      "20000000-0000-4000-8000-000000000ad0=sample.admin@example.com",
+    label: "users",
+  },
+  {
+    query: `select string_agg(id::text || '=' || state::text, ',' order by id)
+      from public.enrollments;`,
+    expected:
+      "50000000-0000-4000-8000-000000000001=payment_pending," +
+      "50000000-0000-4000-8000-000000000002=confirmed," +
+      "50000000-0000-4000-8000-000000000003=approval_pending," +
+      "50000000-0000-4000-8000-000000000004=waitlisted",
     label: "enrollments",
   },
   {
-    query: "select count(*) from public.programs;",
-    count: 9,
+    query: `select string_agg(slug || '=' || publication_state::text, ',' order by slug)
+      from public.programs;`,
+    expected:
+      "art-lab=published,etiquette-series=published,gardening=published," +
+      "harvest-explorers=published,haven-days-enrichment=published," +
+      "history-explorers=published,ready-set-prep-and-learn=published," +
+      "sample-unpublished-draft=draft,sewing=published",
     label: "programs",
   },
 ]
@@ -124,23 +146,140 @@ async function waitForContainers() {
       ["inspect", "-f", "{{.State.Health.Status}}", STORAGE_CONTAINER],
       { encoding: "utf8" },
     )
-    if (status.stdout.trim() === "healthy") return
+    if ((status.stdout ?? "").trim() === "healthy") return
     await sleep(2_000)
   }
+  throw new Error(
+    `${STORAGE_CONTAINER} did not become healthy within ${HEALTH_TIMEOUT_MS}ms`,
+  )
 }
 
 /**
- * Whether the seed actually landed.
- * @returns {{ok: boolean, detail: string}} The verdict and what was counted.
+ * Mark the database before reset so old fixtures cannot satisfy verification.
+ * The reset must remove this table before its new fixture is accepted.
+ * @param {string} marker - Unique marker for this reset attempt.
+ * @returns {boolean} Whether the marker was written and read back.
+ */
+function markResetAttempt(marker) {
+  const result = spawnSync(
+    "psql",
+    [
+      "-h",
+      DB.host,
+      "-p",
+      DB.port,
+      "-U",
+      DB.user,
+      "-d",
+      DB.database,
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-c",
+      `create table if not exists public._hsh_reset_freshness (
+         marker uuid primary key
+       );
+       truncate public._hsh_reset_freshness;
+       insert into public._hsh_reset_freshness values ('${marker}'::uuid);`,
+    ],
+    {
+      encoding: "utf8",
+      env: { ...process.env, PGPASSWORD: DB.password },
+      stdio: "inherit",
+    },
+  )
+  return (
+    result.status === 0 &&
+    scalar("select marker::text from public._hsh_reset_freshness;") === marker
+  )
+}
+
+/**
+ * Run the local reset without its automatic seed step.
+ * @returns {ReturnType<typeof spawnSync>} The completed CLI process.
+ */
+function resetDatabase() {
+  const result = spawnSync(
+    "supabase",
+    ["db", "reset", "--local", "--no-seed"],
+    { encoding: "utf8" },
+  )
+  if (result.stdout) process.stdout.write(result.stdout)
+  if (result.stderr) process.stderr.write(result.stderr)
+  return result
+}
+
+/**
+ * The one known false-negative exit from the CLI that verification may overrule.
+ * SQL and migration errors are never treated as storage health failures.
+ * @param {ReturnType<typeof spawnSync>} result - The completed reset process.
+ * @returns {boolean} Whether only the known storage health check failed.
+ */
+function isStorageHealthFailure(result) {
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`
+  return (
+    result.status !== 0 &&
+    output.includes(
+      `${STORAGE_CONTAINER}: container is not ready: unhealthy`,
+    ) &&
+    !/SQLSTATE|At statement:|failed to apply migration/i.test(output) &&
+    !/^ERROR:/m.test(output)
+  )
+}
+
+/** Apply the sanitized seed through its externally supplied local marker. */
+function applySeed() {
+  return spawnSync(
+    "psql",
+    [
+      "-h",
+      DB.host,
+      "-p",
+      DB.port,
+      "-U",
+      DB.user,
+      "-d",
+      DB.database,
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-v",
+      "hsh_seed_environment=local",
+      "-f",
+      "supabase/seed.sql",
+    ],
+    {
+      encoding: "utf8",
+      env: { ...process.env, PGPASSWORD: DB.password },
+      stdio: "inherit",
+    },
+  ).status
+}
+
+/**
+ * Whether this reset removed its freshness marker and restored exact fixtures.
+ * @returns {{ok: boolean, detail: string}} The verdict and what was verified.
  */
 function verifySeed() {
-  const seen = EXPECTED.map((row) => ({
+  const seen = [
+    {
+      label: "reset",
+      expected: "fresh",
+      query: `select case
+        when to_regclass('public._hsh_reset_freshness') is null then 'fresh'
+        else 'stale'
+      end;`,
+    },
+    ...EXPECTED,
+  ].map((row) => ({
     ...row,
     actual: scalar(row.query),
   }))
-  const ok = seen.every((row) => row.actual === String(row.count))
+  const ok = seen.every((row) => row.actual === row.expected)
   const detail = seen
-    .map((row) => `${row.label}=${row.actual ?? "unreachable"}/${row.count}`)
+    .map((row) =>
+      row.actual === row.expected
+        ? `${row.label}=canonical`
+        : `${row.label}=${row.actual === null ? "unreachable" : "mismatch"}`,
+    )
     .join(" ")
   return { ok, detail }
 }
@@ -184,11 +323,19 @@ async function main() {
   for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
     await waitForContainers()
 
-    try {
-      execFileSync("supabase", ["db", "reset"], { stdio: "inherit" })
-    } catch {
-      /* Deliberately ignored: the storage health check fails this command even
-         when the reset itself worked. verifySeed() decides, not the exit code. */
+    const marker = randomUUID()
+    if (!markResetAttempt(marker)) {
+      throw new Error("Could not write the reset freshness marker")
+    }
+
+    const reset = resetDatabase()
+    const storageHealthFailure = isStorageHealthFailure(reset)
+    if (reset.status !== 0 && !storageHealthFailure) {
+      throw reset.error ?? new Error(`supabase db reset exited ${reset.status}`)
+    }
+
+    if (applySeed() !== 0) {
+      throw new Error("The sanitized seed command failed")
     }
 
     const { ok, detail } = verifySeed()

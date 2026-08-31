@@ -64,11 +64,12 @@ enabled = true
 schema_paths = []
 
 [db.seed]
-# If enabled, seeds the database after migrations during a db reset.
-enabled = true
-# Specifies an ordered list of seed files to load during db reset.
-# Supports glob patterns relative to supabase directory: "./seeds/*.sql"
-sql_paths = ["./seeds/00_local_environment.sql", "./seed.sql"]
+# The sanitized seed requires an environment marker supplied by psql, outside
+# the SQL file. `npm run db:reset` applies it after a guarded local-only reset.
+# Keeping automatic seeding off makes all fixture loading use that explicit
+# local or preview workflow.
+enabled = false
+sql_paths = ["./seed.sql"]
 
 [db.network_restrictions]
 # Enable management of network restrictions.

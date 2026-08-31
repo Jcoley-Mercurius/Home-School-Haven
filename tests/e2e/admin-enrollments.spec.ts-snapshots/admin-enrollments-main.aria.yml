@@ -25,12 +25,12 @@
       - text: Waitlisted
       - radio "Enrolled"
       - text: Enrolled
-      - radio "Not confirmed"
-      - text: Not confirmed
+      - radio "Payment failed — not confirmed"
+      - text: Payment failed — not confirmed
       - radio "Cancelled"
       - text: Cancelled
-      - radio "Not confirmed"
-      - text: Not confirmed
+      - radio "Blocked — not confirmed"
+      - text: Blocked — not confirmed
     - text: Program
     - combobox "Program": All programs
     - button "Apply"
