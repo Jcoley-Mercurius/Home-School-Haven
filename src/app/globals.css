@@ -466,7 +466,25 @@
     line-height: var(--hsh-leading-body-sm);
   }
 
-  .hsh-label {
+  .hsh-label,
+  /* `hsh-heading-sm` is NOT a new type role, and adds no new scale step.
+     The approved MDS type scale stops at Heading 4 (20px Manrope 700), so a
+     heading ELEMENT nested below an `hsh-h4` — a drawer section under its
+     dialog title, a roster's "Confirmed" under its program name — has no
+     smaller heading role to take. It takes the approved Label role, and this
+     alias exists so the markup can stay semantic (`<h3>`, `<h4>`) without
+     inventing a Heading 5.
+
+     It is declared as one rule with `.hsh-label` rather than a copy of the
+     same four declarations, so the two cannot drift apart into a real second
+     role by a later edit to one of them.
+
+     This class was in use in `admin/roster-section.tsx` and
+     `admin/family-drawer.tsx` before it was ever defined (DEFECT-EW3). Those
+     headings fell back to the browser's default `h3`/`h4` styling and rendered
+     LARGER than their `hsh-h4` parent, inverting the hierarchy the MDS
+     requires be preserved. */
+  .hsh-heading-sm {
     font-family: var(--hsh-font-ui);
     font-size: var(--hsh-size-label);
     font-weight: var(--hsh-weight-semibold);
