@@ -73,6 +73,27 @@ test.describe("signed out", () => {
   })
 })
 
+/**
+ * Wait until the streamed sections have actually rendered.
+ *
+ * The overview suspends its reads, so a screenshot or an ARIA snapshot taken
+ * straight after `reload()` can catch the skeleton: captures came back 1280x1230
+ * -- a short page with none of the content and none of the operations table's
+ * horizontal overflow -- and were compared against a settled baseline. Nothing
+ * was wrong with the page; the picture was taken too early.
+ *
+ * "Recent activity" is the last region on the page, so its presence means the
+ * sections above it have resolved.
+ * @param page - The page under test.
+ * @returns Resolves once the overview has settled.
+ */
+async function settled(page: Page) {
+  await expect(
+    page.getByRole("region", { name: "Recent activity" }),
+  ).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+}
+
 test.describe("administrator overview", () => {
   test.skip(
     !SUPABASE_CONFIGURED,
@@ -272,6 +293,7 @@ test.describe("administrator overview", () => {
   })
 
   test("matches the structural ARIA snapshot", async ({ page }) => {
+    await settled(page)
     await expect(page.locator("main")).toMatchAriaSnapshot({
       name: "admin-overview-main.aria.yml",
     })
@@ -281,7 +303,7 @@ test.describe("administrator overview", () => {
     test(`matches the ${name} visual baseline`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await page.reload()
-      await page.evaluate(() => document.fonts.ready)
+      await settled(page)
       await expect(page).toHaveScreenshot(`admin-overview-${name}.png`, {
         fullPage: true,
         maxDiffPixelRatio: 0.01,

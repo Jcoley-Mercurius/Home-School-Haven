@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import {
   AttentionPanel,
   OwnerAuthorityBand,
+  QuickActions,
   SummaryTiles,
 } from "@/components/admin/overview-cards"
 import { OverviewSkeleton } from "@/components/admin/overview-skeleton"
@@ -37,7 +38,10 @@ import { getAdminOverview } from "@/lib/admin/repository"
  *
  * WHAT THIS PAGE REFUSES TO DO
  *
- * It is read-only, by boundary and not by omission. It confirms no payment,
+ * It remains read-only, by boundary and not by omission. The links added above
+ * navigate; they change nothing. Every mutation in this release lives on
+ * `/admin/programs/[id]` or `/admin/enrollments`, behind its own guard and its
+ * own database authorization check. It confirms no payment,
  * confirms no enrollment, approves no consent, and decides no scholarship,
  * refund, cancellation, credit, or transfer (MPS-RUL-004). Every count comes
  * from an authoritative query; nothing is estimated or padded to make the
@@ -54,15 +58,18 @@ import { getAdminOverview } from "@/lib/admin/repository"
  *
  * DEVIATIONS FROM MDS-REF-009
  *
- * The reference's Quick Actions panel (D-AO1) and its NEXT ACTION column
- * (D-AO2) are omitted: every target is a workflow this release does not
- * implement, and a control that leads nowhere implies an available workflow.
- * The sidebar carries the two destinations that exist rather than the nine the
- * reference draws (D-AO3). The time-of-day greeting is replaced with a fixed
- * heading (D-AO5), because a server-rendered greeting is wrong for any viewer
- * outside the server's timezone and a client-rendered one hydrates differently
- * than it rendered. All are recorded in
- * `prompts/admin-operations-foundation.md` §9.
+ * The program-and-enrollment-operations slice closed two of them by building
+ * their destinations. The NEXT ACTION column is back and D-AO2 is resolved.
+ * Quick Actions is back with the two of four actions that exist, narrowing
+ * D-AO1. The sidebar now carries four of nine destinations, narrowing D-AO3.
+ * The remaining absences are still workflows this release does not implement,
+ * and a control that leads nowhere would imply one that it does.
+ *
+ * The time-of-day greeting is still replaced with a fixed heading (D-AO5),
+ * because a server-rendered greeting is wrong for any viewer outside the
+ * server's timezone and a client-rendered one hydrates differently than it
+ * rendered. All are recorded in `prompts/admin-operations-foundation.md` §9
+ * and `prompts/admin-program-enrollment-operations.md`.
  */
 export const metadata: Metadata = {
   title: "Operations Overview — Home School Haven of SWFL",
@@ -89,7 +96,12 @@ async function OverviewSections() {
         educators={overview.educators}
       />
 
-      <ProgramOperations state={overview.programs} />
+      {/* MDS-REF-009 pairs the program table with the Quick Actions rail at
+          desktop width and stacks them below it. */}
+      <div className="grid grid-cols-1 gap-[var(--hsh-grid-gap-mobile)] sm:gap-[var(--hsh-grid-gap-tablet)] lg:grid-cols-[1fr_320px] lg:gap-[var(--hsh-grid-gap-desktop)]">
+        <ProgramOperations state={overview.programs} />
+        <QuickActions />
+      </div>
 
       <div className="grid grid-cols-1 gap-[var(--hsh-grid-gap-mobile)] sm:gap-[var(--hsh-grid-gap-tablet)] lg:grid-cols-2 lg:gap-[var(--hsh-grid-gap-desktop)]">
         <AttentionPanel state={overview.attention} />
@@ -127,9 +139,9 @@ export default async function AdminOverviewPage() {
         <OwnerAuthorityBand />
 
         <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-          Program, enrollment, family, educator, schedule, communication,
-          report, and settings operations are not part of this review yet. They
-          arrive in later slices, and no link to them is shown until they work.
+          Family, educator, schedule, communication, report, and settings
+          operations are not part of this review yet. They arrive in later
+          slices, and no link to them is shown until they work.
         </p>
       </main>
     </AdminPortalShell>

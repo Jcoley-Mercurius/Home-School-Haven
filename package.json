@@ -6,7 +6,7 @@
     "build": "next build",
     "check:demo-assets": "node scripts/check-demo-placeholders.mjs",
     "db:advisors": "supabase db advisors --local",
-    "db:reset": "supabase db reset",
+    "db:reset": "node scripts/db-reset.mjs",
     "db:start": "supabase start",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --linked --schema public > src/lib/supabase/database.types.ts.tmp && node scripts/apply-db-types.mjs",

@@ -35,7 +35,8 @@ authorization model, sample accounts, migration and rollback procedure:
 # Hosted project (current setup)
 supabase link --project-ref <ref>
 supabase db push                             # apply migrations
-supabase db query --linked -f supabase/seed.sql   # sanitized fixtures
+psql "$PREVIEW_DB_URL" -v ON_ERROR_STOP=1 \
+  -v hsh_seed_environment=preview -f supabase/seed.sql   # sanitized fixtures
 npm run db:types                             # regenerate database types
 
 # Local stack instead (needs Docker)

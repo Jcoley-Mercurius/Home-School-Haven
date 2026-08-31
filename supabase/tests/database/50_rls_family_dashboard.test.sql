@@ -12,7 +12,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(17);
 
 \set parent_a '20000000-0000-4000-8000-00000000000a'
 \set parent_b '20000000-0000-4000-8000-00000000000b'

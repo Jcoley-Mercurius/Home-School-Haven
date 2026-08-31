@@ -24,7 +24,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(23);
+select plan(25);
 
 \set admin    '20000000-0000-4000-8000-000000000ad0'
 \set parent_a '20000000-0000-4000-8000-00000000000a'

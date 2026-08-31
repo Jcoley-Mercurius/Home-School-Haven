@@ -14,8 +14,16 @@ import type { EnrollmentState } from "@/lib/enrollment/repository"
 import { cn } from "@/lib/utils"
 
 /**
- * The single place where a stored enrollment state becomes something a family
- * reads (MDS `components.enrollment_state`, DO-DONT "Trust states").
+ * The single place where a stored enrollment state becomes something a person
+ * reads — a family on the dashboard and an administrator in operations (MDS
+ * `components.enrollment_state`, DO-DONT "Trust states").
+ *
+ * It moved out of `components/family/` in the program-and-enrollment-operations
+ * slice for one reason: MPS-ACC-022 requires that "family and admin views show
+ * one consistent enrollment and payment state". The cheapest way to guarantee
+ * that is for both views to render from this one table, so a change to a label
+ * or a sentence cannot reach one audience and not the other. The mapping below
+ * is unchanged by that move.
  *
  * TWO APPROVED VOCABULARIES, RESOLVED BY AUTHORITY
  *

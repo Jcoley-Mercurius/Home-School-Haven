@@ -15,26 +15,34 @@
 --     carries the `demo-unapproved-v0` affirmation version. No name below
 --     belongs to a real child.
 --
--- This file is applied by `supabase db reset` against a LOCAL stack, and may be
--- applied to the private preview. It must never run against production.
+-- This file is applied by `npm run db:reset` against a LOCAL stack, and may be
+-- applied deliberately to the private preview. It must never run against
+-- production. Both workflows must supply `hsh_seed_environment` to psql; the
+-- SQL in this file cannot declare its own environment.
+
+\set ON_ERROR_STOP on
+
+\if :{?hsh_seed_environment}
+select :'hsh_seed_environment' in ('local', 'preview')
+  as hsh_seed_environment_allowed \gset
+\else
+\set hsh_seed_environment_allowed false
+\endif
+
+\if :hsh_seed_environment_allowed
+\else
+do $$
+begin
+  raise exception
+    'Refusing sanitized seed: invoke psql with -v hsh_seed_environment=local or preview.';
+end;
+$$;
+\endif
 
 -- Password hashing for the sample accounts below. pgcrypto lives in the
 -- `extensions` schema on Supabase, and psql's search_path does not necessarily
 -- include it, so `crypt` and `gen_salt` are schema-qualified at every call site.
 create extension if not exists pgcrypto with schema extensions;
-
-do $$
-declare
-  env text := coalesce(current_setting('app.environment', true), '');
-begin
-  if env not in ('local', 'preview') then
-    raise exception
-      'supabase/seed.sql contains sample data and may only run when app.environment is explicitly set to "local" or "preview". Current value: "%"',
-      env;
-  end if;
-end;
-$$;
-
 
 -- ---------------------------------------------------------------------------
 -- Programs
@@ -45,7 +53,7 @@ insert into public.programs (
   published_session_length, published_price, published_registration_options,
   availability, publication_state, import_status, source, unverified_details,
   image_src, image_alt, image_width, image_height, image_is_placeholder,
-  sort_order
+  sort_order, summary
 ) values
   (
     '10000000-0000-4000-8000-000000000001',
@@ -54,7 +62,7 @@ insert into public.programs (
     'Fall registration offers 1-, 2-, or 3-day options across Enrichment or Ready Set Prep.',
     'unknown', 'published', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 1
+    '[]'::jsonb, null, null, null, null, false, 1, null
   ),
   (
     '10000000-0000-4000-8000-000000000002',
@@ -66,7 +74,7 @@ insert into public.programs (
     '[]'::jsonb,
     '/placeholder/program-haven-days-enrichment.jpg',
     'Placeholder photo — demo only. Potted plants beside a window.',
-    498, 474, true, 2
+    498, 474, true, 2, null
   ),
   (
     '10000000-0000-4000-8000-000000000003',
@@ -75,7 +83,7 @@ insert into public.programs (
     'unknown', 'published', 'import-title-review-detail',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory (QA-001: date association unproven)',
     '["September 11–October 2 (association unproven)"]'::jsonb,
-    null, null, null, null, false, 3
+    null, null, null, null, false, 3, null
   ),
   (
     '10000000-0000-4000-8000-000000000004',
@@ -86,7 +94,7 @@ insert into public.programs (
     '[]'::jsonb,
     '/placeholder/program-art-lab.jpg',
     'Placeholder photo — demo only. Watercolour paints and brushes on a table.',
-    456, 474, true, 4
+    456, 474, true, 4, null
   ),
   (
     '10000000-0000-4000-8000-000000000005',
@@ -94,7 +102,7 @@ insert into public.programs (
     'September 15–October 5', null, null, 'Two hours per session', null, null,
     'unknown', 'published', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 5
+    '[]'::jsonb, null, null, null, null, false, 5, null
   ),
   (
     '10000000-0000-4000-8000-000000000006',
@@ -103,7 +111,7 @@ insert into public.programs (
     'unknown', 'published', 'import-title-review-detail',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory (QA-001: session-length association unproven)',
     '["Two hours per session (association unproven)"]'::jsonb,
-    null, null, null, null, false, 6
+    null, null, null, null, false, 6, null
   ),
   (
     '10000000-0000-4000-8000-000000000007',
@@ -114,7 +122,7 @@ insert into public.programs (
     '[]'::jsonb,
     '/placeholder/program-harvest-explorers.jpg',
     'Placeholder photo — demo only. A woven basket with a eucalyptus sprig.',
-    474, 474, true, 7
+    474, 474, true, 7, null
   ),
   (
     '10000000-0000-4000-8000-000000000008',
@@ -122,7 +130,7 @@ insert into public.programs (
     'September 3–October 15', null, null, '2.5 hours per session', null, null,
     'unknown', 'published', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 8
+    '[]'::jsonb, null, null, null, null, false, 8, null
   ),
   -- Sample draft. Its only purpose is to give the "a visitor cannot see an
   -- unpublished program" test a target. It is not real published content, which
@@ -133,7 +141,16 @@ insert into public.programs (
     null, null, null, null, null, null,
     'unknown', 'draft', 'import',
     'Sample data — not published content',
-    '[]'::jsonb, null, null, null, null, false, 99
+    '[]'::jsonb, null, null, null, null, false, 99,
+    -- The only seeded summary. `admin_set_program_publication` refuses to
+    -- publish a program with no summary (MPS-ACC-008/009), and this fixture is
+    -- the row the publish/unpublish paths exercise, so without one that flow
+    -- cannot be tested at all. It invents no published copy: it says in words
+    -- that it is a sample and that nothing has been published here. Every real
+    -- program keeps `summary` NULL, which is what the approved inventory says
+    -- (import rule 3, and `UNPUBLISHED` in src/content/programs.ts).
+    'Sample draft record for the Foundation Review. Home School Haven has not '
+    'published a summary for this program.'
   )
 -- Without this the whole file stops here on any re-run: the programs insert
 -- raises a duplicate key, and every statement after it -- the sample accounts,
