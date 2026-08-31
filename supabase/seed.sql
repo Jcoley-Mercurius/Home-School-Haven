@@ -335,7 +335,23 @@ begin
     ('50000000-0000-4000-8000-000000000004', family_b,
      '40000000-0000-4000-8000-000000000003',
      '10000000-0000-4000-8000-000000000005', 'waitlisted',
-     'Sample record. A waitlist place is not enrollment.')
+     'Sample record. A waitlist place is not enrollment.'),
+    -- Art Lab, confirmed. The ONLY confirmed enrollment inside a program the
+    -- sample educator is assigned to, and it exists so MPS-ACC-028 has a
+    -- target. Before it, the educator was assigned to 0004 and 00ff while the
+    -- one confirmed enrollment sat in 0002, which the educator does not hold --
+    -- so "the assigned educator sees the roster" and "the unassigned educator
+    -- does not" were both untestable, and the roster boundary could not be
+    -- proven either way.
+    --
+    -- Pairing it with the payment_pending row above on the SAME program is the
+    -- other half of the point: program 0004 now carries one confirmed and one
+    -- unconfirmed child, so the roster page must show them apart on one screen
+    -- and the educator policy must return exactly one of them.
+    ('50000000-0000-4000-8000-000000000005', family_a,
+     '40000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000004', 'confirmed',
+     'Sample record. Confirmed by an authorized administrator; not a payment.')
   on conflict (id) do nothing;
 
   -- -------------------------------------------------------------------------

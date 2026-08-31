@@ -229,12 +229,21 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
         </Field>
 
         <Field invalid={Boolean(state.fieldErrors.summary)}>
-          <FieldLabel>Summary</FieldLabel>
+          {/* Explicit id/htmlFor: Base UI's Field associates its label with a
+              REGISTERED Field control, and a native <textarea> is not one, so
+              without this the label attaches to nothing — the control has no
+              accessible name at all. Same trap, and the same fix, as
+              contact-form.tsx and the enrollment drawer's note. axe rates it
+              critical ("Form elements must have labels"); it was found by the
+              roster slice's axe check on this page, which is the first to
+              exercise the program detail form. */}
+          <FieldLabel htmlFor={`${ids}-summary`}>Summary</FieldLabel>
           <FieldDescription>
             Required before this program can be published. Use the approved
             published description.
           </FieldDescription>
           <Textarea
+            id={`${ids}-summary`}
             key={`summary-${value("summary")}`}
             name="summary"
             rows={4}

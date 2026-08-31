@@ -6,7 +6,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(8);
 
 \set educator  '20000000-0000-4000-8000-00000000000e'
 \set sewing    '10000000-0000-4000-8000-000000000005'
@@ -42,19 +42,29 @@ select throws_ok(
 
 -- NEGATIVE: nor unassign themselves from oversight.
 --
--- Run as a top-level statement: Postgres refuses a data-modifying CTE inside a
--- subquery expression ("WITH clause containing a data-modifying statement must
--- be at the top level"), so the previous form raised before it could assert
--- anything. The educator holds the DELETE privilege but no DELETE policy, so
--- this affects zero rows rather than raising -- and the assignments survive.
-delete from public.educator_assignments
-  where educator_user_id = :'educator'::uuid;
+-- This assertion got STRONGER in 20260831000000 and the form had to change with
+-- it. Previously the educator held the DELETE privilege but no DELETE policy,
+-- so the statement affected zero rows and the test measured the surviving
+-- count. That migration revoked the privilege itself -- the only write path is
+-- now `admin_unassign_educator`, which checks `private.is_admin()` -- so the
+-- same statement is refused one layer earlier and raises 42501 instead.
+--
+-- The refusal is asserted rather than the survivors because a privilege that
+-- does not exist cannot be re-opened by a future policy change, while a
+-- zero-row delete could quietly become a real one.
+select throws_ok(
+  $$ delete from public.educator_assignments
+       where educator_user_id = '20000000-0000-4000-8000-00000000000e' $$,
+  '42501',
+  null,
+  'an educator cannot delete their own assignment'
+);
 
 select is(
   (select count(*)::int from public.educator_assignments
      where educator_user_id = :'educator'::uuid),
   2,
-  'an educator cannot delete their own assignment'
+  'and both assignments survive'
 );
 
 -- NEGATIVE: program assignment grants nothing about families (MPS-REQ-004).

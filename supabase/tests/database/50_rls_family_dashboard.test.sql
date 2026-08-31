@@ -28,25 +28,35 @@ select plan(17);
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000a","role":"authenticated"}';
 
--- POSITIVE: their own family's enrollments, all three of them.
+-- POSITIVE: their own family's enrollments, all four of them. The fourth
+-- arrived with the roster slice, which needed a confirmed enrollment inside a
+-- program the sample educator actually holds (MPS-ACC-028 had no target before
+-- it). It belongs to family A, so this count moved 3 -> 4.
 select is(
   (select count(*)::int from public.enrollments),
-  3,
+  4,
   'a parent reads their own family''s enrollments and no others'
 );
 
 -- The trust states the dashboard exists to distinguish are all present and
 -- readable, so a rendering test has something real to render.
+--
+-- Art Lab now carries TWO of family A's enrollments -- one payment_pending for
+-- the first child and one confirmed for the second -- so this is narrowed by
+-- student rather than by program. That pairing is deliberate: one program
+-- holding a confirmed and an unconfirmed child on the same screen is exactly
+-- what the roster must not blur together.
 select is(
   (select state::text from public.enrollments
-     where program_id = :'art_lab'::uuid),
+     where program_id = :'art_lab'::uuid
+       and student_id = '40000000-0000-4000-8000-000000000001'::uuid),
   'payment_pending',
   'the payment-pending enrollment is readable by its own family'
 );
 select is(
   (select count(*)::int from public.enrollments where state = 'confirmed'),
-  1,
-  'exactly one enrollment is confirmed — confirmation is not the default'
+  2,
+  'two enrollments are confirmed — confirmation is still not the default'
 );
 
 -- NEGATIVE: family B's enrollment is invisible, by id and in aggregate.
@@ -142,11 +152,15 @@ select is(
 -- ---------------------------------------------------------------------------
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
--- Assigned to Art Lab, so its roster is reachable.
+-- Assigned to Art Lab, so its roster is reachable -- both of its enrollments,
+-- the confirmed one and the payment_pending one. Seeing that a place is
+-- unsettled is part of what an assigned educator's roster is for; identifying
+-- the child behind an unsettled place is not, and that narrower rule lives on
+-- `students`, asserted in 60_ and 80_.
 select is(
   (select count(*)::int from public.enrollments
      where program_id = :'art_lab'::uuid),
-  1,
+  2,
   'an assigned educator reads the roster for their assigned program'
 );
 

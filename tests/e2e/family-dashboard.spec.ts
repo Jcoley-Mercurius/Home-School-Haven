@@ -180,13 +180,20 @@ test.describe("enrollment trust states", () => {
     await signIn(page, ACCOUNTS.parentWithFamily)
     await page.goto("/family/schedule")
 
-    /* The seed confirms exactly one of family A's three enrollments. If a
-       second badge ever says "Enrolled", something started inferring
-       confirmation from payment activity. */
+    /* The seed confirms exactly two of family A's FOUR enrollments -- Haven
+       Days for the first child, and Art Lab for the second. The count moved
+       from one to two in the family-and-educator-operations slice, which added
+       the Art Lab confirmation so the roster boundary had a target; both are
+       deliberate administrator confirmations in the fixture.
+       
+       The guard is unchanged in substance: family A also holds a
+       payment_pending and an approval_pending enrollment, and if either ever
+       renders as "Enrolled" this count becomes three -- which is the signal
+       that something started inferring confirmation from payment activity. */
     await expect(
       page.locator('[data-slot="enrollment-state"][data-state="confirmed"]'),
-    ).toHaveCount(1)
-    await expect(page.getByText("Enrolled", { exact: true })).toHaveCount(1)
+    ).toHaveCount(2)
+    await expect(page.getByText("Enrolled", { exact: true })).toHaveCount(2)
   })
 
   test("a waitlist place is never called enrollment", async ({ page }) => {

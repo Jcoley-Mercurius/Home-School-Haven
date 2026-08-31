@@ -1,0 +1,31 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem: Educators
+  - heading "Educators" [level=1]
+  - paragraph: Who holds the educator role, which programs each of them is assigned to, and the two changes an administrator may make to that.
+  - paragraph: An assignment is program access, nothing more
+  - text: Assigning an educator gives them one program’s roster, resources, and announcements. It grants no control over pricing, availability, or cancellation, no reach into an unassigned program, and no administrator authority. Samantha Dodson controls administrator access, and it is not granted from this page.
+  - search:
+    - text: Search educators
+    - searchbox "Search educators"
+    - status: Showing all 1 educators.
+  - table "Educators, with whether an account is linked and which programs they are assigned to. Select an educator to manage their assignments.":
+    - caption: Educators, with whether an account is linked and which programs they are assigned to. Select an educator to manage their assignments.
+    - rowgroup:
+      - row "Educator Account Assigned programs Action":
+        - columnheader "Educator"
+        - columnheader "Account"
+        - columnheader "Assigned programs"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Sample Educator Linked Art Lab, Sample Unpublished Draft (test fixture) Manage Sample Educator's program assignments":
+        - rowheader "Sample Educator"
+        - cell "Linked"
+        - cell "Art Lab, Sample Unpublished Draft (test fixture)"
+        - cell "Manage Sample Educator's program assignments":
+          - button "Manage Sample Educator's program assignments"

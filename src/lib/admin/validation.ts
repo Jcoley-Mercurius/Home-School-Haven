@@ -198,6 +198,43 @@ const publicationSchema = z.object({
   publicationState: publicationTarget,
 })
 
+/**
+ * The mandatory attributable note on an educator assignment change
+ * (MPS-REQ-024).
+ *
+ * Reuses the enrollment note's shape and length because the database applies
+ * the identical 1–400 rule to both, and two limits that must agree are better
+ * expressed once. The wording differs because the decision does: an assignment
+ * note explains a change to who may reach a program's roster.
+ *
+ * Unlike the enrollment note, this one is not persisted — `educator_assignments`
+ * has no note column and no approved requirement asks for one (deviation
+ * D-FE2). It is required so an administrator states a reason before acting.
+ */
+const assignmentNote = z
+  .string()
+  .trim()
+  .min(1, "Say why this assignment is changing. This is recorded.")
+  .max(NOTE_MAX, `Use ${NOTE_MAX} characters or fewer.`)
+
+/**
+ * Assign or unassign an educator (MPS-REQ-017).
+ *
+ * Both identifiers are validated as uuids and neither is trusted beyond its
+ * shape: the database decides whether the target actually holds the `educator`
+ * grant and whether the program may be assigned. Passing this schema means the
+ * request is well-formed, never that it is permitted.
+ *
+ * There is no concurrency token. Assignment is set membership with no prior
+ * material state to flatten, so a stale submission reaches the same result and
+ * is reported as `unchanged` rather than refused (deviation D-FE1).
+ */
+const assignmentSchema = z.object({
+  educatorUserId: recordId,
+  programId: recordId,
+  note: assignmentNote,
+})
+
 const enrollmentStateSchema = z.object({
   enrollmentId: recordId,
   expectedUpdatedAt: concurrencyToken,
@@ -220,6 +257,7 @@ export {
   PROGRAM_NAME_MAX,
   PROGRAM_SLUG_MAX,
   SUMMARY_MAX,
+  assignmentSchema,
   createProgramSchema,
   enrollmentStateSchema,
   programFactsSchema,

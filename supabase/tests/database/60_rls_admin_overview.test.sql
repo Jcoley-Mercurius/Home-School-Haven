@@ -56,7 +56,7 @@ select is(
 select is((select count(*)::int from public.educator_assignments), 2,
   'an administrator reads every educator assignment');
 
-select is((select count(*)::int from public.enrollments), 4,
+select is((select count(*)::int from public.enrollments), 5,
   'an administrator reads every enrollment');
 
 select is((select count(*)::int from public.families), 2,
@@ -85,7 +85,7 @@ select is(
 set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-00000000000a","role":"authenticated"}';
 
-select is((select count(*)::int from public.enrollments), 3,
+select is((select count(*)::int from public.enrollments), 4,
   'a parent reads only their own family''s enrollments');
 
 select is((select count(*)::int from public.families), 1,
@@ -112,16 +112,24 @@ select is((select count(*)::int from public.programs), 8,
 set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
--- One enrollment sits on an assigned program. Roster reach follows assignment
+-- Two enrollments sit on an assigned program -- one confirmed, one
+-- payment_pending, both on Art Lab. Roster reach follows assignment
 -- (MPS-REQ-018, MPS-ACC-028) and stops there.
-select is((select count(*)::int from public.enrollments), 1,
+select is((select count(*)::int from public.enrollments), 2,
   'an educator reads only the roster of an assigned program');
 
 select is((select count(*)::int from public.families), 0,
   'an educator reads no family record');
 
-select is((select count(*)::int from public.students), 0,
-  'an educator reads no student profile');
+-- The student read is NARROWER than the enrollment read, and deliberately so.
+-- `enrollments_select_assigned_educator` returns every state on an assigned
+-- program, because an operator needs to see that a place is unsettled.
+-- `students_select_assigned_educator` returns only children whose enrollment is
+-- CONFIRMED: a family whose arrangement is still pending is not an educator's
+-- business (MPS-RUL-003). So of the two enrollments above, exactly one names a
+-- child this educator may identify.
+select is((select count(*)::int from public.students), 1,
+  'an educator reads only the students confirmed on an assigned program');
 
 select is((select count(*)::int from public.audit_events), 0,
   'an educator reads no change history');

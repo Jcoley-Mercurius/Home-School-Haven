@@ -4,7 +4,14 @@
    holds Lucide icon components, and functions cannot be passed to a Client
    Component as props. */
 
-import { BookOpen, LayoutDashboard, UserRound, Users } from "lucide-react"
+import {
+  BookOpen,
+  GraduationCap,
+  Home,
+  LayoutDashboard,
+  UserRound,
+  Users,
+} from "lucide-react"
 
 import { PortalShell } from "@/components/layout/portal-shell"
 
@@ -23,9 +30,10 @@ import type { PortalDestination } from "@/components/layout/portal-shell"
  *
  * MDS `navigation.specification.admin` names nine destinations: Overview,
  * Programs, Enrollments, Families, Educators, Schedule, Communications,
- * Reports, and Settings. Three of them are built. Programs and Enrollments
- * joined this list in the program-and-enrollment-operations slice, which
- * narrows deviation D-AO3 from seven missing destinations to five.
+ * Reports, and Settings. Six of them are built. Programs and Enrollments joined
+ * this list in the program-and-enrollment-operations slice; Families and
+ * Educators joined it in the family-and-educator-operations slice, which
+ * narrows deviation D-AO3 from five missing destinations to three.
  *
  * `/admin/programs` is the operations list, which shows drafts and archived
  * programs as well as published ones. It is deliberately not the public
@@ -39,9 +47,20 @@ import type { PortalDestination } from "@/components/layout/portal-shell"
  * entirely, following the owner decision of 2026-08-27 that only destinations
  * which exist are listed. Each one joins this list in the slice that builds it.
  *
- * A four-item sidebar is still thinner than the nine MDS-REF-009 draws, and
- * that remains deviation D-AO3 rather than being papered over with links that
- * go nowhere.
+ * A six-item sidebar is still thinner than the nine MDS-REF-009 draws, and that
+ * remains deviation D-AO3 rather than being papered over with links that go
+ * nowhere.
+ *
+ * WHY ONLY FOUR OF THE SIX SIT ON THE MOBILE BAR
+ *
+ * The MDS mobile bottom bar holds a small number of destinations legibly at
+ * 44 px targets with 8 px between them. Overview, Programs, Enrollments, and
+ * Account are the four an administrator moves between constantly; Families and
+ * Educators are reference surfaces reached from the sidebar and the rail, so
+ * they take the shell's existing "More" row, which keeps them reachable on
+ * mobile rather than hidden. Cramming six onto the bar itself would shrink the
+ * targets below the approved 44 px minimum, which the MDS does not permit for
+ * the sake of a shorter path.
  *
  * Authorization is NOT here. This is chrome: `/admin` calls `requireAdmin()`
  * itself, and RLS decides independently what the database will hand over.
@@ -65,6 +84,18 @@ const DESTINATIONS: PortalDestination[] = [
     href: "/admin/enrollments",
     icon: Users,
     onMobileBar: true,
+  },
+  {
+    label: "Families",
+    href: "/admin/families",
+    icon: Home,
+    onMobileBar: false,
+  },
+  {
+    label: "Educators",
+    href: "/admin/educators",
+    icon: GraduationCap,
+    onMobileBar: false,
   },
   { label: "Account", href: "/account", icon: UserRound, onMobileBar: true },
 ]
