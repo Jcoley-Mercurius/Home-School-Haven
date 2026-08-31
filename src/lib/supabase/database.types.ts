@@ -486,6 +486,10 @@ export type Database = {
         }
         Returns: string
       }
+      admin_assign_educator: {
+        Args: { educator_id: string; note: string; target_program_id: string }
+        Returns: string
+      }
       admin_create_program_draft: {
         Args: {
           program_name: string
@@ -509,6 +513,10 @@ export type Database = {
           next_state: Database["public"]["Enums"]["program_publication_state"]
           target_id: string
         }
+        Returns: string
+      }
+      admin_unassign_educator: {
+        Args: { educator_id: string; note: string; target_program_id: string }
         Returns: string
       }
       admin_update_program_facts: {

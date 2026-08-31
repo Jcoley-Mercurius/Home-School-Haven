@@ -1,0 +1,40 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem: Families
+  - heading "Families" [level=1]
+  - paragraph: Every family account, its guardians, its students, and what each student is enrolled in.
+  - paragraph: Families control their own records
+  - text: This directory is read-only. A parent or guardian adds, changes, and removes their family’s details and student profiles; an administrator cannot edit or delete them here. Enrollment states are changed on the Enrollments page, where each decision is recorded with a reason.
+  - search:
+    - text: Search families
+    - searchbox "Search families"
+    - status: Showing all 2 families.
+  - table "Families, with the primary guardian, how many students are on the account, and how many enrollments are confirmed. Select a family to view its detail.":
+    - caption: Families, with the primary guardian, how many students are on the account, and how many enrollments are confirmed. Select a family to view its detail.
+    - rowgroup:
+      - row "Family Primary guardian Students Confirmed Action":
+        - columnheader "Family"
+        - columnheader "Primary guardian"
+        - columnheader "Students"
+        - columnheader "Confirmed"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Sample Family A Sample Parent One 2 2 of 4 View the Sample Family A account":
+        - rowheader "Sample Family A"
+        - cell "Sample Parent One"
+        - cell "2"
+        - cell "2 of 4"
+        - cell "View the Sample Family A account":
+          - button "View the Sample Family A account"
+      - row "Sample Family B Sample Parent Two 1 0 of 1 View the Sample Family B account":
+        - rowheader "Sample Family B"
+        - cell "Sample Parent Two"
+        - cell "1"
+        - cell "0 of 1"
+        - cell "View the Sample Family B account":
+          - button "View the Sample Family B account"

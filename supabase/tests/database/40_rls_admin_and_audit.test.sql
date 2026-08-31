@@ -32,10 +32,19 @@ create temporary table audit_baseline as
   select count(*) as n from public.audit_events
    where entity_type = 'educator_assignment' and action = 'assigned';
 
-select lives_ok(
-  $$ insert into public.educator_assignments (educator_user_id, program_id)
-       values ('20000000-0000-4000-8000-00000000000e',
-               '10000000-0000-4000-8000-000000000005') $$,
+-- The direct INSERT this used to make is refused as of 20260831000000, which
+-- revoked the verb: an assignment now goes through `admin_assign_educator`,
+-- which additionally checks that the target holds the educator role, that the
+-- program is not archived, and that a reason was stated. The assertion is the
+-- same one -- an administrator can assign an educator -- through the path that
+-- actually exists. `80_admin_family_educator_roster.test.sql` covers the
+-- function's own refusals; this file keeps proving the audit consequence.
+select is(
+  public.admin_assign_educator(
+    '20000000-0000-4000-8000-00000000000e',
+    '10000000-0000-4000-8000-000000000005',
+    'Assigning the sample educator while testing administrator reach.'),
+  'assigned',
   'an administrator can assign an educator to a program'
 );
 

@@ -11,7 +11,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(25);
+select plan(26);
 
 \set parent_a '20000000-0000-4000-8000-00000000000a'
 \set parent_c '20000000-0000-4000-8000-00000000000c'
@@ -179,8 +179,16 @@ select is(
 -- An educator reaches nothing here
 -- ---------------------------------------------------------------------------
 -- MPS-REQ-018 limits an educator to approved roster fields for assigned
--- programs. Enrollment does not exist in this release, so no assignment can
--- authorize a student row, and an educator with no family sees none.
+-- programs. This assertion was written when enrollment did not exist, so no
+-- assignment could authorize a student row and the answer was a flat zero.
+--
+-- `educator_roster_students` (20260831000000) changed that on purpose:
+-- MPS-ACC-028 requires an assigned educator to see the roster, and without a
+-- student row a roster is not reachable at all. The rule is now narrower than
+-- "none" and narrower than "all" -- an educator reads exactly the children with
+-- a CONFIRMED enrollment in a program they hold, which is one. This file
+-- asserts the count; `80_admin_family_educator_roster.test.sql` asserts which
+-- child, and that the payment-pending child in the same program stays hidden.
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
@@ -188,7 +196,12 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","r
 select is(
   (select count(*)::int from public.students),
   0,
-  'an educator reads no student profiles'
+  'an educator reads no row from the unrestricted student table'
+);
+select is(
+  (select count(*)::int from public.educator_roster_students),
+  1,
+  'an educator reads only the confirmed roster of an assigned program'
 );
 
 select throws_ok(

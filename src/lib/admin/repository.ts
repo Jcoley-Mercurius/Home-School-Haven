@@ -52,14 +52,18 @@ type PublicationState = Enums<"program_publication_state">
  * One read, with "we could not look" kept distinct from "there is nothing
  * here". Shaped like `SectionState` in the enrollment repository, but carrying
  * a single value rather than a list, because most of what an overview shows is
- * a summary rather than a collection.
+ * a summary rather than a collection. Reads assembled from independent queries
+ * can opt into typed `gaps` so unavailable related data is not rendered as an
+ * empty relationship.
  */
-type AdminRead<T> =
+type AdminRead<T, TGap extends string = never> =
   /** No Supabase project in this environment — not the same as "empty". */
   | { status: "unavailable" }
   /** The read failed. Never rendered as emptiness. */
   | { status: "failed" }
-  | { status: "ready"; data: T }
+  | ([TGap] extends [never]
+      ? { status: "ready"; data: T }
+      : { status: "ready"; data: T; gaps: TGap[] })
 
 /** A program as the operations table shows it. Program fields only. */
 type ProgramOperationsRow = {

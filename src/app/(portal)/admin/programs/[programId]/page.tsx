@@ -1,8 +1,11 @@
+import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { ExternalLink } from "lucide-react"
 
 import { ProgramFactsForm } from "@/components/admin/program-form"
+import { ListSkeleton } from "@/components/admin/list-skeleton"
+import { RosterSection } from "@/components/admin/roster-section"
 import { PublicationActions } from "@/components/admin/program-publication-actions"
 import { PublicationBadge } from "@/components/admin/publication-state"
 import { AvailabilityBadge } from "@/components/program/availability-badge"
@@ -182,14 +185,20 @@ export default async function AdminProgramDetailPage({
         <ProgramFactsForm program={program} />
       </section>
 
+      {/* The roster streams separately from the program facts: it is a second
+          authorized read, and a slow or failed roster must cost this page its
+          roster rather than the form an administrator came here to use. */}
+      <Suspense fallback={<ListSkeleton label="Loading the roster" rows={3} />}>
+        <RosterSection programId={program.id} programName={program.name} />
+      </Suspense>
+
       <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
         Capacity figures, scholarships, discounts, and refunds are not managed
         here. Home School Haven has not confirmed capacity numbers, and every
         financial decision remains an offline matter under existing policy.
-        Educator assignment arrives in a later slice; the badge above reports
-        only whether an assignment exists. Enrollment records for this program
-        are managed from{" "}
-        <TextLink href="/admin/enrollments">Enrollments</TextLink>.
+        Educator assignments for this program are managed from{" "}
+        <TextLink href="/admin/educators">Educators</TextLink>, and enrollment
+        records from <TextLink href="/admin/enrollments">Enrollments</TextLink>.
       </p>
     </>,
   )

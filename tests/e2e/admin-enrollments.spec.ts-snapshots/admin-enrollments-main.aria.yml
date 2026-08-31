@@ -35,7 +35,7 @@
     - combobox "Program": All programs
     - button "Apply"
     - paragraph: "There is no name search here on purpose: a search term becomes part of the web address, and a student’s name must never travel in one."
-  - status: Showing 4 of 4 enrollments.
+  - status: Showing 5 of 5 enrollments.
   - table "Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.":
     - caption: Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.
     - rowgroup:
@@ -74,3 +74,10 @@
         - cell "Waitlisted"
         - cell "Review Sample Student B1's enrollment in Sewing":
           - button "Review Sample Student B1's enrollment in Sewing"
+      - row "Sample Student A2 Sample Family A Art Lab Enrolled Review Sample Student A2's enrollment in Art Lab":
+        - rowheader "Sample Student A2"
+        - cell "Sample Family A"
+        - cell "Art Lab"
+        - cell "Enrolled"
+        - cell "Review Sample Student A2's enrollment in Art Lab":
+          - button "Review Sample Student A2's enrollment in Art Lab"

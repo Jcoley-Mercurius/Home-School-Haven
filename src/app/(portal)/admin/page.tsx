@@ -139,9 +139,9 @@ export default async function AdminOverviewPage() {
         <OwnerAuthorityBand />
 
         <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-          Family, educator, schedule, communication, report, and settings
-          operations are not part of this review yet. They arrive in later
-          slices, and no link to them is shown until they work.
+          Schedule, communication, report, and settings operations are not part
+          of this review yet. They arrive in later slices, and no link to them
+          is shown until they work.
         </p>
       </main>
     </AdminPortalShell>

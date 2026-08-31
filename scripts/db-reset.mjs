@@ -53,11 +53,15 @@ const EXPECTED = [
   {
     query: `select string_agg(id::text || '=' || state::text, ',' order by id)
       from public.enrollments;`,
+    /* 0005 is the confirmed Art Lab enrollment the roster slice added, so
+       MPS-ACC-028 has a target: it is the only confirmed enrollment inside a
+       program the sample educator is actually assigned to. */
     expected:
       "50000000-0000-4000-8000-000000000001=payment_pending," +
       "50000000-0000-4000-8000-000000000002=confirmed," +
       "50000000-0000-4000-8000-000000000003=approval_pending," +
-      "50000000-0000-4000-8000-000000000004=waitlisted",
+      "50000000-0000-4000-8000-000000000004=waitlisted," +
+      "50000000-0000-4000-8000-000000000005=confirmed",
     label: "enrollments",
   },
   {

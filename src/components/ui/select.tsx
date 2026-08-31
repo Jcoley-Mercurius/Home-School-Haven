@@ -77,7 +77,20 @@ function SelectContent({
 }: SelectPrimitive.Popup.Props) {
   return (
     <SelectPrimitive.Portal>
-      <SelectPrimitive.Positioner sideOffset={4} alignItemWithTrigger={false}>
+      {/* `z-60`, one step above the dialog popup's `z-50`.
+          
+          Both the select and the dialog portal to the body, so outside a dialog
+          the positioner's stacking never mattered and it carried none. Inside
+          one it does: the select popup rendered BENEATH the dialog, so its
+          options were visible but every click landed on the dialog instead —
+          the control looked operable and silently was not by mouse. Keyboard
+          selection still worked, which is exactly why this survived until a
+          test tried to click an option. */}
+      <SelectPrimitive.Positioner
+        className="z-60"
+        sideOffset={4}
+        alignItemWithTrigger={false}
+      >
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
