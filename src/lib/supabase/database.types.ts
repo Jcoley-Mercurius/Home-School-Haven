@@ -475,7 +475,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      educator_roster_students: {
+        Row: {
+          preferred_name: string | null
+          program_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_student_to_own_family: {

@@ -1,0 +1,62 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - heading "Overview" [level=1]
+  - paragraph: The programs you are assigned to, the schedule Home School Haven has published for them, and who has a confirmed place.
+  - list:
+    - listitem:
+      - link "2 Assigned programs 1 published":
+        - /url: /educator/programs
+    - listitem:
+      - link "1 With a published schedule Published details only":
+        - /url: /educator/schedule
+    - listitem:
+      - link "2 Rosters Confirmed enrollments":
+        - /url: /educator/rosters
+  - region "Assigned programs":
+    - heading "Assigned programs" [level=2]
+    - link "See all programs":
+      - /url: /educator/programs
+    - list:
+      - listitem:
+        - link "Art Lab Published Open program":
+          - /url: /educator/programs/10000000-0000-4000-8000-000000000004
+      - listitem:
+        - link "Sample Unpublished Draft (test fixture) Draft Sample draft record for the Foundation Review. Home School Haven has not published a summary for this program. Open program":
+          - /url: /educator/programs/10000000-0000-4000-8000-0000000000ff
+  - region "Recent announcements":
+    - heading "Recent announcements" [level=2]
+    - link "All announcements":
+      - /url: /educator/announcements
+    - list:
+      - listitem:
+        - paragraph: Sample announcement — welcome to the review
+        - text: Published
+        - paragraph: Art Lab
+        - paragraph: This is sample content for the Foundation Review. Home School Haven has not published a real announcement here yet.
+        - paragraph: /Published 8\/\d+\/\d+/
+      - listitem:
+        - paragraph: Sample unpublished announcement (test fixture)
+        - text: Draft
+        - paragraph: Art Lab
+        - paragraph: Never visible to a family. Present so the published filter is testable.
+        - paragraph: Not published — families cannot see this yet.
+  - region "Available resources":
+    - heading "Available resources" [level=2]
+    - link "All resources":
+      - /url: /educator/resources
+    - list:
+      - listitem:
+        - paragraph: Sample resource — program information
+        - text: Published
+        - paragraph: Art Lab
+        - paragraph: Sample content for the Foundation Review.
+        - link "Open resource (opens in a new tab)":
+          - /url: https://www.homeschoolhaven.org/
+      - listitem:
+        - paragraph: Sample unpublished resource (test fixture)
+        - text: Draft
+        - paragraph: Art Lab
+        - paragraph: Never visible to a family. Present so the published filter is testable.
+        - link "Open resource (opens in a new tab)":
+          - /url: https://www.homeschoolhaven.org/
+        - paragraph: Not published — families cannot see this yet.
