@@ -25,6 +25,22 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
+  /**
+   * One worker, because every suite shares ONE database.
+   *
+   * The fixtures are seeded rows, and a number of tests change them: programs
+   * are published and unpublished, enrollment states are moved along. With two
+   * workers those mutations interleave with other tests' reads, so results
+   * depended on timing rather than on the code -- a program list assertion
+   * failed because a parallel test had the draft published at that instant, and
+   * visual baselines captured a record mid-change. Both look like product
+   * defects and are not.
+   *
+   * Parallelism here would need a database per worker, which the local Supabase
+   * stack does not provide. Correctness first: the whole matrix is a few
+   * minutes.
+   */
+  workers: 1,
   reporter: [["list"]],
   use: {
     baseURL: "http://127.0.0.1:3100",

@@ -1,16 +1,19 @@
+import Link from "next/link"
 import {
   BookOpen,
+  ChevronRight,
   CircleAlert,
   CircleCheck,
   CircleX,
   Info,
+  Plus,
   Users,
   UserRound,
   ClipboardList,
 } from "lucide-react"
 
 import { SampleNote, SectionError } from "@/components/family/section-states"
-import { ENROLLMENT_STATE } from "@/components/family/enrollment-state"
+import { ENROLLMENT_STATE } from "@/components/enrollment/enrollment-state"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardGlyph, CardTitle } from "@/components/ui/card"
 import type { AttentionItem, AttentionResult } from "@/lib/admin/attention"
@@ -368,6 +371,87 @@ function AttentionPanel({ state }: { state: AdminRead<AttentionResult> }) {
 }
 
 /* --------------------------------------------------------------------------
+   Quick actions
+   -------------------------------------------------------------------------- */
+
+/**
+ * Quick Actions (MDS-REF-009 "Quick Actions" panel).
+ *
+ * The reference draws four: New Program Draft, Import Website Content, Review
+ * Enrollments, and Manage Educators. The administrator-operations-foundation
+ * slice omitted the whole panel as deviation D-AO1, because every target was a
+ * route that did not exist and a control that leads nowhere implies an
+ * available workflow.
+ *
+ * Two of the four now exist, so the panel returns with exactly those two.
+ * Import Website Content and Manage Educators stay out until their slices build
+ * them — D-AO1 is narrowed, not resolved.
+ *
+ * These are links, not actions. Nothing on the overview changes a record.
+ *
+ * @returns Quick actions panel.
+ */
+function QuickActions() {
+  const actions = [
+    {
+      href: "/admin/programs/new",
+      icon: Plus,
+      label: "New program draft",
+      description: "Start a program. It stays invisible until you publish it.",
+    },
+    {
+      href: "/admin/enrollments",
+      icon: Users,
+      label: "Review enrollments",
+      description: "Every enrollment and its current authoritative state.",
+    },
+  ]
+
+  return (
+    <section
+      aria-labelledby="quick-actions-heading"
+      className="flex h-fit flex-col gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)] shadow-[var(--hsh-shadow-card)]"
+    >
+      <h2
+        id="quick-actions-heading"
+        className="hsh-h4 text-[var(--hsh-text-primary)]"
+      >
+        Quick Actions
+      </h2>
+      <ul className="flex list-none flex-col gap-[var(--hsh-space-2)] p-0">
+        {actions.map((action) => (
+          <li key={action.href}>
+            <Link
+              href={action.href}
+              className="flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-control)] border border-[var(--hsh-border-default)] px-[var(--hsh-space-4)] py-[var(--hsh-space-3)] transition-colors outline-none hover:bg-[var(--hsh-forest-50)] focus-visible:outline-[length:var(--hsh-focus-width)] focus-visible:outline-offset-[var(--hsh-focus-offset)] focus-visible:outline-[color:var(--hsh-focus)] focus-visible:outline-solid"
+            >
+              <action.icon
+                aria-hidden="true"
+                className="size-5 shrink-0 text-[var(--hsh-forest-600)]"
+                strokeWidth={1.75}
+              />
+              <span className="flex min-w-0 flex-col">
+                <span className="hsh-body font-semibold text-[var(--hsh-text-primary)]">
+                  {action.label}
+                </span>
+                <span className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+                  {action.description}
+                </span>
+              </span>
+              <ChevronRight
+                aria-hidden="true"
+                className="ml-auto size-5 shrink-0 text-[var(--hsh-text-muted)]"
+                strokeWidth={1.75}
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+/* --------------------------------------------------------------------------
    Owner authority
    -------------------------------------------------------------------------- */
 
@@ -411,4 +495,4 @@ function OwnerAuthorityBand() {
   )
 }
 
-export { AttentionPanel, OwnerAuthorityBand, SummaryTiles }
+export { AttentionPanel, OwnerAuthorityBand, QuickActions, SummaryTiles }

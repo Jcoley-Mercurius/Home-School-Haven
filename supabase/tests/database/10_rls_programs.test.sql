@@ -67,26 +67,22 @@ select is(
 );
 
 -- NEGATIVE: MPS-RUL-005 — only an administrator or the owner publishes.
--- The UPDATE policy's USING clause excludes every row for a non-admin, so this
--- affects 0 rows rather than raising. Silent and harmless is the correct
--- outcome; what matters is that nothing changed.
--- Top-level, for the same reason as the educator suite: Postgres refuses a
--- data-modifying CTE inside a subquery expression, so the previous form raised
--- before it asserted anything. The parent holds the UPDATE privilege but no
--- UPDATE policy, so this matches no row rather than raising -- and the check
--- is made after dropping back to the owner, because a parent cannot see the
--- draft at all and "invisible" would pass whether or not the write landed.
-update public.programs set publication_state = 'published'
-  where slug = 'sample-unpublished-draft';
-
-reset role;
-
-select is(
-  (select publication_state::text from public.programs
-     where slug = 'sample-unpublished-draft'),
-  'draft',
+--
+-- The denial moved a layer earlier, exactly as it did for `anon` above.
+-- `*_admin_program_enrollment_operations.sql` (§11 option A) revoked INSERT,
+-- UPDATE and DELETE on `public.programs` from `authenticated`, so a parent no
+-- longer reaches the UPDATE policy at all: the statement is refused outright
+-- (42501) instead of running and matching zero rows. That is a stronger
+-- guarantee than the one this assertion used to make, and it is the reason the
+-- previous "write, then read the row back" form now aborts the file.
+select throws_ok(
+  $$ update public.programs set publication_state = 'published'
+       where slug = 'sample-unpublished-draft' $$,
+  '42501', null,
   'a parent cannot publish a program'
 );
+
+reset role;
 
 -- ---------------------------------------------------------------------------
 -- educator (ACT-003) — MPS-REQ-018
@@ -101,17 +97,13 @@ select is(
   'an educator sees an assigned program at any publication state'
 );
 
--- NEGATIVE: assignment grants read access, never write authority. An educator
--- can SELECT this row, so this is a genuine "visible but not writable" case.
--- Top-level again: a data-modifying CTE cannot sit inside a subquery
--- expression. The educator can SELECT this row, so the refusal is checked
--- directly on what they can see -- a genuine "visible but not writable" case.
-update public.programs set published_price = '$1' where slug = 'art-lab';
-
-select is(
-  (select count(*)::int from public.programs
-     where slug = 'art-lab' and published_price = '$1'),
-  0,
+-- NEGATIVE: assignment grants read access, never write authority (MPS-ACC-027).
+-- The educator CAN select this row, so it is a genuine "visible but not
+-- writable" case -- and since option A revoked the write verbs, the refusal is
+-- now a privilege error rather than a silently empty update.
+select throws_ok(
+  $$ update public.programs set published_price = '$1' where slug = 'art-lab' $$,
+  '42501', null,
   'an assigned educator cannot change a program price'
 );
 
@@ -138,9 +130,18 @@ select is(
 );
 
 -- POSITIVE: administrators may publish (MPS-RUL-005).
-select lives_ok(
-  $$ update public.programs set publication_state = 'published'
-       where slug = 'sample-unpublished-draft' $$,
+--
+-- Through the RPC, because option A left no direct write path for any client
+-- role -- an administrator included. `admin_set_program_publication` is now the
+-- only way a publication state changes, which is the point of the revoke: the
+-- transition rules and the truthfulness precondition cannot be walked around by
+-- composing a PostgREST update. The concurrency token is read from the row
+-- rather than hard-coded, since the seed does not fix `updated_at`.
+select is(
+  (select public.admin_set_program_publication(
+     :'draft'::uuid, 'published',
+     (select updated_at from public.programs where id = :'draft'::uuid))),
+  'updated',
   'an administrator can publish a program'
 );
 

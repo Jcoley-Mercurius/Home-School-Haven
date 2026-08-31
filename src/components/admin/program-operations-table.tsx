@@ -1,6 +1,8 @@
 import Image from "next/image"
+import Link from "next/link"
 import {
   BookOpen,
+  ChevronRight,
   CircleCheck,
   CircleMinus,
   ExternalLink,
@@ -10,6 +12,7 @@ import {
 
 import { SectionError } from "@/components/family/section-states"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardGlyph, CardTitle } from "@/components/ui/card"
 import type {
   AdminRead,
@@ -32,13 +35,21 @@ import type {
  * of the two is in the accessibility tree at a time, so a screen-reader user is
  * not offered the same nine programs twice.
  *
- * WHAT IS MISSING FROM THE REFERENCE, AND WHY
+ * THE NEXT ACTION COLUMN, RESTORED
  *
- * MDS-REF-009 draws a fifth column, NEXT ACTION, holding Review and View
- * buttons and a row chevron. Every one of those targets is a route that does
- * not exist in this release. A button that navigates nowhere implies an
- * available workflow, so the column is omitted and recorded as deviation D-AO2;
- * it returns with the program detail slice.
+ * MDS-REF-009 draws a fifth column, NEXT ACTION, holding a Review control per
+ * row. The administrator-operations-foundation slice omitted it as deviation
+ * D-AO2, because every target was a route that did not exist and a button
+ * navigating nowhere implies an available workflow. `/admin/programs/[id]` now
+ * exists, so the column is back and D-AO2 is resolved.
+ *
+ * The Review control carries the program name in its accessible name, via
+ * `aria-label` rather than a visually-hidden span. A column of identical
+ * "Review" buttons is unusable to anyone reading them out of the table's row
+ * context — but an sr-only span puts the name into the table's TEXT a second
+ * time, which makes every scoped text locator over this table ambiguous and
+ * broke two pre-existing tests (DEFECT-PE4, the same class as DEFECT-AO3).
+ * `aria-label` gives the control its name without adding a text node.
  *
  * WHAT THE COLUMNS DO AND DO NOT CLAIM
  *
@@ -167,6 +178,12 @@ function ProgramTable({ programs }: { programs: ProgramOperationsRow[] }) {
             >
               Registration path
             </th>
+            <th
+              scope="col"
+              className="hsh-caption px-[var(--hsh-space-3)] py-[var(--hsh-space-3)] tracking-[0.06em] text-[var(--hsh-text-muted)] uppercase"
+            >
+              <span className="sr-only">Next action</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -194,6 +211,17 @@ function ProgramTable({ programs }: { programs: ProgramOperationsRow[] }) {
               </td>
               <td className="px-[var(--hsh-space-3)] py-[var(--hsh-space-4)]">
                 <RegistrationPath hasCheckoutUrl={program.hasCheckoutUrl} />
+              </td>
+              <td className="px-[var(--hsh-space-3)] py-[var(--hsh-space-4)] text-right">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  aria-label={`Review ${program.name}`}
+                  render={<Link href={`/admin/programs/${program.id}`} />}
+                >
+                  Review
+                  <ChevronRight aria-hidden="true" strokeWidth={1.75} />
+                </Button>
               </td>
             </tr>
           ))}
@@ -249,6 +277,17 @@ function ProgramRecordCards({
               </dd>
             </div>
           </dl>
+
+          <Button
+            variant="secondary"
+            size="md"
+            className="w-full"
+            aria-label={`Review ${program.name}`}
+            render={<Link href={`/admin/programs/${program.id}`} />}
+          >
+            Review
+            <ChevronRight aria-hidden="true" strokeWidth={1.75} />
+          </Button>
         </li>
       ))}
     </ul>

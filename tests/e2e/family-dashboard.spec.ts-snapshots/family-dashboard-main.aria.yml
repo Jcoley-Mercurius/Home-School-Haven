@@ -1,0 +1,79 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - heading "Family Overview" [level=1]
+  - paragraph: Here's what's happening with Sample Family A at Home School Haven.
+  - text: Viewing
+  - combobox "Viewing student": Sample Student A1
+  - button "View"
+  - region "Your next step":
+    - heading "Your next step" [level=3]
+    - paragraph: Payment verification pending
+    - paragraph: Home School Haven is verifying your payment. Enrollment is not yet confirmed. Nothing further is needed from you right now.
+    - link "View Details":
+      - /url: /family/schedule
+  - region "My Enrollments":
+    - heading "My Enrollments" [level=3]
+    - list:
+      - listitem:
+        - paragraph:
+          - link "Art Lab":
+            - /url: /programs/art-lab
+        - paragraph: Sample Student A1
+        - text: Payment verification pending
+        - paragraph: Home School Haven is verifying your payment. Enrollment is not yet confirmed.
+      - listitem:
+        - paragraph:
+          - link "Haven Days Enrichment":
+            - /url: /programs/haven-days-enrichment
+        - paragraph: Sample Student A1
+        - text: Enrolled
+        - paragraph: Home School Haven has confirmed this enrollment.
+    - link "View all enrollments":
+      - /url: /family/schedule
+  - region "Your Schedule":
+    - heading "Your Schedule" [level=3]
+    - list:
+      - listitem:
+        - paragraph: Art Lab
+        - paragraph: Contact for details
+        - paragraph: Sample Student A1
+      - listitem:
+        - paragraph: Haven Days Enrichment
+        - paragraph: Contact for details
+        - paragraph: Sample Student A1
+    - paragraph: Home School Haven has not published dated sessions for these programs, so no times or locations are shown. Contact them for details.
+    - link "View full schedule":
+      - /url: /family/schedule
+  - region "Announcements":
+    - heading "Announcements" [level=3]
+    - list:
+      - listitem:
+        - paragraph: Sample announcement — welcome to the review
+        - paragraph: Art Lab
+        - paragraph: This is sample content for the Foundation Review. Home School Haven has not published a real announcement here yet.
+      - listitem:
+        - paragraph: Sample announcement — what this space is for
+        - paragraph: Haven Days Enrichment
+        - paragraph: Program announcements from Home School Haven will appear here. This entry is sample content for the Foundation Review.
+    - link "View all announcements":
+      - /url: /family/announcements
+  - region "Learning Resources":
+    - heading "Learning Resources" [level=3]
+    - list:
+      - listitem:
+        - paragraph: Sample resource — Home School Haven resource library
+        - paragraph: Sample content for the Foundation Review, linking to the published public resource page.
+        - link "View resource — Sample resource — Home School Haven resource library, opens in a new tab":
+          - /url: https://www.homeschoolhaven.org/
+      - listitem:
+        - paragraph: Sample resource — program information
+        - paragraph: Sample content for the Foundation Review.
+        - link "View resource — Sample resource — program information, opens in a new tab":
+          - /url: https://www.homeschoolhaven.org/
+    - link "Browse all resources":
+      - /url: /family/resources
+  - region "Need help?":
+    - heading "Need help?" [level=3]
+    - paragraph: We’re here for you. Reach out privately and Home School Haven will respond with care.
+    - link "Request Assistance":
+      - /url: /contact

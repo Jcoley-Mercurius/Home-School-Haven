@@ -42,6 +42,20 @@ const MAILPIT = "http://127.0.0.1:54324"
 const SAMPLE_PARENT = "sample.parent.one@example.com"
 const OLD_PASSWORD = "SampleFoundationReview2026"
 const NEW_PASSWORD = "RenewedFoundation2026"
+/*
+ * A DISTINCT password per round trip, because Supabase refuses to set a
+ * password to the one already in force ("New password should be different from
+ * the old password"). Three tests below each complete a real reset in order, so
+ * reusing one value made the second and third silently stay on
+ * /reset-password with a validation error rather than reaching /family.
+ *
+ * This suite runs after every suite that signs in with the seeded password
+ * (alphabetically it follows admin-*, authorization, and family-*), so leaving
+ * the account on a changed password harms nothing; `npm run db:reset` restores
+ * it.
+ */
+const FIRST_RESET_PASSWORD = "FirstRecoveryRound2026"
+const REUSED_LINK_PASSWORD = "UsedLinkRecovery2026"
 
 /** True only when a local Supabase stack, with its mail catcher, is running. */
 async function localStackIsUp(page: Page): Promise<boolean> {
@@ -55,15 +69,34 @@ async function localStackIsUp(page: Page): Promise<boolean> {
   }
 }
 
+/**
+ * Empty the catcher so the next link read back is unambiguously the new one.
+ *
+ * Mailpit's search does not promise newest-first, and several tests below each
+ * request their own link. Reading "a" message returned an ALREADY-USED link
+ * from an earlier test, which Supabase correctly refused -- the tests failed at
+ * /link-expired while the code under test was behaving exactly right.
+ */
+async function clearMailbox(page: Page): Promise<void> {
+  await page.request.delete(`${MAILPIT}/api/v1/messages`)
+}
+
 /** The most recent recovery link Mailpit holds for an address. */
 async function latestRecoveryLink(
   page: Page,
   address: string,
 ): Promise<string | null> {
-  const list = await page.request.get(`${MAILPIT}/api/v1/search`, {
-    params: { query: `to:${address}` },
-  })
-  const { messages } = (await list.json()) as { messages: { ID: string }[] }
+  /* Poll: the mail is delivered asynchronously, so an immediate read can find
+     an empty mailbox that is about to receive the message. */
+  let messages: { ID: string }[] = []
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const list = await page.request.get(`${MAILPIT}/api/v1/search`, {
+      params: { query: `to:${address}` },
+    })
+    messages = ((await list.json()) as { messages: { ID: string }[] }).messages
+    if (messages?.length) break
+    await page.waitForTimeout(500)
+  }
   if (!messages?.length) return null
 
   const body = await page.request.get(
@@ -73,7 +106,16 @@ async function latestRecoveryLink(
   const match = HTML.match(/href="([^"]*\/auth\/confirm[^"]*)"/)
   if (!match) return null
   /* Mailpit stores the HTML with entities intact. */
-  return match[1].replace(/&amp;/g, "&")
+  const href = match[1].replace(/&amp;/g, "&")
+
+  /* Path + query only, so `page.goto` resolves it against Playwright's
+     baseURL. The emailed link is absolute and built from Supabase's `site_url`
+     (127.0.0.1:3000, the `next dev` port), while this harness serves the
+     production build on 3100 -- following the link verbatim just hit
+     ERR_CONNECTION_REFUSED. What these tests verify is the token round trip,
+     not which port the mail happens to name. */
+  const url = new URL(href)
+  return `${url.pathname}${url.search}`
 }
 
 test.describe("/forgot-password", () => {
@@ -231,10 +273,18 @@ test.describe("recovery round trip", () => {
     page,
   }) => {
     await page.goto("/sign-in?redirectTo=%2Ffamily")
+    /* Before anything is typed: an await between filling the field
+       and submitting let a re-render clear the input. */
+    await clearMailbox(page)
     await page.getByRole("link", { name: "Forgot your password?" }).click()
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
     await page.getByRole("button", { name: "Email a reset link" }).click()
-    await expect(page.getByText("Check your email")).toBeVisible()
+    /* By role: the confirmation is rendered twice on purpose -- once as the
+       visible heading and once in an sr-only live region so it is announced --
+       and an unscoped text locator matches both under strict mode. */
+    await expect(
+      page.getByRole("heading", { name: "Check your email" }),
+    ).toBeVisible()
 
     const link = await latestRecoveryLink(page, SAMPLE_PARENT)
     expect(link, "a recovery email should have arrived").not.toBeNull()
@@ -244,14 +294,16 @@ test.describe("recovery round trip", () => {
     // The token must not survive into the address bar of a rendered page.
     expect(page.url()).not.toContain("token_hash")
 
-    await page.getByLabel("New password", { exact: true }).fill(NEW_PASSWORD)
-    await page.getByLabel("Confirm new password").fill(NEW_PASSWORD)
+    await page
+      .getByLabel("New password", { exact: true })
+      .fill(FIRST_RESET_PASSWORD)
+    await page.getByLabel("Confirm new password").fill(FIRST_RESET_PASSWORD)
     await page.getByRole("button", { name: "Save new password" }).click()
 
     // Server-derived role routing, not a form field.
     await expect(page).toHaveURL(/\/family$/)
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Your family",
+      "Family Overview",
     )
   })
 
@@ -259,6 +311,9 @@ test.describe("recovery round trip", () => {
     // Ordering note: this depends on the reset above, so it re-runs the reset
     // rather than assuming a shared session.
     await page.goto("/forgot-password")
+    /* Before anything is typed: an await between filling the field
+       and submitting let a re-render clear the input. */
+    await clearMailbox(page)
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
     await page.getByRole("button", { name: "Email a reset link" }).click()
     const link = await latestRecoveryLink(page, SAMPLE_PARENT)
@@ -275,8 +330,14 @@ test.describe("recovery round trip", () => {
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
     await page.getByLabel("Password").fill(OLD_PASSWORD)
     await page.getByRole("button", { name: "Sign In" }).click()
+    /* `exact`: the refusal is rendered twice on purpose -- once in an sr-only
+       live region so it is announced, and once as visible body copy that adds a
+       "Please check both and try again." A substring matches both and trips
+       strict mode. This asserts the announced form. */
     await expect(
-      page.getByText("did not match an account", { exact: false }),
+      page.getByText("That email and password did not match an account.", {
+        exact: true,
+      }),
     ).toBeVisible()
 
     await page.getByLabel("Password").fill(NEW_PASSWORD)
@@ -286,14 +347,19 @@ test.describe("recovery round trip", () => {
 
   test("a used link cannot be used again", async ({ page }) => {
     await page.goto("/forgot-password")
+    /* Before anything is typed: an await between filling the field
+       and submitting let a re-render clear the input. */
+    await clearMailbox(page)
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
     await page.getByRole("button", { name: "Email a reset link" }).click()
     const link = await latestRecoveryLink(page, SAMPLE_PARENT)
 
     await page.goto(link!)
     await expect(page).toHaveURL(/\/reset-password/)
-    await page.getByLabel("New password", { exact: true }).fill(NEW_PASSWORD)
-    await page.getByLabel("Confirm new password").fill(NEW_PASSWORD)
+    await page
+      .getByLabel("New password", { exact: true })
+      .fill(REUSED_LINK_PASSWORD)
+    await page.getByLabel("Confirm new password").fill(REUSED_LINK_PASSWORD)
     await page.getByRole("button", { name: "Save new password" }).click()
     await expect(page).toHaveURL(/\/family$/)
 
@@ -326,6 +392,9 @@ test.describe("recovery round trip", () => {
     page,
   }) => {
     await page.goto("/forgot-password")
+    /* Before anything is typed: an await between filling the field
+       and submitting let a re-render clear the input. */
+    await clearMailbox(page)
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
     await page.getByRole("button", { name: "Email a reset link" }).click()
     const link = await latestRecoveryLink(page, SAMPLE_PARENT)

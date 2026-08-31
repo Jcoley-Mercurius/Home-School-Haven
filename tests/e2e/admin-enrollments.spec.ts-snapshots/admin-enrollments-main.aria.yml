@@ -1,0 +1,76 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem: Enrollments
+  - heading "Enrollments" [level=1]
+  - paragraph: Every enrollment and its current authoritative state. Families see exactly the state and wording shown here.
+  - paragraph: Payment is never confirmed on this platform
+  - text: Checkout happens on Home School Haven’s external payment page. Leaving for it is not proof of payment, and payment activity is not confirmed enrollment. Confirming an enrollment here records an administrator’s decision — it verifies no payment and issues no refund, credit, or transfer.
+  - form "Filter enrollments":
+    - group "Enrollment state":
+      - text: ""
+      - radio "All states" [checked]
+      - text: All states
+      - radio "Awaiting checkout"
+      - text: Awaiting checkout
+      - radio "Pending review"
+      - text: Pending review
+      - radio "Payment verification pending"
+      - text: Payment verification pending
+      - radio "Waitlisted"
+      - text: Waitlisted
+      - radio "Enrolled"
+      - text: Enrolled
+      - radio "Not confirmed"
+      - text: Not confirmed
+      - radio "Cancelled"
+      - text: Cancelled
+      - radio "Not confirmed"
+      - text: Not confirmed
+    - text: Program
+    - combobox "Program": All programs
+    - button "Apply"
+    - paragraph: "There is no name search here on purpose: a search term becomes part of the web address, and a student’s name must never travel in one."
+  - status: Showing 4 of 4 enrollments.
+  - table "Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.":
+    - caption: Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.
+    - rowgroup:
+      - row "Student Family Program State Action":
+        - columnheader "Student"
+        - columnheader "Family"
+        - columnheader "Program"
+        - columnheader "State"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Sample Student A1 Sample Family A Art Lab Payment verification pending Review Sample Student A1's enrollment in Art Lab":
+        - rowheader "Sample Student A1"
+        - cell "Sample Family A"
+        - cell "Art Lab"
+        - cell "Payment verification pending"
+        - cell "Review Sample Student A1's enrollment in Art Lab":
+          - button "Review Sample Student A1's enrollment in Art Lab"
+      - row "Sample Student A1 Sample Family A Haven Days Enrichment Enrolled Review Sample Student A1's enrollment in Haven Days Enrichment":
+        - rowheader "Sample Student A1"
+        - cell "Sample Family A"
+        - cell "Haven Days Enrichment"
+        - cell "Enrolled"
+        - cell "Review Sample Student A1's enrollment in Haven Days Enrichment":
+          - button "Review Sample Student A1's enrollment in Haven Days Enrichment"
+      - row "Sample Student A2 Sample Family A Harvest Explorers Pending review Review Sample Student A2's enrollment in Harvest Explorers":
+        - rowheader "Sample Student A2"
+        - cell "Sample Family A"
+        - cell "Harvest Explorers"
+        - cell "Pending review"
+        - cell "Review Sample Student A2's enrollment in Harvest Explorers":
+          - button "Review Sample Student A2's enrollment in Harvest Explorers"
+      - row "Sample Student B1 Sample Family B Sewing Waitlisted Review Sample Student B1's enrollment in Sewing":
+        - rowheader "Sample Student B1"
+        - cell "Sample Family B"
+        - cell "Sewing"
+        - cell "Waitlisted"
+        - cell "Review Sample Student B1's enrollment in Sewing":
+          - button "Review Sample Student B1's enrollment in Sewing"

@@ -7,11 +7,11 @@
     - text: All programs 9 Published 8 Draft 1 Archived 0
   - region "Enrollments":
     - heading "Enrollments" [level=3]
-    - text: All records 0
+    - text: All records 4 Pending review 1 Payment verification pending 1 Waitlisted 1 Enrolled 1
     - paragraph: Every enrollment record in this review is a sanitized sample. None of them is evidence that anyone has paid.
   - region "Families":
     - heading "Families" [level=3]
-    - text: Family accounts 3 Student profiles 3
+    - text: Family accounts 2 Student profiles 3
     - paragraph: Sanitized sample families and student profiles. No real child or family record exists in this environment.
   - region "Educators":
     - heading "Educators" [level=3]
@@ -21,60 +21,114 @@
     - table "Every program, with its publication state, educator assignment, and registration path.":
       - caption: Every program, with its publication state, educator assignment, and registration path.
       - rowgroup:
-        - row "Program Publication Educator Registration path":
+        - row "Program Publication Educator Registration path Next action":
           - columnheader "Program"
           - columnheader "Publication"
           - columnheader "Educator"
           - columnheader "Registration path"
+          - columnheader "Next action"
       - rowgroup:
-        - row "Ready Set Prep & Learn Published Not assigned No checkout link published":
+        - row "Ready Set Prep & Learn Published Not assigned No checkout link published Review Ready Set Prep & Learn":
           - rowheader "Ready Set Prep & Learn"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Haven Days Enrichment Published Not assigned No checkout link published":
+          - cell "Review Ready Set Prep & Learn":
+            - link "Review Ready Set Prep & Learn":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000001
+              - text: ""
+        - row "Haven Days Enrichment Published Not assigned No checkout link published Review Haven Days Enrichment":
           - rowheader "Haven Days Enrichment"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Etiquette Series Published Not assigned No checkout link published":
+          - cell "Review Haven Days Enrichment":
+            - link "Review Haven Days Enrichment":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000002
+              - text: ""
+        - row "Etiquette Series Published Not assigned No checkout link published Review Etiquette Series":
           - rowheader "Etiquette Series"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Art Lab Published Assigned No checkout link published":
+          - cell "Review Etiquette Series":
+            - link "Review Etiquette Series":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000003
+              - text: ""
+        - row "Art Lab Published Assigned No checkout link published Review Art Lab":
           - rowheader "Art Lab"
           - cell "Published"
           - cell "Assigned"
           - cell "No checkout link published"
-        - row "Sewing Published Not assigned No checkout link published":
+          - cell "Review Art Lab":
+            - link "Review Art Lab":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+              - text: ""
+        - row "Sewing Published Not assigned No checkout link published Review Sewing":
           - rowheader "Sewing"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Gardening Published Not assigned No checkout link published":
+          - cell "Review Sewing":
+            - link "Review Sewing":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000005
+              - text: ""
+        - row "Gardening Published Not assigned No checkout link published Review Gardening":
           - rowheader "Gardening"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Harvest Explorers Published Not assigned No checkout link published":
+          - cell "Review Gardening":
+            - link "Review Gardening":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000006
+              - text: ""
+        - row "Harvest Explorers Published Not assigned No checkout link published Review Harvest Explorers":
           - rowheader "Harvest Explorers"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "History Explorers Published Not assigned No checkout link published":
+          - cell "Review Harvest Explorers":
+            - link "Review Harvest Explorers":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000007
+              - text: ""
+        - row "History Explorers Published Not assigned No checkout link published Review History Explorers":
           - rowheader "History Explorers"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-        - row "Sample Unpublished Draft (test fixture) Draft Assigned No checkout link published":
+          - cell "Review History Explorers":
+            - link "Review History Explorers":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000008
+              - text: ""
+        - row "Sample Unpublished Draft (test fixture) Draft Assigned No checkout link published Review Sample Unpublished Draft (test fixture)":
           - rowheader "Sample Unpublished Draft (test fixture)"
           - cell "Draft"
           - cell "Assigned"
           - cell "No checkout link published"
+          - cell "Review Sample Unpublished Draft (test fixture)":
+            - link "Review Sample Unpublished Draft (test fixture)":
+              - /url: /admin/programs/10000000-0000-4000-8000-0000000000ff
+              - text: ""
+  - region "Quick Actions":
+    - heading "Quick Actions" [level=2]
+    - list:
+      - listitem:
+        - link "New program draft Start a program. It stays invisible until you publish it.":
+          - /url: /admin/programs/new
+      - listitem:
+        - link "Review enrollments Every enrollment and its current authoritative state.":
+          - /url: /admin/enrollments
   - region "Needs attention":
     - heading "Needs attention" [level=3]
     - list:
+      - listitem:
+        - paragraph: Payment verification pending
+        - paragraph: Payment activity is awaiting verification by an authorized administrator. It is not confirmed payment, and these enrollments are not confirmed.
+        - text: 1 enrollments
+      - listitem:
+        - paragraph: Enrollment pending review
+        - paragraph: Registrations are waiting on administrative review. Reviewing them is not part of this release.
+        - text: 1 registrations
       - listitem:
         - paragraph: Consent policy not yet approved
         - paragraph: Student profiles carry a demo authority affirmation because Samantha Dodson has not yet approved the consent language. Real-family activation stays blocked until she does.
@@ -95,30 +149,30 @@
     - heading "Recent activity" [level=3]
     - list:
       - listitem:
-        - text: Student profile removed
-        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile added
-        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile removed
-        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile added
-        - time: /Aug \d+, \d+, \d+:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile removed
-        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile added
-        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile removed
-        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Student profile added
-        - time: /Aug \d+, \d+, 9:\d+ PM UTC/
+        - text: Program created · set up by the review environment
+        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
   - complementary "Authority and environment":
     - paragraph: This is a private beta environment with sample data. Continuing to external checkout is a handoff to Home School Haven’s payment provider — it is not payment confirmation, and payment activity is not confirmed enrollment.
     - paragraph: Samantha Dodson remains the final decision owner. Administrators hold delegated operational authority, and only an administrator or Samantha publishes program, price, availability, registration, or cancellation changes.
-  - paragraph: Program, enrollment, family, educator, schedule, communication, report, and settings operations are not part of this review yet. They arrive in later slices, and no link to them is shown until they work.
+  - paragraph: Family, educator, schedule, communication, report, and settings operations are not part of this review yet. They arrive in later slices, and no link to them is shown until they work.

@@ -68,7 +68,7 @@ schema_paths = []
 enabled = true
 # Specifies an ordered list of seed files to load during db reset.
 # Supports glob patterns relative to supabase directory: "./seeds/*.sql"
-sql_paths = ["./seed.sql"]
+sql_paths = ["./seeds/00_local_environment.sql", "./seed.sql"]
 
 [db.network_restrictions]
 # Enable management of network restrictions.
@@ -213,7 +213,15 @@ anonymous_users = 30
 # Number of sessions that can be refreshed in a 5 minute interval per IP address.
 token_refresh = 150
 # Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
-sign_in_sign_ups = 30
+#
+# Raised for the LOCAL stack only (this file does not configure the hosted
+# projects -- their rate limits are dashboard state). The Playwright suites sign
+# in per test, from one IP, across parallel workers, so 30 was exceeded partway
+# through a run: sign-in then failed for reasons unrelated to the code under
+# test and surfaced as random `beforeEach` timeouts. Abuse protection for real
+# users is Cloudflare Turnstile plus the hosted limits, neither of which this
+# value touches.
+sign_in_sign_ups = 300
 # Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
 token_verifications = 30
 # Number of Web3 logins that can be made in a 5 minute interval per IP address.
@@ -226,8 +234,17 @@ web3 = 30
 # secret = ""
 
 [auth.email]
-# See [auth].enable_signup above.
-enable_signup = false
+# NOT a duplicate of [auth].enable_signup, despite the name. The CLI maps this
+# key to GOTRUE_EXTERNAL_EMAIL_ENABLED, which switches the email provider off
+# entirely -- sign-IN included. With it false the local stack answered every
+# sign-in attempt with "Email logins are disabled", so no seeded account could
+# authenticate and every Playwright suite that signs in failed in its helper.
+#
+# Closed-beta registration is still refused: [auth].enable_signup = false above
+# sets GOTRUE_DISABLE_SIGNUP=true, which blocks sign-ups for every provider. This
+# key only restores the ability of an account that already exists to log in,
+# which MPS-REQ-011 requires.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true

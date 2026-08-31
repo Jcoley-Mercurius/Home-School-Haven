@@ -1,0 +1,119 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem: Programs
+  - heading "Programs" [level=1]
+  - paragraph: Every program, at every publication state. Only an administrator or Samantha publishes a program, a price, or a registration change.
+  - link "New program draft":
+    - /url: /admin/programs/new
+  - search "Filter programs":
+    - text: Search programs
+    - searchbox "Search programs"
+    - button "Apply"
+    - group "Publication status":
+      - text: ""
+      - radio "All programs" [checked]
+      - text: All programs
+      - radio "Drafts"
+      - text: Drafts
+      - radio "Published"
+      - text: Published
+      - radio "Archived"
+      - text: Archived
+  - status: Showing 9 of 9 programs.
+  - table "Programs, with publication status, availability, educator assignment, and registration path. Select a program to open its detail.":
+    - caption: Programs, with publication status, availability, educator assignment, and registration path. Select a program to open its detail.
+    - rowgroup:
+      - row "Program Publication Availability Educator Registration path Action":
+        - columnheader "Program"
+        - columnheader "Publication"
+        - columnheader "Availability"
+        - columnheader "Educator"
+        - columnheader "Registration path"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Ready Set Prep & Learn /ready-set-prep-and-learn Published Availability not published Not assigned No checkout link published Review Ready Set Prep & Learn":
+        - rowheader "Ready Set Prep & Learn /ready-set-prep-and-learn"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Ready Set Prep & Learn":
+          - link "Review Ready Set Prep & Learn":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000001
+      - row "Haven Days Enrichment /haven-days-enrichment Published Availability not published Not assigned No checkout link published Review Haven Days Enrichment":
+        - rowheader "Haven Days Enrichment /haven-days-enrichment"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Haven Days Enrichment":
+          - link "Review Haven Days Enrichment":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000002
+      - row "Etiquette Series /etiquette-series Published Availability not published Not assigned No checkout link published Review Etiquette Series":
+        - rowheader "Etiquette Series /etiquette-series"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Etiquette Series":
+          - link "Review Etiquette Series":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000003
+      - row "Art Lab /art-lab Published Availability not published Assigned No checkout link published Review Art Lab":
+        - rowheader "Art Lab /art-lab"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Assigned"
+        - cell "No checkout link published"
+        - cell "Review Art Lab":
+          - link "Review Art Lab":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+      - row "Sewing /sewing Published Availability not published Not assigned No checkout link published Review Sewing":
+        - rowheader "Sewing /sewing"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Sewing":
+          - link "Review Sewing":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000005
+      - row "Gardening /gardening Published Availability not published Not assigned No checkout link published Review Gardening":
+        - rowheader "Gardening /gardening"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Gardening":
+          - link "Review Gardening":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000006
+      - row "Harvest Explorers /harvest-explorers Published Availability not published Not assigned No checkout link published Review Harvest Explorers":
+        - rowheader "Harvest Explorers /harvest-explorers"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Harvest Explorers":
+          - link "Review Harvest Explorers":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000007
+      - row "History Explorers /history-explorers Published Availability not published Not assigned No checkout link published Review History Explorers":
+        - rowheader "History Explorers /history-explorers"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review History Explorers":
+          - link "Review History Explorers":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000008
+      - row "Sample Unpublished Draft (test fixture) /sample-unpublished-draft Draft Availability not published Assigned No checkout link published Review Sample Unpublished Draft (test fixture)":
+        - rowheader "Sample Unpublished Draft (test fixture) /sample-unpublished-draft"
+        - cell "Draft"
+        - cell "Availability not published"
+        - cell "Assigned"
+        - cell "No checkout link published"
+        - cell "Review Sample Unpublished Draft (test fixture)":
+          - link "Review Sample Unpublished Draft (test fixture)":
+            - /url: /admin/programs/10000000-0000-4000-8000-0000000000ff

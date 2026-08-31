@@ -15,7 +15,7 @@ import {
   SampleNote,
   SectionError,
 } from "@/components/family/section-states"
-import { EnrollmentStateBadge } from "@/components/family/enrollment-state"
+import { EnrollmentStateBadge } from "@/components/enrollment/enrollment-state"
 import { Button } from "@/components/ui/button"
 import {
   Card,

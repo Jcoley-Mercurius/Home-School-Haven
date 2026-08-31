@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -51,6 +51,24 @@ function StudentSelector({
 }) {
   const formRef = useRef<HTMLFormElement>(null)
 
+  /* Controlled, and submitted from an effect rather than from inside
+     `onValueChange`.
+     `requestSubmit()` called directly in the change handler runs BEFORE React
+     has re-rendered the hidden input the Select writes its value into, so the
+     form submitted the PREVIOUS selection: the URL gained `?student=` (the old
+     id), the server resolved it to the child already in view, and choosing a
+     different child appeared to do nothing at all. Submitting once the new
+     value has been committed is what makes the control actually change the
+     view. */
+  const [value, setValue] = useState(selectedId)
+  const pendingSubmit = useRef(false)
+
+  useEffect(() => {
+    if (!pendingSubmit.current) return
+    pendingSubmit.current = false
+    formRef.current?.requestSubmit()
+  }, [value])
+
   if (students.length < 2) return null
 
   return (
@@ -73,12 +91,16 @@ function StudentSelector({
             to a parent in place of their own child's name. */}
         <Select
           name="student"
-          defaultValue={selectedId}
+          value={value}
           items={students.map((student) => ({
             value: student.id,
             label: student.preferredName,
           }))}
-          onValueChange={() => formRef.current?.requestSubmit()}
+          onValueChange={(next: string | null) => {
+            if (next === null) return
+            pendingSubmit.current = true
+            setValue(next)
+          }}
         >
           <SelectTrigger
             id="student-selector"

@@ -486,6 +486,51 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_program_draft: {
+        Args: {
+          program_name: string
+          program_slug: string
+          program_summary?: string
+        }
+        Returns: string
+      }
+      admin_set_enrollment_state: {
+        Args: {
+          expected_updated_at: string
+          next_state: Database["public"]["Enums"]["enrollment_state"]
+          note: string
+          target_id: string
+        }
+        Returns: string
+      }
+      admin_set_program_publication: {
+        Args: {
+          expected_updated_at: string
+          next_state: Database["public"]["Enums"]["program_publication_state"]
+          target_id: string
+        }
+        Returns: string
+      }
+      admin_update_program_facts: {
+        Args: {
+          expected_updated_at: string
+          program_audience: string
+          program_availability: Database["public"]["Enums"]["availability_state"]
+          program_checkout_url: string
+          program_dates: string
+          program_duration: string
+          program_educator: string
+          program_format: string
+          program_location: string
+          program_name: string
+          program_price: string
+          program_schedule: string
+          program_session_length: string
+          program_summary: string
+          target_id: string
+        }
+        Returns: string
+      }
       create_family_for_current_user: {
         Args: { family_name: string }
         Returns: string
