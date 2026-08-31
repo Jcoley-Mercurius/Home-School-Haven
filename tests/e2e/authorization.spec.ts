@@ -28,6 +28,11 @@ const PROTECTED = [
   "/family/setup",
   "/family/students/new",
   "/educator",
+  "/educator/programs",
+  "/educator/schedule",
+  "/educator/rosters",
+  "/educator/announcements",
+  "/educator/resources",
   "/admin",
   "/account",
 ] as const
@@ -135,7 +140,7 @@ test.describe("cross-role denial", () => {
   }) => {
     await signIn(page, ACCOUNTS.educator)
     await expect(page).toHaveURL(/\/educator$/)
-    await expect(page.getByText("Art Lab")).toBeVisible()
+    await expect(page.getByText("Art Lab").first()).toBeVisible()
     // Assigned to two of nine programs; the rest must not appear.
     await expect(page.getByText("Harvest Explorers")).toHaveCount(0)
 
@@ -150,6 +155,29 @@ test.describe("cross-role denial", () => {
       "/family/setup",
       "/family/students/new",
       "/admin",
+      "/admin/programs",
+      "/admin/enrollments",
+      "/admin/families",
+      "/admin/educators",
+    ]) {
+      await expectStatus(page, route, 404)
+    }
+  })
+
+  test("a parent reaches no educator destination", async ({ page }) => {
+    /* The educator area gained six destinations; a parent must be refused
+       every one of them, not only the root. A 404 rather than a 403, so the
+       response never confirms that an educator area exists at that path. */
+    await signIn(page, ACCOUNTS.parent)
+
+    for (const route of [
+      "/educator",
+      "/educator/programs",
+      "/educator/schedule",
+      "/educator/rosters",
+      "/educator/announcements",
+      "/educator/resources",
+      "/educator/programs/10000000-0000-4000-8000-000000000004",
     ]) {
       await expectStatus(page, route, 404)
     }
