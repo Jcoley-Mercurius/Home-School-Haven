@@ -58,6 +58,15 @@ type AdminProgram = {
   publicationState: PublicationState
   /** The published external checkout link, or `null` when none is set. */
   checkoutUrl: string | null
+  /**
+   * Established capacity, or `null` when Home School Haven has not set one
+   * (MPS-RUL-002, MPS-FEA-012). `null` is rendered as words, never as a zero:
+   * "not established" and "no places" are different claims, and the real
+   * per-program numbers remain unconfirmed (checklist §1, GAP-ADMIN-004).
+   */
+  capacity: number | null
+  /** Whether this program accepts waitlist placements (MPS-ACC-020). */
+  waitlistEnabled: boolean
   educatorAssigned: boolean
   needsContentReview: boolean
   updatedAt: string
@@ -66,7 +75,7 @@ type AdminProgram = {
 /* One unbroken string literal: PostgREST infers the row type from the literal,
    and a concatenation degrades every column to `GenericStringError`. */
 // prettier-ignore
-const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,import_status,updated_at"
+const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,import_status,updated_at"
 
 type ProgramRow = {
   id: string
@@ -85,6 +94,8 @@ type ProgramRow = {
   availability: Availability
   publication_state: PublicationState
   checkout_url: string | null
+  capacity: number | null
+  waitlist_enabled: boolean
   import_status: string
   updated_at: string
 }
@@ -116,6 +127,8 @@ function mapRow(
     availability: row.availability,
     publicationState: row.publication_state,
     checkoutUrl: row.checkout_url,
+    capacity: row.capacity,
+    waitlistEnabled: row.waitlist_enabled,
     educatorAssigned: assignedProgramIds.has(row.id),
     needsContentReview: row.import_status === "import-title-review-detail",
     updatedAt: row.updated_at,

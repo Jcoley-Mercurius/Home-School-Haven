@@ -31,6 +31,7 @@ import {
 } from "@/lib/family/content"
 import { nextAction, selectStudent } from "@/lib/family/dashboard-state"
 import { getFamilyState, type Student } from "@/lib/family/repository"
+import { listVisibleSessions } from "@/lib/schedule/repository"
 
 /**
  * Family dashboard — the "Overview" destination (MPS-REQ-015, MPS-WFL-007,
@@ -81,10 +82,11 @@ async function DashboardSections({
   students: Student[]
   selectedStudentId: string | null
 }) {
-  const [enrollments, announcements, resources] = await Promise.all([
+  const [enrollments, announcements, resources, sessions] = await Promise.all([
     getFamilyEnrollments(),
     getFamilyAnnouncements(3),
     getFamilyResources(3),
+    listVisibleSessions(),
   ])
 
   /* Scoped to the selected child. Enrollments the parent may see, narrowed to
@@ -118,6 +120,11 @@ async function DashboardSections({
       />
       <ScheduleCard
         state={scopedEnrollments}
+        /* A failed session read leaves the published schedule text standing
+           rather than emptying the card. MPS-WFL-007 makes this card one of the
+           approved ways a schedule change reaches a family, so a rescheduled or
+           cancelled session shows here with the time it moved from. */
+        sessions={sessions.status === "ready" ? sessions.items : undefined}
         heading="Your Schedule"
         viewAllHref="/family/schedule"
       />

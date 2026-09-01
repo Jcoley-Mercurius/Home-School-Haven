@@ -332,11 +332,23 @@ test.describe("program detail and approved actions", () => {
     ).toBeVisible()
   })
 
-  test("offers no capacity, discount, refund, or payment control", async ({
-    page,
-  }) => {
-    /* GAP-ADMIN-004 and MPS GAP-010. A field here would be the first step
-       toward storing an answer nobody has given.
+  test("offers no discount, refund, or payment control", async ({ page }) => {
+    /* MPS GAP-010. A field here would be the first step toward storing an
+       answer nobody has given.
+
+       CAPACITY IS NO LONGER ON THIS LIST, AND THAT IS A DECISION.
+
+       It was, under GAP-ADMIN-004, because no capacity capability existed and a
+       field would have been one this product invented. HSH-SLICE-ADM-04 built
+       the capability MPS-FEA-012 and MPS-RUL-002 approve, so a capacity control
+       now belongs here. What GAP-ADMIN-004 still covers is the NUMBERS —
+       checklist §1 is unanswered — and that is asserted separately below and in
+       `schedule-capacity.spec.ts`: with no capacity set, the page states that
+       none is established and shows no figure at all.
+
+       Everything financial stays absent. Capacity is a count of places; it is
+       not a price, a deposit, or a payment, and this test is what keeps the two
+       from being confused as the surface grows.
 
        This asserts the absence of CONTROLS, not of words. The page's closing
        paragraph deliberately names scholarships, discounts, and refunds in
@@ -346,14 +358,13 @@ test.describe("program detail and approved actions", () => {
     const main = page.locator("main")
 
     for (const label of [
-      /capacity/i,
-      /seats/i,
       /discount/i,
       /scholarship/i,
       /refund/i,
       /credit/i,
       /amount/i,
       /deposit/i,
+      /price per/i,
     ]) {
       await expect(main.getByLabel(label)).toHaveCount(0)
     }
@@ -365,6 +376,19 @@ test.describe("program detail and approved actions", () => {
     ]) {
       await expect(main.getByRole("button", { name: action })).toHaveCount(0)
     }
+
+    /* The capacity control exists, and on an untouched draft it claims no
+       number — GAP-ADMIN-004's surviving half. */
+    /* By role, not by label alone: "Capacity and waitlist" is also the
+       accessible name of the section that contains the field. */
+    await expect(
+      main.getByRole("textbox", { name: "Capacity", exact: true }),
+    ).toHaveValue("")
+    await expect(
+      main.getByText("has not set a capacity for this program", {
+        exact: false,
+      }),
+    ).toBeVisible()
   })
 
   test("a duplicate web address is refused with the values kept", async ({

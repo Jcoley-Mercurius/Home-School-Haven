@@ -33,19 +33,33 @@ type EntryLabel = { key: string; text: string; isStart: boolean }
  * opening of the month for a reader who arrives mid-range, marked "continues"
  * so a continuation is never mistaken for a start date.
  */
-function labelsForDay(day: CalendarDay, isMonthOpening: boolean): EntryLabel[] {
+function labelsForDay(
+  day: CalendarDay,
+  isMonthOpening: boolean,
+  entries: readonly CalendarEntry[],
+): EntryLabel[] {
   if (!day.inMonth) return []
 
-  return entriesOnDay(day.iso).flatMap((entry: CalendarEntry) => {
+  return entriesOnDay(day.iso, entries).flatMap((entry: CalendarEntry) => {
     const isStart = entry.start === day.iso
     const isEnd = entry.end === day.iso
     if (!isStart && !isEnd && !isMonthOpening) return []
 
-    const text = isStart
+    const base = isStart
       ? entry.title
       : isEnd
         ? `${entry.title} ends`
         : `${entry.title} continues`
+
+    /* A cancelled or moved session says so in the cell's own text. A visitor
+       reading a month grid must not have to notice a colour to learn that a
+       class is not happening (DO-DONT "Trust states", DESIGN-SYSTEM §10). */
+    const text =
+      entry.state === "canceled"
+        ? `${base} — cancelled`
+        : entry.state === "rescheduled"
+          ? `${base} — rescheduled`
+          : base
 
     return [{ key: `${entry.id}-${day.iso}`, text, isStart }]
   })
@@ -54,9 +68,12 @@ function labelsForDay(day: CalendarDay, isMonthOpening: boolean): EntryLabel[] {
 function MonthGrid({
   month,
   today,
+  entries,
 }: {
   month: MonthKey
   today: string | null
+  /** Every entry the grid may draw: the published inventory plus any sessions. */
+  entries: readonly CalendarEntry[]
 }) {
   const weeks = monthWeeks(month)
   const label = monthLabel(month)
@@ -85,7 +102,7 @@ function MonthGrid({
         {weeks.map((week) => (
           <tr key={week[0].iso}>
             {week.map((day) => {
-              const labels = labelsForDay(day, day.dayOfMonth === 1)
+              const labels = labelsForDay(day, day.dayOfMonth === 1, entries)
               const isToday = day.inMonth && day.iso === today
 
               return (

@@ -37,11 +37,48 @@
         - paragraph: Art Lab
         - paragraph: Contact for details
         - paragraph: Sample Student A1
+        - list:
+          - listitem:
+            - heading "Sample session — Art Lab meeting" [level=4]
+            - text: Completed
+            - paragraph:
+              - time: /Tue, Aug \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+            - paragraph: Sample location
+            - paragraph: This session has taken place.
+            - paragraph: Sample record. This session has been marked complete.
+          - listitem:
+            - heading "Sample session — Art Lab meeting" [level=4]
+            - text: Upcoming
+            - paragraph:
+              - time: /Tue, Sep 8, \d+, 5:\d+ PM – 7:\d+ PM ET/
+            - paragraph: Sample location
+            - paragraph: This session is scheduled.
+          - listitem:
+            - heading "Sample session — Art Lab meeting" [level=4]
+            - text: Rescheduled
+            - paragraph:
+              - time: /Tue, Sep \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+            - paragraph: Sample location
+            - paragraph:
+              - text: Previously
+              - time: /Tue, Sep \d+, \d+, 5:\d+ PM/
+              - text: .
+            - paragraph: Home School Haven has moved this session to a new time.
+            - paragraph: Sample record. Moved one week later so a changed session is reviewable.
       - listitem:
         - paragraph: Haven Days Enrichment
         - paragraph: Contact for details
         - paragraph: Sample Student A1
-    - paragraph: Home School Haven has not published dated sessions for these programs, so no times or locations are shown. Contact them for details.
+        - list:
+          - listitem:
+            - heading "Sample session — Nature Explorers meeting" [level=4]
+            - text: Cancelled
+            - paragraph:
+              - time: /Fri, Sep \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+            - paragraph: Sample location
+            - paragraph: Home School Haven has cancelled this session. No refund, credit, or transfer is decided here.
+            - paragraph: Sample record. Called off so a canceled session is reviewable. No refund, credit, or transfer is decided here.
+    - paragraph: Session times are Home School Haven’s local time (ET). Where no dated session is shown, Home School Haven has not set one and the published schedule is everything they have stated.
     - link "View full schedule":
       - /url: /family/schedule
   - region "Announcements":

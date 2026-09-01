@@ -38,8 +38,8 @@
         - paragraph: Sample unpublished announcement (test fixture)
         - text: Draft
         - paragraph: Art Lab
-        - paragraph: Never visible to a family. Present so the published filter is testable.
-        - paragraph: Not published — families cannot see this yet.
+        - paragraph: Never visible to a family. Present so the draft state is testable.
+        - paragraph: Families cannot see this yet.
   - region "Available resources":
     - heading "Available resources" [level=2]
     - link "All resources":
@@ -48,15 +48,15 @@
       - listitem:
         - paragraph: Sample resource — program information
         - text: Published
-        - paragraph: Art Lab
+        - paragraph: Link · Art Lab
         - paragraph: Sample content for the Foundation Review.
         - link "Open resource (opens in a new tab)":
           - /url: https://www.homeschoolhaven.org/
       - listitem:
         - paragraph: Sample unpublished resource (test fixture)
         - text: Draft
-        - paragraph: Art Lab
-        - paragraph: Never visible to a family. Present so the published filter is testable.
+        - paragraph: Link · Art Lab
+        - paragraph: Never visible to a family. Present so the draft state is testable.
         - link "Open resource (opens in a new tab)":
           - /url: https://www.homeschoolhaven.org/
-        - paragraph: Not published — families cannot see this yet.
+        - paragraph: Families cannot see this yet.

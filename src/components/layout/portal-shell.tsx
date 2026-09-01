@@ -267,8 +267,20 @@ function PortalShell({
           </ul>
 
           {mobileMore.length > 0 ? (
-            <ul className="flex items-center gap-[var(--hsh-space-2)] border-t border-[var(--hsh-border-default)] px-[var(--hsh-space-2)] py-[var(--hsh-space-1)]">
-              <li className="flex items-center gap-[var(--hsh-space-2)] pl-[var(--hsh-space-2)] text-[var(--hsh-text-muted)]">
+            /* The More row scrolls inside ITSELF once it holds enough
+               destinations to exceed a phone's width. DESIGN-SYSTEM §8: wide
+               content scrolls in its own container and the page body never
+               scrolls horizontally — a body that scrolls sideways drags the
+               whole layout with it, including the content the visitor came for.
+               The administrator area reached that width at four More
+               destinations (HSH-SLICE-ADM-04 added Schedule); the family and
+               educator areas are under it and are unaffected either way.
+
+               `shrink-0` on each item is the other half: without it flex would
+               compress the labels toward illegibility rather than scroll, and
+               the 44 px touch target would go with them. */
+            <ul className="flex items-center gap-[var(--hsh-space-2)] overflow-x-auto border-t border-[var(--hsh-border-default)] px-[var(--hsh-space-2)] py-[var(--hsh-space-1)]">
+              <li className="flex shrink-0 items-center gap-[var(--hsh-space-2)] pl-[var(--hsh-space-2)] text-[var(--hsh-text-muted)]">
                 <MoreHorizontal
                   aria-hidden="true"
                   className="size-4"
@@ -279,12 +291,12 @@ function PortalShell({
               {mobileMore.map((item) => {
                 const current = isCurrent(pathname, item.href, homeHref)
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} className="shrink-0">
                     <Link
                       href={item.href}
                       aria-current={current ? "page" : undefined}
                       className={cn(
-                        "hsh-caption flex min-h-[var(--hsh-touch-target)] items-center",
+                        "hsh-caption flex min-h-[var(--hsh-touch-target)] items-center whitespace-nowrap",
                         "rounded-[var(--hsh-radius-control)] px-[var(--hsh-space-3)] font-semibold",
                         current
                           ? "bg-[var(--hsh-forest-100)] text-[var(--hsh-forest-700)]"

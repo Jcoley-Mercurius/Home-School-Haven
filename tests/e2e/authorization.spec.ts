@@ -34,6 +34,7 @@ const PROTECTED = [
   "/educator/announcements",
   "/educator/resources",
   "/admin",
+  "/admin/schedule",
   "/admin/communications",
   "/admin/communications/announcements/new",
   "/admin/communications/resources/new",
@@ -162,6 +163,7 @@ test.describe("cross-role denial", () => {
       "/admin/enrollments",
       "/admin/families",
       "/admin/educators",
+      "/admin/schedule",
     ]) {
       await expectStatus(page, route, 404)
     }

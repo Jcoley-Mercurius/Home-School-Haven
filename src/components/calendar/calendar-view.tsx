@@ -13,6 +13,7 @@ import {
   entriesInMonth,
   monthKeyOf,
   monthLabel,
+  type CalendarEntry,
   type MonthKey,
 } from "@/content/calendar"
 import { cn } from "@/lib/utils"
@@ -61,7 +62,18 @@ function subscribeToBreakpoint(onChange: () => void) {
   return () => query.removeEventListener("change", onChange)
 }
 
-function CalendarView({ initialMonth }: { initialMonth: MonthKey }) {
+function CalendarView({
+  initialMonth,
+  entries,
+}: {
+  initialMonth: MonthKey
+  /**
+   * Every entry the calendar may draw — the published inventory merged with the
+   * dated sessions of published programs, assembled on the server so this
+   * client component reads one list and never queries anything itself.
+   */
+  entries: readonly CalendarEntry[]
+}) {
   const today = useSyncExternalStore(
     subscribeToClock,
     () => todayIso(),
@@ -87,7 +99,7 @@ function CalendarView({ initialMonth }: { initialMonth: MonthKey }) {
   const setMonth = setChosenMonth
 
   const label = monthLabel(month)
-  const count = entriesInMonth(month).length
+  const count = entriesInMonth(month, entries).length
   const summary =
     count === 0
       ? `${label}. Nothing published.`
@@ -181,9 +193,9 @@ function CalendarView({ initialMonth }: { initialMonth: MonthKey }) {
             transformation, not a different data set (DESIGN-SYSTEM.md §8). */}
         <div>
           {isDesktop && view === "month" ? (
-            <MonthGrid month={month} today={today} />
+            <MonthGrid month={month} today={today} entries={entries} />
           ) : (
-            <EventList month={month} />
+            <EventList month={month} allEntries={entries} />
           )}
         </div>
 

@@ -416,5 +416,89 @@ begin
      'Present so cross-family resource denial is testable.',
      'link', 'https://www.homeschoolhaven.org/', 'published')
   on conflict (id) do nothing;
+  -- -------------------------------------------------------------------------
+  -- Program sessions, capacity, and attendance (sample)
+  -- -------------------------------------------------------------------------
+  -- SAMPLE, and titled so. A session carries a real date and a real time, so a
+  -- seeded one that borrowed a program's published range would manufacture the
+  -- exact fact import rule 3 forbids. Every title below says "Sample session",
+  -- and every time is relative to `now()` so the fixture stays meaningful
+  -- whenever it is reset rather than drifting into the past.
+  --
+  -- Coverage is chosen so each state and each boundary has a target:
+  --   0001 upcoming, on Art Lab (0004) -- the program the sample educator holds
+  --        and the one confirmed enrollment sits in, so the attendance and
+  --        roster paths have somewhere to run;
+  --   0002 completed, on Art Lab, and the one carrying an attendance record;
+  --   0003 rescheduled, on Art Lab, so "changed" is visible with the time it
+  --        moved from;
+  --   0004 canceled, on Nature Explorers (0002), which family A holds through a
+  --        different enrollment;
+  --   00f1 on the unpublished draft fixture (00ff), so "a visitor sees no
+  --        session of an unpublished program" has a target;
+  --   00f2 on Sewing (0005), which only family B holds, so cross-family denial
+  --        has a target.
+  insert into public.program_sessions
+    (id, program_id, title, starts_at, ends_at, location, state,
+     rescheduled_from, change_note) values
+    ('80000000-0000-4000-8000-000000000001',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample session — Art Lab meeting',
+     now() + interval '7 days', now() + interval '7 days 2 hours',
+     'Sample location', 'scheduled', null, null),
+    ('80000000-0000-4000-8000-000000000002',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample session — Art Lab meeting',
+     now() - interval '7 days', now() - interval '7 days' + interval '2 hours',
+     'Sample location', 'completed', null,
+     'Sample record. This session has been marked complete.'),
+    ('80000000-0000-4000-8000-000000000003',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample session — Art Lab meeting',
+     now() + interval '21 days', now() + interval '21 days 2 hours',
+     'Sample location', 'rescheduled', now() + interval '14 days',
+     'Sample record. Moved one week later so a changed session is reviewable.'),
+    ('80000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-000000000002',
+     'Sample session — Nature Explorers meeting',
+     now() + interval '10 days', now() + interval '10 days 2 hours',
+     'Sample location', 'canceled', null,
+     'Sample record. Called off so a canceled session is reviewable. No '
+     'refund, credit, or transfer is decided here.'),
+    ('80000000-0000-4000-8000-0000000000f1',
+     '10000000-0000-4000-8000-0000000000ff',
+     'Sample session on an unpublished program (test fixture)',
+     now() + interval '5 days', now() + interval '5 days 1 hour',
+     null, 'scheduled', null, null),
+    ('80000000-0000-4000-8000-0000000000f2',
+     '10000000-0000-4000-8000-000000000005',
+     'Sample session for another family (test fixture)',
+     now() + interval '9 days', now() + interval '9 days 1 hour',
+     null, 'scheduled', null, null)
+  on conflict (id) do nothing;
+
+  -- Sample capacity. These are DEMO NUMBERS, not Home School Haven's confirmed
+  -- capacities: checklist §1 is unanswered and GAP-ADMIN-004 remains open for
+  -- the numbers themselves. Every other program keeps `capacity` NULL, which
+  -- means "not established" and renders as no numeric claim at all.
+  --
+  -- Art Lab (0004) carries capacity with a waitlist enabled; Sewing (0005)
+  -- carries capacity with the waitlist off, so "full without waitlist" and
+  -- "full with waitlist" both have a target (MPS-WFL-005 alternate paths).
+  update public.programs
+  set capacity = 12, waitlist_enabled = true
+  where id = '10000000-0000-4000-8000-000000000004';
+
+  update public.programs
+  set capacity = 8, waitlist_enabled = false
+  where id = '10000000-0000-4000-8000-000000000005';
+
+  -- One attendance record: the confirmed Art Lab enrollment, at the completed
+  -- session. Its absence on every other pairing is "not recorded", which is not
+  -- a claim of absence (GAP-ADMIN-010).
+  insert into public.session_attendance (session_id, enrollment_id) values
+    ('80000000-0000-4000-8000-000000000002',
+     '50000000-0000-4000-8000-000000000005')
+  on conflict (session_id, enrollment_id) do nothing;
 end;
 $$;

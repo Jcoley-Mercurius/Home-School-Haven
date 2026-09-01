@@ -13,10 +13,18 @@
  *   - a chronology the source publishes oddly is preserved for review, never
  *     silently corrected (QA-002).
  *
- * There is no Supabase calendar entity in the Foundation Release. When calendar
- * administration is approved, the `CalendarEntry` shape is what a row will
- * provide, so replacing this module changes no component contract — the same
- * arrangement `src/content/programs.ts` already uses for the catalog.
+ * WHAT CHANGED IN HSH-SLICE-ADM-04
+ *
+ * `public.program_sessions` now exists, and a session carries a real date and a
+ * real year — which is precisely the condition rule 2 above requires before
+ * anything may be plotted. So the calendar now draws two kinds of entry: the
+ * published inventory below, unchanged, and the dated sessions an administrator
+ * authored for a PUBLISHED program.
+ *
+ * Neither is derived from the other, and the merge happens in the page rather
+ * than in this module: this file stays the record of what the approved source
+ * publishes, and `entriesOnDay`/`entriesInMonth` take the entries to search as
+ * a parameter so a caller can pass either set or both.
  */
 
 const INVENTORY = "BETA-CONTENT-IMPORT-INVENTORY — Calendar inventory"
@@ -38,6 +46,16 @@ export type CalendarEntry = {
   /** The program this entry belongs to, when the source proves the link. */
   program: { slug: string; name: string } | null
   source: string
+  /**
+   * The administrative state of the session behind this entry, for entries
+   * that come from `public.program_sessions` (HSH-SLICE-ADM-04).
+   *
+   * `undefined` for every entry from the published inventory, which has no
+   * such state: the inventory records what Home School Haven publishes, not a
+   * decision anyone made about a meeting. A cancelled or moved session is
+   * named as such in text on the grid and in the list, never by colour alone.
+   */
+  state?: "scheduled" | "rescheduled" | "canceled" | "completed"
 }
 
 /**
@@ -228,18 +246,24 @@ export function monthWeeks({ year, month }: MonthKey): CalendarDay[][] {
 }
 
 /** Entries covering a single day, in published order. */
-export function entriesOnDay(iso: string): CalendarEntry[] {
+export function entriesOnDay(
+  iso: string,
+  entries: readonly CalendarEntry[] = calendarEntries,
+): CalendarEntry[] {
   const time = toUtc(iso)
-  return calendarEntries.filter(
+  return entries.filter(
     (entry) => toUtc(entry.start) <= time && time <= toUtc(entry.end),
   )
 }
 
 /** Entries touching any day of a month, in published order. */
-export function entriesInMonth({ year, month }: MonthKey): CalendarEntry[] {
+export function entriesInMonth(
+  { year, month }: MonthKey,
+  entries: readonly CalendarEntry[] = calendarEntries,
+): CalendarEntry[] {
   const first = Date.UTC(year, month, 1)
   const last = Date.UTC(year, month + 1, 0)
-  return calendarEntries.filter(
+  return entries.filter(
     (entry) => toUtc(entry.start) <= last && toUtc(entry.end) >= first,
   )
 }

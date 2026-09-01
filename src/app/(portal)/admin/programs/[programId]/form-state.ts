@@ -72,3 +72,108 @@ const emptyPublicationFormState: PublicationFormState = { status: "idle" }
 
 export { emptyProgramFactsFormState, emptyPublicationFormState }
 export type { ProgramFactsFormState, ProgramFactsValues, PublicationFormState }
+
+/**
+ * Schedule and capacity form states (HSH-SLICE-ADM-04).
+ *
+ * `overCapacity` is a first-class SUCCESS status, not a failure. The capacity
+ * saved; confirmed places now exceed it; nothing was decided about who loses a
+ * place, because MPS defines no rule for that (GAP-ADMIN-012). Folding it into
+ * `saved` would hide the condition, and folding it into a failure would claim a
+ * refusal that did not happen.
+ *
+ * `rescheduled` is likewise distinct from `saved`: the same submission that
+ * corrects a title also moves a session, and only the database knows which
+ * occurred. The administrator needs to see which one they just did.
+ */
+type SessionFormValues = {
+  title: string
+  startsAt: string
+  endsAt: string
+  location: string
+  changeNote: string
+}
+
+type SessionFormState = {
+  status:
+    | "idle"
+    | "invalid"
+    | "stale"
+    | "notFound"
+    | "forbidden"
+    | "unavailable"
+    | "rejected"
+    | "failed"
+    | "created"
+    | "saved"
+    | "rescheduled"
+    | "unchanged"
+  fieldErrors: Partial<Record<keyof SessionFormValues, string>>
+  /** Echoed on every failure, so an administrator's typing survives a refusal. */
+  values: SessionFormValues | null
+  /** Safe to display. Never echoes a submitted value or a database detail. */
+  message?: string
+}
+
+const emptySessionFormState: SessionFormState = {
+  status: "idle",
+  fieldErrors: {},
+  values: null,
+}
+
+type SessionStateFormState = {
+  status:
+    | "idle"
+    | "updated"
+    | "unchanged"
+    | "invalidTransition"
+    | "stale"
+    | "notFound"
+    | "forbidden"
+    | "unavailable"
+    | "rejected"
+    | "failed"
+  message?: string
+}
+
+const emptySessionStateFormState: SessionStateFormState = { status: "idle" }
+
+type CapacityFormValues = { capacity: string; waitlistEnabled: boolean }
+
+type CapacityFormState = {
+  status:
+    | "idle"
+    | "invalid"
+    | "saved"
+    /** Saved, and confirmed places now exceed it (GAP-ADMIN-012). */
+    | "overCapacity"
+    | "unchanged"
+    | "stale"
+    | "notFound"
+    | "forbidden"
+    | "unavailable"
+    | "rejected"
+    | "failed"
+  fieldErrors: Partial<Record<keyof CapacityFormValues, string>>
+  values: CapacityFormValues | null
+  message?: string
+}
+
+const emptyCapacityFormState: CapacityFormState = {
+  status: "idle",
+  fieldErrors: {},
+  values: null,
+}
+
+export {
+  emptyCapacityFormState,
+  emptySessionFormState,
+  emptySessionStateFormState,
+}
+export type {
+  CapacityFormState,
+  CapacityFormValues,
+  SessionFormState,
+  SessionFormValues,
+  SessionStateFormState,
+}

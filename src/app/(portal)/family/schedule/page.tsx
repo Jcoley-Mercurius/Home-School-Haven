@@ -10,6 +10,7 @@ import { FamilyPortalShell } from "@/components/layout/family-portal-shell"
 import { requireRole } from "@/lib/auth/guards"
 import { getFamilyEnrollments } from "@/lib/enrollment/repository"
 import { getFamilyState } from "@/lib/family/repository"
+import { listVisibleSessions } from "@/lib/schedule/repository"
 
 /**
  * The full schedule and enrollment list — the "Schedule" destination, and where
@@ -20,8 +21,15 @@ import { getFamilyState } from "@/lib/family/repository"
  * student's ... status ... are distinguishable" — the student's name is on
  * every row).
  *
- * Deviation D-FD1 applies here as it does on the Overview: published schedule
- * text, never an invented date, time, or location.
+ * Deviation D-FD1 narrows here rather than closing. Where an administrator has
+ * authored dated sessions, real dates and times are shown; where none exists,
+ * the published schedule text remains the only thing said, because turning
+ * "Tuesdays" into a date would invent a fact a family would plan around.
+ *
+ * MPS-WFL-007 names "present current state in dashboard" as a notification
+ * method, so a rescheduled or cancelled session reaches a family here — with
+ * the time it moved from and the administrator's note, which is MPS-ACC-025's
+ * "without erasing history".
  */
 export const metadata: Metadata = {
   title: "Schedule — Home School Haven of SWFL",
@@ -33,7 +41,10 @@ export default async function FamilySchedulePage() {
 
   if (family.status === "incomplete") redirect("/family/setup")
 
-  const enrollments = await getFamilyEnrollments()
+  const [enrollments, sessions] = await Promise.all([
+    getFamilyEnrollments(),
+    listVisibleSessions(),
+  ])
 
   return (
     <FamilyPortalShell viewerLabel={viewer.displayName ?? viewer.email ?? ""}>
@@ -55,7 +66,12 @@ export default async function FamilySchedulePage() {
 
         <div className="grid grid-cols-1 gap-[var(--hsh-grid-gap-mobile)] sm:gap-[var(--hsh-grid-gap-tablet)] lg:grid-cols-2 lg:gap-[var(--hsh-grid-gap-desktop)]">
           <EnrollmentsCard state={enrollments} heading="All Enrollments" />
-          <ScheduleCard state={enrollments} heading="Published Schedule" />
+          <ScheduleCard
+            state={enrollments}
+            /* A failed session read leaves the published text standing. */
+            sessions={sessions.status === "ready" ? sessions.items : undefined}
+            heading="Published Schedule"
+          />
         </div>
       </main>
     </FamilyPortalShell>

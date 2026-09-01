@@ -7,6 +7,7 @@ import {
   isRange,
   longDateLabel,
   monthLabel,
+  type CalendarEntry,
   type MonthKey,
 } from "@/content/calendar"
 import { guidanceHref, programHref } from "@/content/foundation-content"
@@ -20,8 +21,15 @@ import { guidanceHref, programHref } from "@/content/foundation-content"
  * Each entry shows its published detail exactly as the source publishes it. No
  * date is reformatted into a claim the source does not make.
  */
-function EventList({ month }: { month: MonthKey }) {
-  const entries = entriesInMonth(month)
+function EventList({
+  month,
+  allEntries,
+}: {
+  month: MonthKey
+  /** Every entry the list may show: the published inventory plus any sessions. */
+  allEntries: readonly CalendarEntry[]
+}) {
+  const entries = entriesInMonth(month, allEntries)
 
   if (entries.length === 0) {
     /* MPS-ACC-010: an empty result offers a path, never a dead end. */
@@ -73,6 +81,18 @@ function EventList({ month }: { month: MonthKey }) {
             <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
               Published as: {entry.publishedDetail}
             </p>
+            {/* A cancelled or moved session states it in its own sentence.
+                MPS-ACC-031: a material change shows consistently on the public
+                view as well as the authenticated ones. */}
+            {entry.state === "canceled" ? (
+              <p className="hsh-body-sm font-semibold text-[var(--hsh-coral-700)]">
+                Cancelled. Contact Home School Haven about this session.
+              </p>
+            ) : entry.state === "rescheduled" ? (
+              <p className="hsh-body-sm font-semibold text-[var(--hsh-gold-700)]">
+                Rescheduled. The date and time shown here are the current ones.
+              </p>
+            ) : null}
             {entry.program ? (
               <Link
                 href={programHref(entry.program.slug)}

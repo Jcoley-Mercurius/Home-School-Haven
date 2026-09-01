@@ -10,12 +10,14 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramActionRail } from "@/components/program/program-action-rail"
 import { ProgramCard } from "@/components/program/program-card"
 import { VerifiedFacts } from "@/components/program/verified-facts"
+import { SessionList } from "@/components/schedule/session-list"
 import { positioning } from "@/content/foundation-content"
 import {
   getPublishedProgram,
   listPublishedProgramSlugs,
   listRelatedPrograms,
 } from "@/lib/programs/repository"
+import { listPublicSessions } from "@/lib/schedule/repository"
 
 /**
  * Program detail (DESIGN-SYSTEM.md §7 "Program detail: identity and verified
@@ -110,7 +112,21 @@ export default async function ProgramDetailPage({
     )
   }
 
-  const related = await listRelatedPrograms(program.slug)
+  const [related, sessions] = await Promise.all([
+    listRelatedPrograms(program.slug),
+    listPublicSessions(),
+  ])
+
+  /* Matched by slug because the public `Program` type carries no id, and
+     widening it to carry one would put a database identifier into every public
+     catalog payload for the sake of this one section. RLS already narrowed the
+     result to published programs, so this narrows and never widens. */
+  const programSessions =
+    sessions.status === "ready"
+      ? sessions.items.filter(
+          (session) => session.program?.slug === program.slug,
+        )
+      : []
 
   return (
     <>
@@ -188,6 +204,42 @@ export default async function ProgramDetailPage({
 
           <div className="flex flex-col gap-[var(--hsh-space-8)] lg:col-start-1 lg:row-start-2">
             <VerifiedFacts program={program} />
+
+            {/* Dated sessions, where Home School Haven has set them. They do
+                not replace the published schedule text above — both are shown,
+                because they say different things: the text is what Home School
+                Haven publishes about the program, and a session is a meeting
+                with a date. A cancelled or moved session is shown and named as
+                such rather than removed, so a visitor who planned around it can
+                learn from this page that it changed (MPS-ACC-031).
+
+                Nothing is rendered where a program has no sessions: an empty
+                heading would read as a schedule that is missing rather than one
+                that was never set. */}
+            {programSessions.length > 0 ? (
+              <section
+                aria-labelledby="sessions-heading"
+                className="flex flex-col gap-[var(--hsh-space-3)]"
+              >
+                <h2
+                  id="sessions-heading"
+                  className="hsh-h3 text-[var(--hsh-text-primary)]"
+                >
+                  Session dates
+                </h2>
+                <SessionList
+                  sessions={programSessions}
+                  size="standard"
+                  /* This page is statically rendered, so a Today or Upcoming
+                     badge would be baked at build time and could describe a day
+                     that has already passed. The dates are printed; they are
+                     not characterised. */
+                  timeMode="stored"
+                  emptyMessage=""
+                  headingLevel="h3"
+                />
+              </section>
+            ) : null}
 
             <section
               aria-labelledby="about-heading"
