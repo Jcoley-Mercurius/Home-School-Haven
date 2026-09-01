@@ -23,6 +23,12 @@ import {
 } from "@/lib/schedule/timezone"
 
 import type { ScheduleSession } from "@/lib/schedule/repository"
+import type { SessionFormState } from "@/app/(portal)/admin/programs/[programId]/form-state"
+
+type SessionFormSuccessStatus = Extract<
+  SessionFormState["status"],
+  "created" | "saved" | "rescheduled" | "unchanged"
+>
 
 /**
  * Author or edit one session (MPS-WFL-005 step 2, MPS-RUL-005; MDS
@@ -60,8 +66,8 @@ function SessionForm({
   programId: string
   /** The session being edited, or `undefined` when authoring a new one. */
   session?: ScheduleSession
-  /** Called after a successful save, so a dialog can close itself. */
-  onDone?: () => void
+  /** Called with the successful outcome, so a dialog can preserve it outside. */
+  onDone?: (outcome: SessionFormSuccessStatus) => void
 }) {
   const editing = session !== undefined
   const [state, formAction, pending] = useActionState(
@@ -80,18 +86,20 @@ function SessionForm({
     )
   }
 
-  const succeeded =
+  const successfulStatus: SessionFormSuccessStatus | null =
     state.status === "created" ||
     state.status === "saved" ||
     state.status === "rescheduled" ||
     state.status === "unchanged"
+      ? state.status
+      : null
 
   /* In an effect, not during render: `onDone` closes a parent dialog, and
      setting a parent's state while this component renders is the React error
      that turns a successful save into a crash. */
   useEffect(() => {
-    if (succeeded) onDone?.()
-  }, [succeeded, onDone])
+    if (successfulStatus) onDone?.(successfulStatus)
+  }, [successfulStatus, onDone])
 
   const announcement =
     state.status === "created"
@@ -308,3 +316,4 @@ function SessionForm({
 }
 
 export { SessionForm }
+export type { SessionFormSuccessStatus }

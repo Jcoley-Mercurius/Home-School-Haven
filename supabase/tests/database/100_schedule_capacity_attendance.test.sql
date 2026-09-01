@@ -31,7 +31,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(74);
+select plan(76);
 
 \set admin    '20000000-0000-4000-8000-000000000ad0'
 \set parent_a '20000000-0000-4000-8000-00000000000a'
@@ -517,9 +517,26 @@ select is(
     (select starts_at from public.program_sessions where id = :'s_rescheduled'),
     (select ends_at from public.program_sessions where id = :'s_rescheduled'),
     'Sample location',
-    (select change_note from public.program_sessions where id = :'s_rescheduled'))),
+    null)),
   'updated',
   'correcting a title is an edit, not a reschedule'
+);
+select is(
+  (select change_note from public.program_sessions where id = :'s_rescheduled'),
+  'Sample record. Moved one week later so a changed session is reviewable.',
+  'a title-only edit preserves the existing reschedule explanation'
+);
+select is(
+  (select public.admin_update_program_session(
+    :'s_rescheduled',
+    (select updated_at from public.program_sessions where id = :'s_rescheduled'),
+    'Sample session — retitled',
+    (select starts_at from public.program_sessions where id = :'s_rescheduled'),
+    (select ends_at from public.program_sessions where id = :'s_rescheduled'),
+    'Sample location',
+    null)),
+  'unchanged',
+  'an omitted note is not treated as a change when the existing note is preserved'
 );
 
 -- Cancellation and completion, each with a mandatory note.

@@ -110,6 +110,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
   test("an administrator cancels a session and the family sees it", async ({
     page,
     browser,
+    baseURL,
   }) => {
     await signIn(page, ACCOUNTS.admin)
     await page.goto(`/admin/programs/${ART_LAB}`)
@@ -141,6 +142,10 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
       .fill("Sample record. Cancelled by an end-to-end test.")
     await dialog.getByRole("button", { name: "Cancel this session" }).click()
 
+    await expect(dialog).toBeHidden()
+    await expect(
+      page.getByRole("status").filter({ hasText: "Session cancelled" }),
+    ).toBeVisible()
     await expect(page.getByText("Cancelled").first()).toBeVisible()
 
     /* MPS-ACC-031: the same change, on the family's own screen.
@@ -150,7 +155,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
        the admin dashboard and the parent's view would never be reached — the
        test would then pass or fail for reasons that have nothing to do with the
        cancellation. A separate context is a genuinely separate visitor. */
-    const familyContext = await browser.newContext()
+    const familyContext = await browser.newContext({ baseURL })
     const familyPage = await familyContext.newPage()
 
     try {

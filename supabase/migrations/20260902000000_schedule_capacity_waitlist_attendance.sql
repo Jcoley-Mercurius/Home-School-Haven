@@ -745,14 +745,15 @@ begin
 
   if current_row.title is not distinct from trimmed_title
      and current_row.location is not distinct from trimmed_location
-     and current_row.change_note is not distinct from trimmed_note then
+     and (trimmed_note is null
+          or current_row.change_note is not distinct from trimmed_note) then
     return 'unchanged';
   end if;
 
   update public.program_sessions
   set title       = trimmed_title,
       location    = trimmed_location,
-      change_note = trimmed_note
+      change_note = coalesce(trimmed_note, current_row.change_note)
   where id = target_id;
 
   return 'updated';

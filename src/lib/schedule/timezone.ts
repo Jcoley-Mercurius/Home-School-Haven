@@ -113,7 +113,7 @@ function parseProgramLocal(local: string): string | null {
      but `Date.UTC` rolls it into March, which would silently store a different
      day than the one submitted. */
   const roundTrip = formatProgramLocal(result.toISOString())
-  if (roundTrip.slice(0, 10) !== local.trim().slice(0, 10)) return null
+  if (roundTrip !== local.trim()) return null
 
   return result.toISOString()
 }

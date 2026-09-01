@@ -65,6 +65,7 @@ function sessionCalendarEntries(
 ): CalendarEntry[] {
   return sessions.map((session) => {
     const day = DAY_KEY.format(new Date(session.startsAt))
+    const endDay = DAY_KEY.format(new Date(session.endsAt))
 
     return {
       id: `session-${session.id}`,
@@ -72,11 +73,10 @@ function sessionCalendarEntries(
       publishedDetail: `${TIME.format(new Date(session.startsAt))}–${TIME.format(
         new Date(session.endsAt),
       )} ET${session.location ? `, ${session.location}` : ""}`,
-      /* A session is a single day on the grid. A meeting that runs past
-         midnight is not something this product has, and spanning two squares
-         for a late finish would read as a two-day event. */
+      /* End from the stored end instant: the database permits a session to run
+         past midnight, and the inclusive calendar range must preserve it. */
       start: day,
-      end: day,
+      end: endDay,
       program: session.program
         ? { slug: session.program.slug, name: session.program.name }
         : null,

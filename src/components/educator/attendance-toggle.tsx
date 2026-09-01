@@ -52,15 +52,7 @@ function AttendanceToggle({
         ? `${name} is no longer recorded at ${sessionTitle}. This does not record an absence.`
         : state.status === "unchanged"
           ? "Nothing changed."
-          : state.status === "forbidden"
-            ? "This account is not authorized to record attendance for this program."
-            : state.status === "notFound"
-              ? "This program is no longer assigned to you."
-              : state.status === "unavailable"
-                ? "Attendance cannot be recorded in this environment."
-                : state.status === "rejected" || state.status === "failed"
-                  ? (state.message ?? "Nothing was recorded. Please try again.")
-                  : ""
+          : ""
 
   const failed =
     state.status === "forbidden" ||
@@ -68,6 +60,15 @@ function AttendanceToggle({
     state.status === "rejected" ||
     state.status === "unavailable" ||
     state.status === "failed"
+
+  const failureMessage =
+    state.status === "forbidden"
+      ? "This account is not authorized to record attendance for this program."
+      : state.status === "notFound"
+        ? "This program is no longer assigned to you."
+        : state.status === "unavailable"
+          ? "Attendance cannot be recorded in this environment."
+          : (state.message ?? "Nothing was recorded. Please try again.")
 
   return (
     <div className="flex flex-col items-end gap-[var(--hsh-space-1)]">
@@ -118,7 +119,7 @@ function AttendanceToggle({
 
       {failed ? (
         <span role="alert" className="hsh-body-sm text-[var(--hsh-error)]">
-          {announcement}
+          {failureMessage}
         </span>
       ) : null}
     </div>

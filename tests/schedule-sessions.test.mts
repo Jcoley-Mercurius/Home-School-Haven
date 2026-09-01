@@ -298,5 +298,10 @@ describe("program timezone", () => {
     /* Survives the regex and would otherwise roll silently into March, storing
        a different day than the one submitted. */
     assert.equal(parseProgramLocal("2026-02-31T10:00"), null)
+    /* 02:30 never occurs on the spring-forward day in America/New_York. */
+    assert.equal(parseProgramLocal("2026-03-08T02:30"), null)
+    /* The form contract is minute precision; silently dropping seconds would
+       store a different wall-clock value than the one submitted. */
+    assert.equal(parseProgramLocal("2026-09-15T10:00:30"), null)
   })
 })
