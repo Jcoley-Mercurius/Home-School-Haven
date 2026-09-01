@@ -4,6 +4,7 @@ import {
   BookOpen,
   CalendarDays,
   CircleAlert,
+  Download,
   ExternalLink,
   Heart,
   HeartHandshake,
@@ -475,23 +476,58 @@ function ResourcesCard({
                     {resource.description}
                   </p>
                 ) : null}
-                <a
-                  href={resource.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hsh-label inline-flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-2)] text-[var(--hsh-text-link)] underline-offset-4 hover:underline"
-                >
-                  View resource
-                  <ExternalLink
-                    aria-hidden="true"
-                    className="size-4"
-                    strokeWidth={1.75}
-                  />
-                  <span className="sr-only">
-                    {" "}
-                    — {resource.title}, opens in a new tab
-                  </span>
-                </a>
+                {resource.state === "replaced" ? (
+                  <p className="hsh-caption m-0 text-[var(--hsh-text-muted)]">
+                    A newer version of this resource has been published.
+                  </p>
+                ) : null}
+                {/* A file and a link are different promises, so they are not
+                    spelled the same way. A link leaves the platform and opens
+                    in a new tab; a download stays here, goes through the
+                    authorizing route, and never exposes a storage path or a
+                    signed URL to this page. */}
+                {resource.downloadPath ? (
+                  <a
+                    href={resource.downloadPath}
+                    className="hsh-label inline-flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-2)] text-[var(--hsh-text-link)] underline-offset-4 hover:underline"
+                  >
+                    Download
+                    <Download
+                      aria-hidden="true"
+                      className="size-4"
+                      strokeWidth={1.75}
+                    />
+                    <span className="sr-only">
+                      {" "}
+                      — {resource.fileName ?? resource.title}
+                    </span>
+                  </a>
+                ) : resource.url ? (
+                  <a
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hsh-label inline-flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-2)] text-[var(--hsh-text-link)] underline-offset-4 hover:underline"
+                  >
+                    View resource
+                    <ExternalLink
+                      aria-hidden="true"
+                      className="size-4"
+                      strokeWidth={1.75}
+                    />
+                    <span className="sr-only">
+                      {" "}
+                      — {resource.title}, opens in a new tab
+                    </span>
+                  </a>
+                ) : (
+                  /* A published resource always has one medium or the other;
+                     this is the honest rendering if one ever does not, rather
+                     than a link to nowhere. */
+                  <p className="hsh-caption m-0 text-[var(--hsh-text-muted)]">
+                    This resource is not available to open just now.
+                  </p>
+                )}
               </li>
             ))}
           </ul>

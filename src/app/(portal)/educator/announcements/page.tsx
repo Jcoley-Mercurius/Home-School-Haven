@@ -9,20 +9,24 @@ import { listAssignedPrograms } from "@/lib/educator/assignments"
 import { listEducatorAnnouncements } from "@/lib/educator/content"
 
 /**
- * Program announcements on assigned programs, read-only (MPS-REQ-018,
+ * Program announcements across every assigned program (MPS-REQ-018,
  * MPS-REQ-019, MPS-ACC-030).
  *
- * This is the reading half of MPS-REQ-019. There is no compose, publish,
- * replace, or remove control, and none is shown disabled: `announcements`
- * grants no client role a write and carries no write policy, so there is no
- * capability being withheld from an educator — there is no capability.
+ * WHY AUTHORING IS NOT REACHED FROM HERE
+ *
+ * An educator can author now — HSH-SLICE-CONTENT-01 built it — but an
+ * announcement belongs to ONE program, and this list spans several. A "new
+ * announcement" button here would have to guess which, or ask, which is the
+ * program selector the administrator surface has and this one does not need:
+ * composing starts from a program's own page, one tap away. So this page reads,
+ * and the manage links live where the program is unambiguous.
  *
  * Program-scoped by definition. An educator has no organization-wide
  * communication reach; an announcement belongs to a program, and the only
  * programs readable here are the ones they are assigned to.
  *
- * Unpublished rows appear, labelled "Draft". See `content-lists.tsx` for why
- * dropping them and rendering them as published are both worse.
+ * Every state appears, labelled as itself. See `content-lists.tsx` for why
+ * dropping drafts and rendering them as published are both worse.
  */
 export const metadata: Metadata = {
   title: "Announcements — Educator — Home School Haven of SWFL",
@@ -53,8 +57,8 @@ export default async function EducatorAnnouncementsPage() {
           </h1>
           <p className="hsh-body-lg max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
             Announcements on the programs you are assigned to, with whether
-            families can currently see each one. Announcements are written by an
-            administrator in this release.
+            families can currently see each one. Open a program to write a new
+            announcement or change an existing one.
           </p>
         </header>
 
@@ -74,7 +78,7 @@ export default async function EducatorAnnouncementsPage() {
           <AnnouncementList
             items={announcements.items}
             emptyTitle="No announcements yet"
-            emptyBody="There are no announcements on the programs you are assigned to. When an administrator posts one, it appears here."
+            emptyBody="There are no announcements on the programs you are assigned to. Open one of your programs to write the first one."
           />
         )}
       </main>

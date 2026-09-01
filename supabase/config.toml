@@ -118,12 +118,21 @@ enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
-# Uncomment to configure local storage buckets
-# [storage.buckets.images]
-# public = false
-# file_size_limit = "50MiB"
-# allowed_mime_types = ["image/png", "image/jpeg"]
-# objects_path = "./images"
+# Private program-scoped learning-resource files (HSH-SLICE-CONTENT-01).
+#
+# Declared here so `supabase start` reproduces the bucket locally; the migration
+# `20260901000000_program_content_authoring.sql` is what creates it on a linked
+# project and what attaches its `storage.objects` policies. `public = false` is
+# stated in both places on purpose — a bucket that silently became public would
+# expose every uploaded file with no other control in the way.
+#
+# The limits are the owner decisions of 2026-08-31: 10 MB (GAP-CONTENT-02) and
+# the PDF/PNG/JPEG/plain-text allowlist (GAP-CONTENT-01). They are also column
+# constraints and are also checked server-side before upload.
+[storage.buckets.program-resources]
+public = false
+file_size_limit = "10MiB"
+allowed_mime_types = ["application/pdf", "image/png", "image/jpeg", "text/plain"]
 
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]

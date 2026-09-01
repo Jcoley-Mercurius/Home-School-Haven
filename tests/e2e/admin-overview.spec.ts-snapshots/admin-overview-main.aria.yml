@@ -149,29 +149,29 @@
     - heading "Recent activity" [level=3]
     - list:
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
       - listitem:
-        - text: Program created · set up by the review environment
-        - time: /Aug \d+, \d+, \d+:\d+ AM UTC/
+        - text: Operational change recorded · set up by the review environment
+        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
   - complementary "Authority and environment":
     - paragraph: This is a private beta environment with sample data. Continuing to external checkout is a handoff to Home School Haven’s payment provider — it is not payment confirmation, and payment activity is not confirmed enrollment.
     - paragraph: Samantha Dodson remains the final decision owner. Administrators hold delegated operational authority, and only an administrator or Samantha publishes program, price, availability, registration, or cancellation changes.

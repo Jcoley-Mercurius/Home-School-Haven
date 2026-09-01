@@ -34,35 +34,50 @@ export type Database = {
         Row: {
           body: string
           created_at: string
+          created_by: string | null
           id: string
           is_sample: boolean
           program_id: string
-          published: boolean
           published_at: string | null
+          removed_at: string | null
+          replaced_at: string | null
+          replaced_by_id: string | null
+          state: Database["public"]["Enums"]["content_state"]
           title: string
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
           body: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_sample?: boolean
           program_id: string
-          published?: boolean
           published_at?: string | null
+          removed_at?: string | null
+          replaced_at?: string | null
+          replaced_by_id?: string | null
+          state?: Database["public"]["Enums"]["content_state"]
           title: string
           updated_at?: string
+          updated_by?: string | null
         }
         Update: {
           body?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           is_sample?: boolean
           program_id?: string
-          published?: boolean
           published_at?: string | null
+          removed_at?: string | null
+          replaced_at?: string | null
+          replaced_by_id?: string | null
+          state?: Database["public"]["Enums"]["content_state"]
           title?: string
           updated_at?: string
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -70,6 +85,13 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_replaced_by_id_fkey"
+            columns: ["replaced_by_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
             referencedColumns: ["id"]
           },
         ]
@@ -246,37 +268,67 @@ export type Database = {
       }
       learning_resources: {
         Row: {
+          content_type: string | null
           created_at: string
+          created_by: string | null
           description: string | null
+          file_name: string | null
+          file_size_bytes: number | null
           id: string
           is_sample: boolean
+          kind: Database["public"]["Enums"]["resource_kind"]
           program_id: string
-          published: boolean
+          removed_at: string | null
+          replaced_at: string | null
+          replaced_by_id: string | null
+          state: Database["public"]["Enums"]["content_state"]
+          storage_path: string | null
           title: string
           updated_at: string
-          url: string
+          updated_by: string | null
+          url: string | null
         }
         Insert: {
+          content_type?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
+          file_name?: string | null
+          file_size_bytes?: number | null
           id?: string
           is_sample?: boolean
+          kind?: Database["public"]["Enums"]["resource_kind"]
           program_id: string
-          published?: boolean
+          removed_at?: string | null
+          replaced_at?: string | null
+          replaced_by_id?: string | null
+          state?: Database["public"]["Enums"]["content_state"]
+          storage_path?: string | null
           title: string
           updated_at?: string
-          url: string
+          updated_by?: string | null
+          url?: string | null
         }
         Update: {
+          content_type?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
+          file_name?: string | null
+          file_size_bytes?: number | null
           id?: string
           is_sample?: boolean
+          kind?: Database["public"]["Enums"]["resource_kind"]
           program_id?: string
-          published?: boolean
+          removed_at?: string | null
+          replaced_at?: string | null
+          replaced_by_id?: string | null
+          state?: Database["public"]["Enums"]["content_state"]
+          storage_path?: string | null
           title?: string
           updated_at?: string
-          url?: string
+          updated_by?: string | null
+          url?: string | null
         }
         Relationships: [
           {
@@ -284,6 +336,13 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_resources_replaced_by_id_fkey"
+            columns: ["replaced_by_id"]
+            isOneToOne: false
+            referencedRelation: "learning_resources"
             referencedColumns: ["id"]
           },
         ]
@@ -553,6 +612,89 @@ export type Database = {
         }
         Returns: string
       }
+      content_attach_resource_file: {
+        Args: {
+          expected_updated_at: string
+          object_content_type: string
+          object_path: string
+          object_size_bytes: number
+          original_file_name: string
+          target_id: string
+        }
+        Returns: string
+      }
+      content_create_announcement_draft: {
+        Args: {
+          announcement_body: string
+          announcement_title: string
+          target_program: string
+        }
+        Returns: string
+      }
+      content_create_resource_draft: {
+        Args: {
+          resource_description: string
+          resource_kind: Database["public"]["Enums"]["resource_kind"]
+          resource_title: string
+          resource_url: string
+          target_program: string
+        }
+        Returns: string
+      }
+      content_publish_announcement: {
+        Args: { expected_updated_at: string; target_id: string }
+        Returns: string
+      }
+      content_publish_resource: {
+        Args: { expected_updated_at: string; target_id: string }
+        Returns: string
+      }
+      content_remove_announcement: {
+        Args: { expected_updated_at: string; target_id: string }
+        Returns: string
+      }
+      content_remove_resource: {
+        Args: { expected_updated_at: string; target_id: string }
+        Returns: string
+      }
+      content_replace_announcement: {
+        Args: {
+          announcement_body: string
+          announcement_title: string
+          expected_updated_at: string
+          target_id: string
+        }
+        Returns: string
+      }
+      content_replace_resource: {
+        Args: {
+          expected_updated_at: string
+          resource_description: string
+          resource_title: string
+          resource_url: string
+          target_id: string
+        }
+        Returns: string
+      }
+      content_update_announcement_draft: {
+        Args: {
+          announcement_body: string
+          announcement_title: string
+          expected_updated_at: string
+          target_id: string
+        }
+        Returns: string
+      }
+      content_update_resource_draft: {
+        Args: {
+          expected_updated_at: string
+          resource_description: string
+          resource_title: string
+          resource_url: string
+          target_id: string
+        }
+        Returns: string
+      }
       create_family_for_current_user: {
         Args: { family_name: string }
         Returns: string
@@ -565,6 +707,7 @@ export type Database = {
     Enums: {
       app_role: "parent" | "educator" | "admin" | "owner"
       availability_state: "open" | "limited" | "waitlist" | "closed" | "unknown"
+      content_state: "draft" | "published" | "replaced" | "removed"
       enrollment_state:
         | "started"
         | "approval_pending"
@@ -576,6 +719,7 @@ export type Database = {
         | "blocked"
       family_member_role: "primary_guardian" | "invited_guardian"
       program_publication_state: "draft" | "published" | "archived"
+      resource_kind: "document" | "link" | "video" | "activity" | "download"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -705,6 +849,7 @@ export const Constants = {
     Enums: {
       app_role: ["parent", "educator", "admin", "owner"],
       availability_state: ["open", "limited", "waitlist", "closed", "unknown"],
+      content_state: ["draft", "published", "replaced", "removed"],
       enrollment_state: [
         "started",
         "approval_pending",
@@ -717,6 +862,7 @@ export const Constants = {
       ],
       family_member_role: ["primary_guardian", "invited_guardian"],
       program_publication_state: ["draft", "published", "archived"],
+      resource_kind: ["document", "link", "video", "activity", "download"],
     },
   },
 } as const

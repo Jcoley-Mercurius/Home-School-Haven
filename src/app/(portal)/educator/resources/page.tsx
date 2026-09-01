@@ -51,7 +51,7 @@ export default async function EducatorResourcesPage() {
           </h1>
           <p className="hsh-body-lg max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
             Learning resources published for the programs you are assigned to.
-            Resources are added by an administrator in this release.
+            Open a program to add a new resource or change an existing one.
           </p>
         </header>
 
@@ -71,7 +71,7 @@ export default async function EducatorResourcesPage() {
           <ResourceList
             items={resources.items}
             emptyTitle="No resources yet"
-            emptyBody="There are no learning resources on the programs you are assigned to. When an administrator adds one, it appears here."
+            emptyBody="There are no learning resources on the programs you are assigned to. Open one of your programs to add the first one."
           />
         )}
       </main>

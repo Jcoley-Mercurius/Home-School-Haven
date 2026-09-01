@@ -161,13 +161,19 @@ function CreateProgramForm() {
         </Field>
 
         <Field invalid={Boolean(state.fieldErrors.summary)}>
-          <FieldLabel>Summary</FieldLabel>
+          {/* `Textarea` is a plain <textarea>, not a Base UI Field.Control, so
+              Field cannot associate the label with it on its own and a screen
+              reader announces an unlabelled control. The explicit id/htmlFor
+              pair is what every other textarea in this repository uses
+              (DEFECT-C5). */}
+          <FieldLabel htmlFor={`${ids}-summary`}>Summary</FieldLabel>
           <FieldDescription>
             Optional now, required before this program can be published. Use the
             approved published description — do not write new copy for a program
             that already has some.
           </FieldDescription>
           <Textarea
+            id={`${ids}-summary`}
             key={state.values.summary}
             name="summary"
             rows={4}

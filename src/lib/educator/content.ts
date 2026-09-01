@@ -2,23 +2,24 @@
  * Announcement and learning-resource reads for the educator workspace
  * (MPS-REQ-018, MPS-REQ-019, MPS-ACC-030).
  *
- * READ ONLY, BY CONSTRUCTION
+ * NO LONGER READ ONLY — AND THE WRITES ARE NOT HERE
  *
- * There are no write functions, and there is no write to add: neither
- * `public.announcements` nor `public.learning_resources` grants any client role
- * INSERT, UPDATE, or DELETE, and neither carries a write policy. MPS-REQ-019's
- * authoring half — create, publish, replace, remove — is a later slice with its
- * own approved prompt. This is the half that reads.
+ * When this module was written, neither content table had a client write path
+ * and this header said so. HSH-SLICE-CONTENT-01 added one. It did not add it
+ * here: authoring lives in `@/lib/content/mutations.ts`, which calls SECURITY
+ * DEFINER functions, and this module still only reads. The split is deliberate
+ * — a read module that can also write is a read module nobody can be sure
+ * about.
  *
- * DRAFTS ARE SHOWN, AND SHOWN AS DRAFTS
+ * EVERY STATE IS SHOWN, AND SHOWN AS ITSELF
  *
- * The family policies filter on `published`; the educator policies deliberately
- * do not, so an educator sees unpublished rows on their own programs. That is
- * surfaced rather than suppressed: MDS `announcement` lists `educator_draft`
- * among its approved variants, and MPS-REQ-019 requires "a visible content
- * state". Silently dropping a draft would tell an educator their program has no
- * announcement when it has one; rendering it like a published one would tell
- * them families can read it. Both are worse than saying which it is.
+ * The family policies return `published` and `replaced`; the educator policies
+ * deliberately filter on no state at all, so an educator sees drafts and
+ * removed items on their own programs. That is surfaced rather than suppressed:
+ * MPS-REQ-019 requires "a visible content state". Silently dropping a draft
+ * would tell an educator their program has no announcement when it has one;
+ * rendering it like a published one would tell them families can read it. Both
+ * are worse than saying which it is.
  *
  * SCOPING
  *
@@ -31,8 +32,11 @@
 
 import "server-only"
 
-import { isSupabaseConfigured } from "@/lib/env"
-import { createClient } from "@/lib/supabase/server"
+import {
+  listAnnouncements,
+  listResources,
+} from "@/lib/content/announcements-index"
+import { isFamilyVisible } from "@/lib/content/lifecycle"
 
 import type {
   EducatorAnnouncement,
@@ -41,7 +45,17 @@ import type {
 import type { SectionState } from "@/lib/enrollment/repository"
 
 /**
- * Announcements on the given assigned programs, newest published first.
+ * Order content the way an educator needs to see it.
+ *
+ * What families can currently read comes first, then drafts an educator can act
+ * on, then the settled history. Ordering on `published_at` alone would float a
+ * draft — which has none — to the top of "Recent announcements", burying the
+ * notice families can actually see (DEFECT-EW2).
+ */
+const STATE_ORDER = { published: 0, draft: 1, replaced: 2, removed: 3 } as const
+
+/**
+ * Announcements on the given assigned programs.
  *
  * @param programIds - Program ids the viewer's assignment already authorized.
  * @returns The announcements, or a state explaining why not.
@@ -49,43 +63,28 @@ import type { SectionState } from "@/lib/enrollment/repository"
 async function listEducatorAnnouncements(
   programIds: string[],
 ): Promise<SectionState<EducatorAnnouncement>> {
-  if (!isSupabaseConfigured()) return { status: "unavailable" }
-  /* No assignments is an empty workspace, not a failed read. Asking PostgREST
-     for `in.()` would be a query with no meaning. */
-  if (programIds.length === 0) return { status: "ready", items: [] }
+  const read = await listAnnouncements(programIds)
+  if (read.status !== "ready") return read
 
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from("announcements")
-    .select("id,title,body,published,published_at,program_id,programs(name)")
-    .in("program_id", programIds)
-    /* Published first, newest first; drafts last. A draft has no
-       `published_at`, so ordering on that column alone would float it to the
-       top of "Recent announcements" — and an educator cannot act on a draft in
-       this release, so leading with one buries the notice families can
-       actually see. */
-    .order("published", { ascending: false })
-    .order("published_at", { ascending: false, nullsFirst: false })
-
-  if (error) return { status: "failed" }
-
-  return {
-    status: "ready",
-    items: (data ?? []).map((row) => ({
+  const items = read.items
+    .map((row) => ({
       id: row.id,
       title: row.title,
       body: row.body,
-      published: row.published,
-      publishedAt: row.published_at,
-      programId: row.program_id,
-      programName: row.programs?.name ?? null,
-    })),
-  }
+      state: row.state,
+      familyVisible: isFamilyVisible(row.state),
+      publishedAt: row.publishedAt,
+      programId: row.programId,
+      programName: row.programName,
+      updatedAt: row.updatedAt,
+    }))
+    .sort((a, b) => STATE_ORDER[a.state] - STATE_ORDER[b.state])
+
+  return { status: "ready", items }
 }
 
 /**
- * Learning resources on the given assigned programs, by title.
+ * Learning resources on the given assigned programs.
  *
  * @param programIds - Program ids the viewer's assignment already authorized.
  * @returns The resources, or a state explaining why not.
@@ -93,33 +92,29 @@ async function listEducatorAnnouncements(
 async function listEducatorResources(
   programIds: string[],
 ): Promise<SectionState<EducatorResource>> {
-  if (!isSupabaseConfigured()) return { status: "unavailable" }
-  if (programIds.length === 0) return { status: "ready", items: [] }
+  const read = await listResources(programIds)
+  if (read.status !== "ready") return read
 
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from("learning_resources")
-    .select("id,title,description,url,published,program_id,programs(name)")
-    .in("program_id", programIds)
-    /* Published first, then by title, for the same reason as announcements. */
-    .order("published", { ascending: false })
-    .order("title")
-
-  if (error) return { status: "failed" }
-
-  return {
-    status: "ready",
-    items: (data ?? []).map((row) => ({
+  const items = read.items
+    .map((row) => ({
       id: row.id,
       title: row.title,
       description: row.description,
+      kind: row.kind,
       url: row.url,
-      published: row.published,
-      programId: row.program_id,
-      programName: row.programs?.name ?? null,
-    })),
-  }
+      /* The route, never the storage path and never a signed URL. */
+      downloadPath: row.hasFile ? `/resources/${row.id}/file` : null,
+      fileName: row.fileName,
+      fileSizeBytes: row.fileSizeBytes,
+      state: row.state,
+      familyVisible: isFamilyVisible(row.state),
+      programId: row.programId,
+      programName: row.programName,
+      updatedAt: row.updatedAt,
+    }))
+    .sort((a, b) => STATE_ORDER[a.state] - STATE_ORDER[b.state])
+
+  return { status: "ready", items }
 }
 
 export { listEducatorAnnouncements, listEducatorResources }

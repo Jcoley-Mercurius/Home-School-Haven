@@ -25,6 +25,8 @@
    by relative path. */
 import type { EDUCATOR_ROSTER_COLUMNS } from "@/lib/admin/roster-state"
 
+import type { ContentState, ResourceKind } from "@/lib/content/lifecycle"
+
 import type { EnrollmentState } from "@/lib/admin/transitions"
 import type { Enums } from "@/lib/supabase/types"
 
@@ -121,10 +123,19 @@ type EducatorAnnouncement = {
   id: string
   title: string
   body: string
-  published: boolean
+  state: ContentState
+  /**
+   * Whether enrolled families can currently read this. Derived from `state` by
+   * `isFamilyVisible`, and carried explicitly so no component re-derives the
+   * rule — "families can see this" is the sentence an educator acts on, and it
+   * must mean the same thing everywhere it appears.
+   */
+  familyVisible: boolean
   publishedAt: string | null
   programId: string
   programName: string | null
+  /** The optimistic-concurrency token for any authoring action on this row. */
+  updatedAt: string
 }
 
 /** One learning resource on an assigned program, with its real content state. */
@@ -132,11 +143,23 @@ type EducatorResource = {
   id: string
   title: string
   description: string | null
-  /** Always `http(s)`; the table's check constraint is what guarantees it. */
-  url: string
-  published: boolean
+  kind: ResourceKind
+  /** `null` for a file-backed resource. Always `http(s)` when present. */
+  url: string | null
+  /**
+   * The application route that authorizes and then redirects to a fresh signed
+   * URL, or `null` for a link. Never a storage path and never a signed URL:
+   * either would be durable in a payload the browser keeps.
+   */
+  downloadPath: string | null
+  fileName: string | null
+  fileSizeBytes: number | null
+  state: ContentState
+  familyVisible: boolean
   programId: string
   programName: string | null
+  /** The optimistic-concurrency token for any authoring action on this row. */
+  updatedAt: string
 }
 
 /* ---------------------------------------------------------------------------
