@@ -86,23 +86,23 @@ select is(
   'a parent reads published resources for their own programs only'
 );
 
--- NEGATIVE: an unpublished row on a program they ARE enrolled in. This proves
--- the `published` half of the policy, independently of the family half.
+-- NEGATIVE: a draft row on a program they ARE enrolled in. This proves the
+-- state half of the policy, independently of the family half.
 select is(
   (select count(*)::int from public.announcements
-     where program_id = :'art_lab'::uuid and not published),
+     where program_id = :'art_lab'::uuid and state = 'draft'),
   0,
-  'an unpublished announcement is invisible even on an enrolled program'
+  'a draft announcement is invisible even on an enrolled program'
 );
 select is(
   (select count(*)::int from public.learning_resources
-     where program_id = :'art_lab'::uuid and not published),
+     where program_id = :'art_lab'::uuid and state = 'draft'),
   0,
-  'an unpublished resource is invisible even on an enrolled program'
+  'a draft resource is invisible even on an enrolled program'
 );
 
 -- NEGATIVE: a PUBLISHED row on a program they are NOT enrolled in. This proves
--- the family half, independently of the published half.
+-- the family half, independently of the state half.
 select is(
   (select count(*)::int from public.announcements
      where program_id = :'sewing'::uuid),

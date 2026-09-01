@@ -34,6 +34,9 @@ const PROTECTED = [
   "/educator/announcements",
   "/educator/resources",
   "/admin",
+  "/admin/communications",
+  "/admin/communications/announcements/new",
+  "/admin/communications/resources/new",
   "/account",
 ] as const
 

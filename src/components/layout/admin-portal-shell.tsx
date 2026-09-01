@@ -9,6 +9,7 @@ import {
   GraduationCap,
   Home,
   LayoutDashboard,
+  Megaphone,
   UserRound,
   Users,
 } from "lucide-react"
@@ -95,6 +96,18 @@ const DESTINATIONS: PortalDestination[] = [
     label: "Educators",
     href: "/admin/educators",
     icon: GraduationCap,
+    onMobileBar: false,
+  },
+  /* MDS `navigation.specification.admin` names Communications among the
+     administrator destinations. It arrived with HSH-SLICE-CONTENT-01, which is
+     what gave it something to point at; Schedule, Reports, and Settings remain
+     missing and remain recorded as D-AO3. Off the mobile bar for the same
+     reason Families and Educators are: six destinations on the bar would put
+     every target below the approved 44 px minimum. */
+  {
+    label: "Communications",
+    href: "/admin/communications",
+    icon: Megaphone,
     onMobileBar: false,
   },
   { label: "Account", href: "/account", icon: UserRound, onMobileBar: true },

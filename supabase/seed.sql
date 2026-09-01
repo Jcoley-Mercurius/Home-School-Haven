@@ -365,56 +365,56 @@ begin
   -- not, and one row on a program only family B is enrolled in, which it must
   -- not reach either.
   insert into public.announcements
-    (id, program_id, title, body, published, published_at) values
+    (id, program_id, title, body, state, published_at) values
     ('60000000-0000-4000-8000-000000000001',
      '10000000-0000-4000-8000-000000000004',
      'Sample announcement — welcome to the review',
      'This is sample content for the Foundation Review. Home School Haven has '
      'not published a real announcement here yet.',
-     true, now() - interval '2 days'),
+     'published', now() - interval '2 days'),
     ('60000000-0000-4000-8000-000000000002',
      '10000000-0000-4000-8000-000000000002',
      'Sample announcement — what this space is for',
      'Program announcements from Home School Haven will appear here. This entry '
      'is sample content for the Foundation Review.',
-     true, now() - interval '9 days'),
-    -- Unpublished: proves the `published` filter, not the family boundary.
+     'published', now() - interval '9 days'),
+    -- A draft: proves the state filter, not the family boundary.
     ('60000000-0000-4000-8000-0000000000f1',
      '10000000-0000-4000-8000-000000000004',
      'Sample unpublished announcement (test fixture)',
-     'Never visible to a family. Present so the published filter is testable.',
-     false, null),
+     'Never visible to a family. Present so the draft state is testable.',
+     'draft', null),
     -- Family B only: proves the family boundary, not the published filter.
     ('60000000-0000-4000-8000-0000000000f2',
      '10000000-0000-4000-8000-000000000005',
      'Sample announcement for another family (test fixture)',
      'Present so cross-family announcement denial is testable.',
-     true, now() - interval '1 day')
+     'published', now() - interval '1 day')
   on conflict (id) do nothing;
 
   insert into public.learning_resources
-    (id, program_id, title, description, url, published) values
+    (id, program_id, title, description, kind, url, state) values
     ('70000000-0000-4000-8000-000000000001',
      '10000000-0000-4000-8000-000000000002',
      'Sample resource — Home School Haven resource library',
      'Sample content for the Foundation Review, linking to the published '
      'public resource page.',
-     'https://www.homeschoolhaven.org/', true),
+     'link', 'https://www.homeschoolhaven.org/', 'published'),
     ('70000000-0000-4000-8000-000000000002',
      '10000000-0000-4000-8000-000000000004',
      'Sample resource — program information',
      'Sample content for the Foundation Review.',
-     'https://www.homeschoolhaven.org/', true),
+     'link', 'https://www.homeschoolhaven.org/', 'published'),
     ('70000000-0000-4000-8000-0000000000f1',
      '10000000-0000-4000-8000-000000000004',
      'Sample unpublished resource (test fixture)',
-     'Never visible to a family. Present so the published filter is testable.',
-     'https://www.homeschoolhaven.org/', false),
+     'Never visible to a family. Present so the draft state is testable.',
+     'link', 'https://www.homeschoolhaven.org/', 'draft'),
     ('70000000-0000-4000-8000-0000000000f2',
      '10000000-0000-4000-8000-000000000005',
      'Sample resource for another family (test fixture)',
      'Present so cross-family resource denial is testable.',
-     'https://www.homeschoolhaven.org/', true)
+     'link', 'https://www.homeschoolhaven.org/', 'published')
   on conflict (id) do nothing;
 end;
 $$;

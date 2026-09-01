@@ -202,6 +202,21 @@ async function getAdminOverview(activityLimit = 8): Promise<AdminOverview> {
       .from("audit_events")
       .select("id,occurred_at,entity_type,action,actor_user_id")
       .order("occurred_at", { ascending: false })
+      /* TIEBREAK ON `id`, OR THIS LIST IS NONDETERMINISTIC.
+
+         Many audit rows share one `occurred_at` — a migration or a seed runs in
+         a single transaction, so `now()` is constant across every row it
+         writes, and the sanitized seed alone produces two dozen at the same
+         instant. Ordering on `occurred_at` with a LIMIT then asks Postgres to
+         pick an arbitrary subset of a tie, and it is free to pick a different
+         one each time: the administrator overview showed different items and a
+         different page height run to run, which is why its visual baseline was
+         intermittent.
+
+         `id` is `bigint generated always as identity`, so it is monotonic with
+         insertion and breaks every tie in the same direction as the intended
+         "newest first". */
+      .order("id", { ascending: false })
       .limit(activityLimit),
   ])
 

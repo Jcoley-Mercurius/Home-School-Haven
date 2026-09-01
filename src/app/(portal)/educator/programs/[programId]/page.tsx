@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 
@@ -10,6 +11,7 @@ import { EducatorRosterSection } from "@/components/educator/roster-section"
 import { ScheduleSection } from "@/components/educator/schedule-section"
 import { ReadFailure } from "@/components/educator/states"
 import { ListSkeleton } from "@/components/admin/list-skeleton"
+import { Button } from "@/components/ui/button"
 import { PublicationBadge } from "@/components/admin/publication-state"
 import { ReviewDataBanner } from "@/components/family/section-states"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
@@ -187,12 +189,29 @@ export default async function EducatorProgramDetailPage({
         aria-labelledby="detail-announcements"
         className="flex flex-col gap-[var(--hsh-space-4)]"
       >
-        <h2
-          id="detail-announcements"
-          className="hsh-h3 m-0 text-[var(--hsh-text-primary)]"
-        >
-          Announcements
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-[var(--hsh-space-3)]">
+          <h2
+            id="detail-announcements"
+            className="hsh-h3 m-0 text-[var(--hsh-text-primary)]"
+          >
+            Announcements
+          </h2>
+          {/* Authoring is reached from the program's own page, where the
+              program is already decided. The link is not a permission — the
+              route it opens re-derives authority from the viewer's own
+              assignments and answers 404 if they do not hold this program. */}
+          <Button
+            render={
+              <Link
+                href={`/educator/programs/${program.id}/announcements/new`}
+              />
+            }
+            variant="primary"
+            size="md"
+          >
+            New announcement
+          </Button>
+        </div>
         {announcements.status !== "ready" ? (
           <ReadFailure
             status={announcements.status}
@@ -202,8 +221,9 @@ export default async function EducatorProgramDetailPage({
           <AnnouncementList
             items={announcements.items}
             showProgramName={false}
+            manageBase={`/educator/programs/${program.id}`}
             emptyTitle="No announcements for this program"
-            emptyBody="Nothing has been posted for this program. Announcements are written by an administrator in this release."
+            emptyBody="Nothing has been posted for this program yet. Compose the first one above — it stays a draft until you publish it."
           />
         )}
       </section>
@@ -212,12 +232,23 @@ export default async function EducatorProgramDetailPage({
         aria-labelledby="detail-resources"
         className="flex flex-col gap-[var(--hsh-space-4)]"
       >
-        <h2
-          id="detail-resources"
-          className="hsh-h3 m-0 text-[var(--hsh-text-primary)]"
-        >
-          Resources
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-[var(--hsh-space-3)]">
+          <h2
+            id="detail-resources"
+            className="hsh-h3 m-0 text-[var(--hsh-text-primary)]"
+          >
+            Resources
+          </h2>
+          <Button
+            render={
+              <Link href={`/educator/programs/${program.id}/resources/new`} />
+            }
+            variant="primary"
+            size="md"
+          >
+            New resource
+          </Button>
+        </div>
         {resources.status !== "ready" ? (
           <ReadFailure
             status={resources.status}
@@ -227,8 +258,9 @@ export default async function EducatorProgramDetailPage({
           <ResourceList
             items={resources.items}
             showProgramName={false}
+            manageBase={`/educator/programs/${program.id}`}
             emptyTitle="No resources for this program"
-            emptyBody="No learning resources have been added for this program. Resources are added by an administrator in this release."
+            emptyBody="No learning resources have been added for this program yet. Add the first one above — it stays a draft until you publish it."
           />
         )}
       </section>

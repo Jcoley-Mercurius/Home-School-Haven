@@ -1,22 +1,34 @@
 /**
- * Announcement and learning-resource reads for the authenticated viewer.
+ * Announcement and learning-resource reads for the authenticated family viewer.
  *
- * Neither query filters by program. It does not need to: the RLS policies added
- * in `20260829170000_family_dashboard_records.sql` return only rows that are
- * `published` **and** attached to a program this viewer's family holds a
- * non-cancelled enrollment in. Writing that rule here as well would put the
- * family boundary in two places, one of which could drift.
+ * Neither query filters by program or by state. It does not need to: the RLS
+ * policies return only rows that are `published` or `replaced` AND attached to
+ * a program this viewer's family holds a non-cancelled enrollment in. Writing
+ * that rule here as well would put the family boundary in two places, one of
+ * which could drift.
  *
- * There are no write functions. Authoring announcements and resources is
- * MPS-REQ-019 and belongs to the educator and administrator work; neither table
- * has a client write policy or privilege.
+ * WHY A FAMILY SEES A REPLACED ITEM AND NOT A REMOVED ONE
+ *
+ * Deviation D-C2. MPS-ACC-030 asks for a truthful current state. Withdrawing a
+ * notice a family already read is not a truthful state, it is a disappearance,
+ * so a replaced item stays and says it was superseded. A REMOVED item is the
+ * opposite case: losing it is exactly what removal means, and the policy is
+ * what takes it away rather than a filter written here.
+ *
+ * These are thin shapings over `@/lib/content/*`, which is the one place the
+ * columns and the mapping live (MPS-REQ-020). A family surface reading its own
+ * copy of those columns is how three surfaces come to describe one row three
+ * different ways.
  */
 
 import "server-only"
 
-import { isSupabaseConfigured } from "@/lib/env"
-import { createClient } from "@/lib/supabase/server"
+import {
+  listAnnouncements,
+  listResources,
+} from "@/lib/content/announcements-index"
 
+import type { ContentState } from "@/lib/content/lifecycle"
 import type { SectionState } from "@/lib/enrollment/repository"
 
 export type Announcement = {
@@ -26,16 +38,27 @@ export type Announcement = {
   publishedAt: string | null
   programId: string
   programName: string | null
+  /** Always `published` or `replaced` — the policy returns nothing else. */
+  state: ContentState
 }
 
 export type LearningResource = {
   id: string
   title: string
   description: string | null
-  /** Always `http(s)`; the table's check constraint is what guarantees it. */
-  url: string
+  /** `null` for a file-backed resource, which is fetched through `downloadPath`. */
+  url: string | null
+  /**
+   * The application route that authorizes and then redirects to a fresh signed
+   * URL, or `null` when this resource is a link. Never a storage path and never
+   * a signed URL: both would be durable in a page a browser keeps.
+   */
+  downloadPath: string | null
+  fileName: string | null
+  fileSizeBytes: number | null
   programId: string
   programName: string | null
+  state: ContentState
 }
 
 /**
@@ -46,31 +69,20 @@ export type LearningResource = {
 export async function getFamilyAnnouncements(
   limit?: number,
 ): Promise<SectionState<Announcement>> {
-  if (!isSupabaseConfigured()) return { status: "unavailable" }
+  const read = await listAnnouncements()
+  if (read.status !== "ready") return read
 
-  const supabase = await createClient()
+  const items = read.items.map((row) => ({
+    id: row.id,
+    title: row.title,
+    body: row.body,
+    publishedAt: row.publishedAt,
+    programId: row.programId,
+    programName: row.programName,
+    state: row.state,
+  }))
 
-  let query = supabase
-    .from("announcements")
-    .select("id,title,body,published_at,program_id,programs(name)")
-    .order("published_at", { ascending: false })
-
-  if (limit) query = query.limit(limit)
-
-  const { data, error } = await query
-  if (error) return { status: "failed" }
-
-  return {
-    status: "ready",
-    items: (data ?? []).map((row) => ({
-      id: row.id,
-      title: row.title,
-      body: row.body,
-      publishedAt: row.published_at,
-      programId: row.program_id,
-      programName: row.programs?.name ?? null,
-    })),
-  }
+  return { status: "ready", items: limit ? items.slice(0, limit) : items }
 }
 
 /**
@@ -81,29 +93,21 @@ export async function getFamilyAnnouncements(
 export async function getFamilyResources(
   limit?: number,
 ): Promise<SectionState<LearningResource>> {
-  if (!isSupabaseConfigured()) return { status: "unavailable" }
+  const read = await listResources()
+  if (read.status !== "ready") return read
 
-  const supabase = await createClient()
+  const items = read.items.map((row) => ({
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    url: row.url,
+    downloadPath: row.hasFile ? `/resources/${row.id}/file` : null,
+    fileName: row.fileName,
+    fileSizeBytes: row.fileSizeBytes,
+    programId: row.programId,
+    programName: row.programName,
+    state: row.state,
+  }))
 
-  let query = supabase
-    .from("learning_resources")
-    .select("id,title,description,url,program_id,programs(name)")
-    .order("title")
-
-  if (limit) query = query.limit(limit)
-
-  const { data, error } = await query
-  if (error) return { status: "failed" }
-
-  return {
-    status: "ready",
-    items: (data ?? []).map((row) => ({
-      id: row.id,
-      title: row.title,
-      description: row.description,
-      url: row.url,
-      programId: row.program_id,
-      programName: row.programs?.name ?? null,
-    })),
-  }
+  return { status: "ready", items: limit ? items.slice(0, limit) : items }
 }

@@ -125,7 +125,7 @@ export default async function EducatorOverviewPage() {
           <AnnouncementList
             items={announcements.items.slice(0, 3)}
             emptyTitle="No announcements yet"
-            emptyBody="There are no announcements on the programs you are assigned to. Announcements are written by an administrator in this release; when one is added, it appears here."
+            emptyBody="There are no announcements on the programs you are assigned to. Open one of your programs to write the first one."
           />
         )}
       </section>
@@ -152,7 +152,7 @@ export default async function EducatorOverviewPage() {
           <ResourceList
             items={resources.items.slice(0, 3)}
             emptyTitle="No resources yet"
-            emptyBody="There are no learning resources on the programs you are assigned to. Resources are added by an administrator in this release."
+            emptyBody="There are no learning resources on the programs you are assigned to. Open one of your programs to add the first one."
           />
         )}
       </section>
