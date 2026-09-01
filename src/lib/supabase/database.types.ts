@@ -23,11 +23,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       announcements: {
@@ -368,10 +363,64 @@ export type Database = {
         }
         Relationships: []
       }
+      program_sessions: {
+        Row: {
+          change_note: string | null
+          created_at: string
+          ends_at: string
+          id: string
+          is_sample: boolean
+          location: string | null
+          program_id: string
+          rescheduled_from: string | null
+          starts_at: string
+          state: Database["public"]["Enums"]["session_state"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          change_note?: string | null
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_sample?: boolean
+          location?: string | null
+          program_id: string
+          rescheduled_from?: string | null
+          starts_at: string
+          state?: Database["public"]["Enums"]["session_state"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          change_note?: string | null
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_sample?: boolean
+          location?: string | null
+          program_id?: string
+          rescheduled_from?: string | null
+          starts_at?: string
+          state?: Database["public"]["Enums"]["session_state"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_sessions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       programs: {
         Row: {
           audience: string | null
           availability: Database["public"]["Enums"]["availability_state"]
+          capacity: number | null
           checkout_url: string | null
           created_at: string
           educator: string | null
@@ -399,10 +448,12 @@ export type Database = {
           summary: string | null
           unverified_details: Json
           updated_at: string
+          waitlist_enabled: boolean
         }
         Insert: {
           audience?: string | null
           availability?: Database["public"]["Enums"]["availability_state"]
+          capacity?: number | null
           checkout_url?: string | null
           created_at?: string
           educator?: string | null
@@ -430,10 +481,12 @@ export type Database = {
           summary?: string | null
           unverified_details?: Json
           updated_at?: string
+          waitlist_enabled?: boolean
         }
         Update: {
           audience?: string | null
           availability?: Database["public"]["Enums"]["availability_state"]
+          capacity?: number | null
           checkout_url?: string | null
           created_at?: string
           educator?: string | null
@@ -461,8 +514,59 @@ export type Database = {
           summary?: string | null
           unverified_details?: Json
           updated_at?: string
+          waitlist_enabled?: boolean
         }
         Relationships: []
+      }
+      session_attendance: {
+        Row: {
+          enrollment_id: string
+          recorded_at: string
+          recorded_by: string | null
+          session_id: string
+        }
+        Insert: {
+          enrollment_id: string
+          recorded_at?: string
+          recorded_by?: string | null
+          session_id: string
+        }
+        Update: {
+          enrollment_id?: string
+          recorded_at?: string
+          recorded_by?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_attendance_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "educator_session_roster"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
+            foreignKeyName: "session_attendance_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "educator_session_roster"
+            referencedColumns: ["session_id"]
+          },
+          {
+            foreignKeyName: "session_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       students: {
         Row: {
@@ -549,6 +653,15 @@ export type Database = {
           },
         ]
       }
+      educator_session_roster: {
+        Row: {
+          attended: boolean | null
+          enrollment_id: string | null
+          preferred_name: string | null
+          session_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_student_to_own_family: {
@@ -571,6 +684,16 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_program_session: {
+        Args: {
+          session_ends_at: string
+          session_location?: string
+          session_starts_at: string
+          session_title: string
+          target_program: string
+        }
+        Returns: string
+      }
       admin_set_enrollment_state: {
         Args: {
           expected_updated_at: string
@@ -580,10 +703,28 @@ export type Database = {
         }
         Returns: string
       }
+      admin_set_program_capacity: {
+        Args: {
+          expected_updated_at: string
+          next_capacity: number
+          next_waitlist_enabled: boolean
+          target_id: string
+        }
+        Returns: string
+      }
       admin_set_program_publication: {
         Args: {
           expected_updated_at: string
           next_state: Database["public"]["Enums"]["program_publication_state"]
+          target_id: string
+        }
+        Returns: string
+      }
+      admin_set_session_state: {
+        Args: {
+          expected_updated_at: string
+          next_state: Database["public"]["Enums"]["session_state"]
+          note: string
           target_id: string
         }
         Returns: string
@@ -610,6 +751,22 @@ export type Database = {
           program_summary: string
           target_id: string
         }
+        Returns: string
+      }
+      admin_update_program_session: {
+        Args: {
+          expected_updated_at: string
+          session_change_note: string
+          session_ends_at: string
+          session_location: string
+          session_starts_at: string
+          session_title: string
+          target_id: string
+        }
+        Returns: string
+      }
+      clear_session_attendance: {
+        Args: { target_enrollment: string; target_session: string }
         Returns: string
       }
       content_attach_resource_file: {
@@ -699,6 +856,10 @@ export type Database = {
         Args: { family_name: string }
         Returns: string
       }
+      record_session_attendance: {
+        Args: { target_enrollment: string; target_session: string }
+        Returns: string
+      }
       remove_student_from_own_family: {
         Args: { student_id: string }
         Returns: boolean
@@ -720,6 +881,7 @@ export type Database = {
       family_member_role: "primary_guardian" | "invited_guardian"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
+      session_state: "scheduled" | "rescheduled" | "canceled" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -863,6 +1025,8 @@ export const Constants = {
       family_member_role: ["primary_guardian", "invited_guardian"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],
+      session_state: ["scheduled", "rescheduled", "canceled", "completed"],
     },
   },
 } as const
+

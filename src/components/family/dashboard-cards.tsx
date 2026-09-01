@@ -17,6 +17,8 @@ import {
   SectionError,
 } from "@/components/family/section-states"
 import { EnrollmentStateBadge } from "@/components/enrollment/enrollment-state"
+import { SessionList } from "@/components/schedule/session-list"
+import { PROGRAM_TIME_ZONE_LABEL } from "@/lib/schedule/timezone"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/card"
 import type { NextAction } from "@/lib/family/dashboard-state"
 import type { Announcement, LearningResource } from "@/lib/family/content"
+import type { ScheduleSession } from "@/lib/schedule/repository"
 import type {
   EnrollmentRecord,
   SectionState,
@@ -257,10 +260,18 @@ function EnrollmentsCard({
  */
 function ScheduleCard({
   state,
+  sessions,
   heading = "Schedule",
   viewAllHref,
 }: {
   state: SectionState<EnrollmentRecord>
+  /**
+   * Dated sessions for the programs this family holds, or `undefined` when the
+   * session read failed. A failed read leaves the published schedule text
+   * standing rather than emptying the card: the text is still true, and it is
+   * what this card showed before sessions existed.
+   */
+  sessions?: readonly ScheduleSession[]
   heading?: string
   viewAllHref?: string
 }) {
@@ -310,14 +321,42 @@ function ScheduleCard({
                   <p className="hsh-body-sm text-[var(--hsh-text-muted)]">
                     {enrollment.studentName}
                   </p>
+
+                  {/* MPS-ACC-025: a rescheduled or cancelled session replaces
+                      the stale guidance here, on the card a parent actually
+                      looks at, and carries the time it moved from so the
+                      history is not erased. MPS-WFL-007 names "present current
+                      state in dashboard" as a notification method, which is why
+                      this is where a schedule change reaches a family. */}
+                  {sessions ? (
+                    <div className="mt-[var(--hsh-space-2)]">
+                      <SessionList
+                        sessions={sessions.filter(
+                          (session) =>
+                            session.programId === enrollment.programId,
+                        )}
+                        size="compact"
+                        emptyMessage="Home School Haven has not set dated sessions for this program yet."
+                        headingLevel="h4"
+                      />
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>
-            <SampleNote>
-              Home School Haven has not published dated sessions for these
-              programs, so no times or locations are shown. Contact them for
-              details.
-            </SampleNote>
+            {sessions === undefined ? (
+              <SampleNote>
+                Dated sessions could not be loaded just now. The published
+                schedule above is unchanged — please refresh in a moment.
+              </SampleNote>
+            ) : (
+              <SampleNote>
+                Session times are Home School Haven&rsquo;s local time (
+                {PROGRAM_TIME_ZONE_LABEL}). Where no dated session is shown,
+                Home School Haven has not set one and the published schedule is
+                everything they have stated.
+              </SampleNote>
+            )}
           </>
         )}
       </CardContent>

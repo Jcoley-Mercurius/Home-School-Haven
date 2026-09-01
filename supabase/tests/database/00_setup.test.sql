@@ -45,14 +45,21 @@ select is(
   'anon and PUBLIC hold no write privilege on any table'
 );
 
+-- `program_sessions` joined `programs` on the anon side in
+-- `20260902000000_schedule_capacity_waitlist_attendance.sql`, and it is the
+-- only table added to that surface. A session of a PUBLISHED program is public
+-- information -- it is what the public calendar plots -- and the policy on that
+-- table admits nothing else: a draft or archived program's sessions reach no
+-- visitor. Any third name appearing here is a mistake, which is what this
+-- assertion is for.
 select is(
   (
     select coalesce(string_agg(distinct table_name, ', ' order by table_name), '')
     from information_schema.table_privileges
     where table_schema = 'public' and grantee in ('anon', 'public')
   ),
-  'programs',
-  'anon and PUBLIC reach exactly one table: programs'
+  'program_sessions, programs',
+  'anon and PUBLIC reach exactly two tables: programs and program_sessions'
 );
 
 -- No client role may write a role grant. This is the privilege-layer half of

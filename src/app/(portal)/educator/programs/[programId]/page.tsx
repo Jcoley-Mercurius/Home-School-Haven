@@ -7,6 +7,7 @@ import {
   AnnouncementList,
   ResourceList,
 } from "@/components/educator/content-lists"
+import { AttendanceSection } from "@/components/educator/attendance-section"
 import { EducatorRosterSection } from "@/components/educator/roster-section"
 import { ScheduleSection } from "@/components/educator/schedule-section"
 import { ReadFailure } from "@/components/educator/states"
@@ -22,6 +23,7 @@ import {
   listEducatorAnnouncements,
   listEducatorResources,
 } from "@/lib/educator/content"
+import { listProgramSessions } from "@/lib/schedule/repository"
 
 /**
  * One assigned program, read-only (MPS-REQ-018, MPS-REQ-020, MPS-ACC-028,
@@ -105,9 +107,10 @@ export default async function EducatorProgramDetailPage({
   }
 
   const program = result.data
-  const [announcements, resources] = await Promise.all([
+  const [announcements, resources, sessions] = await Promise.all([
     listEducatorAnnouncements([program.id]),
     listEducatorResources([program.id]),
+    listProgramSessions(program.id),
   ])
 
   return shell(
@@ -171,9 +174,23 @@ export default async function EducatorProgramDetailPage({
       <h2 className="hsh-h3 m-0 text-[var(--hsh-text-primary)]">Schedule</h2>
       <ScheduleSection
         program={program}
+        /* A failed session read leaves the published schedule text standing
+           rather than replacing the whole section with an error: the text is
+           still true, and it is what this page showed before sessions existed. */
+        sessions={sessions.status === "ready" ? sessions.items : undefined}
         headingId="detail-schedule"
         headingLevel="h3"
       />
+
+      {/* Attendance streams separately: it is two further authorized reads, and
+          a slow one must cost this page its attendance rather than the roster
+          and schedule an educator came here for. */}
+      <Suspense fallback={<ListSkeleton label="Loading attendance" rows={3} />}>
+        <AttendanceSection
+          programId={program.id}
+          headingId="detail-attendance"
+        />
+      </Suspense>
 
       <h2 className="hsh-h3 m-0 text-[var(--hsh-text-primary)]">Roster</h2>
       <Suspense fallback={<ListSkeleton label="Loading the roster" rows={3} />}>

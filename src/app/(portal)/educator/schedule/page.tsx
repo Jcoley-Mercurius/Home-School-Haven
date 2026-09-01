@@ -6,23 +6,33 @@ import { ReviewDataBanner } from "@/components/family/section-states"
 import { EducatorPortalShell } from "@/components/layout/educator-portal-shell"
 import { requireRole } from "@/lib/auth/guards"
 import { listAssignedPrograms } from "@/lib/educator/assignments"
+import {
+  listVisibleSessions,
+  sessionsForProgram,
+} from "@/lib/schedule/repository"
+import { PROGRAM_TIME_ZONE_LABEL } from "@/lib/schedule/timezone"
 
 /**
  * Schedule, scoped to assignment and read-only (MPS-REQ-018, MPS-REQ-020).
  *
- * WHAT THIS PAGE CAN HONESTLY SHOW
+ * WHAT THIS PAGE SHOWS
  *
- * There is no schedule table in this release. Schedule is published text on
- * `public.programs`, and `NULL` means Home School Haven does not publish that
- * fact. So this lists the assigned programs and, for each, the schedule facts
- * that actually exist — no computed session, no generated calendar, no
- * "upcoming" ordering over ranges that carry no year (deviation D-EW2, the
- * educator counterpart of the family area's D-FD1).
+ * For each assigned program: the schedule text Home School Haven publishes,
+ * where `NULL` means it publishes no such fact, AND the dated sessions an
+ * administrator has authored (HSH-SLICE-ADM-04). Neither is derived from the
+ * other — turning "Tuesdays" into a date would invent a fact, and an educator
+ * would plan around it. Deviation D-EW2 therefore narrows rather than closing:
+ * it stands for every program that has no authored sessions.
  *
- * Schedule creation, capacity changes, waitlist operations, attendance,
- * cancellation, transfers, and notifications are not deferred UI on this page.
- * None of them exists as a capability for any role in this release, so there is
- * nothing here to disable or hide.
+ * The sessions are read ONCE for the whole page rather than per program. The
+ * RLS policies already bound the result to what this educator may see, so one
+ * query and an in-memory split is both fewer round trips and one fewer place a
+ * per-program filter could be written wrongly.
+ *
+ * Schedule creation, capacity changes, waitlist operations, cancellation, and
+ * transfers are administrator decisions (MPS-RUL-005) and are not on this page.
+ * Attendance is an educator operation and lives on each program's own page,
+ * beside the roster it is recorded against.
  */
 export const metadata: Metadata = {
   title: "Schedule — Educator — Home School Haven of SWFL",
@@ -30,7 +40,10 @@ export const metadata: Metadata = {
 
 export default async function EducatorSchedulePage() {
   const viewer = await requireRole("educator", "/educator/schedule")
-  const assigned = await listAssignedPrograms(viewer.userId)
+  const [assigned, sessions] = await Promise.all([
+    listAssignedPrograms(viewer.userId),
+    listVisibleSessions(),
+  ])
 
   return (
     <EducatorPortalShell viewerLabel={viewer.displayName ?? viewer.email ?? ""}>
@@ -46,7 +59,8 @@ export default async function EducatorSchedulePage() {
           </h1>
           <p className="hsh-body-lg max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
             The schedule Home School Haven has published for each program you
-            are assigned to, exactly as families see it.
+            are assigned to, exactly as families see it. Session times are Home
+            School Haven&rsquo;s local time ({PROGRAM_TIME_ZONE_LABEL}).
           </p>
         </header>
 
@@ -63,6 +77,14 @@ export default async function EducatorSchedulePage() {
               <ScheduleSection
                 key={program.id}
                 program={program}
+                /* A failed session read leaves the published text standing:
+                   it is still true, and it is what this page showed before
+                   sessions existed. */
+                sessions={
+                  sessions.status === "ready"
+                    ? sessionsForProgram(sessions.items, program.id)
+                    : undefined
+                }
                 headingId={`schedule-${program.id}`}
                 headingLevel="h2"
               />

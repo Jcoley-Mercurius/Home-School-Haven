@@ -6,6 +6,8 @@ import { ExternalLink } from "lucide-react"
 import { ProgramFactsForm } from "@/components/admin/program-form"
 import { ListSkeleton } from "@/components/admin/list-skeleton"
 import { RosterSection } from "@/components/admin/roster-section"
+import { CapacitySection } from "@/components/admin/capacity-section"
+import { ScheduleSection } from "@/components/admin/schedule-section"
 import { PublicationActions } from "@/components/admin/program-publication-actions"
 import { PublicationBadge } from "@/components/admin/publication-state"
 import { AvailabilityBadge } from "@/components/program/availability-badge"
@@ -185,20 +187,34 @@ export default async function AdminProgramDetailPage({
         <ProgramFactsForm program={program} />
       </section>
 
-      {/* The roster streams separately from the program facts: it is a second
-          authorized read, and a slow or failed roster must cost this page its
-          roster rather than the form an administrator came here to use. */}
+      {/* Each of the three sections below streams separately from the program
+          facts and from one another: every one is its own authorized read, and
+          a slow or failed schedule must cost this page its schedule rather than
+          the form an administrator came here to use. */}
+      <Suspense
+        fallback={<ListSkeleton label="Loading the schedule" rows={3} />}
+      >
+        <ScheduleSection programId={program.id} programName={program.name} />
+      </Suspense>
+
+      <Suspense fallback={<ListSkeleton label="Loading capacity" rows={2} />}>
+        <CapacitySection program={program} />
+      </Suspense>
+
       <Suspense fallback={<ListSkeleton label="Loading the roster" rows={3} />}>
         <RosterSection programId={program.id} programName={program.name} />
       </Suspense>
 
       <p className="hsh-body-sm max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-        Capacity figures, scholarships, discounts, and refunds are not managed
-        here. Home School Haven has not confirmed capacity numbers, and every
-        financial decision remains an offline matter under existing policy.
-        Educator assignments for this program are managed from{" "}
-        <TextLink href="/admin/educators">Educators</TextLink>, and enrollment
-        records from <TextLink href="/admin/enrollments">Enrollments</TextLink>.
+        Scholarships, discounts, refunds, credits, and transfers are not managed
+        here: every financial decision remains an offline matter under Home
+        School Haven&rsquo;s existing policy, and nothing on this page decides
+        or issues one. Capacity above is a number an administrator sets; it
+        creates and removes no enrollment. Educator assignments for this program
+        are managed from <TextLink href="/admin/educators">Educators</TextLink>,
+        and enrollment records — including moving a waitlisted record to
+        confirmed — from{" "}
+        <TextLink href="/admin/enrollments">Enrollments</TextLink>.
       </p>
     </>,
   )

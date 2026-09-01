@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button"
 import { calendarTermRanges, monthKeyOf } from "@/content/calendar"
 import { guidanceHref, programsHref } from "@/content/foundation-content"
 import { listPublishedPrograms } from "@/lib/programs/repository"
+import { listPublicSessions } from "@/lib/schedule/repository"
+import { sessionCalendarEntries } from "@/lib/schedule/calendar-entries"
+import { calendarEntries } from "@/content/calendar"
 
 /**
  * Public calendar (MPS-REQ-007, MPS-REQ-008, MPS-REQ-009, MPS-ACC-009,
@@ -37,8 +40,19 @@ import { listPublishedPrograms } from "@/lib/programs/repository"
  * the "Upcoming" panel title, which here reads "Published programs", because
  * most published program ranges carry no year and cannot be ordered in time.
  *
+ * WHAT CHANGED IN HSH-SLICE-ADM-04
+ *
+ * The grid now also draws the dated sessions of published programs. Those are
+ * not an exception to the two rules above — they are the first content that
+ * SATISFIES the first one, because a session stores a real day and a real year
+ * where the published ranges store neither. A cancelled or rescheduled session
+ * is drawn and named as such rather than removed, so a family who planned
+ * around it can learn from the public page that it changed (MPS-ACC-031).
+ *
  * Statically rendered with no `revalidate`, for the reason recorded at length
- * in `src/app/programs/page.tsx`.
+ * in `src/app/programs/page.tsx`. Every schedule mutation calls
+ * `revalidatePath("/calendar")`, so a change reaches this page on the next
+ * request rather than on a timer.
  */
 export const metadata: Metadata = {
   title: "Calendar — Home School Haven of SWFL",
@@ -50,8 +64,25 @@ export default async function CalendarPage() {
   /* Build-time month. `CalendarView` moves to the visitor's current month once
      it mounts; passing it in keeps the server and client markup identical. */
   const initialMonth = monthKeyOf(new Date())
-  const programs = await listPublishedPrograms()
+  const [programs, sessions] = await Promise.all([
+    listPublishedPrograms(),
+    listPublicSessions(),
+  ])
   const datedPrograms = programs?.filter((program) => program.publishedDates)
+
+  /* Two sets, merged here rather than in either source. The inventory is what
+     Home School Haven publishes; the sessions are what an administrator
+     authored, and each carries a real day and year — which is exactly the
+     condition `src/content/calendar.ts` requires before anything is drawn.
+     RLS already narrowed the sessions to published programs, so no filter is
+     repeated here. A failed session read leaves the published inventory
+     drawing exactly what it drew before, rather than emptying the calendar. */
+  const entries = [
+    ...calendarEntries,
+    ...(sessions.status === "ready"
+      ? sessionCalendarEntries(sessions.items)
+      : []),
+  ]
 
   return (
     <>
@@ -78,7 +109,7 @@ export default async function CalendarPage() {
 
         <div className="hsh-container hsh-container-public grid items-start gap-[var(--hsh-space-8)] lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="flex flex-col gap-[var(--hsh-space-12)]">
-            <CalendarView initialMonth={initialMonth} />
+            <CalendarView initialMonth={initialMonth} entries={entries} />
 
             <section
               aria-labelledby="term-ranges-heading"
