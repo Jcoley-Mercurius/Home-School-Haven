@@ -96,7 +96,14 @@ export const reassurancePanel = {
   points: [
     {
       glyph: "people" as const,
-      text: "Online requests are not open yet, so submitted messages are not recorded or seen.",
+      /* CHANGED 2026-09-01, and it had to change: this said "online requests
+         are not open yet, so submitted messages are not recorded or seen",
+         which was true only while no destination existed. It does now
+         (`src/lib/contact/recorder.ts`), and a family told nobody would see
+         their message writes a different message. Truthful state, no promised
+         timeline (MPS-RUL-010). Needs owner sign-off as public copy —
+         GAP-PUBLIC-005. */
+      text: "Your request is recorded privately and seen only by Home School Haven administrators.",
     },
     {
       glyph: "heart" as const,

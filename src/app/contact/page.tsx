@@ -74,13 +74,14 @@ export default function ContactPage() {
           {/* Stated before anything is typed, not after a failed submission. */}
           <div className="flex max-w-[70ch] flex-col gap-[var(--hsh-space-2)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-strong)] bg-[var(--hsh-surface-elevated)] p-[var(--hsh-space-5)]">
             <h2 className="hsh-h4 text-[var(--hsh-text-primary)]">
-              Online requests are not open yet
+              What happens to your request
             </h2>
             <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
-              This is a private review environment. The form below works and is
-              checked, but Home School Haven has not connected a destination for
-              it yet, so nothing you send is recorded or seen by anyone. To
-              reach us today, please call{" "}
+              What you send is recorded privately and goes to Home School
+              Haven&rsquo;s administrators. A request for help with the cost of
+              a class is seen only by them &mdash; never by an educator, and
+              never in anything shared with other families. Nothing here decides
+              anything about cost or enrollment. To reach us today, please call{" "}
               <a
                 href={telHref}
                 data-inline-link="true"

@@ -275,6 +275,68 @@ export type Database = {
           },
         ]
       }
+      inquiries: {
+        Row: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          id: string
+          message: string
+          owner_user_id: string | null
+          program_id: string | null
+          reference: string
+          state: Database["public"]["Enums"]["inquiry_state"]
+          state_changed_at: string
+          submission_token: string
+          submitted_at: string
+          type: Database["public"]["Enums"]["inquiry_type"]
+          updated_at: string
+        }
+        Insert: {
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          owner_user_id?: string | null
+          program_id?: string | null
+          reference: string
+          state?: Database["public"]["Enums"]["inquiry_state"]
+          state_changed_at?: string
+          submission_token: string
+          submitted_at?: string
+          type: Database["public"]["Enums"]["inquiry_type"]
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          owner_user_id?: string | null
+          program_id?: string | null
+          reference?: string
+          state?: Database["public"]["Enums"]["inquiry_state"]
+          state_changed_at?: string
+          submission_token?: string
+          submitted_at?: string
+          type?: Database["public"]["Enums"]["inquiry_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_resources: {
         Row: {
           content_type: string | null
@@ -720,6 +782,15 @@ export type Database = {
         }
         Returns: string
       }
+      admin_set_inquiry_state: {
+        Args: {
+          p_clear_owner?: boolean
+          p_inquiry_id: string
+          p_next_state?: Database["public"]["Enums"]["inquiry_state"]
+          p_owner_user_id?: string
+        }
+        Returns: Database["public"]["Enums"]["inquiry_state"]
+      }
       admin_set_program_capacity: {
         Args: {
           expected_updated_at: string
@@ -894,6 +965,18 @@ export type Database = {
         Args: { student_id: string }
         Returns: boolean
       }
+      submit_inquiry: {
+        Args: {
+          p_email: string
+          p_message: string
+          p_name: string
+          p_phone: string
+          p_program_slug: string
+          p_submission_token: string
+          p_type: Database["public"]["Enums"]["inquiry_type"]
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "parent" | "educator" | "admin" | "owner"
@@ -909,6 +992,14 @@ export type Database = {
         | "canceled"
         | "blocked"
       family_member_role: "primary_guardian" | "invited_guardian"
+      inquiry_state:
+        | "submitted"
+        | "under_review"
+        | "awaiting_family"
+        | "approved_path_provided"
+        | "not_available"
+        | "closed"
+      inquiry_type: "guidance" | "question" | "visit" | "assistance"
       program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
@@ -1054,6 +1145,15 @@ export const Constants = {
         "blocked",
       ],
       family_member_role: ["primary_guardian", "invited_guardian"],
+      inquiry_state: [
+        "submitted",
+        "under_review",
+        "awaiting_family",
+        "approved_path_provided",
+        "not_available",
+        "closed",
+      ],
+      inquiry_type: ["guidance", "question", "visit", "assistance"],
       program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],
@@ -1061,3 +1161,4 @@ export const Constants = {
     },
   },
 } as const
+

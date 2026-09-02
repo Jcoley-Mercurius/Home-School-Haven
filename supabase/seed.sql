@@ -551,5 +551,57 @@ begin
     ('80000000-0000-4000-8000-000000000002',
      '50000000-0000-4000-8000-000000000005')
   on conflict (session_id, enrollment_id) do nothing;
+
+  -- -------------------------------------------------------------------------
+  -- Inquiries (sample)
+  -- -------------------------------------------------------------------------
+  -- Invented people, `@example.com` addresses reserved by RFC 2606, and no
+  -- real phone number (MPS-RUL-007). No message names a child, a price, an
+  -- amount, a policy, or a promise, because a sample that did would put words
+  -- into Home School Haven's mouth and put a made-up family circumstance into
+  -- a screenshot (MPS-RUL-010, MPS-RUL-006).
+  --
+  -- Coverage: one of each pathway, and four of the six review states so the
+  -- queue, the state badges, and the transition buttons all have something to
+  -- render. `submission_token` is a fixed UUID per row so re-seeding is
+  -- idempotent the same way the public form's retry is.
+  --
+  -- Written directly rather than through `public.submit_inquiry`, because a
+  -- seed is not a submission: these carry chosen references, chosen times, and
+  -- chosen states, none of which that function permits a caller to set.
+  insert into public.inquiries
+    (id, reference, type, submitted_at, state, state_changed_at,
+     owner_user_id, contact_name, contact_email, contact_phone, program_id,
+     message, submission_token) values
+    ('a0000000-0000-4000-8000-000000000001', 'HSH-SAMPLE1', 'assistance',
+     '2026-08-31 12:00:00+00', 'submitted', now() - interval '2 days',
+     null, 'Sample Parent One', 'sample.one@example.com', null,
+     '10000000-0000-4000-8000-000000000002',
+     'Sample request for the Foundation Review. A family would describe their '
+     'situation here and ask what support might be possible.',
+     'a1000000-0000-4000-8000-000000000001'),
+    ('a0000000-0000-4000-8000-000000000002', 'HSH-SAMPLE2', 'guidance',
+     '2026-08-28 12:00:00+00', 'under_review', now() - interval '1 day',
+     '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Two',
+     'sample.two@example.com', null, null,
+     'Sample request for the Foundation Review. A family would ask which '
+     'program suits their child here.',
+     'a1000000-0000-4000-8000-000000000002'),
+    ('a0000000-0000-4000-8000-000000000003', 'HSH-SAMPLE3', 'visit',
+     '2026-08-24 12:00:00+00', 'awaiting_family', now() - interval '6 days',
+     '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Three',
+     'sample.three@example.com', '555-0100',
+     '10000000-0000-4000-8000-000000000004',
+     'Sample request for the Foundation Review. A family would ask about '
+     'visiting here.',
+     'a1000000-0000-4000-8000-000000000003'),
+    ('a0000000-0000-4000-8000-000000000004', 'HSH-SAMPLE4', 'question',
+     '2026-08-13 12:00:00+00', 'closed', now() - interval '18 days',
+     '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Four',
+     'sample.four@example.com', null, null,
+     'Sample request for the Foundation Review. A general question would be '
+     'written here, and this one has been answered and closed.',
+     'a1000000-0000-4000-8000-000000000004')
+  on conflict (id) do nothing;
 end;
 $$;

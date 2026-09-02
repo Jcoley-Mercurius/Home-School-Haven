@@ -69,6 +69,37 @@ export default async function AdminCommunicationsPage() {
           </p>
         </header>
 
+        {/* Inbound family requests, alongside the outbound announcements and
+            resources below. The queue lives here because MDS
+            `navigation.specification.admin` names no Inquiries destination and
+            adding one is the MDS's decision, not this slice's (MDS-GAP-P2, see
+            `./inquiries/page.tsx`). */}
+        <section
+          aria-labelledby="inquiries-heading"
+          className="flex flex-col gap-[var(--hsh-space-3)]"
+        >
+          <h2
+            id="inquiries-heading"
+            className="hsh-h3 m-0 text-[var(--hsh-text-primary)]"
+          >
+            Inquiries
+          </h2>
+          <p className="hsh-body-sm m-0 max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+            Requests sent from the public site: guidance, visits, general
+            questions, and help with the cost of a class. Requests about cost
+            are private to administrators and are never shown to educators.
+          </p>
+          <div>
+            <Button
+              render={<Link href="/admin/communications/inquiries" />}
+              variant="secondary"
+              size="md"
+            >
+              Open inquiries
+            </Button>
+          </div>
+        </section>
+
         <section
           aria-labelledby="announcements-heading"
           className="flex flex-col gap-[var(--hsh-space-4)]"

@@ -1,0 +1,63 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem:
+        - link "Communications":
+          - /url: /admin/communications
+      - listitem: Inquiries
+  - heading "Inquiries" [level=1]
+  - paragraph: Every request sent from the public site — guidance, visits, general questions, and help with the cost of a class — with who owns it and where it stands.
+  - paragraph: Requests about cost are private, and nothing here replies for you
+  - text: A request for help with the cost of a class is visible only to administrators. Educators cannot see any inquiry, and no part of it appears on a roster or in a program announcement. Moving an inquiry records where your review stands; it sends the family nothing, and it decides no discount, scholarship, or price. Replying is still yours to do, by email or phone.
+  - status: 4 inquiries, newest first.
+  - table "Inquiries, with the request type, who sent it, when it arrived, who owns it, and its current state. Select an inquiry to read what the family wrote and to move it.":
+    - caption: Inquiries, with the request type, who sent it, when it arrived, who owns it, and its current state. Select an inquiry to read what the family wrote and to move it.
+    - rowgroup:
+      - row "Request From Arrived Owner State Action":
+        - columnheader "Request"
+        - columnheader "From"
+        - columnheader "Arrived"
+        - columnheader "Owner"
+        - columnheader "State"
+        - columnheader "Action"
+    - rowgroup:
+      - row /Cost assistance Sample Parent One Aug \d+, \d+ Unassigned Submitted Open the cost assistance request HSH-SAMPLE1 from Sample Parent One/:
+        - rowheader "Cost assistance"
+        - cell "Sample Parent One"
+        - cell /Aug \d+, \d+/:
+          - time: /Aug \d+, \d+/
+        - cell "Unassigned"
+        - cell "Submitted"
+        - cell "Open the cost assistance request HSH-SAMPLE1 from Sample Parent One":
+          - button "Open the cost assistance request HSH-SAMPLE1 from Sample Parent One"
+      - row /Guidance Sample Parent Two Aug \d+, \d+ You Under review Open the guidance request HSH-SAMPLE2 from Sample Parent Two/:
+        - rowheader "Guidance"
+        - cell "Sample Parent Two"
+        - cell /Aug \d+, \d+/:
+          - time: /Aug \d+, \d+/
+        - cell "You"
+        - cell "Under review"
+        - cell "Open the guidance request HSH-SAMPLE2 from Sample Parent Two":
+          - button "Open the guidance request HSH-SAMPLE2 from Sample Parent Two"
+      - row /Visit Sample Parent Three Aug \d+, \d+ You Awaiting family Open the visit request HSH-SAMPLE3 from Sample Parent Three/:
+        - rowheader "Visit"
+        - cell "Sample Parent Three"
+        - cell /Aug \d+, \d+/:
+          - time: /Aug \d+, \d+/
+        - cell "You"
+        - cell "Awaiting family"
+        - cell "Open the visit request HSH-SAMPLE3 from Sample Parent Three":
+          - button "Open the visit request HSH-SAMPLE3 from Sample Parent Three"
+      - row /General question Sample Parent Four Aug \d+, \d+ You Closed Open the general question request HSH-SAMPLE4 from Sample Parent Four/:
+        - rowheader "General question"
+        - cell "Sample Parent Four"
+        - cell /Aug \d+, \d+/:
+          - time: /Aug \d+, \d+/
+        - cell "You"
+        - cell "Closed"
+        - cell "Open the general question request HSH-SAMPLE4 from Sample Parent Four":
+          - button "Open the general question request HSH-SAMPLE4 from Sample Parent Four"
