@@ -412,6 +412,7 @@ test.describe("accessibility and responsive", () => {
   test("the registration page structure is stable", async ({ page }) => {
     await signIn(page, ACCOUNTS.parentWithFamily)
     await register(page, PROGRAMS.approval, FREE_STUDENT)
+    await register(page, PROGRAMS.approval, FREE_STUDENT)
     await page.waitForURL(/\/family\/enrollments\//)
     await expect(page.locator("main")).toMatchAriaSnapshot({
       name: "family-enrollment-approval-pending.aria.yml",

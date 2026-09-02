@@ -84,7 +84,7 @@ export default async function EnrollPage({
         </header>
 
         <div className="flex max-w-[var(--hsh-content-reading)] flex-col gap-[var(--hsh-space-6)]">
-          {programState.status !== "ready" ? (
+          {familyState.status !== "ready" || programState.status !== "ready" ? (
             /* Not "no programs": the read did not happen. Rendering an empty
                form here would invite a registration nothing could accept. */
             <Alert tone="warning" title="This program could not be loaded">

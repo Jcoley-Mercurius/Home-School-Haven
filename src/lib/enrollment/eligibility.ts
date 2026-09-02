@@ -126,7 +126,7 @@ const OUTCOME: Record<EnrollmentOutcome, OutcomePresentation> = {
  * @returns The outcome, or `null` when it is not one this build knows.
  */
 export function parseOutcome(value: unknown): EnrollmentOutcome | null {
-  return typeof value === "string" && value in OUTCOME
+  return typeof value === "string" && Object.hasOwn(OUTCOME, value)
     ? (value as EnrollmentOutcome)
     : null
 }

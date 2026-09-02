@@ -29,7 +29,7 @@ import { isSupabaseConfigured } from "@/lib/env"
 import { createClient } from "@/lib/supabase/server"
 
 import type { AdminRead, PublicationState } from "@/lib/admin/repository"
-import type { Enums } from "@/lib/supabase/types"
+import type { Enums, Tables } from "@/lib/supabase/types"
 
 type Availability = Enums<"availability_state">
 type ConfirmationMode = Enums<"program_confirmation_mode">
@@ -85,29 +85,30 @@ type AdminProgram = {
 // prettier-ignore
 const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,confirmation_mode,import_status,updated_at"
 
-type ProgramRow = {
-  id: string
-  slug: string
-  name: string
-  summary: string | null
-  audience: string | null
-  format: string | null
-  location: string | null
-  educator: string | null
-  published_dates: string | null
-  published_schedule: string | null
-  published_duration: string | null
-  published_session_length: string | null
-  published_price: string | null
-  availability: Availability
-  publication_state: PublicationState
-  checkout_url: string | null
-  capacity: number | null
-  waitlist_enabled: boolean
-  confirmation_mode: ConfirmationMode
-  import_status: string
-  updated_at: string
-}
+type ProgramRow = Pick<
+  Tables<"programs">,
+  | "id"
+  | "slug"
+  | "name"
+  | "summary"
+  | "audience"
+  | "format"
+  | "location"
+  | "educator"
+  | "published_dates"
+  | "published_schedule"
+  | "published_duration"
+  | "published_session_length"
+  | "published_price"
+  | "availability"
+  | "publication_state"
+  | "checkout_url"
+  | "capacity"
+  | "waitlist_enabled"
+  | "confirmation_mode"
+  | "import_status"
+  | "updated_at"
+>
 
 /**
  * Shape one row for the operations surfaces.
