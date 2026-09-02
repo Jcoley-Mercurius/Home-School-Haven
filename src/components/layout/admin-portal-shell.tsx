@@ -7,6 +7,7 @@
 import {
   BookOpen,
   CalendarDays,
+  ClipboardList,
   GraduationCap,
   Home,
   LayoutDashboard,
@@ -99,13 +100,14 @@ const DESTINATIONS: PortalDestination[] = [
     icon: GraduationCap,
     onMobileBar: false,
   },
-  /* MDS `navigation.specification.admin` names Communications and Schedule
-     among the administrator destinations. Communications arrived with
-     HSH-SLICE-CONTENT-01 and Schedule with HSH-SLICE-ADM-04, each when there
-     was something to point at; Reports and Settings remain missing and D-AO3 is
-     narrowed to those two. Both are off the mobile bar for the same reason
-     Families and Educators are: more destinations on the bar would put every
-     target below the approved 44 px minimum. */
+  /* MDS `navigation.specification.admin` names Communications, Schedule, and
+     Reports among the administrator destinations. Communications arrived with
+     HSH-SLICE-CONTENT-01, Schedule with HSH-SLICE-ADM-04, and Reports with
+     HSH-SLICE-EVIDENCE-01, each when there was something to point at; only
+     Settings remains missing and D-AO3 is narrowed to it alone. All are off
+     the mobile bar for the same reason Families and Educators are: more
+     destinations on the bar would put every target below the approved 44 px
+     minimum. */
   {
     label: "Schedule",
     href: "/admin/schedule",
@@ -116,6 +118,12 @@ const DESTINATIONS: PortalDestination[] = [
     label: "Communications",
     href: "/admin/communications",
     icon: Megaphone,
+    onMobileBar: false,
+  },
+  {
+    label: "Reports",
+    href: "/admin/reports",
+    icon: ClipboardList,
     onMobileBar: false,
   },
   { label: "Account", href: "/account", icon: UserRound, onMobileBar: true },
