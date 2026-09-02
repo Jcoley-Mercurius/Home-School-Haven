@@ -34,10 +34,12 @@ import { type AcceptInvitationFormState } from "./form-state"
  *
  * ORDER OF OPERATIONS
  *
- * Password first, then acceptance. If acceptance fails, the visitor still holds
- * their session and can submit again — the password call is idempotent and the
- * invitation is still pending. The reverse order would risk an account that
- * holds family access with no password anyone knows.
+ * Invitation status first, then password, then acceptance. The status check
+ * closes a stale form before it can change the account. If acceptance fails,
+ * the visitor still holds their session and can submit again — the invitation
+ * remains pending and the password call is idempotent. Accepting before setting
+ * the password would risk an account that holds family access with no password
+ * anyone knows.
  *
  * The password rules mirror `supabase/config.toml`
  * (`minimum_password_length = 12`, `password_requirements =
@@ -96,6 +98,18 @@ export async function acceptInvitation(
 
   try {
     const supabase = await createClient()
+
+    const { data: invitationStatus, error: statusError } = await supabase.rpc(
+      "family_invitation_status",
+    )
+
+    if (statusError) {
+      return { status: "failed", fieldErrors: {} }
+    }
+
+    if (invitationStatus !== "pending") {
+      return { status: "closed", fieldErrors: {} }
+    }
 
     const { error: passwordError } = await supabase.auth.updateUser({
       password: parsed.data.password,

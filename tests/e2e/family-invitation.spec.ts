@@ -68,47 +68,60 @@ async function signIn(page: Page, email: string) {
   await page.waitForURL((url: URL) => !url.pathname.startsWith("/sign-in"))
 }
 
-/** The most recent invitation link Mailpit holds for an address. */
+/** The newest invitation link Mailpit holds, optionally excluding one used before. */
 async function latestInviteLink(
   page: Page,
   address: string,
+  previousLink?: string,
 ): Promise<string | null> {
-  let messages: { ID: string }[] = []
   for (let attempt = 0; attempt < 20; attempt += 1) {
     const list = await page.request.get(`${MAILPIT}/api/v1/search`, {
       params: { query: `to:${address}` },
     })
-    messages = ((await list.json()) as { messages: { ID: string }[] }).messages
-    if (messages?.length) break
+    const messages = ((await list.json()) as { messages?: { ID: string }[] })
+      .messages
+
+    for (const message of messages ?? []) {
+      const body = await page.request.get(
+        `${MAILPIT}/api/v1/message/${message.ID}`,
+      )
+      const { HTML, Text } = (await body.json()) as {
+        HTML: string
+        Text: string
+      }
+
+      /* The email must not carry child, assistance, or enrollment detail.
+         Asserted here rather than in a separate test because this is the only
+         place the delivered message itself is available. */
+      const delivered = `${HTML} ${Text}`.toLowerCase()
+      for (const forbidden of [
+        "student",
+        "child",
+        "enrollment",
+        "assistance",
+      ]) {
+        expect(
+          delivered,
+          `invitation email must not mention ${forbidden}`,
+        ).not.toContain(forbidden)
+      }
+
+      const match = HTML.match(/href="([^"]*\/auth\/confirm[^"]*)"/)
+      if (!match) continue
+      const href = match[1].replace(/&amp;/g, "&")
+
+      /* Path + query only: the emailed link is absolute and built from
+         Supabase's `site_url` (the `next dev` port), while this harness serves
+         the production build on 3100. */
+      const url = new URL(href)
+      const link = `${url.pathname}${url.search}`
+      if (link !== previousLink) return link
+    }
+
     await page.waitForTimeout(500)
   }
-  if (!messages?.length) return null
 
-  const body = await page.request.get(
-    `${MAILPIT}/api/v1/message/${messages[0].ID}`,
-  )
-  const { HTML, Text } = (await body.json()) as { HTML: string; Text: string }
-
-  /* The email must not carry child, assistance, or enrollment detail. Asserted
-     here rather than in a separate test because this is the only place the
-     delivered message itself is available. */
-  const delivered = `${HTML} ${Text}`.toLowerCase()
-  for (const forbidden of ["student", "child", "enrollment", "assistance"]) {
-    expect(
-      delivered,
-      `invitation email must not mention ${forbidden}`,
-    ).not.toContain(forbidden)
-  }
-
-  const match = HTML.match(/href="([^"]*\/auth\/confirm[^"]*)"/)
-  if (!match) return null
-  const href = match[1].replace(/&amp;/g, "&")
-
-  /* Path + query only: the emailed link is absolute and built from Supabase's
-     `site_url` (the `next dev` port), while this harness serves the production
-     build on 3100. */
-  const url = new URL(href)
-  return `${url.pathname}${url.search}`
+  return null
 }
 
 /**
@@ -277,7 +290,7 @@ test.describe("the invitation round trip", () => {
     await page.goto(link as string)
     await expect(page).toHaveURL(/\/link-expired/)
 
-    const newLink = await latestInviteLink(page, address)
+    const newLink = await latestInviteLink(page, address, link as string)
     expect(newLink).not.toBeNull()
 
     await page.context().clearCookies()
