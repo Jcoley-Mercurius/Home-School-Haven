@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process"
+
 import AxeBuilder from "@axe-core/playwright"
 import { type Page } from "@playwright/test"
 
@@ -17,6 +19,44 @@ import { expect, test } from "./fixtures"
  */
 
 /* MDS DESIGN-SYSTEM.md §8: mobile 0–639, tablet 640–1023, desktop 1024–1439, wide 1440+. */
+const SUPABASE_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
+
+const LOCAL_STACK = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
+)
+
+const LOCAL_DB = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+
+/**
+ * Remove the inquiries this file submits.
+ *
+ * Since 2026-09-01 a submission on this page creates a real record, so this
+ * suite now writes to the shared fixture. The rows it makes are its own — the
+ * seeded samples all carry an `HSH-SAMPLE*` reference — and leaving them behind
+ * would grow the administrator queue on every run and break
+ * `admin-inquiries.spec.ts`, which counts what is waiting.
+ */
+function clearSubmittedInquiries() {
+  execFileSync(
+    "psql",
+    [
+      LOCAL_DB,
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-c",
+      `delete from public.audit_events where entity_type = 'inquiry'
+         and changed_fields ->> 'reference' not like 'HSH-SAMPLE%';`,
+      "-c",
+      "delete from public.inquiries where reference not like 'HSH-SAMPLE%';",
+    ],
+    { stdio: "inherit" },
+  )
+}
+
+test.afterAll(async () => {
+  if (LOCAL_STACK) clearSubmittedInquiries()
+})
+
 const VIEWPORTS = {
   mobile: { width: 390, height: 844 },
   tablet: { width: 768, height: 1024 },
@@ -149,17 +189,30 @@ test.describe("approved content", () => {
       "Have a general inquiry? We're happy to help and point you in the right direction.",
       "Request a confidential conversation with our care team.",
       "We're here for you.",
-      "Online requests are not open yet, so submitted messages are not recorded or seen.",
+      "Your request is recorded privately and seen only by Home School Haven administrators.",
     ]) {
       expect(body).toContain(line)
     }
   })
 
-  test("says up front that requests are not recorded yet", async ({ page }) => {
+  test("says up front what happens to a request, before anything is typed", async ({
+    page,
+  }) => {
+    /* This banner used to say the opposite -- that nothing was recorded or
+       seen -- which was true only while no destination existed. It does now
+       (`src/lib/contact/recorder.ts`), and a family told nobody would read
+       their message writes a different message, so the page has to say the
+       truthful thing BEFORE they type it (MPS-RUL-003, MPS-ACC-012). */
     await gotoContact(page)
     await expect(
-      page.getByRole("heading", { name: "Online requests are not open yet" }),
+      page.getByRole("heading", { name: "What happens to your request" }),
     ).toBeVisible()
+    const banner = page.getByText("recorded privately and goes to Home School")
+    await expect(banner).toBeVisible()
+    await expect(banner).toContainText("never by an educator")
+    await expect(banner).toContainText(
+      "Nothing here decides anything about cost or enrollment",
+    )
   })
 
   test("offers the approved request types and no direct-registration action", async ({
@@ -316,49 +369,93 @@ test.describe("submission", () => {
     ).toBeVisible()
   })
 
-  test("a valid submission is never claimed as received, and keeps what was typed", async ({
+  test("a valid submission is recorded once and confirmed with a reference", async ({
     page,
   }) => {
+    /* MPS-ACC-012. This test asserted the opposite until 2026-09-01, when a
+       destination was built: the record now exists, so claiming receipt is the
+       truthful outcome rather than the forbidden one. What MPS-ACC-014 forbids
+       is claiming it WITHOUT a record, which the failure test below still
+       covers. */
+    test.skip(
+      !SUPABASE_CONFIGURED,
+      "Needs a Supabase project for the request to be recorded.",
+    )
+
     await gotoContact(page)
     await fill(page)
     await page.getByRole("button", { name: "Send Request" }).click()
 
-    const blocked = page.locator('[data-slot="submission-blocked"]')
-    await expect(blocked).toBeVisible()
-    await expect(blocked).toContainText("Your request was not sent")
-    await expect(blocked).toContainText("nothing was recorded")
-    await expect(
-      blocked.getByRole("link", { name: /239-347-9356/ }),
-    ).toBeVisible()
+    const received = page.locator('[data-slot="submission-received"]')
+    await expect(received).toBeVisible()
+    await expect(received).toContainText("Request received")
+    /* The reference is the family's half of the phone fallback. */
+    await expect(received).toContainText(/HSH-[A-Z0-9]{6}/)
 
-    /* MPS-ACC-014: success is never claimed. The reference draws the
-       "Request received" panel as scenery; it is a state, and it is
-       unreachable until a destination exists (D-C4). */
+    /* No enrollment, no place, and no outcome is implied by a received
+       request (MPS-RUL-004, DO-DONT "Trust states"). Scoped to the panel: the
+       page around it legitimately uses words like "approved" in other senses,
+       and it is the confirmation itself that must promise nothing. */
+    await expect(received).toContainText("not an enrollment")
+    const panel = (await received.innerText()).toLowerCase()
+    for (const forbidden of [
+      "approved",
+      "eligible",
+      "discount",
+      "scholarship",
+      "your place",
+      "we'll be in touch shortly",
+    ]) {
+      expect(panel).not.toContain(forbidden)
+    }
+
+    /* Nothing was left blocked: a recorded request clears the failure panel. */
     expect(
-      await page.locator('[data-slot="submission-received"]').count(),
+      await page.locator('[data-slot="submission-blocked"]').count(),
     ).toBe(0)
-    const body = (await page.locator("body").innerText()).toLowerCase()
-    expect(body).not.toContain("request received")
-    expect(body).not.toContain("we'll be in touch")
+  })
 
-    /* MDS-QA scenario 8: entered data survives the failure. */
-    await expect(page.getByLabel("Parent or guardian name")).toHaveValue(
-      "Sample Parent",
+  test("a repeated submission of the same request is recorded only once", async ({
+    page,
+  }) => {
+    /* MPS-ACC-012 "created once". The idempotency key is derived from the
+       content and the day (`src/app/contact/actions.ts`), so a resubmitted
+       form reaches the same record and the family sees the same reference
+       rather than filing a duplicate nobody asked for. */
+    test.skip(
+      !SUPABASE_CONFIGURED,
+      "Needs a Supabase project for the request to be recorded.",
     )
-    await expect(page.getByLabel("Email", { exact: true })).toHaveValue(
-      "parent@example.com",
-    )
-    await expect(page.getByLabel("Message", { exact: true })).toHaveValue(
-      "Looking for a good fit for the fall term.",
-    )
+
+    await gotoContact(page)
+    await fill(page)
+    await page.getByRole("button", { name: "Send Request" }).click()
+
+    const received = page.locator('[data-slot="submission-received"]')
+    await expect(received).toBeVisible()
+    const first = await received.innerText()
+    const reference = first.match(/HSH-[A-Z0-9]{6}/)?.[0]
+    expect(reference).toBeTruthy()
+
+    await gotoContact(page)
+    await fill(page)
+    await page.getByRole("button", { name: "Send Request" }).click()
+    await expect(received).toBeVisible()
+    await expect(received).toContainText(reference!)
   })
 
   test("the outcome is announced to assistive technology", async ({ page }) => {
+    test.skip(
+      !SUPABASE_CONFIGURED,
+      "Needs a Supabase project for the request to be recorded.",
+    )
     await gotoContact(page)
     await fill(page)
     await page.getByRole("button", { name: "Send Request" }).click()
+    /* One announcement for the whole outcome, so a result is never missed
+       after the button returns to rest (MPS-REQ-021). */
     await expect(
-      page.getByRole("status").filter({ hasText: "Your request was not sent" }),
+      page.getByRole("status").filter({ hasText: "Request received" }),
     ).toHaveCount(1)
   })
 
@@ -373,7 +470,14 @@ test.describe("submission", () => {
     await gotoContact(page)
     await fill(page)
     await page.getByRole("button", { name: "Send Request" }).click()
-    await expect(page.locator('[data-slot="submission-blocked"]')).toBeVisible()
+    /* Whichever outcome the environment produces -- recorded with a project
+       configured, blocked without one -- the URL must be clean either way, so
+       this waits on the settled form rather than on one specific panel. */
+    await expect(
+      page.locator(
+        '[data-slot="submission-received"], [data-slot="submission-blocked"]',
+      ),
+    ).toBeVisible()
     /* AGENTS.md §11: contact details never land in a query string, a referrer
        header, or a screenshot of the URL bar. */
     expect(new URL(page.url()).search).toBe("")

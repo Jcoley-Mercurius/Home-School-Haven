@@ -103,8 +103,7 @@ function ContactForm({
 
       {/* The reference draws this panel as a resting section at the foot of the
           page. It is a submission state, not scenery (D-C4, MPS-ACC-014): it
-          appears only when the server confirms a record was created, which
-          cannot happen until a destination is approved and configured. */}
+          appears only when the server confirms a record was actually created. */}
       {state.status === "recorded" ? (
         <div
           data-slot="submission-received"
@@ -118,6 +117,19 @@ function ContactForm({
             your message and will respond personally. This is not an enrollment
             and no place is reserved.
           </p>
+          {/* The reference is what makes the phone fallback work: it carries no
+              contact detail, so it is safe to read aloud, and it lets an
+              administrator find this exact request without the family having to
+              repeat what they wrote. */}
+          {state.reference ? (
+            <p className="hsh-body-sm m-0 text-[var(--hsh-text-secondary)]">
+              Your reference is{" "}
+              <strong className="text-[var(--hsh-text-primary)]">
+                {state.reference}
+              </strong>
+              . Quote it if you call {contact.phone}.
+            </p>
+          ) : null}
         </div>
       ) : null}
 

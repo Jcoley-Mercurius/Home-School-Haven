@@ -1,5 +1,7 @@
 "use server"
 
+import { createHash } from "node:crypto"
+
 import { z } from "zod"
 
 import {
@@ -78,6 +80,52 @@ function readString(formData: FormData, key: string): string {
 }
 
 /**
+ * Idempotency key for one submission (MPS-ACC-012 "an authorized administrative
+ * record is created once").
+ *
+ * Derived from the content rather than generated, because the duplicates worth
+ * collapsing are exactly the ones that are byte-identical: a double-clicked
+ * button, a resubmitted form, a retried action, a refreshed POST. Each arrives
+ * as a separate server-action invocation, so a freshly generated token would
+ * differ every time and defeat the guard it exists to provide.
+ *
+ * The UTC date is part of the key on purpose. Two identical requests today are
+ * one request; the same words sent again next week are a family following up
+ * because nobody replied, and that deserves its own record rather than a
+ * silently reused reference.
+ *
+ * The digest is truncated into UUID shape for the `uuid` column. It is a
+ * deduplication key, never a secret and never shown to anyone: an inquiry is
+ * readable only by an administrator regardless of who holds this value.
+ */
+function submissionToken(request: {
+  type: string
+  email: string
+  programSlug: string | null
+  message: string
+}): string {
+  const digest = createHash("sha256")
+    .update(
+      [
+        new Date().toISOString().slice(0, 10),
+        request.type,
+        request.email.toLowerCase(),
+        request.programSlug ?? "",
+        request.message,
+      ].join("\u0000"),
+    )
+    .digest("hex")
+
+  return [
+    digest.slice(0, 8),
+    digest.slice(8, 12),
+    `4${digest.slice(13, 16)}`,
+    ((parseInt(digest[16], 16) & 0x3) | 0x8).toString(16) + digest.slice(17, 20),
+    digest.slice(20, 32),
+  ].join("-")
+}
+
+/**
  * Server action for submitting a guidance request.
  * @param _previous - The previous form state (unused but required by useActionState).
  * @param formData - The submitted form data containing the guidance request.
@@ -111,7 +159,7 @@ export async function submitGuidanceRequest(
 
   const result = await recordGuidanceRequest({
     ...parsed.data,
-    submittedAt: new Date().toISOString(),
+    submissionToken: submissionToken(parsed.data),
   })
 
   if (result.status === "recorded") {
