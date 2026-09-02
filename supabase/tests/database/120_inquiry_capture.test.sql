@@ -27,7 +27,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(37);
+select plan(38);
 
 \set parent   '20000000-0000-4000-8000-00000000000a'
 \set educator '20000000-0000-4000-8000-00000000000e'
@@ -330,8 +330,11 @@ select throws_ok(
   'an inquiry cannot be assigned to an educator'
 );
 
--- MPS-WFL-004 has no path from `submitted` straight to `approved_path_provided`:
--- an administrator reviews before concluding anything.
+-- MPS-WFL-004 has no path from `submitted` straight to a conclusion: an
+-- administrator reviews before concluding anything. Both conclusions are
+-- asserted, because allowing one and refusing the other is the asymmetry
+-- CodeRabbit caught in the first cut of `src/lib/admin/inquiry-transitions.ts`,
+-- where the table and its own header comment disagreed.
 select throws_ok(
   format($$ select public.admin_set_inquiry_state(
               (select id from public.inquiries where submission_token = %L),
@@ -340,6 +343,15 @@ select throws_ok(
   '23514',
   null,
   'an unreviewed inquiry cannot jump to approved_path_provided'
+);
+select throws_ok(
+  format($$ select public.admin_set_inquiry_state(
+              (select id from public.inquiries where submission_token = %L),
+              'not_available'::public.inquiry_state, null, false) $$,
+         :'tok_visit'),
+  '23514',
+  null,
+  'an unreviewed inquiry cannot jump to not_available either'
 );
 
 select is(
