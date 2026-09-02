@@ -21,7 +21,14 @@ export type ReviewActionFormState = {
   status: ReviewActionStatus
   /** Which signal's panel should show this outcome. */
   signalId: string | null
-  fieldErrors: { note?: string; result?: string; build?: string }
+  fieldErrors: {
+    note?: string
+    result?: string
+    environment?: string
+    buildIdentifier?: string
+    method?: string
+    evidence?: string
+  }
 }
 
 export const emptyReviewActionFormState: ReviewActionFormState = {

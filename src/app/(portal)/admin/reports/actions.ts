@@ -46,11 +46,22 @@ const SIGNAL_ID = z.string().regex(/^SIG-BETA-00[1-8]$/)
 
 const evidenceSchema = z.object({
   signalId: SIGNAL_ID,
-  result: z.enum(["pass", "fail", "blocked", "not_tested"]),
-  environment: z.string().trim().max(200),
-  buildIdentifier: z.string().trim().max(200),
-  method: z.string().trim().max(400),
-  evidence: z.string().trim().max(4000),
+  result: z.enum(["pass", "fail", "blocked", "not_tested"], {
+    error: "Choose a result and try again.",
+  }),
+  environment: z
+    .string()
+    .trim()
+    .max(200, "Environment must be 200 characters or fewer."),
+  buildIdentifier: z
+    .string()
+    .trim()
+    .max(200, "Build identifier must be 200 characters or fewer."),
+  method: z.string().trim().max(400, "Method must be 400 characters or fewer."),
+  evidence: z
+    .string()
+    .trim()
+    .max(4000, "Evidence must be 4000 characters or fewer."),
   nextState: z
     .enum([
       "not_reviewed",
@@ -133,15 +144,26 @@ export async function recordEvidenceAction(
   })
 
   if (!parsed.success) {
+    const flattened = z.flattenError(parsed.error)
     return {
       status: "invalid",
       signalId: rawSignal || null,
-      fieldErrors: { result: "Choose a result and try again." },
+      fieldErrors: {
+        result: flattened.fieldErrors.result?.[0],
+        environment: flattened.fieldErrors.environment?.[0],
+        buildIdentifier: flattened.fieldErrors.buildIdentifier?.[0],
+        method: flattened.fieldErrors.method?.[0],
+        evidence: flattened.fieldErrors.evidence?.[0],
+      },
     }
   }
 
   if (!isSupabaseConfigured()) {
-    return { status: "unavailable", signalId: parsed.data.signalId, fieldErrors: {} }
+    return {
+      status: "unavailable",
+      signalId: parsed.data.signalId,
+      fieldErrors: {},
+    }
   }
 
   await requireAdmin("/admin/reports")
@@ -187,7 +209,11 @@ export async function recordFeedbackAction(
   }
 
   if (!isSupabaseConfigured()) {
-    return { status: "unavailable", signalId: parsed.data.signalId, fieldErrors: {} }
+    return {
+      status: "unavailable",
+      signalId: parsed.data.signalId,
+      fieldErrors: {},
+    }
   }
 
   await requireAdmin("/admin/reports")
@@ -229,7 +255,11 @@ export async function classifyFeedbackAction(
   }
 
   if (!isSupabaseConfigured()) {
-    return { status: "unavailable", signalId: parsed.data.signalId, fieldErrors: {} }
+    return {
+      status: "unavailable",
+      signalId: parsed.data.signalId,
+      fieldErrors: {},
+    }
   }
 
   await requireAdmin("/admin/reports")
@@ -277,7 +307,11 @@ export async function approveDispositionAction(
   }
 
   if (!isSupabaseConfigured()) {
-    return { status: "unavailable", signalId: parsed.data.signalId, fieldErrors: {} }
+    return {
+      status: "unavailable",
+      signalId: parsed.data.signalId,
+      fieldErrors: {},
+    }
   }
 
   await requireAdmin("/admin/reports")

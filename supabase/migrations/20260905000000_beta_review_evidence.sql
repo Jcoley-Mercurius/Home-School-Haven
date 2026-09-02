@@ -279,27 +279,19 @@ revoke all on public.review_feedback from anon, authenticated, public;
 -- (administrator). `private.is_admin()` is exactly that pair. No educator
 -- policy and no family policy: an educator has no business reading the owner's
 -- assessment of the educator workspace.
-grant select, update on public.review_signals to authenticated;
-grant select, update on public.review_feedback to authenticated;
+grant select on public.review_signals to authenticated;
+grant select on public.review_feedback to authenticated;
 
 create policy "review_signals_select_admin"
   on public.review_signals for select to authenticated
   using (private.is_admin());
 
-create policy "review_signals_update_admin"
-  on public.review_signals for update to authenticated
-  using (private.is_admin()) with check (private.is_admin());
-
 create policy "review_feedback_select_admin"
   on public.review_feedback for select to authenticated
   using (private.is_admin());
 
-create policy "review_feedback_update_admin"
-  on public.review_feedback for update to authenticated
-  using (private.is_admin()) with check (private.is_admin());
-
--- No INSERT policy or grant on either table, and no DELETE anywhere. A signal
--- is created by this migration; feedback is created by the function below.
+-- No INSERT, UPDATE, or DELETE grant on either table. A signal is created by
+-- this migration; feedback and every later write go through the functions below.
 -- Nothing deletes a recorded piece of the owner's feedback: MPS-WFL-008's
 -- recovery keeps unresolved items explicit rather than removable.
 

@@ -6,8 +6,8 @@
 -- `/admin/reports` decides what an administrator is shown. This decides what
 -- the database does when asked directly. Six things are proven:
 --
---   1. Neither review table has a client INSERT or DELETE privilege, and
---      `review_signals` cannot be created or destroyed through the API at all.
+--   1. Neither review table has a client INSERT, UPDATE, or DELETE privilege;
+--      all writes go through the security-definer functions.
 --   2. An EDUCATOR and a PARENT each read zero rows from both tables. This is
 --      the one that matters most: Samantha's candid assessment of the educator
 --      workspace must not be readable by that educator.
@@ -26,7 +26,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(40);
+select plan(42);
 
 \set parent   '20000000-0000-4000-8000-00000000000a'
 \set educator '20000000-0000-4000-8000-00000000000e'
@@ -56,12 +56,20 @@ select ok(
   'authenticated holds no DELETE on review_signals'
 );
 select ok(
+  not has_table_privilege('authenticated', 'public.review_signals', 'UPDATE'),
+  'authenticated holds no UPDATE on review_signals — the function is the door'
+);
+select ok(
   not has_table_privilege('authenticated', 'public.review_feedback', 'INSERT'),
   'authenticated holds no INSERT on review_feedback — the function is the door'
 );
 select ok(
   not has_table_privilege('authenticated', 'public.review_feedback', 'DELETE'),
   'authenticated holds no DELETE on review_feedback — feedback is not erasable'
+);
+select ok(
+  not has_table_privilege('authenticated', 'public.review_feedback', 'UPDATE'),
+  'authenticated holds no UPDATE on review_feedback — the function is the door'
 );
 
 -- Exactly one SELECT policy per table. This is the assertion that fails if
@@ -230,7 +238,7 @@ select throws_ok(
        set disposition_approved_at = now(),
            disposition_approved_by = '20000000-0000-4000-8000-000000000ad0'
      where signal_id = 'SIG-BETA-005' $$,
-  '23514',
+  '42501',
   null,
   'a direct update cannot approve an unclassified disposition either'
 );
