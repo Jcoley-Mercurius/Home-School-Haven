@@ -56,7 +56,9 @@ select is(
 select is((select count(*)::int from public.educator_assignments), 2,
   'an administrator reads every educator assignment');
 
-select is((select count(*)::int from public.enrollments), 5,
+/* Seven since the conversion-journey fixtures added family B's two confirmed
+   places (see supabase/seed.sql). */
+select is((select count(*)::int from public.enrollments), 7,
   'an administrator reads every enrollment');
 
 select is((select count(*)::int from public.families), 2,

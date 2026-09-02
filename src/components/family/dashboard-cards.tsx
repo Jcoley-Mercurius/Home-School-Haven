@@ -215,6 +215,20 @@ function EnrollmentsCard({
                     pending states are the ones most easily misread as success,
                     and a badge alone invites exactly that (DO-DONT). */}
                 <EnrollmentStateBadge state={enrollment.state} withSentence />
+                {/* The registration's own page, where its next step lives —
+                    including the external checkout handoff when, and only when,
+                    the state is `started` (MPS-REQ-013). */}
+                <Link
+                  href={`/family/enrollments/${enrollment.id}`}
+                  className="hsh-label inline-flex min-h-[var(--hsh-touch-target)] items-center gap-[var(--hsh-space-2)] self-start text-[var(--hsh-text-link)] underline-offset-4 hover:underline"
+                >
+                  View this registration
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="size-4"
+                    strokeWidth={1.75}
+                  />
+                </Link>
               </li>
             ))}
           </ul>

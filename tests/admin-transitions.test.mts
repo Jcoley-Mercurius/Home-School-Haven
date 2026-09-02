@@ -245,6 +245,10 @@ describe("checkout URL validation", () => {
     sessionLength: "",
     price: "",
     availability: "unknown",
+    /* Required since the conversion-journey slice: MPS-RUL-001 gives every
+       program a confirmation mode, and the schema will not accept a save that
+       omits it. */
+    confirmationMode: "administrator_approval",
   }
 
   const parse = (checkoutUrl: string) =>

@@ -25,7 +25,12 @@ import { contact, type Program } from "@/content/foundation-content"
 const HANDOFF_NOTICE =
   "Registration and payment are completed on Home School Haven's own checkout page, away from this site. Starting checkout does not confirm payment and does not confirm your child's place. Enrollment is confirmed only after Home School Haven verifies it with you."
 
-function CheckoutHandoff({ program }: { program: Program }) {
+/* Narrowed to the two fields this component reads, so it serves both the
+   public program page and a family's own enrollment page without either having
+   to construct a whole `Program` it does not have. */
+type HandoffProgram = Pick<Program, "name" | "checkoutUrl">
+
+function CheckoutHandoff({ program }: { program: HandoffProgram }) {
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
 
   return (

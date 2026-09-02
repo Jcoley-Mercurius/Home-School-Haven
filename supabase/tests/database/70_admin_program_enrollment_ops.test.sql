@@ -242,7 +242,8 @@ select is(
     :'art_lab'::uuid,
     (select updated_at from public.programs where id = :'art_lab'::uuid),
     'Art Lab', 'A sample summary.', '', '', '', '', '', '', '', '', '',
-    'limited', 'https://pay.homeschoolhaven.org/art-lab'),
+    'limited', 'https://pay.homeschoolhaven.org/art-lab',
+    'administrator_approval'),
   'updated',
   'an administrator can save program facts and the approved checkout link'
 );
@@ -258,7 +259,7 @@ select throws_ok(
        (select updated_at from public.programs
           where id = '10000000-0000-4000-8000-000000000004'),
        'Art Lab', '', '', '', '', '', '', '', '', '', '',
-       'unknown', 'https://evil.example.com/pay') $$,
+       'unknown', 'https://evil.example.com/pay', 'administrator_approval') $$,
   '22023',
   null,
   'a checkout link to any other host is refused'
@@ -269,7 +270,8 @@ select throws_ok(
        (select updated_at from public.programs
           where id = '10000000-0000-4000-8000-000000000004'),
        'Art Lab', '', '', '', '', '', '', '', '', '', '',
-       'unknown', 'https://pay.homeschoolhaven.org/x?student=abc') $$,
+       'unknown', 'https://pay.homeschoolhaven.org/x?student=abc',
+       'administrator_approval') $$,
   '22023',
   null,
   'a checkout link carrying a query string is refused (no private data in URLs)'
@@ -279,7 +281,7 @@ select throws_ok(
        '10000000-0000-4000-8000-000000000004',
        '2000-01-01T00:00:00Z'::timestamptz,
        'Art Lab', '', '', '', '', '', '', '', '', '', '',
-       'unknown', '') $$,
+       'unknown', '', 'administrator_approval') $$,
   '40001',
   null,
   'a facts save against a stale row is refused'
@@ -287,7 +289,8 @@ select throws_ok(
 select throws_ok(
   $$ select public.admin_update_program_facts(
        '10000000-0000-4000-8000-00000000dead',
-       now(), 'X', '', '', '', '', '', '', '', '', '', '', 'unknown', '') $$,
+       now(), 'X', '', '', '', '', '', '', '', '', '', '', 'unknown', '',
+       'administrator_approval') $$,
   'P0002',
   null,
   'a program id that matches nothing is reported as not found'
@@ -504,7 +507,7 @@ select throws_ok(
   $$ select public.admin_update_program_facts(
        '10000000-0000-4000-8000-000000000004', now(),
        'Art Lab', '', '', '', '', '', '', '', '', '', '$1',
-       'open', '') $$,
+       'open', '', 'administrator_approval') $$,
   '42501', null,
   'an assigned educator cannot publish a price or open registration (MPS-ACC-027)');
 select throws_ok(

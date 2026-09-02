@@ -493,6 +493,57 @@ begin
   set capacity = 8, waitlist_enabled = false
   where id = '10000000-0000-4000-8000-000000000005';
 
+  -- -------------------------------------------------------------------------
+  -- Conversion-journey fixtures (MPS-WFL-003)
+  -- -------------------------------------------------------------------------
+  -- MPS-ACC-019, 020, and 021 each need a program that actually behaves that
+  -- way; describing the behaviour in a comment is not a target a test can
+  -- reach. These are DEMO configurations, exactly as the capacities above are:
+  -- Home School Haven has confirmed no confirmation mode and no capacity for
+  -- any program (checklist §1, GAP-ADMIN-004, GAP-ADMIN-006).
+  --
+  -- Every other program keeps the `administrator_approval` default, which is
+  -- itself the MPS-ACC-019 target: a registration for one becomes
+  -- approval_pending and reaches no payment path.
+
+  -- Gardening (0006): instant confirmation, no capacity. The MPS-ACC-021
+  -- target -- an eligible registration becomes `started` and the external
+  -- handoff is offered. Its checkout_url is still NULL, so the handoff renders
+  -- its truthful "registration link not published" state (F-1).
+  update public.programs
+  set confirmation_mode = 'instant'
+  where id = '10000000-0000-4000-8000-000000000006';
+
+  -- History Explorers (0008): one place, taken, waitlist ON. The MPS-ACC-020
+  -- target -- a family joining becomes `waitlisted` and no payment is
+  -- collected.
+  update public.programs
+  set capacity = 1, waitlist_enabled = true, confirmation_mode = 'instant'
+  where id = '10000000-0000-4000-8000-000000000008';
+
+  -- Etiquette Series (0003): one place, taken, waitlist OFF. MPS-WFL-003's
+  -- "Program full without waitlist" -- blocked, with nothing recorded and no
+  -- payment started.
+  update public.programs
+  set capacity = 1, waitlist_enabled = false, confirmation_mode = 'instant'
+  where id = '10000000-0000-4000-8000-000000000003';
+
+  -- The confirmed places that make those two programs full. They belong to
+  -- family B, so family A's registrations meet a genuinely full program rather
+  -- than one this fixture emptied for them. `confirmed` is the only state that
+  -- occupies a place (GAP-FAM-001).
+  insert into public.enrollments
+    (id, family_id, student_id, program_id, state, state_note) values
+    ('50000000-0000-4000-8000-000000000006', family_b,
+     '40000000-0000-4000-8000-000000000003',
+     '10000000-0000-4000-8000-000000000008', 'confirmed',
+     'Sample record. Occupies the single demo place.'),
+    ('50000000-0000-4000-8000-000000000007', family_b,
+     '40000000-0000-4000-8000-000000000003',
+     '10000000-0000-4000-8000-000000000003', 'confirmed',
+     'Sample record. Occupies the single demo place.')
+  on conflict (id) do nothing;
+
   -- One attendance record: the confirmed Art Lab enrollment, at the completed
   -- session. Its absence on every other pairing is "not recorded", which is not
   -- a claim of absence (GAP-ADMIN-010).

@@ -57,8 +57,12 @@ const ENROLLMENT_STATE = {
     icon: ExternalLink,
     tone: "pending",
     label: "Awaiting checkout",
+    /* True both before and after the parent follows the handoff link. The
+       product cannot see whether they did — a click is navigation, not a
+       verifiable payment event — so the sentence must not claim either
+       (MPS-REQ-013, DO-DONT "Trust states"). */
     sentence:
-      "Checkout was started with Home School Haven's payment provider. Enrollment is not confirmed.",
+      "This registration is recorded and waiting on Home School Haven's own checkout page. Payment is not confirmed and enrollment is not confirmed.",
   },
   approval_pending: {
     icon: Hourglass,

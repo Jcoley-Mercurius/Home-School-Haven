@@ -125,6 +125,16 @@ const availability = z.enum(
   "Choose an availability state.",
 )
 
+/**
+ * MPS-RUL-001's two confirmation modes, verbatim and exhaustive. There is no
+ * third, and no default is inferred here: the form always submits the value the
+ * administrator sees selected.
+ */
+const confirmationMode = z.enum(
+  ["instant", "administrator_approval"],
+  "Choose how registrations for this program are confirmed.",
+)
+
 const publicationTarget = z.enum(
   ["draft", "published", "archived"],
   "Choose a publication state.",
@@ -190,6 +200,7 @@ const programFactsSchema = z.object({
   price: optionalFact,
   availability,
   checkoutUrl,
+  confirmationMode,
 })
 
 const publicationSchema = z.object({

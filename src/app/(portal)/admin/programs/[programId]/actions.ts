@@ -80,6 +80,7 @@ function readFacts(formData: FormData): ProgramFactsValues {
     price: read("price"),
     availability: read("availability"),
     checkoutUrl: read("checkoutUrl"),
+    confirmationMode: read("confirmationMode"),
   }
 }
 
@@ -128,6 +129,7 @@ export async function saveProgramFactsAction(
         price: firstOf("price"),
         availability: firstOf("availability"),
         checkoutUrl: firstOf("checkoutUrl"),
+        confirmationMode: firstOf("confirmationMode"),
       },
       values,
     }
@@ -155,6 +157,7 @@ export async function saveProgramFactsAction(
     price: parsed.data.price,
     availability: parsed.data.availability,
     checkoutUrl: parsed.data.checkoutUrl,
+    confirmationMode: parsed.data.confirmationMode,
   })
 
   if (!result.ok) {
