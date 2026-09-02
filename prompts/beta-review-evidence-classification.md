@@ -217,3 +217,67 @@ npm run dev
 Single migration, reversible by its header `rollback:` block (drop triggers,
 functions, tables, enums). The Reports nav entry and the route revert with the
 commit. No other slice reads these tables, so removal is self-contained.
+
+---
+
+## 10. As built — deviations and findings
+
+1. **Recording feedback walks an untouched signal.** The plan implied feedback
+   would simply move a signal to `feedback_recorded`, but the MPS-WFL-008 graph
+   has no `not_reviewed → feedback_recorded` edge, so an untouched signal kept
+   its state while displaying feedback — a card reading "nobody has walked this
+   signal yet" directly above the owner's words about it. It is now walked
+   through `in_review` first: two approved edges, two audit rows, nothing
+   skipped. Pinned by four assertions in `130_beta_review_evidence.test.sql`.
+
+2. **`review_result` became its own enum.** The plan described `result` as a
+   free-standing set of four values; it is a Postgres enum
+   (`public.review_result`) so the four words
+   `mps/ACCEPTANCE-CRITERIA.md` §"Required evidence" names are the only ones
+   representable, and a test asserts there is no fifth.
+
+3. **`admin_record_signal_evidence` derives the actor from the session** rather
+   than accepting it. ACCEPTANCE-CRITERIA.md asks who performed the check, and
+   a caller-supplied name would make that answer worthless. It reads
+   `profiles.display_name` and falls back to `auth.users.email` — the same
+   staff pair `AdminPortalShell` already shows as `viewerLabel`.
+
+4. **Two runtime defects found and fixed during the build.** A
+   `Field.Description` and a `Field.Error` rendered outside a `Field.Root` threw
+   Base UI error #28, which broke hydration for the entire signal card and
+   silently stopped every form inside it from submitting — the page looked
+   correct and did nothing. Both now sit inside a root with a comment saying
+   why. The lesson generalises: `Field*` components from
+   `src/components/ui/field.tsx` are Base UI primitives and are runtime errors
+   outside a `Field` root, not merely unstyled.
+
+5. **`demonstratedCount()` is the single definition of "demonstrated"**, tested
+   in isolation, rather than a filter written inline where the summary renders.
+
+### Checks actually run
+
+| Check | Result |
+|---|---|
+| `npx tsc --noEmit` | pass |
+| `npm run lint` | pass |
+| `npm run test:unit` | 237 pass, 0 fail |
+| `130_beta_review_evidence.test.sql` | 40 assertions, all pass |
+| `npm run db:test` | 524 / 525 — the one failure is pre-existing test 54 of `100_schedule_capacity_attendance` (diagnosed in commit bc79dde) |
+| `npm run build` | compiled, exit 0 |
+| `npx playwright test admin-reports` | 25 passed |
+
+Not run, deliberately: the full `npm run test:e2e` sweep. `npm run db:types:check`
+will report drift until `supabase db push`.
+
+### Still open
+
+- **GAP-EVIDENCE-001** — no evidence file attachment.
+- **GAP-EVIDENCE-002** — "Update affected MPS state" is not automated. After a
+  disposition is approved, someone must carry it into `mps/` through ChatGPT
+  Work. This slice makes the pending set visible; it does not close it.
+- **MDS-GAP-E1** — no approved `review_signal` state vocabulary; the badges are
+  composed from the approved `badge` component.
+- **MPS-ACC-032 is not closed.** This slice builds where the walkthrough is
+  recorded. Closing the criterion needs the Phase 5 sweep and Samantha's actual
+  session, and the eight signals will sit at "0 of 8 demonstrated" until then —
+  correctly.
