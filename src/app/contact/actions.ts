@@ -100,7 +100,9 @@ function readString(formData: FormData, key: string): string {
  */
 function submissionToken(request: {
   type: string
+  name: string
   email: string
+  phone: string | null
   programSlug: string | null
   message: string
 }): string {
@@ -109,7 +111,9 @@ function submissionToken(request: {
       [
         new Date().toISOString().slice(0, 10),
         request.type,
+        request.name,
         request.email.toLowerCase(),
+        request.phone ?? "",
         request.programSlug ?? "",
         request.message,
       ].join("\u0000"),

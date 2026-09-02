@@ -66,6 +66,7 @@ describe("inquiry transition table (MPS-WFL-004)", () => {
        next step". Concluding straight from `submitted` would record an outcome
        nobody is shown to have looked at. */
     assert.ok(!inquiryTransitionAllowed("submitted", "approved_path_provided"))
+    assert.ok(!inquiryTransitionAllowed("submitted", "not_available"))
     assert.ok(inquiryTransitionAllowed("submitted", "under_review"))
     assert.ok(
       inquiryTransitionAllowed("under_review", "approved_path_provided"),

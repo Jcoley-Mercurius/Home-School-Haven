@@ -77,6 +77,10 @@ export async function setInquiryStateAction(
     return { status: "invalid", inquiryId: rawId || null }
   }
 
+  if (parsed.data.state === null && parsed.data.claim === "none") {
+    return { status: "invalid", inquiryId: parsed.data.inquiryId }
+  }
+
   if (!isSupabaseConfigured()) {
     return { status: "unavailable", inquiryId: parsed.data.inquiryId }
   }

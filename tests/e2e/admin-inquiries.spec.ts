@@ -46,9 +46,25 @@ import { expect, test } from "./fixtures"
  */
 test.describe.configure({ mode: "serial" })
 
-const LOCAL_STACK = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
+const SUPABASE_CONFIGURED = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
 )
+
+const CAN_RESTORE_FIXTURE = (() => {
+  if (!SUPABASE_CONFIGURED || !process.env.NEXT_PUBLIC_SUPABASE_URL)
+    return false
+
+  try {
+    return (
+      new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin ===
+      "http://127.0.0.1:54321"
+    )
+  } catch {
+    return false
+  }
+})()
 
 const LOCAL_DB = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 
@@ -90,12 +106,12 @@ function restoreInquiryFixture() {
 
 test.beforeAll(async () => {
   test.setTimeout(300_000)
-  if (LOCAL_STACK) restoreInquiryFixture()
+  if (CAN_RESTORE_FIXTURE) restoreInquiryFixture()
 })
 
 test.afterAll(async () => {
   test.setTimeout(300_000)
-  if (LOCAL_STACK) restoreInquiryFixture()
+  if (CAN_RESTORE_FIXTURE) restoreInquiryFixture()
 })
 
 const VIEWPORTS = {
@@ -104,8 +120,6 @@ const VIEWPORTS = {
   desktop: { width: 1280, height: 900 },
   wide: { width: 1440, height: 900 },
 } as const
-
-const SUPABASE_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
 
 const ROUTE = "/admin/communications/inquiries"
 
@@ -390,8 +404,8 @@ test.describe("accessibility and responsive behaviour", () => {
 
 test.describe.serial("approved triage (MPS-WFL-004)", () => {
   test.skip(
-    !SUPABASE_CONFIGURED,
-    "Needs a Supabase project and the sanitized seed.",
+    !CAN_RESTORE_FIXTURE,
+    "Needs the restorable local Supabase stack and sanitized seed.",
   )
   test.beforeEach(async ({ page }) => {
     await signIn(page, ACCOUNTS.admin)

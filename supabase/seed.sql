@@ -574,21 +574,21 @@ begin
      owner_user_id, contact_name, contact_email, contact_phone, program_id,
      message, submission_token) values
     ('a0000000-0000-4000-8000-000000000001', 'HSH-SAMPLE1', 'assistance',
-     now() - interval '2 days', 'submitted', now() - interval '2 days',
+     '2026-08-31 12:00:00+00', 'submitted', now() - interval '2 days',
      null, 'Sample Parent One', 'sample.one@example.com', null,
      '10000000-0000-4000-8000-000000000002',
      'Sample request for the Foundation Review. A family would describe their '
      'situation here and ask what support might be possible.',
      'a1000000-0000-4000-8000-000000000001'),
     ('a0000000-0000-4000-8000-000000000002', 'HSH-SAMPLE2', 'guidance',
-     now() - interval '5 days', 'under_review', now() - interval '1 day',
+     '2026-08-28 12:00:00+00', 'under_review', now() - interval '1 day',
      '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Two',
      'sample.two@example.com', null, null,
      'Sample request for the Foundation Review. A family would ask which '
      'program suits their child here.',
      'a1000000-0000-4000-8000-000000000002'),
     ('a0000000-0000-4000-8000-000000000003', 'HSH-SAMPLE3', 'visit',
-     now() - interval '9 days', 'awaiting_family', now() - interval '6 days',
+     '2026-08-24 12:00:00+00', 'awaiting_family', now() - interval '6 days',
      '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Three',
      'sample.three@example.com', '555-0100',
      '10000000-0000-4000-8000-000000000004',
@@ -596,7 +596,7 @@ begin
      'visiting here.',
      'a1000000-0000-4000-8000-000000000003'),
     ('a0000000-0000-4000-8000-000000000004', 'HSH-SAMPLE4', 'question',
-     now() - interval '20 days', 'closed', now() - interval '18 days',
+     '2026-08-13 12:00:00+00', 'closed', now() - interval '18 days',
      '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Four',
      'sample.four@example.com', null, null,
      'Sample request for the Foundation Review. A general question would be '

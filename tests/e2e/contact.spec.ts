@@ -19,11 +19,25 @@ import { expect, test } from "./fixtures"
  */
 
 /* MDS DESIGN-SYSTEM.md §8: mobile 0–639, tablet 640–1023, desktop 1024–1439, wide 1440+. */
-const SUPABASE_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
-
-const LOCAL_STACK = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
+const SUPABASE_CONFIGURED = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
 )
+
+const CAN_CLEAN_UP_SUBMISSIONS = (() => {
+  if (!SUPABASE_CONFIGURED || !process.env.NEXT_PUBLIC_SUPABASE_URL)
+    return false
+
+  try {
+    return (
+      new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin ===
+      "http://127.0.0.1:54321"
+    )
+  } catch {
+    return false
+  }
+})()
 
 const LOCAL_DB = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 
@@ -54,7 +68,7 @@ function clearSubmittedInquiries() {
 }
 
 test.afterAll(async () => {
-  if (LOCAL_STACK) clearSubmittedInquiries()
+  if (CAN_CLEAN_UP_SUBMISSIONS) clearSubmittedInquiries()
 })
 
 const VIEWPORTS = {
@@ -378,8 +392,8 @@ test.describe("submission", () => {
        is claiming it WITHOUT a record, which the failure test below still
        covers. */
     test.skip(
-      !SUPABASE_CONFIGURED,
-      "Needs a Supabase project for the request to be recorded.",
+      !CAN_CLEAN_UP_SUBMISSIONS,
+      "Needs the local Supabase stack so the recorded request can be removed.",
     )
 
     await gotoContact(page)
@@ -423,8 +437,8 @@ test.describe("submission", () => {
        form reaches the same record and the family sees the same reference
        rather than filing a duplicate nobody asked for. */
     test.skip(
-      !SUPABASE_CONFIGURED,
-      "Needs a Supabase project for the request to be recorded.",
+      !CAN_CLEAN_UP_SUBMISSIONS,
+      "Needs the local Supabase stack so the recorded request can be removed.",
     )
 
     await gotoContact(page)
@@ -446,8 +460,8 @@ test.describe("submission", () => {
 
   test("the outcome is announced to assistive technology", async ({ page }) => {
     test.skip(
-      !SUPABASE_CONFIGURED,
-      "Needs a Supabase project for the request to be recorded.",
+      !CAN_CLEAN_UP_SUBMISSIONS,
+      "Needs the local Supabase stack so the recorded request can be removed.",
     )
     await gotoContact(page)
     await fill(page)
@@ -467,6 +481,11 @@ test.describe("submission", () => {
   })
 
   test("no submitted value reaches the URL", async ({ page }) => {
+    test.skip(
+      SUPABASE_CONFIGURED && !CAN_CLEAN_UP_SUBMISSIONS,
+      "Skips projects where the recorded request cannot be removed safely.",
+    )
+
     await gotoContact(page)
     await fill(page)
     await page.getByRole("button", { name: "Send Request" }).click()

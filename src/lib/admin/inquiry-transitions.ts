@@ -39,7 +39,7 @@ export type InquiryType = Enums<"inquiry_type">
  *   not an old record quietly brought back to life.
  */
 export const INQUIRY_TRANSITIONS: Record<InquiryState, readonly InquiryState[]> = {
-  submitted: ["under_review", "not_available", "closed"],
+  submitted: ["under_review", "closed"],
   under_review: [
     "awaiting_family",
     "approved_path_provided",
