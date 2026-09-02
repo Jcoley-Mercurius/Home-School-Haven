@@ -1,0 +1,91 @@
+- main:
+  - paragraph: Private beta · Sample data
+  - navigation "Breadcrumb":
+    - list:
+      - listitem:
+        - link "Operations":
+          - /url: /admin
+      - listitem: Reports
+  - heading "Foundation beta review" [level=1]
+  - paragraph: The eight approved beta success signals, the evidence recorded against each one, and what Samantha said about it.
+  - paragraph: Recording a decision here does not change what has been approved
+  - text: Classifying feedback and approving its disposition record Samantha’s judgment, attributed and timestamped. They add nothing to any release and change no requirement. Carrying an approved decision into the product system is a separate step that a person does deliberately, so nothing enters launch scope without someone putting it there.
+  - region "Where the review stands":
+    - heading "Where the review stands" [level=2]
+    - status: 1 of 8 signals demonstrated.
+    - paragraph:
+      - text: Only a recorded
+      - strong: pass
+      - text: counts. A signal that is blocked or not yet walked is not evidence of anything, and is never counted here as though it were.
+  - list:
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "A prospective family can understand Home School Haven and identify an appropriate program." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "A family can request guidance or proceed directly into registration and payment." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "A parent can create a family account and manage student profiles." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "Samantha can create and manage programs, schedules, enrollment, and rosters." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Disposition approved Pass
+      - heading "An educator can access assigned programs and appropriate enrolled-family information." [level=3]
+      - paragraph: The disposition is approved and attributed. Carrying it into the MPS is a separate, human step.
+      - paragraph: Demonstrated in the recorded build.
+      - term: Build
+      - definition: build-e2e · local
+      - term: Recorded by
+      - definition: Sample Administrator
+      - term: Method
+      - definition: Manual walkthrough
+      - term: Evidence
+      - definition: Walked the educator workspace.
+      - region "Feedback (1)":
+        - heading "Feedback (1)" [level=4]
+        - list:
+          - listitem:
+            - paragraph: The educator workspace felt cramped and I would rework it.
+            - text: Launch requirement · approved
+            - paragraph: Needed before complete-platform launch. Recording it here does not add it to any release — that is an MPS decision.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "An educator or administrator can publish an announcement or learning resource." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "Website, enrollment, and portal information remain consistent." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"
+    - listitem:
+      - paragraph: /SIG-BETA-\d+/
+      - text: Not reviewed Not tested
+      - heading "Samantha can identify what must be added, changed, or removed before complete-platform launch approval." [level=3]
+      - paragraph: Nobody has walked this signal yet.
+      - paragraph: Not walked yet. This counts as no evidence at all.
+      - button "Record evidence or feedback"

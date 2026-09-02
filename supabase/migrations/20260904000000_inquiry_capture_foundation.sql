@@ -211,7 +211,7 @@ create policy "inquiries_update_admin"
 -- ---------------------------------------------------------------------------
 -- MPS-WFL-004's main path, alternate paths, and completion, read as a graph:
 --
---   submitted              → under_review, not_available, closed
+--   submitted              → under_review, closed
 --   under_review           → awaiting_family, approved_path_provided,
 --                            not_available, closed
 --   awaiting_family        → under_review, approved_path_provided,
@@ -221,8 +221,17 @@ create policy "inquiries_update_admin"
 --   closed                 → (terminal)
 --
 -- "Assistance unavailable" and "Different program recommended" are both
--- administrator conclusions reached from review, which is why `not_available`
--- and `approved_path_provided` are only reachable from a reviewed state.
+-- administrator conclusions reached from review, which is why NEITHER
+-- `not_available` NOR `approved_path_provided` is reachable from `submitted`.
+-- MPS-WFL-004's main path puts "Administrator reviews" before "Request more
+-- information or determine next step", so a family's request cannot be
+-- concluded by anyone who is not recorded as having looked at it. An
+-- administrator who has genuinely decided at a glance passes through
+-- `under_review`, which costs one click and leaves the review in the history.
+--
+-- `closed` stays reachable from `submitted`: closing is not a conclusion about
+-- the family's request, it is disposing of something that needed no answer —
+-- a duplicate, or a test submission in this review environment.
 create function private.inquiry_transition_allowed(
   from_state public.inquiry_state,
   to_state public.inquiry_state
@@ -233,7 +242,7 @@ immutable
 as $$
   select case from_state
     when 'submitted' then
-      to_state in ('under_review', 'not_available', 'closed')
+      to_state in ('under_review', 'closed')
     when 'under_review' then
       to_state in ('awaiting_family', 'approved_path_provided',
                    'not_available', 'closed')

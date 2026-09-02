@@ -289,14 +289,17 @@ test.describe("the queue", () => {
       dialog.getByRole("button", { name: "Mark under review" }),
     ).toBeVisible()
     await expect(
-      dialog.getByRole("button", { name: "Mark not available" }),
-    ).toBeVisible()
-    await expect(
       dialog.getByRole("button", { name: "Mark closed" }),
     ).toBeVisible()
-    /* A conclusion is not reachable before a review. */
+    /* NEITHER conclusion is reachable before a review (MPS-WFL-004's main path
+       puts "Administrator reviews" first). Closing stays available, because
+       closing disposes of a request that needed no answer rather than
+       concluding anything about it. */
     await expect(
       dialog.getByRole("button", { name: "Mark path provided" }),
+    ).toHaveCount(0)
+    await expect(
+      dialog.getByRole("button", { name: "Mark not available" }),
     ).toHaveCount(0)
   })
 

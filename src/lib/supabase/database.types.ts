@@ -597,6 +597,98 @@ export type Database = {
         }
         Relationships: []
       }
+      review_feedback: {
+        Row: {
+          created_at: string
+          disposition: Database["public"]["Enums"]["review_disposition"] | null
+          disposition_approved_at: string | null
+          disposition_approved_by: string | null
+          id: string
+          note: string
+          recorded_by: string | null
+          signal_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          disposition?: Database["public"]["Enums"]["review_disposition"] | null
+          disposition_approved_at?: string | null
+          disposition_approved_by?: string | null
+          id?: string
+          note: string
+          recorded_by?: string | null
+          signal_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          disposition?: Database["public"]["Enums"]["review_disposition"] | null
+          disposition_approved_at?: string | null
+          disposition_approved_by?: string | null
+          id?: string
+          note?: string
+          recorded_by?: string | null
+          signal_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_feedback_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "review_signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_signals: {
+        Row: {
+          actor: string | null
+          build_identifier: string | null
+          created_at: string
+          display_order: number
+          environment: string | null
+          evidence: string | null
+          id: string
+          method: string | null
+          result: Database["public"]["Enums"]["review_result"]
+          state: Database["public"]["Enums"]["review_signal_state"]
+          state_changed_at: string
+          statement: string
+          updated_at: string
+        }
+        Insert: {
+          actor?: string | null
+          build_identifier?: string | null
+          created_at?: string
+          display_order: number
+          environment?: string | null
+          evidence?: string | null
+          id: string
+          method?: string | null
+          result?: Database["public"]["Enums"]["review_result"]
+          state?: Database["public"]["Enums"]["review_signal_state"]
+          state_changed_at?: string
+          statement: string
+          updated_at?: string
+        }
+        Update: {
+          actor?: string | null
+          build_identifier?: string | null
+          created_at?: string
+          display_order?: number
+          environment?: string | null
+          evidence?: string | null
+          id?: string
+          method?: string | null
+          result?: Database["public"]["Enums"]["review_result"]
+          state?: Database["public"]["Enums"]["review_signal_state"]
+          state_changed_at?: string
+          statement?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       session_attendance: {
         Row: {
           enrollment_id: string
@@ -751,9 +843,20 @@ export type Database = {
         }
         Returns: string
       }
+      admin_approve_review_disposition: {
+        Args: { p_feedback_id: string }
+        Returns: string
+      }
       admin_assign_educator: {
         Args: { educator_id: string; note: string; target_program_id: string }
         Returns: string
+      }
+      admin_classify_review_feedback: {
+        Args: {
+          p_disposition: Database["public"]["Enums"]["review_disposition"]
+          p_feedback_id: string
+        }
+        Returns: Database["public"]["Enums"]["review_disposition"]
       }
       admin_create_program_draft: {
         Args: {
@@ -772,6 +875,22 @@ export type Database = {
           target_program: string
         }
         Returns: string
+      }
+      admin_record_review_feedback: {
+        Args: { p_note: string; p_signal_id: string }
+        Returns: string
+      }
+      admin_record_signal_evidence: {
+        Args: {
+          p_build_identifier: string
+          p_environment: string
+          p_evidence: string
+          p_method: string
+          p_next_state?: Database["public"]["Enums"]["review_signal_state"]
+          p_result: Database["public"]["Enums"]["review_result"]
+          p_signal_id: string
+        }
+        Returns: Database["public"]["Enums"]["review_signal_state"]
       }
       admin_set_enrollment_state: {
         Args: {
@@ -1003,6 +1122,20 @@ export type Database = {
       program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
+      review_disposition:
+        | "must_fix_beta_defect"
+        | "launch_requirement"
+        | "next_idea"
+        | "later_idea"
+        | "rejected_change"
+      review_result: "pass" | "fail" | "blocked" | "not_tested"
+      review_signal_state:
+        | "not_reviewed"
+        | "in_review"
+        | "feedback_recorded"
+        | "decision_pending"
+        | "disposition_approved"
+        | "review_complete"
       session_state: "scheduled" | "rescheduled" | "canceled" | "completed"
     }
     CompositeTypes: {
@@ -1019,12 +1152,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1048,11 +1181,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1073,11 +1206,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1098,11 +1231,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1115,11 +1248,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1157,8 +1290,23 @@ export const Constants = {
       program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],
+      review_disposition: [
+        "must_fix_beta_defect",
+        "launch_requirement",
+        "next_idea",
+        "later_idea",
+        "rejected_change",
+      ],
+      review_result: ["pass", "fail", "blocked", "not_tested"],
+      review_signal_state: [
+        "not_reviewed",
+        "in_review",
+        "feedback_recorded",
+        "decision_pending",
+        "disposition_approved",
+        "review_complete",
+      ],
       session_state: ["scheduled", "rescheduled", "canceled", "completed"],
     },
   },
 } as const
-

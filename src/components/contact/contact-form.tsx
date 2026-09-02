@@ -61,6 +61,7 @@ function ContactForm({
   typeRef,
   messageLength,
   onMessageLengthChange,
+  initialProgramSlug = "",
 }: {
   type: GuidanceRequestType
   onTypeChange: (type: GuidanceRequestType) => void
@@ -68,6 +69,8 @@ function ContactForm({
   typeRef: RefObject<HTMLSelectElement | null>
   messageLength: number
   onMessageLengthChange: (length: number) => void
+  /** Program this inquiry arrived from, already validated by the page. */
+  initialProgramSlug?: string
 }) {
   const [state, formAction, pending] = useActionState(
     submitGuidanceRequest,
@@ -282,7 +285,10 @@ function ContactForm({
           <select
             id={`${ids}-program`}
             name="programSlug"
-            defaultValue={state.values.programSlug}
+            /* The server's echo wins after a submission, so a failed attempt
+               keeps what the family chose rather than snapping back to the
+               program the link carried. */
+            defaultValue={state.values.programSlug || initialProgramSlug}
             aria-invalid={Boolean(state.fieldErrors.programSlug) || undefined}
             aria-describedby={
               state.fieldErrors.programSlug ? `${ids}-program-error` : undefined

@@ -6,7 +6,7 @@ import { CheckoutHandoff } from "@/components/program/checkout-handoff"
 import { Button } from "@/components/ui/button"
 import {
   contact,
-  guidanceHref,
+  guidanceHrefForProgram,
   type Program,
 } from "@/content/foundation-content"
 import { cn } from "@/lib/utils"
@@ -95,7 +95,10 @@ function ProgramActionRail({
           variant="secondary"
           size="md"
           className="w-full"
-          render={<Link href={guidanceHref} />}
+          /* Carries the program, so an inquiry from this page arrives already
+             attached to it rather than asking the family to re-select it
+             (MPS-ACC-011). */
+          render={<Link href={guidanceHrefForProgram(program.slug)} />}
         >
           Request Guidance
         </Button>
