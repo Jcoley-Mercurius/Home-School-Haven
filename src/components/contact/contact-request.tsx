@@ -53,7 +53,18 @@ const pathwayTones: Record<ContactPathway["tone"], string> = {
   gold: "bg-[var(--hsh-gold-500)] text-[var(--hsh-surface-card)]",
 }
 
-function ContactRequest({ children }: { children: ReactNode }) {
+function ContactRequest({
+  children,
+  initialProgramSlug = "",
+}: {
+  children: ReactNode
+  /**
+   * The program a "Request Guidance" action arrived from, already validated
+   * against the published catalog by the page (MPS-ACC-011). `""` means the
+   * family came here directly.
+   */
+  initialProgramSlug?: string
+}) {
   const [type, setType] = useState<GuidanceRequestType>("guidance")
   const [messageLength, setMessageLength] = useState(0)
   const [selectionNotice, setSelectionNotice] = useState("")
@@ -162,6 +173,7 @@ function ContactRequest({ children }: { children: ReactNode }) {
             typeRef={typeRef}
             messageLength={messageLength}
             onMessageLengthChange={setMessageLength}
+            initialProgramSlug={initialProgramSlug}
           />
         </div>
       </section>

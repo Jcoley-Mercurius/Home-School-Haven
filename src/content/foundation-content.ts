@@ -106,6 +106,24 @@ export const primaryNav: NavItem[] = [
  */
 export const guidanceHref = "/contact"
 
+/**
+ * The same destination, carrying which program the family was looking at
+ * (MPS-REQ-009, MPS-REQ-010, MPS-ACC-011).
+ *
+ * A slug is public program data — it is already in the page's own URL — so
+ * unlike a contact detail it is safe in a query string (AGENTS.md §11 bars the
+ * latter, not the former). `/contact` re-validates it against published
+ * programs and ignores anything it cannot resolve, so a stale or edited link
+ * degrades to the plain form rather than pre-selecting a program that is not
+ * published.
+ *
+ * @param slug - The published program's slug.
+ * @returns The inquiry surface, pre-selecting that program.
+ */
+export function guidanceHrefForProgram(slug: string): string {
+  return `/contact?program=${encodeURIComponent(slug)}`
+}
+
 /** Destination for the Explore Programs action. */
 export const programsHref = "/programs"
 

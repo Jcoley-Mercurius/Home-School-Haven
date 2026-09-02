@@ -6,7 +6,7 @@ import { ContactRequest } from "@/components/contact/contact-request"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SkipLink } from "@/components/layout/skip-link"
-import { contact } from "@/content/foundation-content"
+import { contact, programs } from "@/content/foundation-content"
 import { contactHero, reassurancePanel } from "@/content/contact"
 
 /**
@@ -38,7 +38,24 @@ import { contactHero, reassurancePanel } from "@/content/contact"
  * `unavailable`, and claiming success with no record behind it is what
  * MPS-ACC-014 forbids (D-C4).
  *
- * Statically rendered with no `revalidate` and no data read.
+ * Rendered from constants with no data read. It accepts one optional query
+ * parameter, `?program=<slug>`, so a "Request Guidance" action on a program
+ * page arrives with that program already selected (MPS-ACC-011). The slug is
+ * public program data and is re-validated here against the published catalog:
+ * anything that does not resolve is ignored, so a stale or hand-edited link
+ * falls back to the plain form rather than pre-selecting an unpublished
+ * program. No other value is ever read from the URL, and nothing the family
+ * types is ever put into one (AGENTS.md §11).
+ *
+ * Reading that parameter here makes this route dynamic (`ƒ`), where it was
+ * previously prerendered. That is deliberate. The alternative is
+ * `useSearchParams` in the client region, which per
+ * `node_modules/next/dist/docs/01-app/03-api-reference/04-functions/use-search-params.md`
+ * client-side renders the tree up to the nearest Suspense boundary — putting
+ * the form and the reassurance copy behind a fallback on the page whose whole
+ * job is conversion. Server-side reading keeps the correct prefill in the
+ * first HTML, works with JavaScript disabled, and costs no layout shift. The
+ * route reads no data and renders from constants, so dynamic here is cheap.
  */
 export const metadata: Metadata = {
   title: "Contact — Home School Haven of SWFL",
@@ -48,8 +65,21 @@ export const metadata: Metadata = {
 
 const panelMarks = { people: Users, heart: Heart } as const
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ program?: string | string[] }>
+}) {
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
+
+  const requested = (await searchParams).program
+  const requestedSlug = Array.isArray(requested) ? requested[0] : requested
+  /* Resolved against the published catalog, not trusted. An unknown slug
+     becomes "" — the same state as arriving with no parameter at all. */
+  const initialProgramSlug =
+    requestedSlug && programs.some((program) => program.slug === requestedSlug)
+      ? requestedSlug
+      : ""
 
   return (
     <>
@@ -96,7 +126,7 @@ export default function ContactPage() {
 
         {/* Pathways and form. The reassurance panel is server-rendered here and
             handed to the client region as children. */}
-        <ContactRequest>
+        <ContactRequest initialProgramSlug={initialProgramSlug}>
           <div className="flex flex-col gap-[var(--hsh-space-6)] rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-quiet)] p-[var(--hsh-space-8)]">
             <h3 className="hsh-h2 text-[var(--hsh-text-primary)]">
               {reassurancePanel.heading}

@@ -584,6 +584,45 @@ test.describe("navigation", () => {
     await expect(page).toHaveURL(/\/contact$/)
   })
 
+  test("Request Guidance from a program carries that program into the form", async ({
+    page,
+  }) => {
+    /* MPS-ACC-011. The program select has always existed for this path -- its
+       own comment says so -- but nothing arrived carrying a program until now,
+       so `inquiries.program_id` was populated only by the seed. */
+    await page.setViewportSize(VIEWPORTS.desktop)
+    await page.goto("/programs/haven-days-enrichment")
+    /* Scoped to `main`: the site header carries a "Request Guidance" link too,
+       and that one is global chrome that stays generic on every page. It is
+       the action rail beside this program that must carry the program. */
+    await page
+      .getByRole("main")
+      .getByRole("link", { name: "Request Guidance" })
+      .first()
+      .click()
+
+    await expect(page).toHaveURL(/\/contact\?program=haven-days-enrichment$/)
+    await expect(
+      page.getByLabel("Program you are asking about (optional)"),
+    ).toHaveValue("haven-days-enrichment")
+  })
+
+  test("an unresolvable program in the URL degrades to the plain form", async ({
+    page,
+  }) => {
+    /* A stale or hand-edited link must not pre-select something unpublished,
+       and must not error: the page validates against the published catalog and
+       falls back to the state it would have had with no parameter at all. */
+    await page.setViewportSize(VIEWPORTS.desktop)
+    await page.goto("/contact?program=no-such-program")
+    await expect(
+      page.getByLabel("Program you are asking about (optional)"),
+    ).toHaveValue("")
+    await expect(
+      page.getByRole("heading", { name: "What happens to your request" }),
+    ).toBeVisible()
+  })
+
   test("/guidance redirects rather than 404ing", async ({ page }) => {
     /* `/guidance` was the Request Guidance destination throughout the earlier
        review, so links already shared must still land on the form. */
