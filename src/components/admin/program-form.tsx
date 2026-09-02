@@ -22,6 +22,7 @@ import {
   PROGRAM_NAME_MAX,
   SUMMARY_MAX,
 } from "@/lib/admin/validation"
+import { CONFIRMATION_MODE } from "@/lib/enrollment/confirmation-mode"
 import { AVAILABILITY } from "@/components/program/availability-badge"
 
 import type { ProgramFactsValues } from "@/app/(portal)/admin/programs/[programId]/form-state"
@@ -129,6 +130,7 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
       price: program.publishedPrice,
       availability: program.availability,
       checkoutUrl: program.checkoutUrl,
+      confirmationMode: program.confirmationMode,
     }
     return fromRow[key] ?? ""
   }
@@ -332,6 +334,52 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
           {state.fieldErrors.availability ? (
             <p role="alert" className="hsh-body-sm text-[var(--hsh-error)]">
               {state.fieldErrors.availability}
+            </p>
+          ) : null}
+        </fieldset>
+
+        <fieldset className="flex flex-col gap-[var(--hsh-space-3)]">
+          <legend className="hsh-label mb-[var(--hsh-space-2)] text-[var(--hsh-text-primary)]">
+            How registrations are confirmed
+          </legend>
+          <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+            MPS-RUL-001 gives every program one of these two modes. Neither one
+            confirms an enrollment: confirmation comes from Home School Haven
+            verifying the outcome, and only from that.
+          </p>
+          <div className="flex flex-col gap-[var(--hsh-space-2)]">
+            {(
+              Object.keys(
+                CONFIRMATION_MODE,
+              ) as (keyof typeof CONFIRMATION_MODE)[]
+            ).map((option) => (
+              <label
+                key={option}
+                className="hsh-body-sm flex min-h-[var(--hsh-touch-target)] cursor-pointer items-center gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-control)] border border-[var(--hsh-border-default)] px-[var(--hsh-space-4)] py-[var(--hsh-space-3)] has-[:checked]:border-[var(--hsh-forest-600)] has-[:checked]:bg-[var(--hsh-forest-50)] has-[:focus-visible]:outline-[length:var(--hsh-focus-width)] has-[:focus-visible]:outline-offset-[var(--hsh-focus-offset)] has-[:focus-visible]:outline-[color:var(--hsh-focus)] has-[:focus-visible]:outline-solid"
+              >
+                <input
+                  type="radio"
+                  name="confirmationMode"
+                  value={option}
+                  defaultChecked={value("confirmationMode") === option}
+                  className="size-4 accent-[var(--hsh-forest-600)]"
+                />
+                <span className="flex flex-col">
+                  <span className="font-semibold text-[var(--hsh-text-primary)]">
+                    {CONFIRMATION_MODE[option].label}
+                  </span>
+                  <span className="text-[var(--hsh-text-secondary)]">
+                    {CONFIRMATION_MODE[option].description}
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
+          {/* A plain paragraph for the same reason the availability group uses
+              one: this is a radio group, not a Base UI `Field.Root`. */}
+          {state.fieldErrors.confirmationMode ? (
+            <p role="alert" className="hsh-body-sm text-[var(--hsh-error)]">
+              {state.fieldErrors.confirmationMode}
             </p>
           ) : null}
         </fieldset>

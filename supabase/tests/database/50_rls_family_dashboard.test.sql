@@ -140,10 +140,15 @@ select throws_ok(
 -- ---------------------------------------------------------------------------
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000b","role":"authenticated"}';
 
+/* Three since the conversion-journey fixtures: family B holds the confirmed
+   place in each of the two full programs (MPS-ACC-020 and the
+   full-without-waitlist path need a program that is genuinely full). The
+   assertion is unchanged in substance — parent B reads family B's rows and no
+   others. */
 select is(
   (select count(*)::int from public.enrollments),
-  1,
-  'the other parent reads exactly their own one enrollment'
+  3,
+  'the other parent reads exactly their own three enrollments'
 );
 
 

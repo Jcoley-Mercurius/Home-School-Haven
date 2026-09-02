@@ -23,6 +23,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
       announcements: {
@@ -152,11 +157,14 @@ export type Database = {
       }
       enrollments: {
         Row: {
+          authority_affirmation_version: string | null
+          authority_affirmed_at: string | null
           created_at: string
           family_id: string
           id: string
           is_sample: boolean
           program_id: string
+          requested_by: string | null
           state: Database["public"]["Enums"]["enrollment_state"]
           state_changed_at: string
           state_note: string | null
@@ -164,11 +172,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          authority_affirmation_version?: string | null
+          authority_affirmed_at?: string | null
           created_at?: string
           family_id: string
           id?: string
           is_sample?: boolean
           program_id: string
+          requested_by?: string | null
           state?: Database["public"]["Enums"]["enrollment_state"]
           state_changed_at?: string
           state_note?: string | null
@@ -176,11 +187,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          authority_affirmation_version?: string | null
+          authority_affirmed_at?: string | null
           created_at?: string
           family_id?: string
           id?: string
           is_sample?: boolean
           program_id?: string
+          requested_by?: string | null
           state?: Database["public"]["Enums"]["enrollment_state"]
           state_changed_at?: string
           state_note?: string | null
@@ -422,6 +436,7 @@ export type Database = {
           availability: Database["public"]["Enums"]["availability_state"]
           capacity: number | null
           checkout_url: string | null
+          confirmation_mode: Database["public"]["Enums"]["program_confirmation_mode"]
           created_at: string
           educator: string | null
           enrollment_window: string | null
@@ -455,6 +470,7 @@ export type Database = {
           availability?: Database["public"]["Enums"]["availability_state"]
           capacity?: number | null
           checkout_url?: string | null
+          confirmation_mode?: Database["public"]["Enums"]["program_confirmation_mode"]
           created_at?: string
           educator?: string | null
           enrollment_window?: string | null
@@ -488,6 +504,7 @@ export type Database = {
           availability?: Database["public"]["Enums"]["availability_state"]
           capacity?: number | null
           checkout_url?: string | null
+          confirmation_mode?: Database["public"]["Enums"]["program_confirmation_mode"]
           created_at?: string
           educator?: string | null
           enrollment_window?: string | null
@@ -739,6 +756,7 @@ export type Database = {
           program_audience: string
           program_availability: Database["public"]["Enums"]["availability_state"]
           program_checkout_url: string
+          program_confirmation_mode: Database["public"]["Enums"]["program_confirmation_mode"]
           program_dates: string
           program_duration: string
           program_educator: string
@@ -856,6 +874,18 @@ export type Database = {
         Args: { family_name: string }
         Returns: string
       }
+      family_request_enrollment: {
+        Args: {
+          authority_affirmed: boolean
+          target_program: string
+          target_student: string
+        }
+        Returns: {
+          enrollment_id: string
+          outcome: string
+          state: Database["public"]["Enums"]["enrollment_state"]
+        }[]
+      }
       record_session_attendance: {
         Args: { target_enrollment: string; target_session: string }
         Returns: string
@@ -879,6 +909,7 @@ export type Database = {
         | "canceled"
         | "blocked"
       family_member_role: "primary_guardian" | "invited_guardian"
+      program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
       session_state: "scheduled" | "rescheduled" | "canceled" | "completed"
@@ -1023,10 +1054,10 @@ export const Constants = {
         "blocked",
       ],
       family_member_role: ["primary_guardian", "invited_guardian"],
+      program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],
       session_state: ["scheduled", "rescheduled", "canceled", "completed"],
     },
   },
 } as const
-

@@ -55,6 +55,32 @@ function ProgramActionRail({
         <AvailabilityBadge state={program.availability} withDescription />
       </div>
 
+      {/* MPS-REQ-012: registration begins with an eligibility evaluation, so
+          the family path comes BEFORE the checkout panel and is the primary
+          action of the two. This link is unconditional and the page stays
+          static: `/family/enroll/[slug]` guards itself, and a signed-out
+          visitor is sent to sign-in and returned here. Reading the session on
+          this public page to decide the label would make every program page
+          dynamic to change one word. */}
+      <div className="flex flex-col gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)]">
+        <h3 className="hsh-label text-[var(--hsh-text-primary)]">
+          Register a student
+        </h3>
+        <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+          Sign in to your family account to choose a student. Home School Haven
+          checks the program, its places, and your family&rsquo;s details before
+          any payment step.
+        </p>
+        <Button
+          variant="primary"
+          size="md"
+          className="w-full"
+          render={<Link href={`/family/enroll/${program.slug}`} />}
+        >
+          Register a Student
+        </Button>
+      </div>
+
       <CheckoutHandoff program={program} />
 
       <div className="flex flex-col gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] bg-[var(--hsh-surface-quiet)] p-[var(--hsh-space-5)]">

@@ -32,6 +32,7 @@ import type { AdminRead, PublicationState } from "@/lib/admin/repository"
 import type { Enums } from "@/lib/supabase/types"
 
 type Availability = Enums<"availability_state">
+type ConfirmationMode = Enums<"program_confirmation_mode">
 
 /**
  * A program as the operations surfaces show it.
@@ -67,6 +68,13 @@ type AdminProgram = {
   capacity: number | null
   /** Whether this program accepts waitlist placements (MPS-ACC-020). */
   waitlistEnabled: boolean
+  /**
+   * Instant confirmation or administrator approval (MPS-RUL-001). `instant`
+   * does not confirm anything: it means an eligible registration may be handed
+   * off to the external checkout. Confirmation still comes from an
+   * administrator recording an authoritative outcome.
+   */
+  confirmationMode: ConfirmationMode
   educatorAssigned: boolean
   needsContentReview: boolean
   updatedAt: string
@@ -75,7 +83,7 @@ type AdminProgram = {
 /* One unbroken string literal: PostgREST infers the row type from the literal,
    and a concatenation degrades every column to `GenericStringError`. */
 // prettier-ignore
-const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,import_status,updated_at"
+const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,confirmation_mode,import_status,updated_at"
 
 type ProgramRow = {
   id: string
@@ -96,6 +104,7 @@ type ProgramRow = {
   checkout_url: string | null
   capacity: number | null
   waitlist_enabled: boolean
+  confirmation_mode: ConfirmationMode
   import_status: string
   updated_at: string
 }
@@ -129,6 +138,7 @@ function mapRow(
     checkoutUrl: row.checkout_url,
     capacity: row.capacity,
     waitlistEnabled: row.waitlist_enabled,
+    confirmationMode: row.confirmation_mode,
     educatorAssigned: assignedProgramIds.has(row.id),
     needsContentReview: row.import_status === "import-title-review-detail",
     updatedAt: row.updated_at,
@@ -302,6 +312,7 @@ async function updateProgramFacts(input: {
   price: string | null
   availability: Availability
   checkoutUrl: string | null
+  confirmationMode: ConfirmationMode
 }): Promise<MutationResult> {
   if (!isSupabaseConfigured()) return { ok: false, reason: "failed" }
 
@@ -330,6 +341,7 @@ async function updateProgramFacts(input: {
     program_price: orEmpty(input.price),
     program_availability: input.availability,
     program_checkout_url: orEmpty(input.checkoutUrl),
+    program_confirmation_mode: input.confirmationMode,
   })
 
   if (error) return mapError(error.code, error.message)
@@ -365,4 +377,4 @@ export {
   setProgramPublication,
   updateProgramFacts,
 }
-export type { AdminProgram, Availability, MutationResult }
+export type { AdminProgram, Availability, ConfirmationMode, MutationResult }

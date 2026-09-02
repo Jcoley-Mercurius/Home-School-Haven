@@ -35,6 +35,8 @@ type ProgramFactsValues = {
   price: string
   availability: string
   checkoutUrl: string
+  /** MPS-RUL-001: `instant` or `administrator_approval`. */
+  confirmationMode: string
 }
 
 type ProgramFactsFormState = {
