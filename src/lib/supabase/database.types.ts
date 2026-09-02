@@ -246,6 +246,51 @@ export type Database = {
         }
         Relationships: []
       }
+      family_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          invited_user_id: string | null
+          last_sent_at: string
+          revoked_at: string | null
+          revoked_by: string | null
+          sent_count: number
+          state: Database["public"]["Enums"]["invitation_state"]
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          invited_by?: string | null
+          invited_user_id?: string | null
+          last_sent_at?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          sent_count?: number
+          state?: Database["public"]["Enums"]["invitation_state"]
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          invited_user_id?: string | null
+          last_sent_at?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          sent_count?: number
+          state?: Database["public"]["Enums"]["invitation_state"]
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           added_at: string
@@ -835,6 +880,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_family_invitation: {
+        Args: never
+        Returns: Database["public"]["Enums"]["invitation_state"]
+      }
       add_student_to_own_family: {
         Args: {
           grade_level?: string
@@ -1064,6 +1113,7 @@ export type Database = {
         Args: { family_name: string }
         Returns: string
       }
+      family_invitation_status: { Args: never; Returns: string }
       family_request_enrollment: {
         Args: {
           authority_affirmed: boolean
@@ -1119,6 +1169,7 @@ export type Database = {
         | "not_available"
         | "closed"
       inquiry_type: "guidance" | "question" | "visit" | "assistance"
+      invitation_state: "pending" | "accepted" | "revoked"
       program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
@@ -1287,6 +1338,7 @@ export const Constants = {
         "closed",
       ],
       inquiry_type: ["guidance", "question", "visit", "assistance"],
+      invitation_state: ["pending", "accepted", "revoked"],
       program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],
