@@ -14,7 +14,7 @@
  * data store and must not accumulate facts that lack a source row.
  */
 
-import type { PlaceholderImage } from "./programs"
+import type { ApprovedPhoto } from "./programs"
 
 export {
   featuredPrograms,
@@ -32,21 +32,47 @@ export type {
   Program,
 } from "./programs"
 
-/** Demo-only placeholder art for the two reserved home panels. */
-export const heroImage: PlaceholderImage = {
-  src: "/placeholder/hero.jpg",
-  alt: "Placeholder photo — demo only. Children painting at a sunlit table surrounded by plants.",
-  width: 1816,
-  height: 744,
-  isPlaceholder: true,
+/**
+ * Approved photography for the two home panels.
+ *
+ * Supplied by Samantha and cleared on 2026-09-03, including parental consent
+ * for the children shown. Provenance is recorded in
+ * `public/photography/README.md`; the demo placeholders these replaced are
+ * deleted rather than left beside them.
+ *
+ * The alt text describes what is happening. It never names a child, and the
+ * "Placeholder photo — demo only" prefix is gone because it would now be false.
+ */
+export const heroImage: ApprovedPhoto = {
+  src: "/photography/children-science-experiment.webp",
+  alt: "Four children gathered around a bubbling colour-mixing experiment at a classroom table.",
+  width: 1240,
+  height: 620,
+  isPlaceholder: false,
 }
 
-export const communityImage: PlaceholderImage = {
-  src: "/placeholder/community.jpg",
-  alt: "Placeholder photo — demo only. A child drawing at a table beside potted plants.",
-  width: 484,
-  height: 744,
-  isPlaceholder: true,
+export const communityImage: ApprovedPhoto = {
+  src: "/photography/learning-room.webp",
+  alt: "A Home School Haven learning room: a child working at a low table beside open storage and a potted plant.",
+  width: 1240,
+  height: 620,
+  isPlaceholder: false,
+}
+
+/**
+ * The About page's own hero, no longer the home hero reused.
+ *
+ * This image is 600 px wide, which is why it sits here and not in a home or
+ * program panel: the About hero renders at roughly 580 CSS px inside the
+ * container, so it lands near 1:1, where the wider 60vw program hero would
+ * upscale it visibly.
+ */
+export const aboutHeroImage: ApprovedPhoto = {
+  src: "/photography/classroom-group.webp",
+  alt: "A group class in session at Home School Haven, children seated around a long table with an educator.",
+  width: 600,
+  height: 433,
+  isPlaceholder: false,
 }
 
 /** Inventory "Values" row, preserved verbatim. */

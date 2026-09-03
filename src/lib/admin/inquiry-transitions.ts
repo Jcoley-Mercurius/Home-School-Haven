@@ -38,7 +38,10 @@ export type InquiryType = Enums<"inquiry_type">
  *   resumes after being closed is a new request with its own submitted time —
  *   not an old record quietly brought back to life.
  */
-export const INQUIRY_TRANSITIONS: Record<InquiryState, readonly InquiryState[]> = {
+export const INQUIRY_TRANSITIONS: Record<
+  InquiryState,
+  readonly InquiryState[]
+> = {
   submitted: ["under_review", "closed"],
   under_review: [
     "awaiting_family",

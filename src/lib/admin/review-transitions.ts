@@ -64,11 +64,13 @@ export const REVIEW_STATE_LABELS: Record<ReviewSignalState, string> = {
 export const REVIEW_STATE_MEANINGS: Record<ReviewSignalState, string> = {
   not_reviewed: "Nobody has walked this signal yet.",
   in_review: "Being walked now.",
-  feedback_recorded: "Something was said about it and is waiting to be classified.",
+  feedback_recorded:
+    "Something was said about it and is waiting to be classified.",
   decision_pending: "Classified, and waiting for a disposition to be approved.",
   disposition_approved:
     "The disposition is approved and attributed. Carrying it into the MPS is a separate, human step.",
-  review_complete: "Finished. It can be reopened if Samantha wants another look.",
+  review_complete:
+    "Finished. It can be reopened if Samantha wants another look.",
 }
 
 /**
@@ -88,7 +90,8 @@ export const REVIEW_RESULT_LABELS: Record<ReviewResult, string> = {
 export const REVIEW_RESULT_MEANINGS: Record<ReviewResult, string> = {
   pass: "Demonstrated in the recorded build.",
   fail: "Walked, and it did not work.",
-  blocked: "Could not be walked. This is not a failure of the signal — something prevented the check.",
+  blocked:
+    "Could not be walked. This is not a failure of the signal — something prevented the check.",
   not_tested: "Not walked yet. This counts as no evidence at all.",
 }
 
@@ -116,7 +119,8 @@ export const REVIEW_DISPOSITION_MEANINGS: Record<ReviewDisposition, string> = {
     "Needed before complete-platform launch. Recording it here does not add it to any release — that is an MPS decision.",
   next_idea: "Worth doing soon, but not required for launch.",
   later_idea: "Worth keeping, with no timing attached.",
-  rejected_change: "Considered and declined. Kept so the decision is not relitigated from memory.",
+  rejected_change:
+    "Considered and declined. Kept so the decision is not relitigated from memory.",
 }
 
 /**

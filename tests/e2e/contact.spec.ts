@@ -424,9 +424,9 @@ test.describe("submission", () => {
     }
 
     /* Nothing was left blocked: a recorded request clears the failure panel. */
-    expect(
-      await page.locator('[data-slot="submission-blocked"]').count(),
-    ).toBe(0)
+    expect(await page.locator('[data-slot="submission-blocked"]').count()).toBe(
+      0,
+    )
   })
 
   test("a repeated submission of the same request is recorded only once", async ({

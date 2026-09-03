@@ -38,7 +38,10 @@ const ALL_STATES: InquiryState[] = [
 
 describe("inquiry transition table (MPS-WFL-004)", () => {
   it("covers exactly the six approved states", () => {
-    assert.deepEqual(Object.keys(INQUIRY_TRANSITIONS).sort(), [...ALL_STATES].sort())
+    assert.deepEqual(
+      Object.keys(INQUIRY_TRANSITIONS).sort(),
+      [...ALL_STATES].sort(),
+    )
   })
 
   it("never proposes a state outside the approved six", () => {
@@ -142,7 +145,12 @@ describe("inquiry vocabulary (MPS-RUL-004)", () => {
   })
 
   it("labels every public pathway", () => {
-    for (const type of ["guidance", "question", "visit", "assistance"] as const) {
+    for (const type of [
+      "guidance",
+      "question",
+      "visit",
+      "assistance",
+    ] as const) {
       assert.ok(INQUIRY_TYPE_LABELS[type].length > 0)
     }
   })

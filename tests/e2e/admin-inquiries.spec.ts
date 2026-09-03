@@ -272,9 +272,9 @@ test.describe("the queue", () => {
       "Send reply",
       "Email the family",
     ]) {
-      await expect(
-        dialog.getByRole("button", { name: forbidden }),
-      ).toHaveCount(0)
+      await expect(dialog.getByRole("button", { name: forbidden })).toHaveCount(
+        0,
+      )
     }
 
     await expect(dialog).toContainText("record a status, not a decision")
@@ -442,9 +442,9 @@ test.describe.serial("approved triage (MPS-WFL-004)", () => {
   }) => {
     await openDrawer(page, /Cost assistance/)
     await page.getByRole("button", { name: "Mark under review" }).click()
-    await expect(
-      page.getByRole("dialog").getByRole("status"),
-    ).toContainText("Inquiry updated")
+    await expect(page.getByRole("dialog").getByRole("status")).toContainText(
+      "Inquiry updated",
+    )
 
     await page.goto(ROUTE)
     await openDrawer(page, /Cost assistance/)

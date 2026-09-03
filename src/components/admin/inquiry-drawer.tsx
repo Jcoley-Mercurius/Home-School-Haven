@@ -120,7 +120,11 @@ function InquiryDrawer({
           {message ? (
             <Alert
               tone={outcome === "updated" ? "success" : "warning"}
-              title={outcome === "updated" ? "Inquiry updated" : "Nothing was changed"}
+              title={
+                outcome === "updated"
+                  ? "Inquiry updated"
+                  : "Nothing was changed"
+              }
               live="polite"
             >
               {message}

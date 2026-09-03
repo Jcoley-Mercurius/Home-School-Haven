@@ -50,7 +50,8 @@ function InquiryList({
   viewerId: string
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const selected = inquiries.find((inquiry) => inquiry.id === selectedId) ?? null
+  const selected =
+    inquiries.find((inquiry) => inquiry.id === selectedId) ?? null
 
   const arrived = (inquiry: AdminInquiry) =>
     new Date(inquiry.submittedAt).toLocaleDateString("en-US", {

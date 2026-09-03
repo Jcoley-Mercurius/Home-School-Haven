@@ -5,7 +5,7 @@
         - link "Home":
           - /url: /
       - listitem: About
-  - paragraph: About Home School Haven
+  - paragraph: ABOUT HOME SCHOOL HAVEN
   - heading "A haven for curious learners and connected families" [level=1]
   - paragraph: Home School Haven is a Christ-centered homeschool community offering enrichment classes, hands-on workshops, small-group learning, and family support.
   - paragraph: "Our mission is simple: to cultivate calm, confident, and compassionate learners through creativity, curiosity, and connection."
@@ -13,7 +13,7 @@
     - /url: /programs
   - link "Request Guidance":
     - /url: /contact
-  - img "Placeholder photo — demo only. Children painting at a sunlit table surrounded by plants."
+  - img "A group class in session at Home School Haven, children seated around a long table with an educator."
   - region "What we value":
     - heading "What we value" [level=2]
     - list:
@@ -52,6 +52,39 @@
       - listitem:
         - heading "Community" [level=3]
         - paragraph: A welcoming community united by faith, values, and purpose.
+  - region "Meet our team":
+    - heading "Meet our team" [level=2]
+    - paragraph: The founder and educators who welcome your family to Home School Haven.
+    - list:
+      - listitem:
+        - article:
+          - img "Samantha, founder of Home School Haven, outside the Cape Coral space."
+          - heading "Samantha" [level=3]
+          - paragraph: Founder
+          - paragraph: It's me Sam!
+          - paragraph: Faith-filled mama to 5 running multiple businesses with my husband Matthew and stepping into my purpose more and more every day!
+          - paragraph: The vision behind Home School Haven was truly placed on my heart by God.
+          - paragraph: /For over \d+ years, I've built a career in the hair industry while navigating the beautiful journey of motherhood\. Throughout those years, my husband and I faced many challenges within the public school system and watched our first three children struggle in ways that broke our hearts\. We knew there had to be a better way, one that nurtured their minds, honored their individuality, and strengthened their faith\./
+          - paragraph: That desire for something different became the foundation of Home School Haven. It's a space designed to bring families together to encourage a love of learning, and to remind parents, children and educators that education can be peaceful, purposeful and led by God's guidance.
+      - listitem:
+        - article:
+          - img "Heidi Endress, Lead Educator, smiling outdoors."
+          - heading "Heidi Endress" [level=3]
+          - paragraph: Lead Educator
+          - paragraph: /Heidi brings \d+ years of experience in elementary education, working with students from Pre-K through fifth grade\. For the past \d+ years, she has served as an elementary Art Director and visual arts teacher\. She holds a degree in Commercial Art, has an extensive knowledge of art history, and is also a certified Therapeutic Art Life Coach\./
+          - paragraph: In addition to teaching, Heidi coaches high school athletics, leads private art experiences through her business, Art Waves of Positive Energy, and teaches at the Alliance for the Arts in Fort Myers, where she also serves as a Summer Art Director.
+          - paragraph: Heidi loves God, sharing His light, serving others, and embracing the beauty of nature. She brings her joyful “aloha spirit” into everything she does and believes art helps children express emotions, build confidence, develop friendships, and discover their own unique creativity.
+          - paragraph: When she isn't teaching or coaching, you'll likely find her painting, spending time in nature, or dreaming up new ways to bring creativity and positive energy into her lessons.
+          - paragraph: We are incredibly grateful to have Heidi as part of the Home School Haven family. Her experience, passion, warmth, and genuine love for children make her such a special part of our community!
+      - listitem:
+        - article:
+          - img "Celina Carlin, Community Engagement & Campus Culture Coordinator."
+          - heading "Celina Carlin" [level=3]
+          - paragraph: Community Engagement & Campus Culture Coordinator
+          - paragraph: Celina is a Florida native who loves sunshine, the outdoors, and hands-on learning. Energetic, creative, and engaging, she creates a warm environment where children feel encouraged to explore, ask questions, and grow in confidence.
+          - paragraph: Inspired by her mother's daycare, Celina began working with children at an early age. She has since gained extensive experience teaching her own children, as well as neighborhood and extended family children, through activities in arts and crafts, science, gardening, and sewing.
+          - paragraph: As a certified horticulturist with certifications in Agricultural Science, Soil Science, and Plant Nutrition, Celina brings specialized knowledge of plants, gardening, soil, and the natural world to her teaching. She believes children learn best through observation, exploration, and hands-on discovery. Her goal is to nurture curiosity, creativity, independence, and confidence while helping children connect learning to real-world experiences.
+          - paragraph: We are so grateful to have Mrs. Celina as part of the Home School Haven family. Her warmth, creativity, hands-on experience, specialized knowledge, and genuine love for children make her a wonderful addition to our community!
   - region "Ready to learn more about our programs and community?":
     - heading "Ready to learn more about our programs and community?" [level=2]
     - link "Explore Programs":

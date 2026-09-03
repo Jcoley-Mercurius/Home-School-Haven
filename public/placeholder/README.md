@@ -13,14 +13,21 @@ Review. They are owner-authorized for demo only (decision 2026-08-27).
 
 ## Replacing them with real photography
 
-Overwrite these files in place, keeping the same filenames and aspect ratios,
-then update the alt text in `src/content/foundation-content.ts` (`heroImage`,
-`communityImage`, and each program's `image.alt`). No layout change is required.
+Do not overwrite these in place. Approved photography goes in
+`public/photography/`, typed `ApprovedPhoto` rather than `PlaceholderImage`,
+with a provenance row in that directory's README — then the placeholder it
+replaced is deleted from here. That is how `hero.jpg` and `community.jpg` were
+retired; follow the same path for the three below by updating each program's
+`image` in `src/content/programs.ts`. No layout change is required.
+
+When the last file here goes, delete this directory and
+`scripts/check-demo-placeholders.mjs` stops blocking production builds.
+
+`hero.jpg` and `community.jpg` were replaced with approved photography on
+2026-09-03 and deleted. What remains:
 
 | File | Used by | Aspect |
 |---|---|---|
-| `hero.jpg` | home hero panel | ~2.44 : 1 |
-| `community.jpg` | home community story panel | ~0.65 : 1 |
 | `program-art-lab.jpg` | Art Lab card | ~0.96 : 1 |
 | `program-haven-days-enrichment.jpg` | Haven Days Enrichment card | ~1.05 : 1 |
 | `program-harvest-explorers.jpg` | Harvest Explorers card | 1 : 1 |

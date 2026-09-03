@@ -17,10 +17,12 @@ import {
   communityGroups,
   communityIntro,
   faithPanel,
+  staffIntro,
+  staffProfiles,
 } from "@/content/about"
 import {
+  aboutHeroImage,
   guidanceHref,
-  heroImage,
   programsHref,
 } from "@/content/foundation-content"
 
@@ -39,6 +41,16 @@ import {
  * heading, mission, approach, faith panel, and community cards are the owner's
  * own words, approved verbatim on 2026-08-28 ("Approved, but keep image copy").
  * Neither group may grow without its matching authority.
+ *
+ * The "Meet our team" section is not part of the proposed image at all. It was
+ * added by slice HSH-SLICE-PUBLIC-03B from the currently published About page,
+ * https://homeschoolhaven.org/about-us, and carries its own provenance tag in
+ * `src/content/about.ts`. It sits below "Meet our community": the groups are
+ * the owner-approved composition and keep their position, while the named
+ * people are published fact appended to it. Portraits are owner-approved
+ * photographs supplied by Samantha on 2026-09-02 and recorded in
+ * `public/photography/README.md`; no value in this section comes from an
+ * educator account or assignment.
  *
  * Three parts of the image are deliberately not built, as recorded in
  * `prompts/public-about-page.md` §4: the decorative botanical illustration
@@ -106,12 +118,12 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Demo-only placeholder art — see `public/placeholder/README.md`.
-                Not approved photography; the children are not real students. */}
+            {/* Approved photography (`public/photography/README.md`). About
+                carries its own hero rather than reusing the home one. */}
             <div className="relative min-h-[280px] overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-quiet)] lg:min-h-[420px]">
               <Image
-                src={heroImage.src}
-                alt={heroImage.alt}
+                src={aboutHeroImage.src}
+                alt={aboutHeroImage.alt}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -247,6 +259,84 @@ export default function AboutPage() {
               ))}
             </ul>
           </div>
+        </section>
+
+        {/* Published team. Facts come from https://homeschoolhaven.org/about-us
+            and nowhere else — see `src/content/about.ts` for the provenance and
+            the rule that no authenticated educator record may feed this. Each
+            person is an <article> so the name, role, and bio stay one unit for
+            assistive technology. */}
+        <section
+          aria-labelledby="staff-heading"
+          className="hsh-container hsh-container-public flex flex-col gap-[var(--hsh-space-8)] pt-[var(--hsh-space-16)]"
+        >
+          <div className="flex flex-col gap-[var(--hsh-space-3)] text-center">
+            <h2
+              id="staff-heading"
+              className="hsh-h2 text-[var(--hsh-text-primary)]"
+            >
+              {staffIntro.heading}
+            </h2>
+            <p className="hsh-body mx-auto max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+              {staffIntro.summary}
+            </p>
+          </div>
+
+          <ul className="flex flex-col gap-[var(--hsh-space-8)]">
+            {staffProfiles.map((person) => (
+              <li key={person.name} className="flex">
+                <article
+                  data-slot="staff-profile"
+                  className="flex w-full flex-col gap-[var(--hsh-space-4)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-6)] shadow-[var(--hsh-shadow-card)] sm:flex-row sm:gap-[var(--hsh-space-6)]"
+                >
+                  {/* Owner-approved photograph where one is cleared; the quiet
+                      leaf still holds the place for anyone whose portrait is
+                      not. `alt` names the person, so it is never decorative. */}
+                  {person.portrait ? (
+                    <Image
+                      src={person.portrait.src}
+                      alt={person.portrait.alt}
+                      width={person.portrait.width}
+                      height={person.portrait.height}
+                      sizes="96px"
+                      className="size-20 shrink-0 rounded-full object-cover sm:size-24"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[var(--hsh-surface-quiet)] text-[var(--hsh-forest-600)]"
+                    >
+                      <Leaf className="size-6" strokeWidth={1.75} />
+                    </span>
+                  )}
+
+                  <div className="flex flex-col gap-[var(--hsh-space-3)]">
+                    <div className="flex flex-col gap-[var(--hsh-space-1)]">
+                      <h3 className="hsh-h4 text-[var(--hsh-text-primary)]">
+                        {person.name}
+                      </h3>
+                      <p className="hsh-label tracking-wide text-[var(--hsh-text-muted)] uppercase">
+                        {person.role}
+                      </p>
+                    </div>
+                    {person.lede ? (
+                      <p className="hsh-body-lg text-[var(--hsh-text-primary)]">
+                        {person.lede}
+                      </p>
+                    ) : null}
+                    {person.paragraphs.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="hsh-body max-w-[68ch] text-[var(--hsh-text-secondary)]"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Closing pathway */}

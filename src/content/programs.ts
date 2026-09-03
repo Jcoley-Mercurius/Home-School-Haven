@@ -45,6 +45,31 @@ export type ImportStatus = "import" | "import-title-review-detail"
  * replace the files in `public/placeholder/` and update `alt` here — the layout
  * does not change. See `public/placeholder/README.md`.
  */
+/**
+ * A real photograph cleared to publish.
+ *
+ * Deliberately a separate type from `PlaceholderImage`, whose `isPlaceholder`
+ * is the literal `true`. The two can never be assigned to one another, so an
+ * approved photo cannot drift into a placeholder slot or the reverse, and the
+ * release gate in `scripts/check-demo-placeholders.mjs` keeps its meaning.
+ *
+ * Provenance and authorization for every file live in
+ * `public/photography/README.md`. Nothing may be typed `ApprovedPhoto` without
+ * a row there.
+ */
+export type ApprovedPhoto = {
+  /** Always under `/photography/`, never `/placeholder/`. */
+  src: string
+  /** Describes the subject. Never the "demo only" prefix placeholders carry. */
+  alt: string
+  width: number
+  height: number
+  isPlaceholder: false
+}
+
+/** Either kind of image, for a slot that may hold one while others hold the other. */
+export type ContentImage = ApprovedPhoto | PlaceholderImage
+
 export type PlaceholderImage = {
   src: string
   alt: string
