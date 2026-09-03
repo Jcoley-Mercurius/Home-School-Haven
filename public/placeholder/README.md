@@ -11,6 +11,25 @@ Review. They are owner-authorized for demo only (decision 2026-08-27).
 - Every usage carries alt text beginning "Placeholder photo — demo only".
 - They must not ship to a live or production environment.
 
+## Temporary Foundation Demo Preview exception (2026-09-03)
+
+So Samantha can review layout in a browser, a **Vercel Preview** deployment may
+build with these files present. That exception is opt-in and narrow:
+
+| `VERCEL_ENV` | `HSH_ALLOW_DEMO_PLACEHOLDERS` | Build |
+|---|---|---|
+| `production` | anything, including `true` | **blocked** |
+| `preview` | `true` | allowed, with a warning naming the imagery |
+| `preview` | unset or anything else | **blocked** |
+| any other or missing value on Vercel | anything | **blocked** |
+| not on Vercel (local build) | — | allowed, with the same warning |
+
+Set `HSH_ALLOW_DEMO_PLACEHOLDERS=true` on the Vercel **Preview** environment
+only. It is not a production override and cannot become one — the production
+check runs first and never consults the flag. The value must be the exact string
+`true`; `TRUE`, `1`, and `yes` fail closed. The exception ends when the files
+below are replaced.
+
 ## Replacing them with real photography
 
 Do not overwrite these in place. Approved photography goes in

@@ -145,16 +145,47 @@ students, and it is deliberately a little soft — these are layout comps, not
 final print-quality images.
 
 **Production deploys are blocked while it is present.** `scripts/check-demo-placeholders.mjs`
-runs as `prebuild` and fails the build when the target is production:
+runs as `prebuild` and fails the build unless this environment is explicitly
+allowed to use the imagery:
+
+| `VERCEL_ENV` | `HSH_ALLOW_DEMO_PLACEHOLDERS` | Build |
+|---|---|---|
+| `production` | anything, including `true` | **blocked** |
+| `preview` | `true` | allowed, with a warning |
+| `preview` | unset or anything else | **blocked** |
+| any other or missing value on Vercel | anything | **blocked** |
+| not on Vercel (local build) | — | allowed, with a warning |
+
+`HSH_RELEASE_TARGET=production` also blocks the build anywhere, and an
+unrecognised `HSH_RELEASE_TARGET` is treated as a typo and blocks too.
 
 ```bash
-npm run build                              # demo build — allowed, warns
-HSH_RELEASE_TARGET=production npm run build  # blocked
+npm run build                       # local demo build — allowed, warns
+VERCEL_ENV=preview HSH_ALLOW_DEMO_PLACEHOLDERS=true npm run build     # Foundation Demo Preview — allowed
+VERCEL_ENV=preview npm run build    # blocked — no opt-in
+VERCEL_ENV=production HSH_ALLOW_DEMO_PLACEHOLDERS=true npm run build  # blocked — production is never exempt
+HSH_RELEASE_TARGET=production npm run build                           # blocked
 ```
 
-The production target is detected from `HSH_RELEASE_TARGET=production` or
-Vercel's own `VERCEL_ENV=production`, so no configuration is needed on Vercel —
-preview deploys build, production deploys fail until the assets are replaced.
+### Temporary Foundation Demo exception on Vercel
+
+The Foundation Demo Preview is deployed with the placeholders still in place, so
+the Vercel project needs `HSH_ALLOW_DEMO_PLACEHOLDERS=true` set on the
+**Preview** environment — and **only** there. Points to keep straight:
+
+- The flag is not a production override and cannot become one. The production
+  check runs first and never reads the flag, so `VERCEL_ENV=production` fails
+  with the flag set exactly as it does without it.
+- The value must be the exact string `true`. `TRUE`, `1`, and `yes` fail closed.
+- A missing or unexpected `VERCEL_ENV` on a Vercel build fails closed as well.
+- An allowed preview build prints a warning stating that the imagery is
+  generated art direction and is not approved student photography.
+- Vercel deploys the **Production Branch** (currently `main`) as
+  `VERCEL_ENV=production`. Deploying the demo from `main` will therefore be
+  blocked no matter what the flag says. Deploy the demo from a non-default
+  branch, or move the Production Branch, so the deployment runs as a preview.
+- The exception is temporary and ends when the three remaining program
+  photographs are replaced.
 
 To ship for real: follow `public/placeholder/README.md`, update the image
 records consumed as `heroImage`, `communityImage`, and each program's `image`

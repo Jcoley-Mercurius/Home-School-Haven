@@ -9,12 +9,22 @@
  *
  * Runs automatically before every build via the `prebuild` script.
  *
- *   production target + demo assets present or referenced -> BUILD FAILS
- *   demo target       + demo assets                       -> allowed, announced
+ * The Foundation Demo Preview needs to build *with* the placeholders while
+ * Samantha reviews layout, so there is exactly one exception, and it is opt-in:
  *
- * The production target is detected from, in order:
- *   HSH_RELEASE_TARGET=production   (explicit, works anywhere)
- *   VERCEL_ENV=production           (set by Vercel on production deploys)
+ *   VERCEL_ENV=production, with or without the flag  -> BUILD FAILS
+ *   VERCEL_ENV=preview  + HSH_ALLOW_DEMO_PLACEHOLDERS=true -> allowed, announced
+ *   VERCEL_ENV=preview  without the flag             -> BUILD FAILS
+ *   any other / missing VERCEL_ENV on Vercel         -> BUILD FAILS
+ *   not running on Vercel (local build)              -> allowed, announced
+ *
+ * The production check runs first and has no escape: the flag can never
+ * override it. The flag must be the exact string `true` — `TRUE`, `1`, and
+ * `yes` do not count, so a fat-fingered Vercel value fails closed rather than
+ * silently shipping demo art.
+ *
+ * `HSH_RELEASE_TARGET=production` also fails, anywhere, matching
+ * `releaseTarget()` in src/lib/env.ts; an unexpected value there fails too.
  *
  * To ship for real: replace the files per public/placeholder/README.md, then
  * delete public/placeholder/ and the `image` entries that point into it.
@@ -31,6 +41,9 @@ const REFERENCE = "/placeholder/"
 
 /** Files that document the placeholders rather than being placeholders. */
 const IGNORED_ASSETS = new Set(["README.md"])
+
+/** The only value of the demo flag that means "yes". */
+const ALLOW_FLAG = "HSH_ALLOW_DEMO_PLACEHOLDERS"
 
 function listDemoAssets() {
   try {
@@ -65,9 +78,71 @@ function listReferences() {
   return hits
 }
 
-const isProduction =
-  process.env.HSH_RELEASE_TARGET === "production" ||
-  process.env.VERCEL_ENV === "production"
+/** An unset variable and one set to the empty string mean the same thing here. */
+function read(name) {
+  const value = process.env[name]
+  return value === undefined || value === "" ? null : value
+}
+
+/**
+ * Decides whether this build may use demo placeholder imagery.
+ *
+ * @returns `{ allowed, reason }` — `reason` explains the decision either way.
+ */
+function decide() {
+  const vercelEnv = read("VERCEL_ENV")
+  const releaseTarget = read("HSH_RELEASE_TARGET")
+  const flag = read(ALLOW_FLAG)
+  const onVercel = vercelEnv !== null || read("VERCEL") !== null
+
+  // Production first, and with no escape hatch. The flag is not consulted.
+  if (vercelEnv === "production" || releaseTarget === "production") {
+    return {
+      allowed: false,
+      reason:
+        vercelEnv === "production"
+          ? "VERCEL_ENV=production. The demo flag does not apply to production."
+          : "HSH_RELEASE_TARGET=production. The demo flag does not apply to production.",
+    }
+  }
+
+  // An unrecognised explicit target is a typo, not a permission.
+  if (releaseTarget !== null && !["local", "preview"].includes(releaseTarget)) {
+    return {
+      allowed: false,
+      reason: `HSH_RELEASE_TARGET=${releaseTarget} is not a recognised target (local | preview | production).`,
+    }
+  }
+
+  if (!onVercel) {
+    return { allowed: true, reason: "Local build — not a deployment." }
+  }
+
+  if (vercelEnv !== "preview") {
+    return {
+      allowed: false,
+      reason:
+        vercelEnv === null
+          ? "Running on Vercel with no VERCEL_ENV. Only a preview deploy may use demo imagery."
+          : `VERCEL_ENV=${vercelEnv} is not a preview deploy. Only a preview deploy may use demo imagery.`,
+    }
+  }
+
+  if (flag !== "true") {
+    return {
+      allowed: false,
+      reason:
+        flag === null
+          ? `VERCEL_ENV=preview but ${ALLOW_FLAG} is not set.`
+          : `VERCEL_ENV=preview but ${ALLOW_FLAG}=${flag} — it must be exactly "true".`,
+    }
+  }
+
+  return {
+    allowed: true,
+    reason: `VERCEL_ENV=preview with ${ALLOW_FLAG}=true — Foundation Demo Preview exception.`,
+  }
+}
 
 const assets = listDemoAssets()
 const references = listReferences()
@@ -78,11 +153,15 @@ if (!inUse) {
   process.exit(0)
 }
 
-if (isProduction) {
+const { allowed, reason } = decide()
+
+if (!allowed) {
   console.error(
     [
       "",
-      "✗ BUILD BLOCKED — demo placeholder imagery cannot ship to production.",
+      "✗ BUILD BLOCKED — demo placeholder imagery cannot ship in this environment.",
+      "",
+      `  ${reason}`,
       "",
       "  These assets are generated art direction depicting children who are",
       "  not real students. They are not approved photography.",
@@ -91,6 +170,10 @@ if (isProduction) {
       ...assets.map((name) => `    public/placeholder/${name}`),
       references.length > 0 ? `  Referenced from (${references.length}):` : "",
       ...references.map((hit) => `    ${hit}`),
+      "",
+      "  The Foundation Demo Preview may build with this imagery only on a",
+      `  Vercel Preview deployment with ${ALLOW_FLAG}=true.`,
+      "  A production deploy is never exempt, flag or no flag.",
       "",
       "  To ship: follow public/placeholder/README.md to swap in released",
       "  photography, then remove public/placeholder/ entirely.",
@@ -108,8 +191,13 @@ console.log(
   [
     "",
     "⚠ Demo build — using placeholder imagery.",
+    `  ${reason}`,
     `  ${assets.length} asset(s) in public/placeholder/, ${references.length} reference(s) in src/.`,
-    "  Not approved photography. Production builds are blocked while these exist.",
+    "",
+    "  This imagery is GENERATED ART DIRECTION, not approved student",
+    "  photography. The children shown are not real students. It is authorized",
+    "  for private Foundation Review of layout only (owner decision 2026-08-27).",
+    "  Production builds stay blocked while these files exist.",
     "",
   ].join("\n"),
 )
