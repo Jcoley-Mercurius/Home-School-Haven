@@ -12,6 +12,7 @@ import { ProgramCard } from "@/components/program/program-card"
 import { VerifiedFacts } from "@/components/program/verified-facts"
 import { SessionList } from "@/components/schedule/session-list"
 import { positioning } from "@/content/foundation-content"
+import { isDemoPreview } from "@/lib/env"
 import {
   getPublishedProgram,
   listPublishedProgramSlugs,
@@ -75,6 +76,17 @@ import { listPublicSessions } from "@/lib/schedule/repository"
  * unavailable there.
  */
 export async function generateStaticParams() {
+  /* TEMPORARY, Demo Preview only (see `isDemoPreview`): the Vercel build
+     container cannot reach Supabase, so enumerating slugs at build time cannot
+     succeed there. Returning none prerenders none; `dynamicParams` stays at its
+     default `true`, so every published program still resolves on request,
+     against the same real project and the same anonymous RLS. This route is the
+     one place a build-time read already failed silently — the empty list it
+     returns on error is indistinguishable from a genuinely empty catalog — so
+     making the Demo Preview case explicit removes that ambiguity rather than
+     adding one. */
+  if (isDemoPreview()) return []
+
   const slugs = await listPublishedProgramSlugs()
   return slugs.map((slug) => ({ slug }))
 }

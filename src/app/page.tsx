@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { connection } from "next/server"
 import { Leaf } from "lucide-react"
 
 import { SiteFooter } from "@/components/layout/site-footer"
@@ -15,6 +16,7 @@ import {
   positioning,
   programsHref,
 } from "@/content/foundation-content"
+import { isDemoPreview } from "@/lib/env"
 import { listFeaturedPrograms } from "@/lib/programs/repository"
 
 /**
@@ -55,6 +57,13 @@ import { listFeaturedPrograms } from "@/lib/programs/repository"
  */
 
 export default async function Home() {
+  /* TEMPORARY, Demo Preview only (see `isDemoPreview`): the Vercel build
+     container cannot reach Supabase, so this read moves to request time there.
+     Everything below is unchanged — same query, same real project, same
+     anonymous RLS, same fail-closed handling. In production and locally this
+     line is not reached and the page is still statically prerendered. */
+  if (isDemoPreview()) await connection()
+
   const featuredPrograms = await listFeaturedPrograms()
 
   // Fail prerendering rather than caching a database error as static output.

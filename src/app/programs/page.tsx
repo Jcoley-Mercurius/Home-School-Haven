@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { connection } from "next/server"
 import { Leaf } from "lucide-react"
 
 import { SiteFooter } from "@/components/layout/site-footer"
@@ -9,6 +10,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { ProgramCard } from "@/components/program/program-card"
 import { Button } from "@/components/ui/button"
 import { contact, guidanceHref } from "@/content/foundation-content"
+import { isDemoPreview } from "@/lib/env"
 import { listPublishedPrograms } from "@/lib/programs/repository"
 
 /**
@@ -63,6 +65,12 @@ export const metadata: Metadata = {
  */
 
 export default async function ProgramsPage() {
+  /* TEMPORARY, Demo Preview only (see `isDemoPreview`): the Vercel build
+     container cannot reach Supabase, so this read moves to request time there.
+     Same query, same real project, same anonymous RLS, same fail-closed
+     handling. In production and locally this line is not reached. */
+  if (isDemoPreview()) await connection()
+
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
   const programs = await listPublishedPrograms()
 

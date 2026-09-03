@@ -104,6 +104,30 @@ test("a Vercel build with no VERCEL_ENV fails", () => {
   assert.match(result.stderr, /no VERCEL_ENV/)
 })
 
+test("the Demo Preview target is recognised and still needs the flag", () => {
+  const blocked = run({ VERCEL_ENV: "preview", HSH_RELEASE_TARGET: "demo" })
+  assert.equal(blocked.status, 1)
+  assert.match(blocked.stderr, /HSH_ALLOW_DEMO_PLACEHOLDERS is not set/)
+
+  const allowed = run({
+    VERCEL_ENV: "preview",
+    HSH_RELEASE_TARGET: "demo",
+    HSH_ALLOW_DEMO_PLACEHOLDERS: "true",
+  })
+  assert.equal(allowed.status, 0)
+  assert.match(allowed.stdout, /Demo build/)
+})
+
+test("the Demo Preview target cannot unblock a production deploy", () => {
+  const result = run({
+    VERCEL_ENV: "production",
+    HSH_RELEASE_TARGET: "demo",
+    HSH_ALLOW_DEMO_PLACEHOLDERS: "true",
+  })
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /does not apply to production/)
+})
+
 test("an unrecognised HSH_RELEASE_TARGET fails", () => {
   const result = run({ HSH_RELEASE_TARGET: "prod" })
   assert.equal(result.status, 1)

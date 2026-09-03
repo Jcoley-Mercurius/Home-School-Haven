@@ -15,6 +15,7 @@ import { test } from "node:test"
 
 import {
   isSupabaseConfigured,
+  isDemoPreview,
   releaseTarget,
   siteUrl,
   supabaseConfig,
@@ -156,6 +157,25 @@ test("release target defaults to local and recognises preview and production", (
   // An unrecognised value must not be treated as production.
   withEnv({ HSH_RELEASE_TARGET: "prod" }, () =>
     assert.equal(releaseTarget(), "local"),
+  )
+})
+
+test("the Demo Preview switch needs both signals, and cannot arm in production", () => {
+  // Both together, on a Vercel preview: the only case that arms it.
+  withEnv({ VERCEL_ENV: "preview", HSH_RELEASE_TARGET: "demo" }, () =>
+    assert.equal(isDemoPreview(), true),
+  )
+
+  // Either alone is not enough.
+  withEnv({ VERCEL_ENV: "preview" }, () => assert.equal(isDemoPreview(), false))
+  withEnv({ HSH_RELEASE_TARGET: "demo" }, () =>
+    assert.equal(isDemoPreview(), false),
+  )
+  withEnv({}, () => assert.equal(isDemoPreview(), false))
+
+  // The demo marker must never change how a production deploy renders.
+  withEnv({ VERCEL_ENV: "production", HSH_RELEASE_TARGET: "demo" }, () =>
+    assert.equal(isDemoPreview(), false),
   )
 })
 

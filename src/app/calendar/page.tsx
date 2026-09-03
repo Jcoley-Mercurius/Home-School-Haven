@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { connection } from "next/server"
 import { ChevronRight, HeartHandshake, Info } from "lucide-react"
 
 import { CalendarView } from "@/components/calendar/calendar-view"
@@ -12,6 +13,7 @@ import { ProgramDataError } from "@/components/program/program-data-error"
 import { Button } from "@/components/ui/button"
 import { calendarTermRanges, monthKeyOf } from "@/content/calendar"
 import { guidanceHref, programsHref } from "@/content/foundation-content"
+import { isDemoPreview } from "@/lib/env"
 import { listPublishedPrograms } from "@/lib/programs/repository"
 import { listPublicSessions } from "@/lib/schedule/repository"
 import { sessionCalendarEntries } from "@/lib/schedule/calendar-entries"
@@ -61,6 +63,13 @@ export const metadata: Metadata = {
 }
 
 export default async function CalendarPage() {
+  /* TEMPORARY, Demo Preview only (see `isDemoPreview`): the Vercel build
+     container cannot reach Supabase. This page renders the approved error
+     state rather than throwing, so prerendering it there would bake that
+     error into static output permanently — a silently wrong page rather than
+     a failed build. Reading at request time keeps the error state truthful. */
+  if (isDemoPreview()) await connection()
+
   /* Build-time month. `CalendarView` moves to the visitor's current month once
      it mounts; passing it in keeps the server and client markup identical. */
   const initialMonth = monthKeyOf(new Date())

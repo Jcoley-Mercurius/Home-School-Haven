@@ -25,6 +25,8 @@
  *
  * `HSH_RELEASE_TARGET=production` also fails, anywhere, matching
  * `releaseTarget()` in src/lib/env.ts; an unexpected value there fails too.
+ * `demo` is recognised (the Foundation Demo Preview marks itself that way so
+ * public pages read at request time) but grants nothing on its own.
  *
  * To ship for real: replace the files per public/placeholder/README.md, then
  * delete public/placeholder/ and the `image` entries that point into it.
@@ -106,11 +108,17 @@ function decide() {
     }
   }
 
-  // An unrecognised explicit target is a typo, not a permission.
-  if (releaseTarget !== null && !["local", "preview"].includes(releaseTarget)) {
+  /* An unrecognised explicit target is a typo, not a permission. `demo` is
+     recognised for the temporary Foundation Demo Preview, which marks itself
+     that way so public pages read at request time; it grants nothing here, and
+     the production check above has already run regardless of its value. */
+  if (
+    releaseTarget !== null &&
+    !["local", "preview", "demo"].includes(releaseTarget)
+  ) {
     return {
       allowed: false,
-      reason: `HSH_RELEASE_TARGET=${releaseTarget} is not a recognised target (local | preview | production).`,
+      reason: `HSH_RELEASE_TARGET=${releaseTarget} is not a recognised target (local | preview | demo | production).`,
     }
   }
 
