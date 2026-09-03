@@ -256,6 +256,7 @@ export type Database = {
           invited_by: string | null
           invited_user_id: string | null
           last_sent_at: string
+          processing_token: string | null
           revoked_at: string | null
           revoked_by: string | null
           sent_count: number
@@ -270,6 +271,7 @@ export type Database = {
           invited_by?: string | null
           invited_user_id?: string | null
           last_sent_at?: string
+          processing_token?: string | null
           revoked_at?: string | null
           revoked_by?: string | null
           sent_count?: number
@@ -284,6 +286,7 @@ export type Database = {
           invited_by?: string | null
           invited_user_id?: string | null
           last_sent_at?: string
+          processing_token?: string | null
           revoked_at?: string | null
           revoked_by?: string | null
           sent_count?: number

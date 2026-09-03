@@ -22,16 +22,18 @@
  *     by `private.is_admin()` in the database, exactly as on every other admin
  *     surface, and is never assumed from possession of the key.
  *
- * THREE INDEPENDENT REFUSALS PROTECT AN ESTABLISHED ACCOUNT
+ * FOUR INDEPENDENT REFUSALS PROTECT AN ESTABLISHED ACCOUNT
  *
  * Deleting an account is the one irreversible thing this module can do, so the
  * refusals are layered and none of them is load-bearing alone:
  *
  *   1. Both callers refuse an invitation that is not `pending`.
- *   2. `accountIsEstablished()` refuses an account holding a role grant or a
+ *   2. A compare-and-set processing claim makes acceptance ineligible before
+ *      either caller inspects or deletes the provisioned account.
+ *   3. `accountIsEstablished()` refuses an account holding a role grant or a
  *      family membership, whatever the invitation row says — and answers
  *      "established" when it cannot tell.
- *   3. `family_invitations_state_consistent` in Postgres refuses to mark an
+ *   4. `family_invitations_state_consistent` in Postgres refuses to mark an
  *      accepted invitation revoked at all, so a forged request that never
  *      reaches this file meets the same rule.
  *
@@ -131,6 +133,7 @@ type InvitationRow = {
   created_at: string
   expires_at: string
   last_sent_at: string
+  processing_token: string | null
   sent_count: number
   accepted_at: string | null
   revoked_at: string | null
@@ -138,7 +141,7 @@ type InvitationRow = {
 
 /* One unbroken literal — PostgREST infers the row type from it. */
 // prettier-ignore
-const SELECT_COLUMNS = "id,email,invited_user_id,state,created_at,expires_at,last_sent_at,sent_count,accepted_at,revoked_at"
+const SELECT_COLUMNS = "id,email,invited_user_id,state,created_at,expires_at,last_sent_at,processing_token,sent_count,accepted_at,revoked_at"
 
 /** Where the emailed invitation lands. */
 function acceptCallback(): string {
@@ -288,12 +291,12 @@ async function accountIsEstablished(userId: string): Promise<boolean> {
  *
  * THE LAST GUARD BEFORE AN IRREVERSIBLE ACT
  *
- * Callers already refuse a non-pending invitation, and the database refuses to
- * mark an accepted invitation revoked. This is the third check, and it looks at
- * the ACCOUNT rather than the invitation: an account holding a role grant or a
- * family membership is a person using the platform, and deleting one is a
- * retention decision this release does not have (GAP-ADMIN-011). It is refused
- * here even if every check above it were wrong.
+ * Revoke and resend first claim the pending invitation, which makes the
+ * acceptance RPC refuse it. This check then looks at the ACCOUNT rather than
+ * the invitation: an account holding a role grant or a family membership is a
+ * person using the platform, and deleting one is a retention decision this
+ * release does not have (GAP-ADMIN-011). It is refused here even if every check
+ * above it were wrong.
  *
  * @returns `false` when the account was not deleted — because the delete
  *   failed, or because it was refused — so the caller can decline to report a
@@ -313,32 +316,111 @@ async function deleteUnacceptedAccount(userId: string): Promise<boolean> {
 }
 
 /**
- * Closes an invitation whose link was destroyed but whose replacement could not
- * be sent.
+ * Atomically makes a pending invitation ineligible for acceptance.
  *
- * This is the partial failure that matters: `resendInvitation` deletes the old
- * account first, so between that delete and a successful send the invitation is
- * pending with no working link. Left alone, the administrator's list would say
- * "waiting to be accepted" over a link that no longer exists.
+ * The token is both the claim and its ownership proof. Two administrators may
+ * read the same pending row, but only one compare-and-set can attach a token;
+ * every restore or final update must present that same token.
  *
- * Setting `expires_at` to now makes the row read as **Expired** — derived, not
- * stored — which is both true and actionable: Expired offers Resend. The row is
- * never marked accepted or revoked, because neither happened.
- *
- * Best effort by design. If this update also fails, the invitation is left
- * pending and the next resend still recovers it; nothing here may throw over
- * the failure it is cleaning up after.
+ * Each UPDATE requests one returned row. PostgREST reports a zero-row
+ * compare-and-set as PGRST116, which is a failed claim rather than success.
  */
-async function closeUnsendableInvitation(invitationId: string): Promise<void> {
+async function claimPendingInvitation(
+  row: InvitationRow,
+): Promise<
+  | { ok: true; row: InvitationRow; processingToken: string }
+  | { ok: false; reason: "forbidden" | "failed" }
+> {
+  const processingToken = crypto.randomUUID()
+
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("family_invitations")
+      .update({ processing_token: processingToken })
+      .eq("id", row.id)
+      .eq("state", "pending")
+      .eq("sent_count", row.sent_count)
+      .is("processing_token", null)
+      .select(SELECT_COLUMNS)
+      .single()
+
+    if (error || !data) {
+      return {
+        ok: false,
+        reason: error?.code === "42501" ? "forbidden" : "failed",
+      }
+    }
+
+    return { ok: true, row: data, processingToken }
+  } catch {
+    return { ok: false, reason: "failed" }
+  }
+}
+
+/** Releases a claim after the external deletion was refused or failed. */
+async function restoreInvitationClaim(
+  invitationId: string,
+  processingToken: string,
+): Promise<void> {
   try {
     const supabase = await createClient()
     await supabase
       .from("family_invitations")
-      .update({ expires_at: new Date().toISOString() })
+      .update({ processing_token: null })
       .eq("id", invitationId)
       .eq("state", "pending")
+      .eq("processing_token", processingToken)
+      .select("id")
+      .single()
   } catch {
-    /* Not logged, and not escalated. */
+    /* A stuck claim is closed to acceptance and safer than reopening blindly. */
+  }
+}
+
+/**
+ * Closes a claimed invitation whose old link was destroyed but whose
+ * replacement could not be attached.
+ *
+ * Re-read first: if another operation or a database repair moved the row, this
+ * cleanup must not overwrite that newer truth. Setting `expires_at` to now
+ * makes the still-pending row read as Expired, and clearing the matching token
+ * makes a later resend able to recover it.
+ */
+async function closeUnsendableInvitation(
+  invitationId: string,
+  processingToken: string,
+): Promise<void> {
+  try {
+    const supabase = await createClient()
+    const { data: current, error: readError } = await supabase
+      .from("family_invitations")
+      .select("id,state,processing_token")
+      .eq("id", invitationId)
+      .maybeSingle()
+
+    if (
+      readError ||
+      !current ||
+      current.state !== "pending" ||
+      current.processing_token !== processingToken
+    ) {
+      return
+    }
+
+    await supabase
+      .from("family_invitations")
+      .update({
+        expires_at: new Date().toISOString(),
+        processing_token: null,
+      })
+      .eq("id", invitationId)
+      .eq("state", "pending")
+      .eq("processing_token", processingToken)
+      .select("id")
+      .single()
+  } catch {
+    /* Best effort after the primary operation already failed. */
   }
 }
 
@@ -429,51 +511,62 @@ export async function resendInvitation(
   if (row.state !== "pending") return { ok: false, reason: "notResendable" }
   if (row.sent_count >= 50) return { ok: false, reason: "sendLimit" }
 
-  if (row.invited_user_id) {
-    if (await accountIsEstablished(row.invited_user_id)) {
+  const claimed = await claimPendingInvitation(row)
+  if (!claimed.ok) return { ok: false, reason: claimed.reason }
+
+  const claimedRow = claimed.row
+
+  if (claimedRow.invited_user_id) {
+    if (await accountIsEstablished(claimedRow.invited_user_id)) {
       /* The invitation says pending but the account is already a participant.
          Deleting it is refused, and so is pretending a resend happened. */
+      await restoreInvitationClaim(claimedRow.id, claimed.processingToken)
       return { ok: false, reason: "notResendable" }
     }
-    if (!(await deleteUnacceptedAccount(row.invited_user_id))) {
+    if (!(await deleteUnacceptedAccount(claimedRow.invited_user_id))) {
       /* The old link could not be killed. Sending a second one would leave two
          live credentials for one account, so nothing is sent. */
+      await restoreInvitationClaim(claimedRow.id, claimed.processingToken)
       return { ok: false, reason: "failed" }
     }
   }
 
-  const sent = await sendInvite(row.email)
+  const sent = await sendInvite(claimedRow.email)
   if (!sent.ok) {
     /* The old account is gone and no new one exists. The row must stop
        claiming its link works — see `closeUnsendableInvitation`. */
-    await closeUnsendableInvitation(row.id)
+    await closeUnsendableInvitation(claimedRow.id, claimed.processingToken)
     return { ok: false, reason: sent.reason }
   }
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("family_invitations")
     .update({
       invited_user_id: sent.userId,
       expires_at: nextExpiry(),
       last_sent_at: new Date().toISOString(),
-      sent_count: row.sent_count + 1,
+      processing_token: null,
+      sent_count: claimedRow.sent_count + 1,
     })
-    .eq("id", row.id)
+    .eq("id", claimedRow.id)
     .eq("state", "pending")
+    .eq("processing_token", claimed.processingToken)
+    .select("id")
+    .single()
 
-  if (error) {
+  if (error || !updated) {
     /* The row could not be moved to the new account, so the account it points
        at must not survive: a provisioned account no invitation names is one
        nobody can see, revoke, or account for. */
     await deleteUnacceptedAccount(sent.userId)
-    await closeUnsendableInvitation(row.id)
+    await closeUnsendableInvitation(claimedRow.id, claimed.processingToken)
     return {
       ok: false,
-      reason: error.code === "42501" ? "forbidden" : "failed",
+      reason: error?.code === "42501" ? "forbidden" : "failed",
     }
   }
 
-  return { ok: true, outcome: "resent", id: row.id }
+  return { ok: true, outcome: "resent", id: claimedRow.id }
 }
 
 /**
@@ -503,38 +596,49 @@ export async function revokeInvitation(
      case is the one that matters: it would mean deleting a family's account. */
   if (row.state !== "pending") return { ok: false, reason: "notRevocable" }
 
-  if (row.invited_user_id) {
-    if (await accountIsEstablished(row.invited_user_id)) {
+  const claimed = await claimPendingInvitation(row)
+  if (!claimed.ok) return { ok: false, reason: claimed.reason }
+
+  const claimedRow = claimed.row
+
+  if (claimedRow.invited_user_id) {
+    if (await accountIsEstablished(claimedRow.invited_user_id)) {
       /* The invitation says pending, but the account holds a role or a family
          membership: somebody is using it. Withdrawing would mean deleting a
          participant's account, which this workflow never does
          (GAP-ADMIN-011). */
+      await restoreInvitationClaim(claimedRow.id, claimed.processingToken)
       return { ok: false, reason: "notRevocable" }
     }
-    if (!(await deleteUnacceptedAccount(row.invited_user_id))) {
+    if (!(await deleteUnacceptedAccount(claimedRow.invited_user_id))) {
       /* Reporting a revoke while the link still works would be a lie about a
          credential. */
+      await restoreInvitationClaim(claimedRow.id, claimed.processingToken)
       return { ok: false, reason: "failed" }
     }
   }
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("family_invitations")
     .update({
       state: "revoked",
       revoked_at: new Date().toISOString(),
       revoked_by: revokedBy,
       invited_user_id: null,
+      processing_token: null,
     })
-    .eq("id", row.id)
+    .eq("id", claimedRow.id)
     .eq("state", "pending")
+    .eq("processing_token", claimed.processingToken)
+    .select("id")
+    .single()
 
-  if (error) {
+  if (error || !updated) {
     return {
       ok: false,
-      reason: error.code === "42501" ? "forbidden" : "failed",
+      reason: error?.code === "42501" ? "forbidden" : "failed",
     }
   }
 
-  return { ok: true, outcome: "revoked", id: row.id }
+  return { ok: true, outcome: "revoked", id: claimedRow.id }
 }

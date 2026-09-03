@@ -43,6 +43,7 @@ const SUPABASE_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
 const SECRET_CONFIGURED = Boolean(
   process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY,
 )
+const LOCAL_SUPABASE_ORIGIN = "http://127.0.0.1:54321"
 
 /** A fresh address per run, so a re-run is not a duplicate-invite test. */
 function newInviteeAddress(): string {
@@ -58,6 +59,22 @@ async function localStackIsUp(page: Page): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+/** Refuse mutations unless the configured project is the local Supabase API. */
+function localSupabaseOriginIsApproved(): boolean {
+  const configured = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!configured) return false
+
+  try {
+    return new URL(configured).origin === LOCAL_SUPABASE_ORIGIN
+  } catch {
+    return false
+  }
+}
+
+async function localProvisioningIsSafe(page: Page): Promise<boolean> {
+  return localSupabaseOriginIsApproved() && (await localStackIsUp(page))
 }
 
 async function signIn(page: Page, email: string) {
@@ -258,8 +275,8 @@ test.describe("the invitation round trip", () => {
     page,
   }) => {
     test.skip(
-      !(await localStackIsUp(page)),
-      "No local Supabase stack (Mailpit on 54324) — refusing to provision accounts against a hosted project.",
+      !(await localProvisioningIsSafe(page)),
+      "Needs the loopback Supabase API on 54321 and Mailpit on 54324 — refusing to provision accounts against a hosted project.",
     )
 
     const address = newInviteeAddress()
@@ -273,6 +290,8 @@ test.describe("the invitation round trip", () => {
       page.getByText("Invitation sent", { exact: true }),
     ).toBeVisible()
     await expect(page.getByText("Waiting to be accepted").first()).toBeVisible()
+    const invitationRow = page.locator("tr", { hasText: address })
+    await expect(invitationRow.locator("td").nth(2)).toContainText("UTC")
 
     const link = await latestInviteLink(page, address)
     expect(link, "an invitation email reached the mailbox").not.toBeNull()
@@ -327,8 +346,8 @@ test.describe("the invitation round trip", () => {
     page,
   }) => {
     test.skip(
-      !(await localStackIsUp(page)),
-      "No local Supabase stack (Mailpit on 54324) — refusing to provision accounts against a hosted project.",
+      !(await localProvisioningIsSafe(page)),
+      "Needs the loopback Supabase API on 54321 and Mailpit on 54324 — refusing to provision accounts against a hosted project.",
     )
 
     const address = newInviteeAddress()
@@ -371,8 +390,8 @@ test.describe("the invitation round trip", () => {
     page,
   }) => {
     test.skip(
-      !(await localStackIsUp(page)),
-      "No local Supabase stack (Mailpit on 54324) — refusing to provision accounts against a hosted project.",
+      !(await localProvisioningIsSafe(page)),
+      "Needs the loopback Supabase API on 54321 and Mailpit on 54324 — refusing to provision accounts against a hosted project.",
     )
 
     /* The partial failure this is about: `resendInvitation` deletes the old
@@ -424,8 +443,8 @@ test.describe("the invitation round trip", () => {
 
   test("a withdrawn invitation stops working", async ({ page }) => {
     test.skip(
-      !(await localStackIsUp(page)),
-      "No local Supabase stack (Mailpit on 54324) — refusing to provision accounts against a hosted project.",
+      !(await localProvisioningIsSafe(page)),
+      "Needs the loopback Supabase API on 54321 and Mailpit on 54324 — refusing to provision accounts against a hosted project.",
     )
 
     const address = newInviteeAddress()
@@ -444,6 +463,9 @@ test.describe("the invitation round trip", () => {
     const row = page.locator("tr", { hasText: address })
     await row.getByRole("button", { name: "Withdraw" }).click()
     await expect(row.getByText("Revoked")).toBeVisible()
+    await expect(row.locator("td").last()).toContainText(
+      "The invitation was withdrawn and its link no longer works.",
+    )
 
     /* Revoking deletes the provisioned account, so the emailed link dies with
        it rather than merely being marked. */

@@ -67,9 +67,13 @@ const STATE_ICON = {
 /** Absolute, never "3 days ago" — an operator reconciling a record needs the date. */
 function formatMoment(value: string): string {
   return new Date(value).toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZone: "UTC",
+    timeZoneName: "short",
   })
 }
 
@@ -127,9 +131,7 @@ function InvitationActions({ invitation }: { invitation: AdminInvitation }) {
   const succeeded =
     outcome?.status === "resent" || outcome?.status === "revoked"
 
-  if (!canResend(lifecycle) && !canRevoke(lifecycle)) {
-    return null
-  }
+  const hasControls = canResend(lifecycle) || canRevoke(lifecycle)
 
   return (
     <div className="flex flex-col items-start gap-[var(--hsh-space-2)]">
@@ -137,40 +139,47 @@ function InvitationActions({ invitation }: { invitation: AdminInvitation }) {
         {message ?? ""}
       </p>
 
-      <div className="flex flex-wrap gap-[var(--hsh-space-2)]">
-        {canResend(lifecycle) ? (
-          <form action={resend}>
-            <input
-              type="hidden"
-              name="invitationId"
-              value={invitation.id}
-              readOnly
-            />
-            <Button
-              type="submit"
-              variant="secondary"
-              size="sm"
-              disabled={resending}
-            >
-              {resending ? "Sending…" : "Resend"}
-            </Button>
-          </form>
-        ) : null}
+      {hasControls ? (
+        <div className="flex flex-wrap gap-[var(--hsh-space-2)]">
+          {canResend(lifecycle) ? (
+            <form action={resend}>
+              <input
+                type="hidden"
+                name="invitationId"
+                value={invitation.id}
+                readOnly
+              />
+              <Button
+                type="submit"
+                variant="secondary"
+                size="sm"
+                disabled={resending}
+              >
+                {resending ? "Sending…" : "Resend"}
+              </Button>
+            </form>
+          ) : null}
 
-        {canRevoke(lifecycle) ? (
-          <form action={revoke}>
-            <input
-              type="hidden"
-              name="invitationId"
-              value={invitation.id}
-              readOnly
-            />
-            <Button type="submit" variant="quiet" size="sm" disabled={revoking}>
-              {revoking ? "Withdrawing…" : "Withdraw"}
-            </Button>
-          </form>
-        ) : null}
-      </div>
+          {canRevoke(lifecycle) ? (
+            <form action={revoke}>
+              <input
+                type="hidden"
+                name="invitationId"
+                value={invitation.id}
+                readOnly
+              />
+              <Button
+                type="submit"
+                variant="quiet"
+                size="sm"
+                disabled={revoking}
+              >
+                {revoking ? "Withdrawing…" : "Withdraw"}
+              </Button>
+            </form>
+          ) : null}
+        </div>
+      ) : null}
 
       {message ? (
         <p

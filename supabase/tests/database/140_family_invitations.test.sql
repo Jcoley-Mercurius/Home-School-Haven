@@ -11,7 +11,7 @@
 -- `/admin/families` and `/invitation/accept` decide what a person is SHOWN.
 -- This decides what the database does when asked directly — by a forged
 -- PostgREST request, by a future migration that adds a convenience policy, or
--- by an educator who simply calls the function. Seven things are proven:
+-- by an educator who simply calls the function. Eight things are proven:
 --
 --   1. `anon` holds nothing on `family_invitations`, and cannot execute either
 --      invitation function.
@@ -25,7 +25,8 @@
 --      than silently succeeding.
 --   6. An expired invitation and a revoked invitation both refuse acceptance,
 --      and an account with no invitation gets no role at all.
---   7. The audit payload discloses NO email address —
+--   7. A revoke/resend processing claim makes the invitation non-acceptable.
+--   8. The audit payload discloses NO email address —
 --      `public.audit_events` is readable by every administrator, and an
 --      invitation list that leaked addresses into history would outlive the
 --      invitation itself.
@@ -33,7 +34,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(45);
+select plan(48);
 
 \set parent   '20000000-0000-4000-8000-00000000000a'
 \set educator '20000000-0000-4000-8000-00000000000e'
@@ -255,6 +256,46 @@ select is(
 -- ===========================================================================
 -- 4. ACCEPTANCE — one role, one time
 -- ===========================================================================
+set local request.jwt.claims =
+  '{"sub":"21000000-0000-4000-8000-000000000001","role":"authenticated"}';
+
+-- Simulate the application's atomic claim before it calls the Auth Admin API.
+-- The invited account must not see an open form or win acceptance while an
+-- administrator is invalidating its credential.
+set local request.jwt.claims =
+  '{"sub":"20000000-0000-4000-8000-000000000ad0","role":"authenticated"}';
+update public.family_invitations
+   set processing_token = '22000000-0000-4000-8000-000000000001'
+ where invited_user_id = :'invitee_ok';
+
+set local request.jwt.claims =
+  '{"sub":"21000000-0000-4000-8000-000000000001","role":"authenticated"}';
+
+select is(
+  public.family_invitation_status(),
+  null,
+  'a claimed invitation is not presented as open'
+);
+
+select is(
+  public.accept_family_invitation(),
+  null,
+  'a claimed invitation refuses acceptance before account deletion'
+);
+
+select is(
+  (select count(*)::int from public.user_roles where user_id = :'invitee_ok'),
+  0,
+  'a refused claimed acceptance grants no role'
+);
+
+set local request.jwt.claims =
+  '{"sub":"20000000-0000-4000-8000-000000000ad0","role":"authenticated"}';
+update public.family_invitations
+   set processing_token = null
+ where invited_user_id = :'invitee_ok'
+   and processing_token = '22000000-0000-4000-8000-000000000001';
+
 set local request.jwt.claims =
   '{"sub":"21000000-0000-4000-8000-000000000001","role":"authenticated"}';
 

@@ -69,6 +69,7 @@ export async function inviteFamilyAction(
   _previous: InviteFamilyFormState,
   formData: FormData,
 ): Promise<InviteFamilyFormState> {
+  const viewer = await requireAdmin(RETURN_TO)
   const emailValue = String(formData.get("email") ?? "")
   const parsed = inviteSchema.safeParse({ email: emailValue.trim() })
 
@@ -81,7 +82,6 @@ export async function inviteFamilyAction(
     }
   }
 
-  const viewer = await requireAdmin(RETURN_TO)
   const result = await inviteFamily(parsed.data.email, viewer.userId)
 
   if (!result.ok) {
@@ -124,12 +124,12 @@ export async function resendInvitationAction(
   _previous: InvitationActionFormState,
   formData: FormData,
 ): Promise<InvitationActionFormState> {
+  await requireAdmin(RETURN_TO)
   const rawId = String(formData.get("invitationId") ?? "")
   const parsed = idSchema.safeParse({ invitationId: rawId })
 
   if (!parsed.success) return { status: "invalid", invitationId: null }
 
-  await requireAdmin(RETURN_TO)
   const result = await resendInvitation(parsed.data.invitationId)
 
   if (!result.ok) {
@@ -167,12 +167,12 @@ export async function revokeInvitationAction(
   _previous: InvitationActionFormState,
   formData: FormData,
 ): Promise<InvitationActionFormState> {
+  const viewer = await requireAdmin(RETURN_TO)
   const rawId = String(formData.get("invitationId") ?? "")
   const parsed = idSchema.safeParse({ invitationId: rawId })
 
   if (!parsed.success) return { status: "invalid", invitationId: null }
 
-  const viewer = await requireAdmin(RETURN_TO)
   const result = await revokeInvitation(parsed.data.invitationId, viewer.userId)
 
   if (!result.ok) {
