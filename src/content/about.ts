@@ -25,6 +25,8 @@
  * See `prompts/public-about-page.md` §3–§4.
  */
 
+import type { ApprovedPhoto } from "./programs"
+
 /** Where a string on this page came from. */
 export type AboutContentSource =
   | "beta-content-import-inventory"
@@ -180,24 +182,6 @@ export type StaffProfile = {
    */
   portrait: ApprovedPhoto | null
   source: AboutContentSource
-}
-
-/**
- * A real photograph cleared to publish.
- *
- * Deliberately a separate type from `PlaceholderImage`, whose `isPlaceholder`
- * is the literal `true`. The two can never be assigned to one another, so an
- * approved photo cannot drift into a placeholder slot or the reverse, and the
- * release gate in `scripts/check-demo-placeholders.mjs` keeps its meaning.
- */
-export type ApprovedPhoto = {
-  /** Always under `/photography/`, never `/placeholder/`. */
-  src: string
-  /** Describes the person. Never the "demo only" prefix placeholders carry. */
-  alt: string
-  width: number
-  height: number
-  isPlaceholder: false
 }
 
 export const staffProfiles: StaffProfile[] = [

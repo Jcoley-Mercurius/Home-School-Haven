@@ -13,7 +13,7 @@
     - /url: /programs
   - link "Request Guidance":
     - /url: /contact
-  - img "Placeholder photo — demo only. Children painting at a sunlit table surrounded by plants."
+  - img "A group class in session at Home School Haven, children seated around a long table with an educator."
   - region "What we value":
     - heading "What we value" [level=2]
     - list:
@@ -58,6 +58,7 @@
     - list:
       - listitem:
         - article:
+          - img "Samantha, founder of Home School Haven, outside the Cape Coral space."
           - heading "Samantha" [level=3]
           - paragraph: Founder
           - paragraph: It's me Sam!
@@ -67,6 +68,7 @@
           - paragraph: That desire for something different became the foundation of Home School Haven. It's a space designed to bring families together to encourage a love of learning, and to remind parents, children and educators that education can be peaceful, purposeful and led by God's guidance.
       - listitem:
         - article:
+          - img "Heidi Endress, Lead Educator, smiling outdoors."
           - heading "Heidi Endress" [level=3]
           - paragraph: Lead Educator
           - paragraph: /Heidi brings \d+ years of experience in elementary education, working with students from Pre-K through fifth grade\. For the past \d+ years, she has served as an elementary Art Director and visual arts teacher\. She holds a degree in Commercial Art, has an extensive knowledge of art history, and is also a certified Therapeutic Art Life Coach\./
@@ -76,6 +78,7 @@
           - paragraph: We are incredibly grateful to have Heidi as part of the Home School Haven family. Her experience, passion, warmth, and genuine love for children make her such a special part of our community!
       - listitem:
         - article:
+          - img "Celina Carlin, Community Engagement & Campus Culture Coordinator."
           - heading "Celina Carlin" [level=3]
           - paragraph: Community Engagement & Campus Culture Coordinator
           - paragraph: Celina is a Florida native who loves sunshine, the outdoors, and hands-on learning. Energetic, creative, and engaging, she creates a warm environment where children feel encouraged to explore, ask questions, and grow in confidence.

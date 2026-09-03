@@ -331,28 +331,48 @@ test.describe("hero bleed", () => {
   })
 })
 
-test.describe("placeholder imagery", () => {
-  test("every image is labelled a demo-only placeholder", async ({ page }) => {
+test.describe("imagery provenance", () => {
+  test("each image is either approved photography or labelled demo-only", async ({
+    page,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop)
     await gotoHome(page)
 
-    /* Demo override 2026-08-27: generated art may stand in for photography only
-       while it is unmistakably labelled and never called approved photography. */
-    const alts = await page
-      .locator("main img")
-      .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("alt")))
+    /* Both kinds may appear while placeholders are being retired, but the two
+       must never blur: anything served from /placeholder/ has to announce
+       itself in its alt text, and anything approved must not claim to be a
+       demo. Demo override 2026-08-27; approved photography added 2026-09-03. */
+    const images = await page.locator("main img").evaluateAll((nodes) =>
+      nodes.map((n) => ({
+        alt: n.getAttribute("alt") ?? "",
+        src: (n as HTMLImageElement).getAttribute("src") ?? "",
+      })),
+    )
 
-    expect(alts.length).toBeGreaterThan(0)
-    for (const alt of alts) {
-      expect(alt).toMatch(/^Placeholder photo — demo only\./)
+    expect(images.length).toBeGreaterThan(0)
+    for (const { alt, src } of images) {
+      const isPlaceholder = src.includes(encodeURIComponent("/placeholder/"))
+      if (isPlaceholder) {
+        expect(alt).toMatch(/^Placeholder photo — demo only\./)
+      } else {
+        expect(src).toContain(encodeURIComponent("/photography/"))
+        expect(alt).not.toMatch(/demo only/)
+        expect(alt.length).toBeGreaterThan(0)
+      }
     }
   })
 
-  test("the page states that its photography is not real", async ({ page }) => {
+  test("the footer says which imagery is still demo art", async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop)
     await gotoHome(page)
+    /* The disclaimer narrows as placeholders are retired. While any remain it
+       must name them; the home panels are approved photography as of
+       2026-09-03, so the sentence points at the program cards instead. */
     await expect(page.getByRole("contentinfo")).toContainText(
-      "not approved photography and does not show real students",
+      "the three program card images are placeholder art for layout review only",
+    )
+    await expect(page.getByRole("contentinfo")).toContainText(
+      "do not show real students",
     )
   })
 })

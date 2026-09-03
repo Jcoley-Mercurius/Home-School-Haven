@@ -21,8 +21,8 @@ import {
   staffProfiles,
 } from "@/content/about"
 import {
+  aboutHeroImage,
   guidanceHref,
-  heroImage,
   programsHref,
 } from "@/content/foundation-content"
 
@@ -118,12 +118,12 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Demo-only placeholder art — see `public/placeholder/README.md`.
-                Not approved photography; the children are not real students. */}
+            {/* Approved photography (`public/photography/README.md`). About
+                carries its own hero rather than reusing the home one. */}
             <div className="relative min-h-[280px] overflow-hidden rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-quiet)] lg:min-h-[420px]">
               <Image
-                src={heroImage.src}
-                alt={heroImage.alt}
+                src={aboutHeroImage.src}
+                alt={aboutHeroImage.alt}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"

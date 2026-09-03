@@ -267,10 +267,9 @@ function SiteFooter() {
           <p className="hsh-caption text-[var(--hsh-text-muted)]">
             Private Foundation Review environment. Program details reflect
             currently published content and are confirmed directly with Home
-            School Haven. Staff portraits are approved photographs supplied by
-            Home School Haven; the remaining program and banner images are
-            placeholder art for layout review only and do not show real
-            students.
+            School Haven. Photography is supplied and approved by Home School
+            Haven; the three program card images are placeholder art for layout
+            review only and do not show real students.
           </p>
           <p className="hsh-caption text-[var(--hsh-text-muted)]">
             Powered by Mercurius

@@ -167,15 +167,15 @@ test.describe("approved content", () => {
     }
   })
 
-  test("hero art is labelled as a demo placeholder", async ({ page }) => {
+  test("the hero is approved photography, not demo art", async ({ page }) => {
     await gotoAbout(page)
-    /* `public/placeholder/README.md`: every usage says so in its alt text, so a
-       reviewer is never shown generated art as if it were real photography. */
+    /* About carries its own approved hero as of 2026-09-03; it no longer
+       reuses the home panel and no longer shows generated art. */
     const hero = page.getByRole("main").locator("img").first()
-    await expect(hero).toHaveAttribute(
-      "alt",
-      /^Placeholder photo — demo only\./,
-    )
+    const src = await hero.getAttribute("src")
+    expect(src).toContain(encodeURIComponent("/photography/classroom-group"))
+    await expect(hero).not.toHaveAttribute("alt", /demo only/)
+    await expect(hero).not.toHaveAttribute("alt", "")
   })
 })
 
@@ -352,13 +352,14 @@ test.describe("footer", () => {
     await expect(footer).toContainText("2930 Del Prado Boulevard South")
 
     /* The guard that stops a reviewer reading demo art as real photography.
-       Scoped, not blanket: real staff portraits ship, five placeholder images
-       do not. The sentence goes when `public/placeholder/` goes. */
+       Scoped, not blanket, and it narrows as placeholders are retired: three
+       program card images are still demo art. It goes when
+       `public/placeholder/` goes. */
     await expect(footer).toContainText(
-      "the remaining program and banner images are placeholder art for layout review only",
+      "the three program card images are placeholder art for layout review only",
     )
     await expect(footer).toContainText(
-      "Staff portraits are approved photographs supplied by Home School Haven",
+      "Photography is supplied and approved by Home School Haven",
     )
   })
 
