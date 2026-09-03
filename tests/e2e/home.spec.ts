@@ -351,13 +351,14 @@ test.describe("imagery provenance", () => {
 
     expect(images.length).toBeGreaterThan(0)
     for (const { alt, src } of images) {
+      const normalizedAlt = alt.trim()
       const isPlaceholder = src.includes(encodeURIComponent("/placeholder/"))
       if (isPlaceholder) {
-        expect(alt).toMatch(/^Placeholder photo — demo only\./)
+        expect(normalizedAlt).toMatch(/^Placeholder photo — demo only\./)
       } else {
         expect(src).toContain(encodeURIComponent("/photography/"))
-        expect(alt).not.toMatch(/demo only/)
-        expect(alt.length).toBeGreaterThan(0)
+        expect(normalizedAlt).not.toMatch(/demo only/i)
+        expect(normalizedAlt.length).toBeGreaterThan(0)
       }
     }
   })
@@ -368,12 +369,40 @@ test.describe("imagery provenance", () => {
     /* The disclaimer narrows as placeholders are retired. While any remain it
        must name them; the home panels are approved photography as of
        2026-09-03, so the sentence points at the program cards instead. */
-    await expect(page.getByRole("contentinfo")).toContainText(
-      "the three program card images are placeholder art for layout review only",
+    const placeholderProgramCardImageCount = await page
+      .getByRole("main")
+      .locator('article[data-slot="card"] img')
+      .evaluateAll(
+        (nodes) =>
+          nodes.filter((node) =>
+            node
+              .getAttribute("src")
+              ?.includes(encodeURIComponent("/placeholder/")),
+          ).length,
+      )
+    const footer = page.getByRole("contentinfo")
+    const footerText = await footer.innerText()
+    const statedCountText = footerText.match(
+      /\b(one|two|three|four|five|six|seven|eight|nine|ten) program card images are placeholder art for layout review only\b/i,
+    )?.[1]
+    const writtenNumbers: Record<string, number> = {
+      one: 1,
+      two: 2,
+      three: 3,
+      four: 4,
+      five: 5,
+      six: 6,
+      seven: 7,
+      eight: 8,
+      nine: 9,
+      ten: 10,
+    }
+
+    expect(statedCountText).toBeDefined()
+    expect(writtenNumbers[statedCountText!.toLowerCase()]).toBe(
+      placeholderProgramCardImageCount,
     )
-    await expect(page.getByRole("contentinfo")).toContainText(
-      "do not show real students",
-    )
+    await expect(footer).toContainText("do not show real students")
   })
 })
 
