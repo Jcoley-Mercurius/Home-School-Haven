@@ -46,6 +46,7 @@ import {
   type Program,
 } from "@/content/programs"
 import { mapProgramRow } from "./map-program-row"
+import { reportProgramQueryFailure } from "./query-diagnostics"
 
 /** `null` means "the system of record could not be read" — never "no programs". */
 export type ProgramReadResult = Program[] | null
@@ -60,14 +61,25 @@ export async function listPublishedPrograms(): Promise<ProgramReadResult> {
   if (!isSupabaseConfigured()) return stagingPrograms
 
   const supabase = createAnonymousClient()
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from("programs")
     .select(SELECT_COLUMNS)
     .order("sort_order", { ascending: true })
 
   /* The error object can carry query detail; only its code is safe to surface,
      and nothing here logs a value. */
-  if (error || !data) return null
+  if (error || !data) {
+    /* TEMPORARY — see `./query-diagnostics`. Reports why the read failed in
+       credential-free fields, then returns `null` exactly as before. Remove
+       this call and that module once the Preview failure is classified. */
+    reportProgramQueryFailure({
+      operation: "listPublishedPrograms",
+      error,
+      status,
+      dataWasNull: !data,
+    })
+    return null
+  }
 
   return data.map(mapProgramRow)
 }
