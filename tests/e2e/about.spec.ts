@@ -179,6 +179,205 @@ test.describe("approved content", () => {
   })
 })
 
+test.describe("published team", () => {
+  /* Facts here come only from https://homeschoolhaven.org/about-us. These
+     assertions are the guard that nothing is quietly invented, inferred from an
+     educator account, or dropped. */
+  test("lists each published person with their role", async ({ page }) => {
+    await gotoAbout(page)
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Meet our team" }),
+    ).toBeVisible()
+
+    const profiles = page.locator('[data-slot="staff-profile"]')
+    await expect(profiles).toHaveCount(3)
+
+    for (const [name, role] of [
+      ["Samantha", "Founder"],
+      ["Heidi Endress", "Lead Educator"],
+      ["Celina Carlin", "Community Engagement & Campus Culture Coordinator"],
+    ]) {
+      const card = profiles.filter({
+        has: page.getByRole("heading", { level: 3, name, exact: true }),
+      })
+      await expect(card).toHaveCount(1)
+      await expect(card).toContainText(role)
+    }
+  })
+
+  test("renders the published bios verbatim", async ({ page }) => {
+    await gotoAbout(page)
+    const body = await page.getByRole("main").innerText()
+
+    for (const line of [
+      "For over 16 years, I've built a career in the hair industry",
+      "Heidi brings 36 years of experience in elementary education",
+      "certified Therapeutic Art Life Coach",
+      "As a certified horticulturist with certifications in Agricultural Science, Soil Science, and Plant Nutrition",
+    ]) {
+      expect(body).toContain(line)
+    }
+  })
+
+  test("shows each approved portrait, and never a remote or broken one", async ({
+    page,
+  }) => {
+    await gotoAbout(page)
+    const profiles = page.locator('[data-slot="staff-profile"]')
+
+    /* One portrait per person, each naming the person rather than carrying the
+       placeholder "demo only" prefix, and each served from the approved
+       directory rather than `/placeholder/`. */
+    await expect(profiles.locator("img")).toHaveCount(3)
+    for (const [name, fragment] of [
+      ["Samantha", "staff-samantha"],
+      ["Heidi Endress", "staff-heidi-endress"],
+      ["Celina Carlin", "staff-celina-carlin"],
+    ]) {
+      const card = profiles.filter({
+        has: page.getByRole("heading", { level: 3, name, exact: true }),
+      })
+      const img = card.locator("img")
+      await expect(img).toHaveAttribute("alt", new RegExp(name.split(" ")[0]))
+      await expect(img).not.toHaveAttribute("alt", /demo only/)
+      const src = await img.getAttribute("src")
+      expect(src).toContain(encodeURIComponent(`/photography/${fragment}`))
+      expect(src).not.toContain("placeholder")
+    }
+
+    /* The footer logo is lazy-loaded by `next/image`, so it is legitimately
+       incomplete until it scrolls into view. Bring the whole page through the
+       viewport first, or this check reports a healthy image as broken. */
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+    await page.waitForFunction(() =>
+      Array.from(document.images).every((img) => img.complete),
+    )
+
+    const broken = await page.locator("img").evaluateAll((nodes) =>
+      nodes
+        .filter((n) => {
+          const img = n as HTMLImageElement
+          return !img.complete || img.naturalWidth === 0
+        })
+        .map(
+          (n) => (n as HTMLImageElement).currentSrc || n.getAttribute("src"),
+        ),
+    )
+    expect(broken).toEqual([])
+
+    /* Nothing on this page may be hotlinked from the current website. */
+    const remote = await page
+      .locator("img")
+      .evaluateAll((nodes) =>
+        nodes
+          .map((n) => (n as HTMLImageElement).getAttribute("src") ?? "")
+          .filter((src) => /^https?:\/\//.test(src)),
+      )
+    expect(remote).toEqual([])
+  })
+})
+
+test.describe("footer", () => {
+  test("composes the four reference columns", async ({ page }) => {
+    await gotoAbout(page)
+    const footer = page.getByRole("contentinfo")
+
+    for (const heading of [
+      "Explore",
+      "Resources",
+      "Account",
+      "Stay Connected",
+    ]) {
+      await expect(
+        footer.getByRole("heading", { level: 2, name: heading, exact: true }),
+      ).toBeVisible()
+    }
+
+    for (const [label, href] of [
+      ["Programs", "/programs"],
+      ["Calendar", "/calendar"],
+      ["About", "/about"],
+      ["Resources", "/resources"],
+      ["Contact", "/contact"],
+      ["Sign In", "/sign-in"],
+      ["Request Guidance", "/contact"],
+    ]) {
+      await expect(
+        footer.getByRole("link", { name: label, exact: true }),
+      ).toHaveAttribute("href", href)
+    }
+  })
+
+  test("carries the brand logo, policy link, and Mercurius attribution", async ({
+    page,
+  }) => {
+    await gotoAbout(page)
+    const footer = page.getByRole("contentinfo")
+
+    const brand = footer.getByRole("link", {
+      name: "Home School Haven of SWFL — home",
+    })
+    await expect(brand).toHaveAttribute("href", "/")
+    await expect(brand.locator("img")).toHaveAttribute("alt", "")
+    await expect(footer).toContainText(
+      "A Christ-centered homeschool community in Cape Coral",
+    )
+
+    const privacy = footer.getByRole("link", { name: /Privacy Policy/ })
+    await expect(privacy).toHaveAttribute(
+      "href",
+      "https://homeschoolhaven.org/privacy-policy",
+    )
+    await expect(privacy).toHaveAttribute("rel", /noopener/)
+
+    /* Restrained secondary attribution: present, and not a heading or a link. */
+    await expect(footer.getByText("Powered by Mercurius")).toBeVisible()
+    await expect(
+      footer.getByRole("link", { name: "Powered by Mercurius" }),
+    ).toHaveCount(0)
+  })
+
+  test("keeps the verified contact facts and the review disclaimer", async ({
+    page,
+  }) => {
+    await gotoAbout(page)
+    const footer = page.getByRole("contentinfo")
+
+    /* QA-003: one published number everywhere. The superseded 239-347-93556
+       variant must never reappear. */
+    await expect(
+      footer.getByRole("link", { name: "239-347-9356" }),
+    ).toHaveAttribute("href", "tel:2393479356")
+    await expect(footer).not.toContainText("239-347-93556")
+    await expect(footer).toContainText("2930 Del Prado Boulevard South")
+
+    /* The guard that stops a reviewer reading demo art as real photography.
+       Scoped, not blanket: real staff portraits ship, five placeholder images
+       do not. The sentence goes when `public/placeholder/` goes. */
+    await expect(footer).toContainText(
+      "the remaining program and banner images are placeholder art for layout review only",
+    )
+    await expect(footer).toContainText(
+      "Staff portraits are approved photographs supplied by Home School Haven",
+    )
+  })
+
+  test("Get Updates is offered as unavailable, not as a live subscription", async ({
+    page,
+  }) => {
+    await gotoAbout(page)
+    const footer = page.getByRole("contentinfo")
+    /* No subscription surface exists and family email collection is gated on
+       unapproved consent policy, so this must never become a link. */
+    await expect(footer.getByRole("link", { name: /Get Updates/ })).toHaveCount(
+      0,
+    )
+    const updates = footer.getByText("Get Updates", { exact: false }).first()
+    await expect(updates).toHaveAttribute("aria-disabled", "true")
+    await expect(updates).toContainText("coming soon")
+  })
+})
+
 test.describe("responsive transformation", () => {
   test("community grid is 4 / 2 / 1 columns across the breakpoints", async ({
     page,
