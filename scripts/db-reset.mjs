@@ -55,13 +55,23 @@ const EXPECTED = [
       from public.enrollments;`,
     /* 0005 is the confirmed Art Lab enrollment the roster slice added, so
        MPS-ACC-028 has a target: it is the only confirmed enrollment inside a
-       program the sample educator is actually assigned to. */
+       program the sample educator is actually assigned to.
+
+       0006 and 0007 are family B's confirmed places, which are what make two
+       programs genuinely full for the conversion journey. They were added to
+       `supabase/seed.sql` with that slice and this expectation was not updated
+       with them, so every reset since has seeded correctly and then reported
+       `enrollments=mismatch`, retried three times, and exited 1 — a passing
+       reset that read as a failure. Extend this list whenever the seed adds an
+       enrollment. */
     expected:
       "50000000-0000-4000-8000-000000000001=payment_pending," +
       "50000000-0000-4000-8000-000000000002=confirmed," +
       "50000000-0000-4000-8000-000000000003=approval_pending," +
       "50000000-0000-4000-8000-000000000004=waitlisted," +
-      "50000000-0000-4000-8000-000000000005=confirmed",
+      "50000000-0000-4000-8000-000000000005=confirmed," +
+      "50000000-0000-4000-8000-000000000006=confirmed," +
+      "50000000-0000-4000-8000-000000000007=confirmed",
     label: "enrollments",
   },
   {
@@ -213,18 +223,54 @@ function resetDatabase() {
 }
 
 /**
- * The one known false-negative exit from the CLI that verification may overrule.
+ * The known false-negative exits from the CLI that verification may overrule.
  * SQL and migration errors are never treated as storage health failures.
+ *
+ * Storage reports the same condition several ways depending on CLI version:
+ *
+ *   1. `<container>[:] container is not ready: unhealthy` — the health check.
+ *      The separator after the container name has been both `: ` and a bare
+ *      space, so it is not matched literally.
+ *   2. `LegacyStorageGatewayStatusError` / `Error status 502` — the storage
+ *      gateway answering during the post-migration restart.
+ *
+ * Only the first spelling of (1) was recognised. On CLI v2.111 the failure
+ * arrives as (2), or as (1) without its colon, so a reset that had fully
+ * succeeded was treated as fatal: `main()` threw before seeding and left the
+ * database MIGRATED BUT EMPTY. Every suite that ran next failed at sign-in,
+ * because an account with no `user_roles` row lands on /account — the
+ * cold-start symptom `waitForApi()` describes below, except permanent. That is
+ * the "a check that did not run must not read as a pass" problem this script
+ * exists to prevent, arriving through the one branch meant to prevent it.
+ *
+ * THE DISCRIMINATOR IS `Restarting containers...`, which the CLI prints only
+ * after the migration phase has completed. A run that dies before that line
+ * never applied a schema, so it stays fatal no matter what storage said. Do not
+ * substitute a check for `failed to bootstrap the local database`: the storage
+ * container prints that in its own startup log on a run that then migrates
+ * perfectly well.
+ *
+ * Either way this only permits the run to CONTINUE. `verifySeed()` remains the
+ * decision: the canonical rows are there, or the attempt is retried.
  * @param {ReturnType<typeof spawnSync>} result - The completed reset process.
- * @returns {boolean} Whether only the known storage health check failed.
+ * @returns {boolean} Whether only a known storage health check failed.
  */
 function isStorageHealthFailure(result) {
   const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`
+
+  /* Naming the storage container keeps this from swallowing an unhealthy
+   *database* container, which is never tolerable. */
+  const unhealthyStorage = new RegExp(
+    `${STORAGE_CONTAINER}\\b[:\\s]+container is not ready`,
+  ).test(output)
+  const storageGateway =
+    /LegacyStorageGatewayStatusError|Error status 502/.test(output)
+  const migrationsCompleted = output.includes("Restarting containers...")
+
   return (
     result.status !== 0 &&
-    output.includes(
-      `${STORAGE_CONTAINER}: container is not ready: unhealthy`,
-    ) &&
+    migrationsCompleted &&
+    (unhealthyStorage || storageGateway) &&
     !/SQLSTATE|At statement:|failed to apply migration/i.test(output) &&
     !/^ERROR:/m.test(output)
   )
