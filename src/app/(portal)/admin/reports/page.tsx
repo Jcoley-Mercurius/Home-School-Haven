@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
 
 import { ReviewSignalCard } from "@/components/admin/review-signal-card"
-import { ReviewDataBanner, SectionError } from "@/components/family/section-states"
+import {
+  ReviewDataBanner,
+  SectionError,
+} from "@/components/family/section-states"
 import { AdminPortalShell } from "@/components/layout/admin-portal-shell"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Alert } from "@/components/ui/alert"
@@ -72,7 +75,10 @@ export default async function AdminReportsPage() {
         <ReviewDataBanner />
 
         <Breadcrumbs
-          trail={[{ label: "Operations", href: "/admin" }, { label: "Reports" }]}
+          trail={[
+            { label: "Operations", href: "/admin" },
+            { label: "Reports" },
+          ]}
         />
 
         <header className="flex flex-col gap-[var(--hsh-space-2)]">
@@ -89,11 +95,12 @@ export default async function AdminReportsPage() {
           tone="info"
           title="Recording a decision here does not change what has been approved"
         >
-          Classifying feedback and approving its disposition record Samantha&rsquo;s
-          judgment, attributed and timestamped. They add nothing to any release
-          and change no requirement. Carrying an approved decision into the
-          product system is a separate step that a person does deliberately, so
-          nothing enters launch scope without someone putting it there.
+          Classifying feedback and approving its disposition record
+          Samantha&rsquo;s judgment, attributed and timestamped. They add
+          nothing to any release and change no requirement. Carrying an approved
+          decision into the product system is a separate step that a person does
+          deliberately, so nothing enters launch scope without someone putting
+          it there.
         </Alert>
 
         {result.status === "unavailable" ? (

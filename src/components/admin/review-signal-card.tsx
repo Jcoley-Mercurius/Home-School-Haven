@@ -102,7 +102,12 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
     state.signalId === signal.id ? state.status : "idle"
 
   const messages: string[] = []
-  for (const state of [evidenceState, feedbackState, classifyState, approveState]) {
+  for (const state of [
+    evidenceState,
+    feedbackState,
+    classifyState,
+    approveState,
+  ]) {
     const status = outcomeFor(state)
     if (status === "idle" || status === "updated") continue
     messages.push(
@@ -129,7 +134,9 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
     approveState,
   ].some((state) => outcomeFor(state) === "updated")
 
-  const unclassified = signal.feedback.filter((item) => !item.disposition).length
+  const unclassified = signal.feedback.filter(
+    (item) => !item.disposition,
+  ).length
   const unapproved = signal.feedback.filter(
     (item) => item.disposition && !item.approvedAt,
   ).length
@@ -287,8 +294,16 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
 
                     {item.disposition ? (
                       <form action={approveAction}>
-                        <input type="hidden" name="signalId" value={signal.id} />
-                        <input type="hidden" name="feedbackId" value={item.id} />
+                        <input
+                          type="hidden"
+                          name="signalId"
+                          value={signal.id}
+                        />
+                        <input
+                          type="hidden"
+                          name="feedbackId"
+                          value={item.id}
+                        />
                         <Button type="submit" variant="primary" size="md">
                           <Gavel aria-hidden="true" strokeWidth={1.75} />
                           Approve this disposition
@@ -354,7 +369,7 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
             <Field
               invalid={Boolean(
                 outcomeFor(evidenceState) === "invalid" &&
-                  evidenceState.fieldErrors.result,
+                evidenceState.fieldErrors.result,
               )}
             >
               <FieldLabel htmlFor={`${ids}-result`}>Result</FieldLabel>
@@ -381,9 +396,7 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor={`${ids}-build`}>
-                Build identifier
-              </FieldLabel>
+              <FieldLabel htmlFor={`${ids}-build`}>Build identifier</FieldLabel>
               <Input
                 id={`${ids}-build`}
                 name="buildIdentifier"
@@ -462,7 +475,7 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
             <Field
               invalid={Boolean(
                 outcomeFor(feedbackState) === "invalid" &&
-                  feedbackState.fieldErrors.note,
+                feedbackState.fieldErrors.note,
               )}
             >
               <FieldLabel htmlFor={`${ids}-note`}>
@@ -475,7 +488,7 @@ function ReviewSignalCard({ signal }: { signal: ReviewSignal }) {
                 aria-invalid={
                   Boolean(
                     outcomeFor(feedbackState) === "invalid" &&
-                      feedbackState.fieldErrors.note,
+                    feedbackState.fieldErrors.note,
                   ) || undefined
                 }
                 placeholder="Samantha's words, as close to verbatim as you can."

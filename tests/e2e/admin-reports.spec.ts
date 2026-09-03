@@ -40,12 +40,13 @@ test.describe.configure({ mode: "serial" })
 
 const SUPABASE_CONFIGURED = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+  (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
 )
 
 const CAN_RESTORE_FIXTURE = (() => {
-  if (!SUPABASE_CONFIGURED || !process.env.NEXT_PUBLIC_SUPABASE_URL) return false
+  if (!SUPABASE_CONFIGURED || !process.env.NEXT_PUBLIC_SUPABASE_URL)
+    return false
   try {
     return (
       new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin ===
@@ -113,8 +114,7 @@ const ACCOUNTS = {
 } as const
 
 /** The note this suite records. Its words are the thing that must not leak. */
-const SECRET_NOTE =
-  "The educator workspace felt cramped and I would rework it."
+const SECRET_NOTE = "The educator workspace felt cramped and I would rework it."
 
 async function signIn(page: Page, email: string) {
   await page.goto("/sign-in")
@@ -141,7 +141,9 @@ test.describe("signed out", () => {
 test.describe("privacy boundary", () => {
   test.skip(!SUPABASE_CONFIGURED, "Needs a Supabase project.")
 
-  test("an educator is refused, and told nothing about it", async ({ page }) => {
+  test("an educator is refused, and told nothing about it", async ({
+    page,
+  }) => {
     await signIn(page, ACCOUNTS.educator)
     const response = await page.request.get(ROUTE, { maxRedirects: 0 })
     /* 404, not 403: a 403 would confirm the surface exists. */
@@ -187,9 +189,7 @@ test.describe("the review", () => {
     await expect(
       page.getByRole("status").filter({ hasText: "of 8 signals demonstrated" }),
     ).toContainText("0 of 8 signals demonstrated")
-    await expect(
-      page.getByText("Only a recorded pass counts"),
-    ).toBeVisible()
+    await expect(page.getByText("Only a recorded pass counts")).toBeVisible()
   })
 
   test("says that recording a decision changes no approved scope", async ({
@@ -222,10 +222,7 @@ test.describe("the review", () => {
 })
 
 test.describe.serial("the approved walkthrough (MPS-WFL-008)", () => {
-  test.skip(
-    !CAN_RESTORE_FIXTURE,
-    "Needs the restorable local Supabase stack.",
-  )
+  test.skip(!CAN_RESTORE_FIXTURE, "Needs the restorable local Supabase stack.")
   test.beforeEach(async ({ page }) => {
     await signIn(page, ACCOUNTS.admin)
     await page.setViewportSize(VIEWPORTS.desktop)
@@ -234,19 +231,23 @@ test.describe.serial("the approved walkthrough (MPS-WFL-008)", () => {
 
   test("records evidence and moves a signal into review", async ({ page }) => {
     const card = signalCard(page, "SIG-BETA-005")
-    await card.getByRole("button", { name: /Record evidence or feedback/ }).click()
+    await card
+      .getByRole("button", { name: /Record evidence or feedback/ })
+      .click()
 
     await card.getByLabel("Result").selectOption("pass")
     await card.getByLabel("Build identifier").fill("build-e2e")
     await card.getByLabel("Environment").fill("local")
     await card.getByLabel("Method").fill("Manual walkthrough")
     await card.getByLabel("Evidence").fill("Walked the educator workspace.")
-    await card.getByLabel("Move this signal (optional)").selectOption("in_review")
+    await card
+      .getByLabel("Move this signal (optional)")
+      .selectOption("in_review")
     await card.getByRole("button", { name: "Record evidence" }).click()
 
-    await expect(page.getByRole("status").filter({ hasText: "Recorded" })).toContainText(
-      "no approved requirement changed",
-    )
+    await expect(
+      page.getByRole("status").filter({ hasText: "Recorded" }),
+    ).toContainText("no approved requirement changed")
     await expect(signalCard(page, "SIG-BETA-005")).toContainText("build-e2e")
   })
 
@@ -258,7 +259,9 @@ test.describe.serial("the approved walkthrough (MPS-WFL-008)", () => {
 
   test("records feedback, which starts unclassified", async ({ page }) => {
     const card = signalCard(page, "SIG-BETA-005")
-    await card.getByRole("button", { name: /Record evidence or feedback/ }).click()
+    await card
+      .getByRole("button", { name: /Record evidence or feedback/ })
+      .click()
     await card.getByLabel("What was said about this signal").fill(SECRET_NOTE)
     await card.getByRole("button", { name: "Record feedback" }).click()
 
@@ -327,7 +330,9 @@ test.describe("accessibility and responsive behaviour", () => {
     })
   }
 
-  test("the evidence panel has no axe violations when open", async ({ page }) => {
+  test("the evidence panel has no axe violations when open", async ({
+    page,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop)
     await page.goto(ROUTE)
     await signalCard(page, "SIG-BETA-001")
