@@ -2,6 +2,11 @@ import { Suspense } from "react"
 import type { Metadata } from "next"
 
 import { FamilyList } from "@/components/admin/family-list"
+import {
+  InvitationList,
+  InvitationListError,
+} from "@/components/admin/invitation-list"
+import { InviteFamilyForm } from "@/components/admin/invite-family-form"
 import { ListSkeleton } from "@/components/admin/list-skeleton"
 import {
   EmptyState,
@@ -13,6 +18,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Alert } from "@/components/ui/alert"
 import { requireAdmin } from "@/lib/auth/guards"
 import { listAdminFamilies } from "@/lib/admin/families"
+import { listInvitations } from "@/lib/admin/invitations"
 
 /**
  * Family operations (ACT-004, ACT-006; MPS-REQ-004/005/017/020/021;
@@ -28,15 +34,24 @@ import { listAdminFamilies } from "@/lib/admin/families"
  * running the identical query gets their own family and their own children.
  * Neither control is load-bearing alone.
  *
- * THIS PAGE READS. IT DOES NOT WRITE.
+ * THE DIRECTORY READS. IT DOES NOT WRITE.
  *
  * A family account and its student profiles are the parent's (ACT-001). An
  * administrator seeing them here acquires no authority over them, and checklist
  * §11 leaves correction, retention, and deletion unanswered, so there is
  * nothing approved to build (GAP-ADMIN-009/010/011). The absence is enforced
- * three deep: no mutation is offered in the UI, `src/lib/admin/families.ts`
- * exports no write, and `families`, `family_members`, and `students` hold no
- * write policy or grant for any client role.
+ * three deep: no mutation is offered in the directory UI,
+ * `src/lib/admin/families.ts` exports no write, and `families`,
+ * `family_members`, and `students` hold no write policy or grant for any client
+ * role.
+ *
+ * THE ONE WRITE ON THIS PAGE IS THE INVITATION SECTION
+ *
+ * Family provisioning is invite-only by the owner decision of 2026-09-02
+ * (MPS-REQ-011): only an authorized administrator may invite a family, there is
+ * no public self-service signup, and an invitation grants the `parent` role and
+ * nothing else. Inviting creates an ACCOUNT, not a family record — the parent
+ * still names their own family during setup, so nothing above changes.
  *
  * NO RECORD IDENTIFIER IN ANY URL
  *
@@ -48,8 +63,10 @@ import { listAdminFamilies } from "@/lib/admin/families"
  *
  * WHAT THIS PAGE WILL NOT SHOW
  *
- * No guardian email or phone — `auth.users` is never read and there is no
- * service-role client in this path. No assistance-request detail (MPS-RUL-003).
+ * No guardian email or phone in the DIRECTORY — `src/lib/admin/families.ts`
+ * reads no contact detail at any depth. The invitation section shows the
+ * addresses an administrator themselves typed, which is a different fact from
+ * a family's contact record and is never joined to one. No assistance-request detail (MPS-RUL-003).
  * No medical, behavioral, accommodation, demographic, emergency-contact, legal
  * name, or date-of-birth field: MPS-RUL-006 kept those columns from being
  * created, so there is nothing to withhold.
@@ -141,6 +158,31 @@ async function FamilySection() {
   )
 }
 
+/**
+ * The invitation section: the form, and the state of every invitation issued.
+ * @returns The invitation section.
+ */
+async function InvitationSection() {
+  const result = await listInvitations()
+
+  return (
+    <div className="flex flex-col gap-[var(--hsh-space-6)]">
+      <InviteFamilyForm />
+
+      {result.status === "unavailable" ? (
+        <SectionError>
+          Invitations are not available in this environment because no Supabase
+          project is configured. This is a setup state, not an empty list.
+        </SectionError>
+      ) : result.status === "failed" ? (
+        <InvitationListError />
+      ) : (
+        <InvitationList invitations={result.data} />
+      )}
+    </div>
+  )
+}
+
 export default async function AdminFamiliesPage() {
   const viewer = await requireAdmin("/admin/families")
 
@@ -168,6 +210,30 @@ export default async function AdminFamiliesPage() {
             student is enrolled in.
           </p>
         </header>
+
+        <section
+          aria-labelledby="invitations-heading"
+          className="flex flex-col gap-[var(--hsh-space-4)]"
+        >
+          <header className="flex flex-col gap-[var(--hsh-space-2)]">
+            <h2
+              id="invitations-heading"
+              className="hsh-h3 text-[var(--hsh-text-primary)]"
+            >
+              Invitations
+            </h2>
+            <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+              A parent cannot create their own account. Inviting one here sends
+              a link that lets them set a password and start their family setup.
+            </p>
+          </header>
+
+          <Suspense
+            fallback={<ListSkeleton label="Loading invitations" rows={2} />}
+          >
+            <InvitationSection />
+          </Suspense>
+        </section>
 
         <Alert tone="info" title="Families control their own records">
           This directory is read-only. A parent or guardian adds, changes, and

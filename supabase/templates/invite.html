@@ -1,11 +1,18 @@
 <!--
-  Invitation email for an account provisioned by Home School Haven.
+  Invitation email for a family account (MPS-REQ-011).
 
-  Sent only when an administrator provisions an account through Supabase. The
-  application has no invitation UI and defines no invitation policy: who may be
-  invited, on what evidence, is an unresolved product question (MPS-REQ-011
-  account creation, ACT-007 invited secondary guardian). This template exists so
-  that an administrator-issued invite is not a dead link.
+  Family provisioning is invite-only by the owner decision of 2026-09-02: only
+  an authorized administrator may invite a family, there is no public
+  self-service signup, and an invitation grants the `parent` role and nothing
+  else. The administrator surface is `/admin/families`; the acceptance screen is
+  `/invitation/accept`.
+
+  WHAT THIS EMAIL MAY NOT CONTAIN, AND DOES NOT
+
+  No child or student information, no assistance-request detail, no enrollment
+  or payment detail, no family record, and no administrator's name. An invitation
+  email may end up forwarded, printed, or read on a shared screen, so it carries
+  the least that still lets an adult act on it (AGENTS.md §11).
 
   See `supabase/templates/recovery.html` for why the link is built from
   `{{ .TokenHash }}` rather than `{{ .ConfirmationURL }}`.
@@ -31,13 +38,13 @@
       margin: 0 0 16px;
     "
   >
-    Home School Haven has set up an account for you. Accept the invitation to
-    confirm your email address:
+    Home School Haven has invited you to set up a family account. Open the link
+    below to confirm your email address and choose a password:
   </p>
 
   <p style="margin: 0 0 24px">
     <a
-      href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=%2Faccount"
+      href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=%2Finvitation%2Faccept"
       style="
         font-family: Helvetica, Arial, sans-serif;
         font-size: 16px;
@@ -49,7 +56,7 @@
         text-decoration: none;
         display: inline-block;
       "
-      >Accept the invitation</a
+      >Set up your account</a
     >
   </p>
 
@@ -62,7 +69,8 @@
       margin: 0;
     "
   >
-    This link works once and expires in one hour. If you were not expecting it,
-    you can ignore this email.
+    This link works once and expires in one hour. If it has expired, ask Home
+    School Haven to send a new one. If you were not expecting this invitation,
+    you can ignore this email — no account is created until you use the link.
   </p>
 </div>

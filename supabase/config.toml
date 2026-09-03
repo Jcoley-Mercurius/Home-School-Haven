@@ -190,8 +190,12 @@ enable_refresh_token_rotation = true
 # Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
 # Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
-# Foundation Release provisions accounts; there is no self-service sign-up
-# (MPS-REQ-011 self-service creation is MTS IMPLEMENTATION-PLAN Phase 3).
+# Family provisioning is INVITE-ONLY (MPS-REQ-011, owner decision 2026-09-02).
+# Only an authorized administrator invites a family, from /admin/families; there
+# is no public self-service sign-up, and this must stay false. An invitation
+# reaches the account through the Supabase Admin API and grants the `parent`
+# role in `public.accept_family_invitation()` — never an educator or an
+# administrator.
 enable_signup = false
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
@@ -289,6 +293,16 @@ otp_expiry = 3600
 subject = "Choose a new Home School Haven password"
 content_path = "./supabase/templates/recovery.html"
 
+# The invitation half of MPS-REQ-011. `otp_expiry` above is what actually limits
+# this link, and `INVITATION_WINDOW_SECONDS` in src/lib/admin/invitations.ts is
+# set equal to it on purpose, so the administrator's list cannot show an
+# invitation as waiting over a link that has already expired.
+#
+# One hour is the APPROVED Foundation Demo limitation (MPS DEC-023, 2026-09-02).
+# An expired invitation is resent, not extended, which is also what exercises
+# MPS-ACC-017. Do NOT lengthen it by raising `otp_expiry`: that setting is
+# shared with password recovery and every other emailed link, and its approved
+# one-hour lifetime is deliberately unchanged.
 [auth.email.template.invite]
 subject = "You have been invited to Home School Haven"
 content_path = "./supabase/templates/invite.html"
