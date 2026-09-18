@@ -293,6 +293,15 @@ test.describe("administrator overview", () => {
   })
 
   test("matches the structural ARIA snapshot", async ({ page }) => {
+    /* Pin the viewport before capturing.
+       The test above sets 1920x1080 to check the 1440px content cap and does
+       not restore it, so this snapshot used to inherit whatever width ran
+       before it. The "Review" link label renders differently by width, so the
+       captured tree alternated between `text: Review` and `text: ""` depending
+       on run order -- it would regenerate to one value and verify against the
+       other. An explicit width makes the structure deterministic. */
+    await page.setViewportSize(VIEWPORTS.desktop)
+    await page.reload()
     await settled(page)
     await expect(page.locator("main")).toMatchAriaSnapshot({
       name: "admin-overview-main.aria.yml",
