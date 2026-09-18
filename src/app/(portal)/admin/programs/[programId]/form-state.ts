@@ -37,6 +37,8 @@ type ProgramFactsValues = {
   checkoutUrl: string
   /** MPS-RUL-001: `instant` or `administrator_approval`. */
   confirmationMode: string
+  /** An offering type, or `""` for an unclassified draft. */
+  offeringType: string
 }
 
 type ProgramFactsFormState = {

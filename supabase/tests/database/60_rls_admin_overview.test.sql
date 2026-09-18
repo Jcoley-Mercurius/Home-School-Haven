@@ -43,9 +43,10 @@ set local role authenticated;
 set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-000000000ad0","role":"authenticated"}';
 
--- Eight published programs plus the draft fixture. An administrator seeing the
--- draft is the reach that distinguishes them from every other role (MPS-ACC-026).
-select is((select count(*)::int from public.programs), 9,
+-- Nine published programs, the draft fixture, and five archived offerings. An
+-- administrator seeing the draft and the archive is the reach that distinguishes
+-- them from every other role (MPS-ACC-026).
+select is((select count(*)::int from public.programs), 15,
   'an administrator reads every program at every publication state');
 
 select is(
@@ -104,7 +105,7 @@ select is((select count(*)::int from public.user_roles), 1,
   'a parent reads only their own role grant');
 
 -- Publication state is the boundary: a parent is a member of the public here.
-select is((select count(*)::int from public.programs), 8,
+select is((select count(*)::int from public.programs), 9,
   'a parent reads published programs only, never the draft');
 
 
@@ -115,7 +116,7 @@ set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
 -- Two enrollments sit on an assigned program -- one confirmed, one
--- payment_pending, both on Art Lab. Roster reach follows assignment
+-- payment_pending, both on Tutoring. Roster reach follows assignment
 -- (MPS-REQ-018, MPS-ACC-028) and stops there.
 select is((select count(*)::int from public.enrollments), 2,
   'an educator reads only the roster of an assigned program');
@@ -143,7 +144,7 @@ select is((select count(*)::int from public.audit_events), 0,
 set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-0000000000f0","role":"authenticated"}';
 
-select is((select count(*)::int from public.programs), 8,
+select is((select count(*)::int from public.programs), 9,
   'a role-less account reads published programs only');
 
 select is((select count(*)::int from public.enrollments), 0,

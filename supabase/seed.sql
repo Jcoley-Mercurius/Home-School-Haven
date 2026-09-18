@@ -4,9 +4,15 @@
 -- sanitized data only. Nothing below describes a real family, child, educator,
 -- or owner.
 --
---   * Program rows are real PUBLISHED content from
---     `mps/BETA-CONTENT-IMPORT-INVENTORY.md`, identical to the staging module in
---     `src/content/programs.ts`. Unpublished facts stay NULL (import rule 3).
+--   * Published program rows come from `20260916000000_public_offering_model.sql`
+--     (owner evidence of 2026-09-14), mirrored by the staging module in
+--     `src/content/programs.ts`. This file adds only the archived offerings and
+--     the draft fixture. Unpublished facts stay NULL (import rule 3).
+--   * Sample fixtures (enrollments, sessions, capacity, announcements, resources,
+--     the educator assignment) sit on CURRENT offerings. They were moved off the
+--     archived ones on 2026-09-16 so no reviewer meets a withdrawn offering in a
+--     family, educator, or administrator view (prompts/public-offering-model.md
+--     §5, option A).
 --   * People are synthetic: every address is on the reserved `example.com`
 --     domain (RFC 2606) and every name is prefixed "Sample".
 --   * Student rows are demo fixtures, added under the owner decision of
@@ -47,8 +53,17 @@ create extension if not exists pgcrypto with schema extensions;
 -- ---------------------------------------------------------------------------
 -- Programs
 -- ---------------------------------------------------------------------------
+-- The nine verified offerings (owner evidence of 2026-09-14) are NOT inserted
+-- here. `20260916000000_public_offering_model.sql` owns their content, so the
+-- hosted project and this local stack hold the same rows from one source, and
+-- it has already inserted them by the time this file runs.
+--
+-- What this file adds is what the migration deliberately does not: the five
+-- offerings that evidence no longer supports, as ARCHIVED rows (so "a removed
+-- offering never reappears publicly" has a real target, exactly as it has on
+-- the hosted project), and the draft test fixture.
 insert into public.programs (
-  id, slug, name,
+  id, slug, name, offering_type,
   published_dates, published_schedule, published_duration,
   published_session_length, published_price, published_registration_options,
   availability, publication_state, import_status, source, unverified_details,
@@ -57,98 +72,69 @@ insert into public.programs (
 ) values
   (
     '10000000-0000-4000-8000-000000000001',
-    'ready-set-prep-and-learn', 'Ready Set Prep & Learn',
+    'ready-set-prep-and-learn', 'Ready Set Prep & Learn', 'ready_set',
     null, 'Tuesdays and Thursdays', null, null, null,
     'Fall registration offers 1-, 2-, or 3-day options across Enrichment or Ready Set Prep.',
-    'unknown', 'published', 'import',
+    'unknown', 'archived', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 1, null
-  ),
-  (
-    '10000000-0000-4000-8000-000000000002',
-    'haven-days-enrichment', 'Haven Days Enrichment',
-    'September 2026–June 2027', null, null, null, null,
-    'Fall registration offers 1-, 2-, or 3-day options.',
-    'unknown', 'published', 'import',
-    'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb,
-    '/placeholder/program-haven-days-enrichment.jpg',
-    'Placeholder photo — demo only. Potted plants beside a window.',
-    498, 474, true, 2, null
+    '[]'::jsonb, null, null, null, null, false, 101, null
   ),
   (
     '10000000-0000-4000-8000-000000000003',
-    'etiquette-series', 'Etiquette Series',
+    'etiquette-series', 'Etiquette Series', 'individual_class',
     null, null, null, null, null, null,
-    'unknown', 'published', 'import-title-review-detail',
+    'unknown', 'archived', 'import-title-review-detail',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory (QA-001: date association unproven)',
     '["September 11–October 2 (association unproven)"]'::jsonb,
-    null, null, null, null, false, 3, null
+    null, null, null, null, false, 102, null
   ),
   (
     '10000000-0000-4000-8000-000000000004',
-    'art-lab', 'Art Lab',
+    'art-lab', 'Art Lab', 'individual_class',
     'August 22–September 26, 2026', null, null, null, null, null,
-    'unknown', 'published', 'import',
+    'unknown', 'archived', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb,
-    '/placeholder/program-art-lab.jpg',
-    'Placeholder photo — demo only. Watercolour paints and brushes on a table.',
-    456, 474, true, 4, null
-  ),
-  (
-    '10000000-0000-4000-8000-000000000005',
-    'sewing', 'Sewing',
-    'September 15–October 5', null, null, 'Two hours per session', null, null,
-    'unknown', 'published', 'import',
-    'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 5, null
-  ),
-  (
-    '10000000-0000-4000-8000-000000000006',
-    'gardening', 'Gardening',
-    'September 3–September 24', null, null, null, null, null,
-    'unknown', 'published', 'import-title-review-detail',
-    'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory (QA-001: session-length association unproven)',
-    '["Two hours per session (association unproven)"]'::jsonb,
-    null, null, null, null, false, 6, null
+    -- Its placeholder image was deleted with the offering on 2026-09-17: the
+    -- file was unreferenced and the footer disclaimer no longer covered it.
+    -- All four image columns move together or `programs_image_complete_check`
+    -- refuses the row.
+    '[]'::jsonb, null, null, null, null, false, 103, null
   ),
   (
     '10000000-0000-4000-8000-000000000007',
-    'harvest-explorers', 'Harvest Explorers',
+    'harvest-explorers', 'Harvest Explorers', 'individual_class',
     'August 20–September 24', null, 'Six weeks', null, '$180 for all six weeks', null,
-    'unknown', 'published', 'import',
+    'unknown', 'archived', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb,
-    '/placeholder/program-harvest-explorers.jpg',
-    'Placeholder photo — demo only. A woven basket with a eucalyptus sprig.',
-    474, 474, true, 7, null
+    -- Placeholder image deleted with the offering on 2026-09-17; see Art Lab above.
+    '[]'::jsonb, null, null, null, null, false, 104, null
   ),
   (
     '10000000-0000-4000-8000-000000000008',
-    'history-explorers', 'History Explorers',
+    'history-explorers', 'History Explorers', 'individual_class',
     'September 3–October 15', null, null, '2.5 hours per session', null, null,
-    'unknown', 'published', 'import',
+    'unknown', 'archived', 'import',
     'BETA-CONTENT-IMPORT-INVENTORY — Published program inventory',
-    '[]'::jsonb, null, null, null, null, false, 8, null
+    '[]'::jsonb, null, null, null, null, false, 105, null
   ),
   -- Sample draft. Its only purpose is to give the "a visitor cannot see an
   -- unpublished program" test a target. It is not real published content, which
-  -- its name states plainly.
+  -- its name states plainly. It carries an offering type so the publish and
+  -- unpublish paths can still be exercised: a published program must have one.
   (
     '10000000-0000-4000-8000-0000000000ff',
     'sample-unpublished-draft', 'Sample Unpublished Draft (test fixture)',
+    'individual_class',
     null, null, null, null, null, null,
     'unknown', 'draft', 'import',
     'Sample data — not published content',
     '[]'::jsonb, null, null, null, null, false, 99,
-    -- The only seeded summary. `admin_set_program_publication` refuses to
-    -- publish a program with no summary (MPS-ACC-008/009), and this fixture is
-    -- the row the publish/unpublish paths exercise, so without one that flow
-    -- cannot be tested at all. It invents no published copy: it says in words
-    -- that it is a sample and that nothing has been published here. Every real
-    -- program keeps `summary` NULL, which is what the approved inventory says
-    -- (import rule 3, and `UNPUBLISHED` in src/content/programs.ts).
+    -- The only seeded summary that is not owner evidence.
+    -- `admin_set_program_publication` refuses to publish a program with no
+    -- summary (MPS-ACC-008/009), and this fixture is the row the
+    -- publish/unpublish paths exercise, so without one that flow cannot be
+    -- tested at all. It invents no published copy: it says in words that it is
+    -- a sample and that nothing has been published here.
     'Sample draft record for the Foundation Review. Home School Haven has not '
     'published a summary for this program.'
   )
@@ -298,7 +284,7 @@ begin
   -- Assigned to exactly one published program and to the draft, so both
   -- "sees assigned" and "cannot see unassigned" are testable.
   insert into public.educator_assignments (educator_user_id, program_id) values
-    (educator, '10000000-0000-4000-8000-000000000004'),
+    (educator, '10000000-0000-4000-8000-00000000000c'),
     (educator, '10000000-0000-4000-8000-0000000000ff')
   on conflict do nothing;
 
@@ -316,12 +302,12 @@ begin
   -- makes mandatory. No row here is evidence that anyone paid anything.
   insert into public.enrollments
     (id, family_id, student_id, program_id, state, state_note) values
-    -- Art Lab, payment verification pending. Not confirmed enrollment.
+    -- Tutoring, payment verification pending. Not confirmed enrollment.
     ('50000000-0000-4000-8000-000000000001', family_a,
      '40000000-0000-4000-8000-000000000001',
-     '10000000-0000-4000-8000-000000000004', 'payment_pending',
+     '10000000-0000-4000-8000-00000000000c', 'payment_pending',
      'Sample record. Awaiting verification by an authorized administrator.'),
-    -- Haven Days Enrichment, confirmed by an authorized administrator.
+    -- Haven Days, confirmed by an authorized administrator.
     ('50000000-0000-4000-8000-000000000002', family_a,
      '40000000-0000-4000-8000-000000000001',
      '10000000-0000-4000-8000-000000000002', 'confirmed',
@@ -329,28 +315,28 @@ begin
     -- The second child, so per-student context is demonstrable.
     ('50000000-0000-4000-8000-000000000003', family_a,
      '40000000-0000-4000-8000-000000000002',
-     '10000000-0000-4000-8000-000000000007', 'approval_pending',
+     '10000000-0000-4000-8000-00000000000e', 'approval_pending',
      'Sample record.'),
     -- Family B. The cross-family denial target.
     ('50000000-0000-4000-8000-000000000004', family_b,
      '40000000-0000-4000-8000-000000000003',
      '10000000-0000-4000-8000-000000000005', 'waitlisted',
      'Sample record. A waitlist place is not enrollment.'),
-    -- Art Lab, confirmed. The ONLY confirmed enrollment inside a program the
+    -- Tutoring, confirmed. The ONLY confirmed enrollment inside a program the
     -- sample educator is assigned to, and it exists so MPS-ACC-028 has a
-    -- target. Before it, the educator was assigned to 0004 and 00ff while the
+    -- target. Before it, the educator was assigned to Art Lab and 00ff while the
     -- one confirmed enrollment sat in 0002, which the educator does not hold --
     -- so "the assigned educator sees the roster" and "the unassigned educator
     -- does not" were both untestable, and the roster boundary could not be
     -- proven either way.
     --
     -- Pairing it with the payment_pending row above on the SAME program is the
-    -- other half of the point: program 0004 now carries one confirmed and one
+    -- other half of the point: program 000c now carries one confirmed and one
     -- unconfirmed child, so the roster page must show them apart on one screen
     -- and the educator policy must return exactly one of them.
     ('50000000-0000-4000-8000-000000000005', family_a,
      '40000000-0000-4000-8000-000000000002',
-     '10000000-0000-4000-8000-000000000004', 'confirmed',
+     '10000000-0000-4000-8000-00000000000c', 'confirmed',
      'Sample record. Confirmed by an authorized administrator; not a payment.')
   on conflict (id) do nothing;
 
@@ -367,7 +353,7 @@ begin
   insert into public.announcements
     (id, program_id, title, body, state, published_at) values
     ('60000000-0000-4000-8000-000000000001',
-     '10000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-00000000000c',
      'Sample announcement — welcome to the review',
      'This is sample content for the Foundation Review. Home School Haven has '
      'not published a real announcement here yet.',
@@ -380,7 +366,7 @@ begin
      'published', now() - interval '9 days'),
     -- A draft: proves the state filter, not the family boundary.
     ('60000000-0000-4000-8000-0000000000f1',
-     '10000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-00000000000c',
      'Sample unpublished announcement (test fixture)',
      'Never visible to a family. Present so the draft state is testable.',
      'draft', null),
@@ -401,12 +387,12 @@ begin
      'public resource page.',
      'link', 'https://www.homeschoolhaven.org/', 'published'),
     ('70000000-0000-4000-8000-000000000002',
-     '10000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-00000000000c',
      'Sample resource — program information',
      'Sample content for the Foundation Review.',
      'link', 'https://www.homeschoolhaven.org/', 'published'),
     ('70000000-0000-4000-8000-0000000000f1',
-     '10000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-00000000000c',
      'Sample unpublished resource (test fixture)',
      'Never visible to a family. Present so the draft state is testable.',
      'link', 'https://www.homeschoolhaven.org/', 'draft'),
@@ -426,13 +412,13 @@ begin
   -- whenever it is reset rather than drifting into the past.
   --
   -- Coverage is chosen so each state and each boundary has a target:
-  --   0001 upcoming, on Art Lab (0004) -- the program the sample educator holds
+  --   0001 upcoming, on Tutoring (000c) -- the program the sample educator holds
   --        and the one confirmed enrollment sits in, so the attendance and
   --        roster paths have somewhere to run;
-  --   0002 completed, on Art Lab, and the one carrying an attendance record;
-  --   0003 rescheduled, on Art Lab, so "changed" is visible with the time it
+  --   0002 completed, on Tutoring, and the one carrying an attendance record;
+  --   0003 rescheduled, on Tutoring, so "changed" is visible with the time it
   --        moved from;
-  --   0004 canceled, on Nature Explorers (0002), which family A holds through a
+  --   0004 canceled, on Haven Days (0002), which family A holds through a
   --        different enrollment;
   --   00f1 on the unpublished draft fixture (00ff), so "a visitor sees no
   --        session of an unpublished program" has a target;
@@ -442,25 +428,25 @@ begin
     (id, program_id, title, starts_at, ends_at, location, state,
      rescheduled_from, change_note) values
     ('80000000-0000-4000-8000-000000000001',
-     '10000000-0000-4000-8000-000000000004',
-     'Sample session — Art Lab meeting',
+     '10000000-0000-4000-8000-00000000000c',
+     'Sample session — Tutoring meeting',
      now() + interval '7 days', now() + interval '7 days 2 hours',
      'Sample location', 'scheduled', null, null),
     ('80000000-0000-4000-8000-000000000002',
-     '10000000-0000-4000-8000-000000000004',
-     'Sample session — Art Lab meeting',
+     '10000000-0000-4000-8000-00000000000c',
+     'Sample session — Tutoring meeting',
      now() - interval '7 days', now() - interval '7 days' + interval '2 hours',
      'Sample location', 'completed', null,
      'Sample record. This session has been marked complete.'),
     ('80000000-0000-4000-8000-000000000003',
-     '10000000-0000-4000-8000-000000000004',
-     'Sample session — Art Lab meeting',
+     '10000000-0000-4000-8000-00000000000c',
+     'Sample session — Tutoring meeting',
      now() + interval '21 days', now() + interval '21 days 2 hours',
      'Sample location', 'rescheduled', now() + interval '14 days',
      'Sample record. Moved one week later so a changed session is reviewable.'),
     ('80000000-0000-4000-8000-000000000004',
      '10000000-0000-4000-8000-000000000002',
-     'Sample session — Nature Explorers meeting',
+     'Sample session — Haven Days meeting',
      now() + interval '10 days', now() + interval '10 days 2 hours',
      'Sample location', 'canceled', null,
      'Sample record. Called off so a canceled session is reviewable. No '
@@ -482,12 +468,12 @@ begin
   -- the numbers themselves. Every other program keeps `capacity` NULL, which
   -- means "not established" and renders as no numeric claim at all.
   --
-  -- Art Lab (0004) carries capacity with a waitlist enabled; Sewing (0005)
+  -- Tutoring (000c) carries capacity with a waitlist enabled; Sewing (0005)
   -- carries capacity with the waitlist off, so "full without waitlist" and
   -- "full with waitlist" both have a target (MPS-WFL-005 alternate paths).
   update public.programs
   set capacity = 12, waitlist_enabled = true
-  where id = '10000000-0000-4000-8000-000000000004';
+  where id = '10000000-0000-4000-8000-00000000000c';
 
   update public.programs
   set capacity = 8, waitlist_enabled = false
@@ -514,19 +500,19 @@ begin
   set confirmation_mode = 'instant'
   where id = '10000000-0000-4000-8000-000000000006';
 
-  -- History Explorers (0008): one place, taken, waitlist ON. The MPS-ACC-020
+  -- Monthly Clubs (000d): one place, taken, waitlist ON. The MPS-ACC-020
   -- target -- a family joining becomes `waitlisted` and no payment is
   -- collected.
   update public.programs
   set capacity = 1, waitlist_enabled = true, confirmation_mode = 'instant'
-  where id = '10000000-0000-4000-8000-000000000008';
+  where id = '10000000-0000-4000-8000-00000000000d';
 
-  -- Etiquette Series (0003): one place, taken, waitlist OFF. MPS-WFL-003's
+  -- Ready Set Sensory (000b): one place, taken, waitlist OFF. MPS-WFL-003's
   -- "Program full without waitlist" -- blocked, with nothing recorded and no
   -- payment started.
   update public.programs
   set capacity = 1, waitlist_enabled = false, confirmation_mode = 'instant'
-  where id = '10000000-0000-4000-8000-000000000003';
+  where id = '10000000-0000-4000-8000-00000000000b';
 
   -- The confirmed places that make those two programs full. They belong to
   -- family B, so family A's registrations meet a genuinely full program rather
@@ -536,15 +522,15 @@ begin
     (id, family_id, student_id, program_id, state, state_note) values
     ('50000000-0000-4000-8000-000000000006', family_b,
      '40000000-0000-4000-8000-000000000003',
-     '10000000-0000-4000-8000-000000000008', 'confirmed',
+     '10000000-0000-4000-8000-00000000000d', 'confirmed',
      'Sample record. Occupies the single demo place.'),
     ('50000000-0000-4000-8000-000000000007', family_b,
      '40000000-0000-4000-8000-000000000003',
-     '10000000-0000-4000-8000-000000000003', 'confirmed',
+     '10000000-0000-4000-8000-00000000000b', 'confirmed',
      'Sample record. Occupies the single demo place.')
   on conflict (id) do nothing;
 
-  -- One attendance record: the confirmed Art Lab enrollment, at the completed
+  -- One attendance record: the confirmed Tutoring enrollment, at the completed
   -- session. Its absence on every other pairing is "not recorded", which is not
   -- a claim of absence (GAP-ADMIN-010).
   insert into public.session_attendance (session_id, enrollment_id) values
@@ -591,7 +577,7 @@ begin
      '2026-08-24 12:00:00+00', 'awaiting_family', now() - interval '6 days',
      '20000000-0000-4000-8000-000000000ad0', 'Sample Parent Three',
      'sample.three@example.com', '555-0100',
-     '10000000-0000-4000-8000-000000000004',
+     '10000000-0000-4000-8000-00000000000c',
      'Sample request for the Foundation Review. A family would ask about '
      'visiting here.',
      'a1000000-0000-4000-8000-000000000003'),

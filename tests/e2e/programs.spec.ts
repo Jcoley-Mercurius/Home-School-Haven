@@ -18,18 +18,27 @@ const VIEWPORTS = {
   wide: { width: 1440, height: 900 },
 } as const
 
-/* Every program the approved import inventory publishes (owner decision
-   2026-08-27: Summer Series and Seasonal School Photos stay out until their
-   catalog inclusion is decided). */
+/* The nine offerings in Samantha's evidence of 2026-09-14, in catalog order. */
 const PUBLISHED = [
-  "Ready Set Prep & Learn",
-  "Haven Days Enrichment",
-  "Etiquette Series",
-  "Art Lab",
+  "Haven Days",
+  "Ready Set Prep",
+  "Ready Set Learn",
+  "Ready Set Sensory",
   "Sewing",
+  "Crochet",
   "Gardening",
-  "Harvest Explorers",
-  "History Explorers",
+  "Tutoring",
+  "Monthly Clubs",
+]
+
+/* Offerings that evidence no longer supports. Archived in the database; they
+   must not come back on any public surface. */
+const ARCHIVED = [
+  { slug: "ready-set-prep-and-learn", name: "Ready Set Prep & Learn" },
+  { slug: "etiquette-series", name: "Etiquette Series" },
+  { slug: "art-lab", name: "Art Lab" },
+  { slug: "harvest-explorers", name: "Harvest Explorers" },
+  { slug: "history-explorers", name: "History Explorers" },
 ]
 
 async function goto(page: Page, path: string) {
@@ -59,7 +68,7 @@ test.describe("catalog", () => {
     for (const name of PUBLISHED) {
       await expect(
         page.getByRole("link", {
-          name: new RegExp(`^View Details for ${name.replace(/&/g, "&")}`),
+          name: new RegExp(`^View Details for ${name}$`),
         }),
       ).toHaveCount(1)
     }
@@ -70,9 +79,57 @@ test.describe("catalog", () => {
     expect(new Set(hrefs).size).toBe(PUBLISHED.length)
   })
 
+  test("groups offerings under one heading per offering type, in order", async ({
+    page,
+  }) => {
+    await goto(page, "/programs")
+    await expect(
+      page.getByRole("main").getByRole("heading", { level: 2 }),
+    ).toHaveText([
+      "Haven Days",
+      "Ready Set programs",
+      "Individual classes",
+      "Tutoring",
+      "Monthly clubs",
+      "Not sure which program fits your child?",
+    ])
+
+    const group = (type: string) =>
+      page.locator(`[data-offering-group="${type}"] h3`)
+    await expect(group("haven_days")).toHaveText(["Haven Days"])
+    await expect(group("ready_set")).toHaveText([
+      "Ready Set Prep",
+      "Ready Set Learn",
+      "Ready Set Sensory",
+    ])
+    /* Haven Days is its own offering, never one class among the others. */
+    await expect(group("individual_class")).toHaveText([
+      "Sewing",
+      "Crochet",
+      "Gardening",
+    ])
+    await expect(group("tutoring")).toHaveText(["Tutoring"])
+    await expect(group("monthly_club")).toHaveText(["Monthly Clubs"])
+  })
+
+  test("shows no archived offering and archived pages are gone", async ({
+    page,
+  }) => {
+    await goto(page, "/programs")
+    const text = await page.locator("main").innerText()
+    for (const { slug, name } of ARCHIVED) {
+      expect(text).not.toContain(name)
+      const response = await page.request.get(`/programs/${slug}`)
+      expect(response.status(), slug).toBe(404)
+    }
+  })
+
   test("grid is 3 / 2 / 1 columns across the breakpoints", async ({ page }) => {
     await goto(page, "/programs")
-    const cards = page.locator('[data-slot="card"]')
+    /* The Ready Set group holds three cards, enough to show three columns. */
+    const cards = page.locator(
+      '[data-offering-group="ready_set"] [data-slot="card"]',
+    )
 
     const columnCount = async () => {
       await page.waitForTimeout(50)
@@ -111,7 +168,7 @@ test.describe("program detail", () => {
   for (const [name, viewport] of Object.entries(VIEWPORTS)) {
     test(`has no axe violations at ${name}`, async ({ page }) => {
       await page.setViewportSize(viewport)
-      await goto(page, "/programs/harvest-explorers")
+      await goto(page, "/programs/ready-set-prep")
       const results = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
         .analyze()
@@ -122,22 +179,30 @@ test.describe("program detail", () => {
   test("shows the published facts and marks the rest Contact for details", async ({
     page,
   }) => {
-    await goto(page, "/programs/harvest-explorers")
+    await goto(page, "/programs/ready-set-prep")
+
+    await expect(
+      page.getByText("Ready Set program", { exact: true }),
+    ).toBeVisible()
 
     const facts = page.getByRole("region", { name: "Verified program details" })
-    await expect(facts.getByText("August 20–September 24")).toBeVisible()
-    await expect(facts.getByText("Six weeks", { exact: true })).toBeVisible()
-    await expect(facts.getByText("$180 for all six weeks")).toBeVisible()
+    const valueOf = (label: string) =>
+      facts
+        .locator("dt", { hasText: new RegExp(`^${label}$`) })
+        .locator("xpath=following-sibling::dd[1]")
+    await expect(valueOf("Dates")).toHaveText("August–May")
+    await expect(valueOf("Schedule")).toHaveText(
+      "Tuesday and Thursday, 9:15–11:30 AM",
+    )
+    await expect(valueOf("Ages or grades")).toHaveText("Ages 3–4")
+    await expect(valueOf("Price")).toHaveText("$80/week")
+    await expect(valueOf("Registration options")).toHaveText(
+      "Ready Set Prep and Ready Set Learn combined: $140/week",
+    )
 
-    /* Ages, format, location, educator, and enrollment period are unpublished
-       for every program and must read as unknown, never be guessed. */
-    for (const label of [
-      "Ages or grades",
-      "Format",
-      "Location",
-      "Educator",
-      "Enrollment period",
-    ]) {
+    /* Format, location, educator, and enrollment period are unpublished and
+       must read as unknown, never be guessed. */
+    for (const label of ["Location", "Educator", "Enrollment period"]) {
       const value = facts
         .locator("dt", { hasText: new RegExp(`^${label}$`) })
         .locator("xpath=following-sibling::dd[1]")
@@ -145,24 +210,61 @@ test.describe("program detail", () => {
     }
   })
 
-  test("renders no unverified source detail", async ({ page }) => {
-    /* QA-001: the Etiquette Series date range and the Gardening session length
-       have unproven source associations and must not surface as fact. */
-    await goto(page, "/programs/etiquette-series")
-    expect(await page.locator("body").innerText()).not.toContain(
-      "September 11–October 2",
+  test("Gardening publishes no price while its sources disagree", async ({
+    page,
+  }) => {
+    /* QA-007: the flyer says $35/week and the email says $35 drop-in. Neither
+       may surface as fact, on the detail page or on its card. */
+    await goto(page, "/programs/gardening")
+    const facts = page.getByRole("region", { name: "Verified program details" })
+    await expect(
+      facts
+        .locator("dt", { hasText: /^Price$/ })
+        .locator("xpath=following-sibling::dd[1]"),
+    ).toHaveText("Contact for details")
+    const body = await page.locator("body").innerText()
+    expect(body).not.toContain("$35")
+    await expect(facts).toContainText(
+      "October–June; no class during the final week of October",
     )
 
-    await goto(page, "/programs/gardening")
-    expect(await page.locator("body").innerText()).not.toContain(
-      "Two hours per session",
-    )
+    await goto(page, "/programs")
+    const card = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.getByRole("heading", { name: "Gardening" }) })
+    expect(await card.innerText()).not.toContain("$")
+  })
+
+  test("verified summaries replace the not-published sentence", async ({
+    page,
+  }) => {
+    await goto(page, "/programs/tutoring")
+    await expect(
+      page.getByText(
+        "Academic skill building, homework help, and test preparation.",
+      ),
+    ).toBeVisible()
+    await goto(page, "/programs/crochet")
+    /* The fact values only: the panel's source line names the evidence date. */
+    const facts = await page
+      .getByRole("region", { name: "Verified program details" })
+      .locator("dl")
+      .innerText()
+    expect(facts).toContain("Mondays in November, 2:00–4:00 PM")
+    expect(facts).toContain("$250, including materials")
+    /* No year is known for Crochet, Sewing, or the first club. */
+    expect(facts).not.toMatch(/\b20\d{2}\b/)
+    await expect(
+      page.getByText(
+        "A beginner class. No experience is required, and there is a take-home project each week.",
+      ),
+    ).toBeVisible()
   })
 
   test("checkout handoff never implies payment or enrollment", async ({
     page,
   }) => {
-    await goto(page, "/programs/art-lab")
+    await goto(page, "/programs/tutoring")
 
     const registration = page.getByRole("region", { name: "Registration" })
     await expect(registration).toContainText(
@@ -200,7 +302,7 @@ test.describe("program detail", () => {
     })
 
     await page.setViewportSize(VIEWPORTS.desktop)
-    await goto(page, "/programs/art-lab")
+    await goto(page, "/programs/tutoring")
     await expect(rail).toHaveCSS("position", "sticky")
     /* Beside the content, not beneath it. */
     const railBox = await rail.boundingBox()
@@ -208,7 +310,7 @@ test.describe("program detail", () => {
     expect(railBox!.x).toBeGreaterThan(headingBox!.x + headingBox!.width - 1)
 
     await page.setViewportSize(VIEWPORTS.mobile)
-    await goto(page, "/programs/art-lab")
+    await goto(page, "/programs/tutoring")
     await expect(rail).toHaveCSS("position", "static")
 
     /* MDS §8 and DO-DONT.md: the rail keeps its priority on mobile. It must sit
@@ -234,9 +336,9 @@ test.describe("program detail", () => {
     page,
   }) => {
     await page.setViewportSize(VIEWPORTS.mobile)
-    await goto(page, "/programs/etiquette-series")
+    await goto(page, "/programs/ready-set-sensory")
 
-    await expect(page.locator("h1")).toHaveText("Etiquette Series")
+    await expect(page.locator("h1")).toHaveText("Ready Set Sensory")
     /* No placeholder art exists for this program; nothing may render broken.
        Scoped to the hero — the related-programs list below carries the art of
        other programs. */
@@ -276,7 +378,7 @@ test.describe("program detail", () => {
   test("no viewport scrolls horizontally", async ({ page }) => {
     for (const viewport of Object.values(VIEWPORTS)) {
       await page.setViewportSize(viewport)
-      await goto(page, "/programs/harvest-explorers")
+      await goto(page, "/programs/ready-set-prep")
       const overflow = await page.evaluate(
         () =>
           document.documentElement.scrollWidth -
@@ -288,7 +390,7 @@ test.describe("program detail", () => {
 
   test("interaction targets meet the 44 px minimum", async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.mobile)
-    await goto(page, "/programs/art-lab")
+    await goto(page, "/programs/tutoring")
 
     const boxes = await page
       .locator("button:visible, a:visible")
@@ -314,9 +416,9 @@ test.describe("keyboard journey", () => {
     await goto(page, "/")
 
     await page
-      .getByRole("link", { name: /^View Details for Art Lab/ })
+      .getByRole("link", { name: /^View Details for Sewing/ })
       .press("Enter")
-    await expect(page).toHaveURL(/\/programs\/art-lab$/)
+    await expect(page).toHaveURL(/\/programs\/sewing$/)
 
     const guidance = page
       .getByRole("complementary", { name: "Availability and next steps" })
@@ -324,7 +426,8 @@ test.describe("keyboard journey", () => {
     await guidance.focus()
     await expect(guidance).toBeFocused()
     await guidance.press("Enter")
-    await expect(page).toHaveURL(/\/contact$/)
+    /* The rail carries the program the family was reading (MPS-REQ-010). */
+    await expect(page).toHaveURL(/\/contact\?program=sewing$/)
   })
 })
 
@@ -341,7 +444,7 @@ test.describe("visual", () => {
 
     test(`detail matches the ${name} baseline`, async ({ page }) => {
       await page.setViewportSize(viewport)
-      await goto(page, "/programs/harvest-explorers")
+      await goto(page, "/programs/ready-set-prep")
       await expect(page).toHaveScreenshot(`detail-${name}.png`, {
         fullPage: true,
         animations: "disabled",

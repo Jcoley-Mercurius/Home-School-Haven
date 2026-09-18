@@ -38,7 +38,7 @@ select plan(61);
 
 -- The draft the educator is assigned to. Assignment grants read, never write.
 \set draft    '10000000-0000-4000-8000-0000000000ff'
-\set art_lab  '10000000-0000-4000-8000-000000000004'
+\set tutoring  '10000000-0000-4000-8000-00000000000c'
 
 -- Seed enrollments, by state.
 \set e_paypending '50000000-0000-4000-8000-000000000001'
@@ -107,7 +107,7 @@ set local request.jwt.claims =
 -- nobody may reach it. Least privilege beating an over-broad policy is the
 -- whole point of the revoke.
 select throws_ok(
-  $$ update public.programs set name = 'Renamed' where slug = 'art-lab' $$,
+  $$ update public.programs set name = 'Renamed' where slug = 'tutoring' $$,
   '42501',
   null,
   'an administrator cannot write programs directly through the Data API'
@@ -239,49 +239,50 @@ select throws_ok(
 -- Program facts, including the checkout-URL rule.
 select is(
   public.admin_update_program_facts(
-    :'art_lab'::uuid,
-    (select updated_at from public.programs where id = :'art_lab'::uuid),
-    'Art Lab', 'A sample summary.', '', '', '', '', '', '', '', '', '',
-    'limited', 'https://pay.homeschoolhaven.org/art-lab',
-    'administrator_approval'),
+    :'tutoring'::uuid,
+    (select updated_at from public.programs where id = :'tutoring'::uuid),
+    'Tutoring', 'A sample summary.', '', '', '', '', '', '', '', '', '',
+    'limited', 'https://pay.homeschoolhaven.org/tutoring',
+    'administrator_approval', 'tutoring'),
   'updated',
   'an administrator can save program facts and the approved checkout link'
 );
 -- Cleared facts become NULL, never the empty string: NULL is "not published".
 select is(
-  (select audience from public.programs where id = :'art_lab'::uuid),
+  (select audience from public.programs where id = :'tutoring'::uuid),
   null,
   'a cleared published fact is stored as NULL, not as an empty string'
 );
 select throws_ok(
   $$ select public.admin_update_program_facts(
-       '10000000-0000-4000-8000-000000000004',
+       '10000000-0000-4000-8000-00000000000c',
        (select updated_at from public.programs
-          where id = '10000000-0000-4000-8000-000000000004'),
-       'Art Lab', '', '', '', '', '', '', '', '', '', '',
-       'unknown', 'https://evil.example.com/pay', 'administrator_approval') $$,
+          where id = '10000000-0000-4000-8000-00000000000c'),
+       'Tutoring', '', '', '', '', '', '', '', '', '', '',
+       'unknown', 'https://evil.example.com/pay', 'administrator_approval',
+       'tutoring') $$,
   '22023',
   null,
   'a checkout link to any other host is refused'
 );
 select throws_ok(
   $$ select public.admin_update_program_facts(
-       '10000000-0000-4000-8000-000000000004',
+       '10000000-0000-4000-8000-00000000000c',
        (select updated_at from public.programs
-          where id = '10000000-0000-4000-8000-000000000004'),
-       'Art Lab', '', '', '', '', '', '', '', '', '', '',
+          where id = '10000000-0000-4000-8000-00000000000c'),
+       'Tutoring', '', '', '', '', '', '', '', '', '', '',
        'unknown', 'https://pay.homeschoolhaven.org/x?student=abc',
-       'administrator_approval') $$,
+       'administrator_approval', 'tutoring') $$,
   '22023',
   null,
   'a checkout link carrying a query string is refused (no private data in URLs)'
 );
 select throws_ok(
   $$ select public.admin_update_program_facts(
-       '10000000-0000-4000-8000-000000000004',
+       '10000000-0000-4000-8000-00000000000c',
        '2000-01-01T00:00:00Z'::timestamptz,
-       'Art Lab', '', '', '', '', '', '', '', '', '', '',
-       'unknown', '', 'administrator_approval') $$,
+       'Tutoring', '', '', '', '', '', '', '', '', '', '',
+       'unknown', '', 'administrator_approval', 'tutoring') $$,
   '40001',
   null,
   'a facts save against a stale row is refused'
@@ -290,7 +291,7 @@ select throws_ok(
   $$ select public.admin_update_program_facts(
        '10000000-0000-4000-8000-00000000dead',
        now(), 'X', '', '', '', '', '', '', '', '', '', '', 'unknown', '',
-       'administrator_approval') $$,
+       'administrator_approval', 'tutoring') $$,
   'P0002',
   null,
   'a program id that matches nothing is reported as not found'
@@ -485,14 +486,14 @@ select throws_ok(
   '42501', null, 'a parent cannot create a program');
 select throws_ok(
   $$ select public.admin_set_program_publication(
-       '10000000-0000-4000-8000-000000000004', 'draft', now()) $$,
+       '10000000-0000-4000-8000-00000000000c', 'draft', now()) $$,
   '42501', null, 'a parent cannot change publication');
 select throws_ok(
   $$ select public.admin_set_enrollment_state(
        '50000000-0000-4000-8000-000000000001', 'confirmed', 'x', now()) $$,
   '42501', null, 'a parent cannot change an enrollment state — even their own');
 
--- Educator (ACT-003), assigned to `art-lab` and to the draft. Assignment grants
+-- Educator (ACT-003), assigned to `tutoring` and to the draft. Assignment grants
 -- read. MPS-ACC-027: an educator cannot publish a price, open registration, or
 -- cancel — asserted here as an enforced control, not a hidden button.
 set local request.jwt.claims =
@@ -505,9 +506,9 @@ select throws_ok(
   'an assigned educator cannot publish their own assigned program (MPS-ACC-027)');
 select throws_ok(
   $$ select public.admin_update_program_facts(
-       '10000000-0000-4000-8000-000000000004', now(),
-       'Art Lab', '', '', '', '', '', '', '', '', '', '$1',
-       'open', '', 'administrator_approval') $$,
+       '10000000-0000-4000-8000-00000000000c', now(),
+       'Tutoring', '', '', '', '', '', '', '', '', '', '$1',
+       'open', '', 'administrator_approval', 'tutoring') $$,
   '42501', null,
   'an assigned educator cannot publish a price or open registration (MPS-ACC-027)');
 select throws_ok(
@@ -545,7 +546,7 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-0000000000f0",'
 
 select throws_ok(
   $$ select public.admin_set_program_publication(
-       '10000000-0000-4000-8000-000000000004', 'archived', now()) $$,
+       '10000000-0000-4000-8000-00000000000c', 'archived', now()) $$,
   '42501', null,
   'app_metadata claiming admin cannot archive a program');
 

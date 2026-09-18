@@ -55,7 +55,7 @@ export type ProgramReadResult = Program[] | null
    literal type of this string, and a concatenation widens it to `string` and
    loses that inference. */
 // prettier-ignore
-const SELECT_COLUMNS = "slug,name,published_dates,published_schedule,published_duration,published_session_length,published_price,published_registration_options,summary,audience,format,location,educator,enrollment_window,availability,checkout_url,import_status,source,unverified_details,image_src,image_alt,image_width,image_height,image_is_placeholder,sort_order"
+const SELECT_COLUMNS = "slug,name,offering_type,published_dates,published_schedule,published_duration,published_session_length,published_price,published_registration_options,summary,audience,format,location,educator,enrollment_window,availability,checkout_url,import_status,source,unverified_details,image_src,image_alt,image_width,image_height,image_is_placeholder,sort_order"
 
 export async function listPublishedPrograms(): Promise<ProgramReadResult> {
   if (!isSupabaseConfigured()) return stagingPrograms
@@ -119,10 +119,9 @@ export async function listFeaturedPrograms(): Promise<ProgramReadResult> {
 }
 
 /**
- * Related programs for the detail page. There is no published category, format,
- * or audience to relate on (QA-005), so this stays the next programs in
- * inventory order rather than an invented affinity — the same rule the staging
- * module documents.
+ * Related programs for the detail page: the next programs in `sort_order`, which
+ * keeps each offering group together — the same rule the staging module
+ * documents.
  */
 export async function listRelatedPrograms(
   slug: string,

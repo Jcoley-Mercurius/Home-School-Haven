@@ -110,7 +110,10 @@ function FooterNavColumn({
  * placeholder art" became false; five placeholder images remain live (the home
  * hero, which About reuses, the community panel, and three program cards), so
  * dropping the sentence entirely would leave generated art of children running
- * unlabelled. It goes when `public/placeholder/` goes, and not before.
+ * unlabelled. It goes when `public/placeholder/` goes, and not before. Since the
+ * owner evidence of 2026-09-14 archived Art Lab and Harvest Explorers, Haven
+ * Days is the only published program still showing placeholder art, and the
+ * sentence names it rather than a count that is no longer true.
  *
  * The image also shows no contact block, policy link, or review disclaimer.
  * Those are kept, below the wave, in the quietest band of the footer: the
@@ -268,8 +271,8 @@ function SiteFooter() {
             Private Foundation Review environment. Program details reflect
             currently published content and are confirmed directly with Home
             School Haven. Photography is supplied and approved by Home School
-            Haven; the three program card images are placeholder art for layout
-            review only and do not show real students.
+            Haven; the Haven Days program image is placeholder art for layout
+            review only and does not show real students.
           </p>
           <p className="hsh-caption text-[var(--hsh-text-muted)]">
             Powered by Mercurius

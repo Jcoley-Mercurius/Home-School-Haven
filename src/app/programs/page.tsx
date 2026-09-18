@@ -11,6 +11,7 @@ import { ProgramCard } from "@/components/program/program-card"
 import { Button } from "@/components/ui/button"
 import { contact, guidanceHref } from "@/content/foundation-content"
 import { isDemoPreview } from "@/lib/env"
+import { groupPrograms } from "@/lib/programs/offering-groups"
 import { listPublishedPrograms } from "@/lib/programs/repository"
 
 /**
@@ -27,6 +28,12 @@ import { listPublishedPrograms } from "@/lib/programs/repository"
  * inventing filter values, which import rule 3 forbids. Filters and search are
  * deferred until those facts are published; the catalog is not redesigned in
  * their place.
+ *
+ * Programs are grouped by offering type — Haven Days, Ready Set programs,
+ * individual classes, tutoring, monthly clubs (owner evidence 2026-09-14,
+ * prompts/public-offering-model.md §4). Each group is a visible h2 over the
+ * approved 3/2/1 card grid; an empty group is not rendered. This composes the
+ * existing heading and grid; it is not the filter rail D-2 defers.
  *
  * The catalog carries no register, pay, or checkout action. Checkout is a
  * handoff that lives on the detail page behind its trust notice.
@@ -105,22 +112,30 @@ export default async function ProgramsPage() {
           </p>
         </section>
 
-        <section
-          aria-labelledby="catalog-heading"
-          className="hsh-container hsh-container-public flex flex-col gap-[var(--hsh-space-8)] pb-[var(--hsh-space-16)]"
-        >
-          <h2 id="catalog-heading" className="sr-only">
-            Program results
-          </h2>
-
+        <div className="hsh-container hsh-container-public flex flex-col gap-[var(--hsh-space-12)] pb-[var(--hsh-space-16)]">
           {programs.length > 0 ? (
-            <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
-              {programs.map((program) => (
-                <li key={program.slug} className="flex">
-                  <ProgramCard program={program} variant="catalog" />
-                </li>
-              ))}
-            </ul>
+            groupPrograms(programs).map((group) => (
+              <section
+                key={group.type}
+                aria-labelledby={`group-${group.type}-heading`}
+                data-offering-group={group.type}
+                className="flex flex-col gap-[var(--hsh-space-6)]"
+              >
+                <h2
+                  id={`group-${group.type}-heading`}
+                  className="hsh-h2 text-[var(--hsh-text-primary)]"
+                >
+                  {group.heading}
+                </h2>
+                <ul className="grid gap-[var(--hsh-space-6)] sm:grid-cols-2 lg:grid-cols-3">
+                  {group.programs.map((program) => (
+                    <li key={program.slug} className="flex">
+                      <ProgramCard program={program} variant="catalog" />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
           ) : (
             /* MPS-ACC-010: an empty result offers a path, never a dead end. */
             <div className="flex flex-col items-center gap-[var(--hsh-space-4)] rounded-[var(--hsh-radius-feature)] bg-[var(--hsh-surface-elevated)] px-[var(--hsh-space-6)] py-[var(--hsh-space-16)] text-center">
@@ -129,9 +144,9 @@ export default async function ProgramsPage() {
                 className="size-8 text-[var(--hsh-forest-500)]"
                 strokeWidth={1.75}
               />
-              <h3 className="hsh-h3 text-[var(--hsh-text-primary)]">
+              <h2 className="hsh-h3 text-[var(--hsh-text-primary)]">
                 No programs are published right now
-              </h3>
+              </h2>
               <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
                 New sessions are added each term. Tell us about your child and
                 we will let you know what is coming, or call{" "}
@@ -171,7 +186,7 @@ export default async function ProgramsPage() {
               Request Guidance
             </Button>
           </div>
-        </section>
+        </div>
       </main>
 
       <SiteFooter />

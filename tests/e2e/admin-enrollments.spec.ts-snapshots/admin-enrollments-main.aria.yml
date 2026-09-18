@@ -35,7 +35,7 @@
     - combobox "Program": All programs
     - button "Apply"
     - paragraph: "There is no name search here on purpose: a search term becomes part of the web address, and a student’s name must never travel in one."
-  - status: Showing 5 of 5 enrollments.
+  - status: Showing 7 of 7 enrollments.
   - table "Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.":
     - caption: Enrollments, with student, family, program, current state, and when that state last changed. Select an enrollment to open its detail.
     - rowgroup:
@@ -46,27 +46,27 @@
         - columnheader "State"
         - columnheader "Action"
     - rowgroup:
-      - row "Sample Student A1 Sample Family A Art Lab Payment verification pending Review Sample Student A1's enrollment in Art Lab":
+      - row "Sample Student A1 Sample Family A Tutoring Payment verification pending Review Sample Student A1's enrollment in Tutoring":
         - rowheader "Sample Student A1"
         - cell "Sample Family A"
-        - cell "Art Lab"
+        - cell "Tutoring"
         - cell "Payment verification pending"
-        - cell "Review Sample Student A1's enrollment in Art Lab":
-          - button "Review Sample Student A1's enrollment in Art Lab"
-      - row "Sample Student A1 Sample Family A Haven Days Enrichment Enrolled Review Sample Student A1's enrollment in Haven Days Enrichment":
+        - cell "Review Sample Student A1's enrollment in Tutoring":
+          - button "Review Sample Student A1's enrollment in Tutoring"
+      - row "Sample Student A1 Sample Family A Haven Days Enrolled Review Sample Student A1's enrollment in Haven Days":
         - rowheader "Sample Student A1"
         - cell "Sample Family A"
-        - cell "Haven Days Enrichment"
+        - cell "Haven Days"
         - cell "Enrolled"
-        - cell "Review Sample Student A1's enrollment in Haven Days Enrichment":
-          - button "Review Sample Student A1's enrollment in Haven Days Enrichment"
-      - row "Sample Student A2 Sample Family A Harvest Explorers Pending review Review Sample Student A2's enrollment in Harvest Explorers":
+        - cell "Review Sample Student A1's enrollment in Haven Days":
+          - button "Review Sample Student A1's enrollment in Haven Days"
+      - row "Sample Student A2 Sample Family A Crochet Pending review Review Sample Student A2's enrollment in Crochet":
         - rowheader "Sample Student A2"
         - cell "Sample Family A"
-        - cell "Harvest Explorers"
+        - cell "Crochet"
         - cell "Pending review"
-        - cell "Review Sample Student A2's enrollment in Harvest Explorers":
-          - button "Review Sample Student A2's enrollment in Harvest Explorers"
+        - cell "Review Sample Student A2's enrollment in Crochet":
+          - button "Review Sample Student A2's enrollment in Crochet"
       - row "Sample Student B1 Sample Family B Sewing Waitlisted Review Sample Student B1's enrollment in Sewing":
         - rowheader "Sample Student B1"
         - cell "Sample Family B"
@@ -74,10 +74,24 @@
         - cell "Waitlisted"
         - cell "Review Sample Student B1's enrollment in Sewing":
           - button "Review Sample Student B1's enrollment in Sewing"
-      - row "Sample Student A2 Sample Family A Art Lab Enrolled Review Sample Student A2's enrollment in Art Lab":
+      - row "Sample Student A2 Sample Family A Tutoring Enrolled Review Sample Student A2's enrollment in Tutoring":
         - rowheader "Sample Student A2"
         - cell "Sample Family A"
-        - cell "Art Lab"
+        - cell "Tutoring"
         - cell "Enrolled"
-        - cell "Review Sample Student A2's enrollment in Art Lab":
-          - button "Review Sample Student A2's enrollment in Art Lab"
+        - cell "Review Sample Student A2's enrollment in Tutoring":
+          - button "Review Sample Student A2's enrollment in Tutoring"
+      - row "Sample Student B1 Sample Family B Monthly Clubs Enrolled Review Sample Student B1's enrollment in Monthly Clubs":
+        - rowheader "Sample Student B1"
+        - cell "Sample Family B"
+        - cell "Monthly Clubs"
+        - cell "Enrolled"
+        - cell "Review Sample Student B1's enrollment in Monthly Clubs":
+          - button "Review Sample Student B1's enrollment in Monthly Clubs"
+      - row "Sample Student B1 Sample Family B Ready Set Sensory Enrolled Review Sample Student B1's enrollment in Ready Set Sensory":
+        - rowheader "Sample Student B1"
+        - cell "Sample Family B"
+        - cell "Ready Set Sensory"
+        - cell "Enrolled"
+        - cell "Review Sample Student B1's enrollment in Ready Set Sensory":
+          - button "Review Sample Student B1's enrollment in Ready Set Sensory"

@@ -62,8 +62,8 @@ const ACCOUNTS = {
    holds neither 0002 nor 0005 — so "sees assigned" and "does not see
    unassigned" both have a target. */
 const ASSIGNED_PROGRAM = {
-  id: "10000000-0000-4000-8000-000000000004",
-  name: "Art Lab",
+  id: "10000000-0000-4000-8000-00000000000c",
+  name: "Tutoring",
 }
 const ASSIGNED_DRAFT = {
   id: "10000000-0000-4000-8000-0000000000ff",
@@ -71,7 +71,7 @@ const ASSIGNED_DRAFT = {
 }
 const UNASSIGNED_PROGRAM = {
   id: "10000000-0000-4000-8000-000000000002",
-  name: "Haven Days Enrichment",
+  name: "Haven Days",
 }
 const UNASSIGNED_OTHER_FAMILY = { id: "10000000-0000-4000-8000-000000000005" }
 
@@ -189,8 +189,8 @@ test.describe("assignment boundary", () => {
 
     for (const absent of [
       UNASSIGNED_PROGRAM.name,
-      "Harvest Explorers",
-      "Etiquette Series",
+      "Crochet",
+      "Ready Set Sensory",
     ]) {
       await expect(page.getByText(absent, { exact: false })).toHaveCount(0)
     }
@@ -291,7 +291,7 @@ test.describe("roster", () => {
     /* The state is named in the educator's words, and it says what it is. */
     await expect(main).toContainText("Payment verification pending")
     await expect(main).toContainText(
-      "These records are not enrolled in Art Lab",
+      "These records are not enrolled in Tutoring",
     )
     await expect(main).toContainText(
       "Students are not named until their place is confirmed",

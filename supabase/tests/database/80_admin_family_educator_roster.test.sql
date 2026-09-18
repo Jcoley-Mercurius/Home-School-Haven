@@ -35,7 +35,7 @@ select plan(60);
 \set educator '20000000-0000-4000-8000-00000000000e'
 \set norole   '20000000-0000-4000-8000-0000000000f0'
 
-\set art_lab      '10000000-0000-4000-8000-000000000004'
+\set tutoring      '10000000-0000-4000-8000-00000000000c'
 \set draft        '10000000-0000-4000-8000-0000000000ff'
 -- Haven Days: holds a confirmed enrollment, and the educator is NOT assigned.
 \set haven_days   '10000000-0000-4000-8000-000000000002'
@@ -185,7 +185,7 @@ select throws_ok(
 select throws_ok(
   $$ select public.admin_unassign_educator(
        '20000000-0000-4000-8000-00000000000e',
-       '10000000-0000-4000-8000-000000000004',
+       '10000000-0000-4000-8000-00000000000c',
        'a parent should not be able to do this') $$,
   '42501', null,
   'a parent cannot unassign an educator'
@@ -223,7 +223,7 @@ select throws_ok(
 select throws_ok(
   $$ select public.admin_unassign_educator(
        '20000000-0000-4000-8000-00000000000e',
-       '10000000-0000-4000-8000-000000000004',
+       '10000000-0000-4000-8000-00000000000c',
        'an educator should not be able to do this') $$,
   '42501', null,
   'an educator cannot unassign anyone'
@@ -233,9 +233,9 @@ select throws_ok(
 -- ===========================================================================
 -- 5. THE ROSTER BOUNDARY (MPS-ACC-028, MPS-REQ-018)
 -- ===========================================================================
--- Still the educator. Assigned to art_lab and the draft; NOT to haven_days.
+-- Still the educator. Assigned to tutoring and the draft; NOT to haven_days.
 --
--- art_lab carries two enrollments: student A2 confirmed, student A1
+-- tutoring carries two enrollments: student A2 confirmed, student A1
 -- payment_pending. The educator must see exactly one child.
 
 select is(
@@ -271,7 +271,7 @@ select is(
 -- MPS-ACC-028 "appears exactly once in the correct program".
 select is(
   (select count(*)::int from public.enrollments
-     where program_id = '10000000-0000-4000-8000-000000000004'::uuid
+     where program_id = '10000000-0000-4000-8000-00000000000c'::uuid
        and state = 'confirmed'),
   1,
   'the confirmed roster for the assigned program holds exactly one row'

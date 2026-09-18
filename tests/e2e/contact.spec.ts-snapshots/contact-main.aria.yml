@@ -61,14 +61,15 @@
     - text: Program you are asking about (optional)
     - combobox "Program you are asking about (optional)":
       - option "No particular program" [selected]
-      - option "Ready Set Prep & Learn"
-      - option "Haven Days Enrichment"
-      - option "Etiquette Series"
-      - option "Art Lab"
+      - option "Haven Days"
+      - option "Ready Set Prep"
+      - option "Ready Set Learn"
+      - option "Ready Set Sensory"
       - option "Sewing"
+      - option "Crochet"
       - option "Gardening"
-      - option "Harvest Explorers"
-      - option "History Explorers"
+      - option "Tutoring"
+      - option "Monthly Clubs"
     - text: Message
     - textbox "Message":
       - /placeholder: Tell us a little more so we can best support you…
@@ -81,5 +82,5 @@
     - heading "Reach us directly" [level=2]
     - link /Call \d+-\d+-\d+/:
       - /url: tel:2393479356
-    - paragraph: /\d+ Del Prado Boulevard South, Suite D Cape Coral, Florida/
+    - paragraph: /\d+ Hibiscus Drive Cape Coral, FL \d+/
     - paragraph: A published email address is not part of the approved content inventory yet, so none is shown here.

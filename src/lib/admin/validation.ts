@@ -28,6 +28,9 @@ import { z } from "zod"
    requires, and `allowImportingTsExtensions` in `tsconfig.json` exists for
    exactly this case. */
 import { ADMIN_ENROLLMENT_TARGETS } from "./transitions.ts"
+/* The taxonomy is the single source of the offering values; a second list here
+   would type-check while silently making a new offering type unselectable. */
+import { OFFERING_ORDER } from "../programs/offering-groups.ts"
 
 const PROGRAM_NAME_MAX = 160
 const PROGRAM_SLUG_MAX = 80
@@ -83,7 +86,7 @@ const programSlug = z
   .max(PROGRAM_SLUG_MAX, `Use ${PROGRAM_SLUG_MAX} characters or fewer.`)
   .regex(
     /^[a-z0-9]+(-[a-z0-9]+)*$/,
-    "Use lowercase letters, numbers, and single hyphens — for example art-lab.",
+    "Use lowercase letters, numbers, and single hyphens — for example sewing.",
   )
 
 /**
@@ -134,6 +137,18 @@ const confirmationMode = z.enum(
   ["instant", "administrator_approval"],
   "Choose how registrations for this program are confirmed.",
 )
+
+/**
+ * How the program is offered (owner evidence 2026-09-14). Optional: a draft may
+ * stay unclassified, and an empty submission becomes `null`. The database
+ * refuses to publish — or to keep published — a program without one.
+ */
+const offeringType = z
+  .union([
+    z.literal(""),
+    z.enum(OFFERING_ORDER, "Choose how this program is offered."),
+  ])
+  .transform((value) => (value === "" ? null : value))
 
 const publicationTarget = z.enum(
   ["draft", "published", "archived"],
@@ -201,6 +216,7 @@ const programFactsSchema = z.object({
   availability,
   checkoutUrl,
   confirmationMode,
+  offeringType,
 })
 
 const publicationSchema = z.object({

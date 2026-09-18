@@ -9,7 +9,7 @@ mds:
   mps_project_id: "home-school-haven-learning-platform"
   mps_version: "unversioned draft; Library version 11 consumed"
   created_at: "2026-08-27T00:00:00Z"
-  updated_at: "2026-08-28T00:00:00Z"
+  updated_at: "2026-09-16T00:00:00Z"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -766,6 +766,7 @@ references:
       - "Adopt the displayed public calendar shell, month grid, notes rail, program panel, and guidance band"
       - "Plot an entry only where the source publishes a day and a year; never infer a missing year"
       - "Do not build the category chips until an approved source assigns offerings to categories"
+      - "Weekly schedules and month-only seasons are listed beside the grid in the existing card treatment and are never plotted as days (MDS-DEC-022, 2026-09-16)"
 
 technical: {framework: null, framework_version: null, language: null, styling_system: null, component_system: null, icon_implementation: null, font_implementation: null, repository_structure: null, token_location: null, component_location: null, global_style_location: null, layout_location: null, deployment_target: null, accessibility_tools: [], test_tools: []}
 
@@ -791,6 +792,8 @@ governance:
     - {id: MDS-DEC-018, area: references, key: homepage_and_family_dashboard, value: "Reconciled public homepage and parent-controlled family dashboard visual references", status: approved, source: "User approval on 2026-08-26", dependencies: [implementation, visual_qa, responsive_references]}
     - {id: MDS-DEC-019, area: references, key: educator_and_admin_backoffice, value: "Educator content workspace and administrator operations references", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_authority, educator_reference, admin_reference, implementation, qa]}
     - {id: MDS-DEC-020, area: release, key: educator_course_builder_horizon, value: "Future platform; not Foundation Release Beta", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_future_scope, educator_reference, implementation_manifest]}
+    - {id: MDS-DEC-021, area: composition, key: catalog_offering_groups, value: "The public catalog composes one visible h2 per MPS offering type (Haven Days, Ready Set programs, Individual classes, Tutoring, Monthly clubs) over the approved 3/2/1 program grid; empty groups are omitted; the detail eyebrow names the offering type. No filter rail or chips are added (catalog deviation D-2 unchanged).", status: approved, source: "prompts/public-offering-model.md approved 2026-09-16; MPS DEC-024", dependencies: [public_catalog, program_detail, program_card, mps_authority]}
+    - {id: MDS-DEC-022, area: composition, key: calendar_schedules_and_seasons, value: "The public calendar replaces the static term-range list with 'Weekly schedules and seasons', derived from published programs and rendered in the existing term-range card treatment; the month grid, list transformation below 1024 px, notes rail, program panel, and guidance band are unchanged", status: approved, source: "prompts/public-offering-model.md approved 2026-09-16", dependencies: [public_calendar, MDS-REF-010, responsive]}
   gaps:
     - {id: MDS-GAP-001, area: identity, statement: "Logo preservation or evolution direction is unapproved", status: resolved}
     - {id: MDS-GAP-002, area: visual_language, statement: "Canonical visual personality and mood are unapproved", status: resolved}
@@ -869,7 +872,23 @@ governance:
       version_impact: "Backward-compatible reference addition released as MDS v1.1 per DESIGN-SYSTEM.md §13."
       affected_artifacts: [reference_index, design_specification, ui_references, project_state]
       approved_at: "2026-08-28"
-  versions:
+    - id: MDS-CHG-009
+      area: composition
+      previous_value: "Catalog as one ungrouped grid; calendar term ranges held as a static copy including QA-002 text"
+      new_value: "Catalog grouped by offering type (MDS-DEC-021); calendar lists weekly schedules and seasons derived from published programs (MDS-DEC-022)"
+      reason: "Owner evidence of 2026-09-14 introduced an offering taxonomy and weekday/month schedules; both are composed from existing headings, grids, and cards with no new visual convention"
+      version_impact: "Backward-compatible composition within v1.1; no token, component, or reference change"
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-16"
+    - id: MDS-CHG-010
+      area: verification
+      previous_value: "MDS-DEC-021 and MDS-DEC-022 recorded as implemented, with ARIA and screenshot baselines not regenerated after the sample fixtures moved"
+      new_value: "Both verified against regenerated ARIA and screenshot baselines at 390, 768, 1024, and 1440 px; every diff reviewed for structural change before acceptance"
+      reason: "Audit of 2026-09-17 (prompts/closeout-slice-1-audit-fixes.md). Nine ARIA baselines still asserted archived offerings, so the accessibility evidence for the grouped catalog and the calendar schedule list did not yet exist."
+      version_impact: "No token, component, layout, or reference change. Evidence only."
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-17"
+      note: "NOT a claim of MDS compliance validation, which remains not_started. The About, Contact composition, resources, auth, password-recovery, family-setup, and admin-families baselines were captured before the footer was recomposed on 2026-09-02 and are still unrefreshed; those pages are unverified (MPS FIND-004). The desktop chip word-break at 1280 px routed to MDS during Slice 1 is still open and was not touched."
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"
@@ -896,7 +915,7 @@ artifacts:
     - {id: MDS-UI-REF-004, name: "Administrator Operations", path: "/Home School Haven Learning Platform/Home School Haven admin dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Foundation Beta"}
     - {id: MDS-UI-REF-005, name: "Public Calendar", path: "mds/references/assets/public-calendar-reference.png", status: current, last_updated: "2026-08-28T00:00:00Z", horizon: "Foundation Release"}
   agents_md: {path: "AGENTS.md", status: current, last_updated: "2026-08-29T00:00:00Z", note: "MDS guardrails current; MTS approved and repository reconciliation completed 2026-08-27 — real versions, paths, and commands recorded in mds/implementation/MDS-IMPLEMENTATION.md"}
-  implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled; exact repository versions, paths, and commands pending inspection"}
+  implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled. Corrected 2026-09-16: the repository has been inspected and implemented against since 2026-08-27 (Next.js 16.3.3, Tailwind v4, @base-ui/react, Playwright + axe); per-slice evidence lives in prompts/."}
   qa_protocol: {path: "mds/qa/MDS-QA.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   compliance_report: {path: "mds/qa/MDS-COMPLIANCE.md", status: missing}
 
@@ -915,7 +934,7 @@ gates:
   composition: {status: complete, requirements: ["Content widths and grids", "Page shells", "Responsive transformations", "Navigation behavior", "Content hierarchy", "Page patterns", "Interaction behavior"], blocking_items: [], completed_at: "2026-08-27T03:10:00Z"}
   references: {status: complete, requirements: ["Core Foundations reference", "Component Library reference", "Layout & Behavior reference", "Canonical public homepage", "Canonical family dashboard", "Educator content workspace", "Administrator operations"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
   approval: {status: complete, requirements: ["Foundations approved", "Components approved", "Composition approved", "Canonical references approved", "Release boundary recorded"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
-  implementation_readiness: {status: in_progress, requirements: ["Design specification", "Principles", "Do/Don't guidance", "Tokens", "Project AGENTS.md", "Implementation manifest", "QA protocol", "Technical implementation inspection"], blocking_items: ["MPS-GAP-005 for real-family policy", "MPS-GAP-010 for authoritative financial policy", "MTS not yet completed", "Target repository and technical stack not yet inspected", "Project AGENTS.md requires MTS reconciliation"], completed_at: null}
+  implementation_readiness: {status: in_progress, requirements: ["Design specification", "Principles", "Do/Don't guidance", "Tokens", "Project AGENTS.md", "Implementation manifest", "QA protocol", "Technical implementation inspection"], blocking_items: ["MPS-GAP-005 for real-family policy", "MPS-GAP-010 for authoritative financial policy"], note: "Corrected 2026-09-16: MTS v1.0 is approved, the repository and stack are inspected, and AGENTS.md is reconciled. This is not a claim of MDS compliance validation, which remains not started.", completed_at: null}
   compliance: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
 
 compliance:

@@ -133,7 +133,7 @@ function CreateProgramForm() {
           <FieldLabel>Web address</FieldLabel>
           <FieldDescription>
             The program&rsquo;s public address, for example{" "}
-            <span className="font-semibold">art-lab</span>. Lowercase letters,
+            <span className="font-semibold">sewing</span>. Lowercase letters,
             numbers, and single hyphens. This is hard to change once families
             have the link, so choose it deliberately.
           </FieldDescription>

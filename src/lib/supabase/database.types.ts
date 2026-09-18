@@ -560,6 +560,7 @@ export type Database = {
           import_status: string
           location: string | null
           name: string
+          offering_type: Database["public"]["Enums"]["offering_type"] | null
           publication_state: Database["public"]["Enums"]["program_publication_state"]
           published_dates: string | null
           published_duration: string | null
@@ -594,6 +595,7 @@ export type Database = {
           import_status?: string
           location?: string | null
           name: string
+          offering_type?: Database["public"]["Enums"]["offering_type"] | null
           publication_state?: Database["public"]["Enums"]["program_publication_state"]
           published_dates?: string | null
           published_duration?: string | null
@@ -628,6 +630,7 @@ export type Database = {
           import_status?: string
           location?: string | null
           name?: string
+          offering_type?: Database["public"]["Enums"]["offering_type"] | null
           publication_state?: Database["public"]["Enums"]["program_publication_state"]
           published_dates?: string | null
           published_duration?: string | null
@@ -1005,6 +1008,7 @@ export type Database = {
           program_format: string
           program_location: string
           program_name: string
+          program_offering_type: Database["public"]["Enums"]["offering_type"]
           program_price: string
           program_schedule: string
           program_session_length: string
@@ -1173,6 +1177,12 @@ export type Database = {
         | "closed"
       inquiry_type: "guidance" | "question" | "visit" | "assistance"
       invitation_state: "pending" | "accepted" | "revoked"
+      offering_type:
+        | "haven_days"
+        | "ready_set"
+        | "individual_class"
+        | "tutoring"
+        | "monthly_club"
       program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
@@ -1342,6 +1352,13 @@ export const Constants = {
       ],
       inquiry_type: ["guidance", "question", "visit", "assistance"],
       invitation_state: ["pending", "accepted", "revoked"],
+      offering_type: [
+        "haven_days",
+        "ready_set",
+        "individual_class",
+        "tutoring",
+        "monthly_club",
+      ],
       program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
       resource_kind: ["document", "link", "video", "activity", "download"],

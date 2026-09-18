@@ -77,11 +77,17 @@ const EXPECTED = [
   {
     query: `select string_agg(slug || '=' || publication_state::text, ',' order by slug)
       from public.programs;`,
+    /* Nine published offerings come from the 20260916000000 migration (owner
+       evidence of 2026-09-14); the five it no longer supports are seeded as
+       archived, and the draft is the test fixture. */
     expected:
-      "art-lab=published,etiquette-series=published,gardening=published," +
-      "harvest-explorers=published,haven-days-enrichment=published," +
-      "history-explorers=published,ready-set-prep-and-learn=published," +
-      "sample-unpublished-draft=draft,sewing=published",
+      "art-lab=archived,crochet=published,etiquette-series=archived," +
+      "gardening=published,harvest-explorers=archived," +
+      "haven-days-enrichment=published,history-explorers=archived," +
+      "monthly-clubs=published,ready-set-learn=published," +
+      "ready-set-prep=published,ready-set-prep-and-learn=archived," +
+      "ready-set-sensory=published,sample-unpublished-draft=draft," +
+      "sewing=published,tutoring=published",
     label: "programs",
   },
 ]
