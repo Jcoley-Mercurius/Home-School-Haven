@@ -120,10 +120,10 @@ describe("nextAction", () => {
     }
   })
 
-  it("offers the catalog only when there is genuinely nothing", () => {
+  it("offers family registration only when there is genuinely nothing", () => {
     const action = nextAction(STUDENTS, [])
-    assert.equal(action?.title, "Explore what is on offer")
-    assert.equal(action?.href, "/programs")
+    assert.equal(action?.title, "Register for programs")
+    assert.equal(action?.href, "/family/registration")
   })
 
   it("stays quiet when every enrollment is settled", () => {

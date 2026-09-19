@@ -92,6 +92,7 @@ Required patterns: public landing, program catalog/results, program detail, form
 - `program_attendance_rules`, `program_attendance_days`, and `program_attendance_plans`, which drive attendance controls;
 - `registration_documents_requiring_acceptance`, which drives `renewal_required`;
 - **v1.2.1:** the registration UI does not read or write `registration_step_up_requests` and renders no STEP UP state. STEP UP is a coupon applied at the end of checkout (MPS DEC-033, MDS-DEC-024), designed in the checkout slice.
+- **Implemented (Slice 3, 2026-09-19, MDS-CHG-014):** `/family/registration`, in `src/components/registration/`. `consent-state.tsx` is the first `consent_state` implementation. Visual baselines at 390, 768, 1024, and 1440 are in `tests/e2e/family-registration.spec.ts-snapshots/`. They are evidence for this pattern, not a canonical reference.
 
 The educator Content Studio/Course Builder is future-platform visual direction. Do not implement it as Foundation Release functionality without an approved MPS change.
 

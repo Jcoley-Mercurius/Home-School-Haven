@@ -128,6 +128,23 @@ export default async function EnrollPage({
           ) : null}
         </div>
 
+        {/* Family registration (Slice 3) takes several children and programs
+            in one submission, with contacts, health answers, and documents.
+            The slug is public, and it only preselects this program there. */}
+        {program && program.availability !== "closed" ? (
+          <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+            Registering more than one child or program?{" "}
+            <Link
+              href={`/family/registration?program=${slug}`}
+              data-inline-link="true"
+              className="rounded-[var(--hsh-radius-small)] font-semibold text-[var(--hsh-text-link)] underline underline-offset-4"
+            >
+              Use the family registration form
+            </Link>
+            .
+          </p>
+        ) : null}
+
         <Link
           href={`/programs/${slug}`}
           className="hsh-body inline-flex min-h-[var(--hsh-touch-target)] items-center self-start rounded-[var(--hsh-radius-small)] font-semibold text-[var(--hsh-text-link)] underline underline-offset-4"

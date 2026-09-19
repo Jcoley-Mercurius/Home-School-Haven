@@ -148,13 +148,17 @@ export function nextAction(
     }
   }
 
+  /* Nothing registered yet: the next step is the family registration itself
+     (Slice 3), which lists the published programs inside it. Sending the
+     parent to the public catalog first would add a detour before the same
+     form. */
   if (enrollments.length === 0) {
     return {
       tone: "calm",
-      title: "Explore what is on offer",
-      body: "Your family has no registrations yet. Have a look at the programs Home School Haven has published.",
-      href: "/programs",
-      linkLabel: "Browse Programs",
+      title: "Register for programs",
+      body: "Your family has no registrations yet. You can register one or more children for Home School Haven's programs in one form.",
+      href: "/family/registration",
+      linkLabel: "Start Registration",
     }
   }
 

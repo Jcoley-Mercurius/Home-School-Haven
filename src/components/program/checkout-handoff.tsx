@@ -30,20 +30,41 @@ const HANDOFF_NOTICE =
    to construct a whole `Program` it does not have. */
 type HandoffProgram = Pick<Program, "name" | "checkoutUrl">
 
-function CheckoutHandoff({ program }: { program: HandoffProgram }) {
+/**
+ * @param program - The program's name and published checkout link, if any.
+ * @param headingId - Unique id for the heading. The family registration result
+ *   renders one handoff per program, and two sections cannot share an id. The
+ *   default keeps the program and enrollment pages unchanged.
+ * @param heading - Heading text; defaults to "Registration".
+ * @param headingLevel - Heading level for where the handoff sits in the outline.
+ * @param afterRegistration - The handoff follows a recorded registration, where
+ *   there is no guidance panel and the child is already registered, so the
+ *   missing-link sentence must not promise either.
+ */
+function CheckoutHandoff({
+  program,
+  headingId = "registration-heading",
+  heading = "Registration",
+  headingLevel = "h2",
+  afterRegistration = false,
+}: {
+  program: HandoffProgram
+  headingId?: string
+  heading?: string
+  headingLevel?: "h2" | "h3" | "h4"
+  afterRegistration?: boolean
+}) {
   const telHref = `tel:${contact.phone.replace(/-/g, "")}`
+  const Heading = headingLevel
 
   return (
     <section
-      aria-labelledby="registration-heading"
+      aria-labelledby={headingId}
       className="flex flex-col gap-[var(--hsh-space-4)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-5)]"
     >
-      <h2
-        id="registration-heading"
-        className="hsh-h4 text-[var(--hsh-text-primary)]"
-      >
-        Registration
-      </h2>
+      <Heading id={headingId} className="hsh-h4 text-[var(--hsh-text-primary)]">
+        {heading}
+      </Heading>
 
       <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
         {HANDOFF_NOTICE}
@@ -86,7 +107,10 @@ function CheckoutHandoff({ program }: { program: HandoffProgram }) {
           <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
             Home School Haven has not published an online registration link for
             this program in this review environment, so there is nothing to
-            start here yet. Use the guidance panel below, or call{" "}
+            start here yet.{" "}
+            {afterRegistration
+              ? "Call"
+              : "Use the guidance panel below, or call"}{" "}
             <a
               href={telHref}
               data-inline-link="true"
@@ -94,7 +118,9 @@ function CheckoutHandoff({ program }: { program: HandoffProgram }) {
             >
               {contact.phone}
             </a>
-            , and we will register your child with you.
+            {afterRegistration
+              ? ", and Home School Haven will help you with the next step."
+              : ", and we will register your child with you."}
           </p>
         </>
       )}

@@ -932,6 +932,16 @@ governance:
       version_impact: "Patch release v1.2.1. It removes an element that was never built and adds no token, component, visual, layout, or reference."
       affected_artifacts: [design_specification, implementation_manifest, project_state]
       approved_at: "2026-09-19"
+    - id: MDS-CHG-014
+      area: page_patterns
+      previous_value: "Family registration pattern specified (DESIGN-SYSTEM §9.1) but not rendered; no visual evidence"
+      new_value: "Pattern implemented at /family/registration by COMPOSE and EXTEND only. consent_state gets its first implementation (required, unavailable, renewal_required, and blocked; signature or acknowledgment shown per document). RadioGroup gets its first use, in fieldsets with legends. CheckoutHandoff gains optional heading id, text, and level props plus an after-registration sentence; the defaults leave existing pages unchanged. No token, color, type role, spacing value, shadow, or new visual convention."
+      reason: "Slice 3 (prompts/family-registration-ui.md)"
+      version_impact: "None. Implements v1.2.1 as written."
+      affected_artifacts: [implementation_manifest, project_state]
+      approved_at: "2026-09-19"
+      evidence: "tests/e2e/family-registration.spec.ts-snapshots: step 1, validation error, empty children, programs, documents, review, and success at 390, 768, 1024, and 1440; registration-step-1 and registration-child-card ARIA snapshots; Axe with WCAG 2.2 AA tags at every step and on success."
+      note: "Rendered validation of this one pattern against the written specification. It is not a site-wide MDS compliance claim; compliance stays not_started (MPS FIND-004). No canonical reference image exists, so the new baselines are evidence, not a reference."
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"
