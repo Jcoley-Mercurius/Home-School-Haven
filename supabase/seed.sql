@@ -281,6 +281,14 @@ begin
      'Sample Student B1', 'Grade 1', 'Parent')
   on conflict do nothing;
 
+  -- Closeout Slice 1 moved the sample educator off Art Lab (0004), which is now
+  -- archived. A preview seeded before then still holds that assignment, and
+  -- `on conflict do nothing` cannot remove a row nothing conflicts with, so a
+  -- re-seed removes it explicitly. A no-op on a freshly reset local stack.
+  delete from public.educator_assignments
+    where educator_user_id = educator
+      and program_id = '10000000-0000-4000-8000-000000000004';
+
   -- Assigned to exactly one published program and to the draft, so both
   -- "sees assigned" and "cannot see unassigned" are testable.
   insert into public.educator_assignments (educator_user_id, program_id) values
