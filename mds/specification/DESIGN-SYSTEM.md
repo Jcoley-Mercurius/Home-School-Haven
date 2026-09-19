@@ -280,7 +280,7 @@ Multi-step progress (`forms`: “progress when multi-step”) may present sectio
 - *Empty:* with no children yet, the children section shows the `empty` pattern with one action, “Add a child”.
 - *Validation error:* all entered values are preserved. An error summary (a `role="alert"` region) appears at the top of the current step and lists each problem as a link. Focus moves to the summary heading. Activating a link expands any collapsed child card and moves focus to the field. Each field shows its message inline via `aria-describedby`.
 - *Blocked outcome* (for example program full, closed, unavailable, attendance not configured, or document version changed): the `error` pattern names the affected child and program and preserves every value. For a changed document version it shows the new version for acceptance.
-- *Network failure or timeout:* plain-language “Nothing was recorded” reassurance and a “Try again” action. The retry reuses the same attempt key, so a retry can never create a second registration. It is never presented as success.
+- *Network failure or timeout:* state that the result could not be confirmed and offer a “Try again” action. The retry reuses the same attempt key and resolves the replayed result without creating a duplicate registration. It is never presented as success.
 - *Success:* a confirmation listing each child’s enrollment state (from `enrollment_state`) and, per child, the external-checkout handoff.
 
 **Responsive.**
