@@ -43,13 +43,13 @@ const ACCOUNTS = {
 /** Seeded conversion fixtures — see the block at the end of supabase/seed.sql. */
 const PROGRAMS = {
   /** administrator_approval, no capacity. MPS-ACC-019. */
-  approval: "ready-set-prep-and-learn",
+  approval: "ready-set-prep",
   /** instant, no capacity. MPS-ACC-021. */
   instant: "gardening",
   /** instant, one place taken, waitlist ON. MPS-ACC-020. */
-  waitlist: "history-explorers",
+  waitlist: "monthly-clubs",
   /** instant, one place taken, waitlist OFF. */
-  full: "etiquette-series",
+  full: "ready-set-sensory",
 } as const
 
 /** The second child, who holds no seeded enrollment in any fixture program. */
@@ -231,7 +231,7 @@ test.describe("registration", () => {
     /* One row, one entry on this child's overview. */
     await viewStudent(page, FREE_STUDENT)
     await expect(
-      page.getByRole("link", { name: /Ready Set Prep & Learn/ }),
+      page.getByRole("link", { name: /Ready Set Prep/ }),
     ).toHaveCount(1)
   })
 

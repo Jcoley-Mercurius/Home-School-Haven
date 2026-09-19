@@ -144,9 +144,9 @@ test.describe("cross-role denial", () => {
   }) => {
     await signIn(page, ACCOUNTS.educator)
     await expect(page).toHaveURL(/\/educator$/)
-    await expect(page.getByText("Art Lab").first()).toBeVisible()
+    await expect(page.getByText("Tutoring").first()).toBeVisible()
     // Assigned to two of nine programs; the rest must not appear.
-    await expect(page.getByText("Harvest Explorers")).toHaveCount(0)
+    await expect(page.getByText("Crochet")).toHaveCount(0)
 
     // Every family route, not only its root: an educator must not reach the
     // setup or student surfaces either.
@@ -182,7 +182,7 @@ test.describe("cross-role denial", () => {
       "/educator/rosters",
       "/educator/announcements",
       "/educator/resources",
-      "/educator/programs/10000000-0000-4000-8000-000000000004",
+      "/educator/programs/10000000-0000-4000-8000-00000000000c",
     ]) {
       await expectStatus(page, route, 404)
     }

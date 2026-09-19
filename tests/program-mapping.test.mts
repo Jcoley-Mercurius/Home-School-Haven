@@ -21,6 +21,7 @@ function bareRow(overrides: Partial<ProgramRow> = {}): ProgramRow {
   return {
     slug: "sewing",
     name: "Sewing",
+    offering_type: "individual_class",
     published_dates: null,
     published_schedule: null,
     published_duration: null,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { connection } from "next/server"
-import { ChevronRight, HeartHandshake, Info } from "lucide-react"
+import { ChevronRight, HeartHandshake } from "lucide-react"
 
 import { CalendarView } from "@/components/calendar/calendar-view"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
@@ -11,8 +11,12 @@ import { SkipLink } from "@/components/layout/skip-link"
 import { ProgramCard } from "@/components/program/program-card"
 import { ProgramDataError } from "@/components/program/program-data-error"
 import { Button } from "@/components/ui/button"
-import { calendarTermRanges, monthKeyOf } from "@/content/calendar"
-import { guidanceHref, programsHref } from "@/content/foundation-content"
+import { monthKeyOf, scheduleAndSeasons } from "@/content/calendar"
+import {
+  guidanceHref,
+  programHref,
+  programsHref,
+} from "@/content/foundation-content"
 import { isDemoPreview } from "@/lib/env"
 import { listPublishedPrograms } from "@/lib/programs/repository"
 import { listPublicSessions } from "@/lib/schedule/repository"
@@ -28,9 +32,8 @@ import { calendarEntries } from "@/content/calendar"
  * everything on this page:
  *
  *   - a day cell exists only where the source publishes a day AND a year;
- *   - a published chronology stays as published. "August 2026–May 2026"
- *     (QA-002) is shown verbatim with its under-review note, because
- *     correcting it silently would manufacture a fact.
+ *   - a weekly schedule or a month range is listed beside the grid, as
+ *     published, and never turned into dates. No year is added to either.
  *
  * The layout follows MDS-REF-010
  * (`mds/references/assets/public-calendar-reference.png`), approved by the owner
@@ -77,7 +80,13 @@ export default async function CalendarPage() {
     listPublishedPrograms(),
     listPublicSessions(),
   ])
-  const datedPrograms = programs?.filter((program) => program.publishedDates)
+  /* Owner evidence of 2026-09-14 publishes most offerings by weekday and
+     month. Both lists below derive from the same published programs, so they
+     match the program pages word for word (MPS-REQ-020). */
+  const scheduledPrograms = programs?.filter(
+    (program) => program.publishedDates || program.publishedSchedule,
+  )
+  const schedules = programs ? scheduleAndSeasons(programs) : null
 
   /* Two sets, merged here rather than in either source. The inventory is what
      Home School Haven publishes; the sessions are what an administrator
@@ -121,46 +130,63 @@ export default async function CalendarPage() {
             <CalendarView initialMonth={initialMonth} entries={entries} />
 
             <section
-              aria-labelledby="term-ranges-heading"
+              aria-labelledby="schedules-heading"
               className="flex flex-col gap-[var(--hsh-space-4)]"
             >
               <h2
-                id="term-ranges-heading"
+                id="schedules-heading"
                 className="hsh-h3 font-[family-name:var(--hsh-font-display)] text-[var(--hsh-text-primary)]"
               >
-                Published term ranges
+                Weekly schedules and seasons
               </h2>
               <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-                These ranges are published by month rather than by date, so they
-                are listed here instead of being placed on the calendar.
+                These are published by weekday and month rather than by date, so
+                they are listed here instead of being placed on the calendar.
               </p>
-              <ul className="grid gap-[var(--hsh-space-4)] sm:grid-cols-2 lg:grid-cols-1">
-                {calendarTermRanges.map((range) => (
-                  <li
-                    key={range.id}
-                    className="flex flex-col gap-[var(--hsh-space-2)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-4)]"
-                  >
-                    <p className="hsh-h4 font-[family-name:var(--hsh-font-display)] text-[var(--hsh-text-primary)]">
-                      {range.title}
-                    </p>
-                    <p className="hsh-body text-[var(--hsh-text-secondary)]">
-                      {range.publishedRange}
-                    </p>
-                    {range.qaNote ? (
-                      /* QA-002 surfaced, not corrected. The icon plus this text
-                       means the state never rests on colour alone. */
-                      <p className="hsh-body-sm flex items-start gap-[var(--hsh-space-2)] text-[var(--hsh-text-muted)]">
-                        <Info
-                          aria-hidden="true"
-                          className="mt-1 size-4 shrink-0 text-[var(--hsh-gold-700)]"
-                          strokeWidth={1.75}
-                        />
-                        {range.qaNote}
-                      </p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
+              {schedules === null ? (
+                <ProgramDataError />
+              ) : (
+                <ul className="grid gap-[var(--hsh-space-4)] sm:grid-cols-2 lg:grid-cols-1">
+                  {schedules.map((item) => (
+                    <li
+                      key={item.slug}
+                      className="flex flex-col gap-[var(--hsh-space-2)] rounded-[var(--hsh-radius-card)] border border-[var(--hsh-border-default)] bg-[var(--hsh-surface-card)] p-[var(--hsh-space-4)]"
+                    >
+                      <h3 className="hsh-h4 font-[family-name:var(--hsh-font-display)] text-[var(--hsh-text-primary)]">
+                        {item.name}
+                      </h3>
+                      <dl className="flex flex-col gap-[var(--hsh-space-1)]">
+                        {item.schedule ? (
+                          <div className="flex flex-wrap gap-x-[var(--hsh-space-2)]">
+                            <dt className="hsh-body-sm font-semibold text-[var(--hsh-text-primary)]">
+                              Schedule
+                            </dt>
+                            <dd className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+                              {item.schedule}
+                            </dd>
+                          </div>
+                        ) : null}
+                        {item.season ? (
+                          <div className="flex flex-wrap gap-x-[var(--hsh-space-2)]">
+                            <dt className="hsh-body-sm font-semibold text-[var(--hsh-text-primary)]">
+                              Season
+                            </dt>
+                            <dd className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+                              {item.season}
+                            </dd>
+                          </div>
+                        ) : null}
+                      </dl>
+                      <Link
+                        href={programHref(item.slug)}
+                        className="hsh-body-sm inline-flex min-h-[var(--hsh-touch-target)] items-center self-start font-semibold text-[var(--hsh-text-link)] underline underline-offset-4"
+                      >
+                        View {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           </div>
 
@@ -175,14 +201,15 @@ export default async function CalendarPage() {
               Published programs
             </h2>
 
-            {/* These carry published date text, so they belong beside a
-                calendar. They are NOT ordered as "upcoming": most publish no
-                year, and inventing one to sort them would invent a fact. */}
-            {datedPrograms === undefined ? (
+            {/* These carry a published schedule or month range, so they belong
+                beside a calendar. They are NOT ordered as "upcoming": none
+                publishes a year, and inventing one to sort them would invent a
+                fact. */}
+            {scheduledPrograms === undefined ? (
               <ProgramDataError />
             ) : (
               <ul className="flex flex-col gap-[var(--hsh-space-3)]">
-                {datedPrograms.map((program) => (
+                {scheduledPrograms.map((program) => (
                   <li key={program.slug} className="flex">
                     <ProgramCard program={program} variant="compact" />
                   </li>

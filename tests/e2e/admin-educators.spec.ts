@@ -73,9 +73,9 @@ const ACCOUNTS = {
 } as const
 
 /** The program the sample educator is NOT seeded onto. */
-const UNASSIGNED_PROGRAM = "Haven Days Enrichment"
+const UNASSIGNED_PROGRAM = "Haven Days"
 /** The program they ARE seeded onto, which carries the confirmed roster. */
-const ASSIGNED_PROGRAM = "Art Lab"
+const ASSIGNED_PROGRAM = "Tutoring"
 
 async function signIn(page: Page, email: string) {
   await page.goto("/sign-in")
@@ -258,7 +258,7 @@ test.describe("the program roster", () => {
       .click()
   })
 
-  /* MPS-ACC-028. Art Lab carries one confirmed enrollment and one
+  /* MPS-ACC-028. Tutoring carries one confirmed enrollment and one
      payment_pending one, so this asserts both halves at once: the confirmed
      child is on the roster exactly once, and the other child is not. */
   test("lists the confirmed student exactly once", async ({ page }) => {

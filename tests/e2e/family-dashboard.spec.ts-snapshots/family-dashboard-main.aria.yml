@@ -16,65 +16,69 @@
     - list:
       - listitem:
         - paragraph:
-          - link "Art Lab":
-            - /url: /programs/art-lab
+          - link "Tutoring":
+            - /url: /programs/tutoring
         - paragraph: Sample Student A1
         - text: Payment verification pending
         - paragraph: Home School Haven is verifying your payment. Enrollment is not yet confirmed.
+        - link "View this registration":
+          - /url: /family/enrollments/50000000-0000-4000-8000-000000000001
       - listitem:
         - paragraph:
-          - link "Haven Days Enrichment":
+          - link "Haven Days":
             - /url: /programs/haven-days-enrichment
         - paragraph: Sample Student A1
         - text: Enrolled
         - paragraph: Home School Haven has confirmed this enrollment.
+        - link "View this registration":
+          - /url: /family/enrollments/50000000-0000-4000-8000-000000000002
     - link "View all enrollments":
       - /url: /family/schedule
   - region "Your Schedule":
     - heading "Your Schedule" [level=3]
     - list:
       - listitem:
-        - paragraph: Art Lab
-        - paragraph: Contact for details
+        - paragraph: Tutoring
+        - paragraph: Tuesday, Wednesday, and Thursday
         - paragraph: Sample Student A1
         - list:
           - listitem:
-            - heading "Sample session — Art Lab meeting" [level=4]
+            - heading "Sample session — Tutoring meeting" [level=4]
             - text: Completed
             - paragraph:
-              - time: /Tue, Aug \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+              - time: /\w+, \w+ \d+, \d+, \d+:\d+ [AP]M – .*ET/
             - paragraph: Sample location
             - paragraph: This session has taken place.
             - paragraph: Sample record. This session has been marked complete.
           - listitem:
-            - heading "Sample session — Art Lab meeting" [level=4]
+            - heading "Sample session — Tutoring meeting" [level=4]
             - text: Upcoming
             - paragraph:
-              - time: /Tue, Sep 8, \d+, 5:\d+ PM – 7:\d+ PM ET/
+              - time: /\w+, \w+ \d+, \d+, \d+:\d+ [AP]M – .*ET/
             - paragraph: Sample location
             - paragraph: This session is scheduled.
           - listitem:
-            - heading "Sample session — Art Lab meeting" [level=4]
+            - heading "Sample session — Tutoring meeting" [level=4]
             - text: Rescheduled
             - paragraph:
-              - time: /Tue, Sep \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+              - time: /\w+, \w+ \d+, \d+, \d+:\d+ [AP]M – .*ET/
             - paragraph: Sample location
             - paragraph:
               - text: Previously
-              - time: /Tue, Sep \d+, \d+, 5:\d+ PM/
+              - time: /\w+, \w+ \d+, \d+, \d+:\d+ [AP]M/
               - text: .
             - paragraph: Home School Haven has moved this session to a new time.
             - paragraph: Sample record. Moved one week later so a changed session is reviewable.
       - listitem:
-        - paragraph: Haven Days Enrichment
-        - paragraph: Contact for details
+        - paragraph: Haven Days
+        - paragraph: /Tuesday, Wednesday, and Thursday, 9:\d+ AM–1:\d+ PM/
         - paragraph: Sample Student A1
         - list:
           - listitem:
-            - heading "Sample session — Nature Explorers meeting" [level=4]
+            - heading "Sample session — Haven Days meeting" [level=4]
             - text: Cancelled
             - paragraph:
-              - time: /Fri, Sep \d+, \d+, 5:\d+ PM – 7:\d+ PM ET/
+              - time: /\w+, \w+ \d+, \d+, \d+:\d+ [AP]M – .*ET/
             - paragraph: Sample location
             - paragraph: Home School Haven has cancelled this session. No refund, credit, or transfer is decided here.
             - paragraph: Sample record. Called off so a canceled session is reviewable. No refund, credit, or transfer is decided here.
@@ -86,11 +90,11 @@
     - list:
       - listitem:
         - paragraph: Sample announcement — welcome to the review
-        - paragraph: Art Lab
+        - paragraph: Tutoring
         - paragraph: This is sample content for the Foundation Review. Home School Haven has not published a real announcement here yet.
       - listitem:
         - paragraph: Sample announcement — what this space is for
-        - paragraph: Haven Days Enrichment
+        - paragraph: Haven Days
         - paragraph: Program announcements from Home School Haven will appear here. This entry is sample content for the Foundation Review.
     - link "View all announcements":
       - /url: /family/announcements

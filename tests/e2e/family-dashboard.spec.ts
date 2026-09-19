@@ -181,9 +181,9 @@ test.describe("enrollment trust states", () => {
     await page.goto("/family/schedule")
 
     /* The seed confirms exactly two of family A's FOUR enrollments -- Haven
-       Days for the first child, and Art Lab for the second. The count moved
+       Days for the first child, and Tutoring for the second. The count moved
        from one to two in the family-and-educator-operations slice, which added
-       the Art Lab confirmation so the roster boundary had a target; both are
+       the Tutoring confirmation so the roster boundary had a target; both are
        deliberate administrator confirmations in the fixture.
        
        The guard is unchanged in substance: family A also holds a
@@ -414,6 +414,16 @@ test.describe("shell, accessibility, and responsive behaviour", () => {
       await signIn(page, ACCOUNTS.parentWithFamily)
       await page.goto("/family")
       await page.waitForLoadState("networkidle")
+      /* KNOWN UNSTABLE -- see prompts/closeout-slice-1-audit-fixes.md §7.
+         This page renders several clock-derived values: session times seeded as
+         `now() + interval '7 days'` and announcement dates as
+         `now() - interval '9 days'` (supabase/seed.sql). Every `db:reset`
+         changes them, and the differing string lengths shift wrapping and page
+         height, so these four baselines cannot match across two resets.
+         Masking `time` alone was tried on 2026-09-18 and is NOT sufficient.
+         Stabilising this needs deterministic seed timestamps, which is a seed
+         change other specs depend on and is not in this slice. Until then,
+         treat a failure here as unproven rather than as a regression. */
       await expect(page).toHaveScreenshot(`family-dashboard-${name}.png`, {
         fullPage: true,
       })

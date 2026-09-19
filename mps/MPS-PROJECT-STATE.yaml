@@ -7,7 +7,7 @@ mps:
   mps_version: "v1.0"
   current_gate: approval_handoff
   created_at: "2026-08-26T23:38:07.209612+00:00"
-  updated_at: "2026-08-27T03:40:00Z"
+  updated_at: "2026-09-16T00:00:00Z"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -59,6 +59,10 @@ project:
       status: approved
       statement: "The courses, programs, and other information currently published on the Home School Haven website are current and authorized as the Foundation Release beta content-import source."
       evidence: "Product-definition collaborator confirmation on 2026-08-26"
+    - id: CTX-011
+      status: observed
+      statement: "Home School Haven's current offerings are Haven Days, the Ready Set programs (Prep, Learn, Sensory), rotating individual classes (Sewing, Crochet, Gardening), tutoring, and monthly clubs, at 1329 Hibiscus Drive, Cape Coral, FL 33909."
+      evidence: "Samantha Dodson's flyer and email of 2026-09-14, as transcribed in the Closeout Slice 1 instruction of 2026-09-16; recorded in BETA-CONTENT-IMPORT-INVENTORY.md"
     - id: CTX-010
       status: approved
       statement: "The current website's program-specific external checkout procedure is sufficient for the Foundation Release private beta."
@@ -356,7 +360,7 @@ requirements:
   - {id: MPS-REQ-005, status: approved, priority: must, release: REL-BETA-001, statement: "The private beta must use sample or sanitized student data until Samantha confirms required data, consent, access, retention, and deletion policy.", actors: [ACT-004, ACT-006], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-008], rules: [MPS-RUL-007], acceptance: [MPS-ACC-004], implementation_status: absent, validation_status: unverified}
   - {id: MPS-REQ-006, status: approved, priority: must, release: REL-BETA-001, statement: "The product must present only Samantha-approved legal, consent, waiver, scholarship, refund, cancellation, transfer, credit, and related policy language.", actors: [ACT-004, ACT-006], outcomes: [OUT-BIZ-001], workflows: [MPS-WFL-002, MPS-WFL-003, MPS-WFL-004], rules: [MPS-RUL-004, MPS-RUL-010], acceptance: [MPS-ACC-006], implementation_status: absent, validation_status: unverified}
   - {id: MPS-REQ-007, status: approved, priority: must, release: REL-BETA-001, statement: "Present verified public pages explaining Home School Haven, its values, location, contact paths, programs, and educators.", actors: [ACT-005, ACT-004], outcomes: [OUT-FAM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-005], acceptance: [MPS-ACC-007, MPS-ACC-008], implementation_status: absent, validation_status: unverified}
-  - {id: MPS-REQ-008, status: approved, priority: must, release: REL-BETA-001, statement: "Present published program title, description, audience, format, schedule, location, educator, price presentation, capacity state, enrollment period, and available next actions.", actors: [ACT-005, ACT-004], outcomes: [OUT-FAM-001, OUT-ADM-001], workflows: [MPS-WFL-001, MPS-WFL-005], acceptance: [MPS-ACC-009, MPS-ACC-010], implementation_status: absent, validation_status: unverified}
+  - {id: MPS-REQ-008, status: approved, priority: must, release: REL-BETA-001, statement: "Present published program title, description, audience, format, schedule, location, educator, price presentation, capacity state, enrollment period, and available next actions.", actors: [ACT-005, ACT-004], outcomes: [OUT-FAM-001, OUT-ADM-001], workflows: [MPS-WFL-001, MPS-WFL-005], acceptance: [MPS-ACC-009, MPS-ACC-010], implementation_status: implemented, validation_status: unverified, implementation: "Catalog, program detail, and calendar read published programs from Supabase. Closeout Slice 1 (2026-09-16) added the offering taxonomy (DEC-024), the nine verified offerings, and archived the unsupported ones. Evidence: tests/offering-model.test.mts, supabase/tests/database/150_public_offering_model.test.sql, tests/e2e/programs.spec.ts, tests/e2e/calendar.spec.ts. Local automated checks only; owner acceptance and hosted verification are outstanding."}
   - {id: MPS-REQ-009, status: approved, priority: must, release: REL-BETA-001, statement: "Let a family choose direct registration, general guidance, a visit request, or discounted-class assistance from the relevant public experience.", actors: [ACT-005, ACT-001], outcomes: [OUT-FAM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-004], acceptance: [MPS-ACC-011], implementation_status: absent, validation_status: unverified}
   - {id: MPS-REQ-010, status: approved, priority: must, release: REL-BETA-001, statement: "Record each inquiry with type, contact, time, state, and authorized owner while keeping assistance requests private.", actors: [ACT-005, ACT-004, ACT-006], outcomes: [OUT-ADM-001, OUT-BIZ-002], workflows: [MPS-WFL-001, MPS-WFL-004], rules: [MPS-RUL-003], acceptance: [MPS-ACC-012, MPS-ACC-013, MPS-ACC-014], implementation_status: absent, validation_status: unverified}
   - {id: MPS-REQ-011, status: approved, priority: must, release: REL-BETA-001, statement: "Let a parent create and verify one family account, recover expired verification, and resume incomplete setup.", actors: [ACT-001], outcomes: [OUT-FAM-002], workflows: [MPS-WFL-002], acceptance: [MPS-ACC-015, MPS-ACC-016, MPS-ACC-017], implementation_status: implemented, validation_status: locally_validated, implementation: "HSH-SLICE-AUTH-02, closed 2026-09-02. Invite-only provisioning per the owner decision of 2026-09-02: only an authorized administrator invites a family, there is no public self-service signup ([auth].enable_signup stays false), and an invitation grants the parent role only. Schema: supabase/migrations/20260902170123_family_invitation_provisioning.sql plus 20260902171500 (anon grant hardening) and 20260902174500 (terminal-state guard). Surfaces: src/app/(portal)/admin/families/ and src/app/(auth)/invitation/accept/.", verification_pending: "Hosted verification on the linked Supabase project is outstanding: the migrations are applied there but no invitation has been issued or accepted against it.", blocked_by: "Live invitation email delivery is BLOCKED pending Resend, custom SMTP, and DNS (SPF/DKIM/DMARC) configuration, and SUPABASE_SECRET_KEY in the hosted environment. Every round trip validated so far ran against the local stack's Mailpit."}
@@ -546,6 +550,10 @@ governance:
       status: approved_demo_limitation
       statement: "A Foundation Demo invitation is open for one hour, matching the Supabase emailed-link lifetime, so the administrator's list can never show an invitation as waiting over a link that has already expired. An expired invitation is resent rather than extended (MPS-ACC-017). This deliberately does NOT change the global password-recovery link lifetime, which stays at its approved one-hour setting for every other emailed link; lengthening the invitation window would require raising that shared setting and is not approved."
       approved_at: "2026-09-02"
+    - id: DEC-024
+      status: approved
+      statement: "Samantha's evidence of 2026-09-14 supersedes the 2026-08-26 website capture for the offerings, prices, schedules, and address it covers. Public offerings are classified as Haven Days, Ready Set programs, individual classes, tutoring, or monthly clubs; Haven Days is never presented as an individual class. Offerings the evidence does not support are archived, not deleted. No year, exact date, capacity, deadline, or checkout URL is supplied where the evidence gives none, and Gardening's price stays unpublished until its source conflict (QA-007) is resolved."
+      approved_at: "2026-09-16"
   assumptions: []
   gaps:
     - {id: GAP-001, status: resolved, statement: "The Foundation Release beta direction is approved by DEC-009; formal release approval remains gated by outcome traceability and later MPS gates."}
@@ -559,11 +567,11 @@ governance:
     - {id: GAP-009, status: resolved, statement: "A flexible hybrid business-model direction is approved under DEC-013, with existing operational practices preserved."}
     - {id: GAP-010, status: open, statement: "Exact scholarship or discount eligibility and approval, payment-plan behavior, refunds, cancellations, transfers, credits, and financial-assistance privacy require Samantha Dodson's confirmation before authoritative payment-policy requirements or real-family activation. Published prices and current external checkout handoff may be used in the private beta under EXC-001."}
     - {id: GAP-011, status: resolved, statement: "Must-priority requirements MPS-REQ-007 through MPS-REQ-024 and acceptance criteria MPS-ACC-007 through MPS-ACC-032 were approved under DEC-018."}
-    - {id: GAP-012, status: open_nonblocking, statement: "The beta content inventory identifies duplicated or ambiguous class-page structure, a calendar chronology anomaly, inconsistent phone digits, unavailable partner names, and incomplete catalog fields; these require content QA before public launch but do not block private beta import."}
+    - {id: GAP-012, status: open_nonblocking, statement: "The beta content inventory identifies duplicated or ambiguous class-page structure, a calendar chronology anomaly, inconsistent phone digits, unavailable partner names, and incomplete catalog fields; these require content QA before public launch but do not block private beta import.", update_2026_09_16: "QA-002 superseded and QA-006 applied by DEC-024. QA-007 (Gardening price conflict) opened. Partner names and incomplete catalog fields remain open."}
     - {id: GAP-013, status: resolved, statement: "Family provisioning policy — who may be invited and by whom — is approved under DEC-022 as invite-only and administrator-initiated, and implemented by HSH-SLICE-AUTH-02. The one-hour invitation window is an approved Foundation Demo limitation under DEC-023, not an open question."}
   risks:
     - {id: RISK-001, status: open, statement: "Handling minor student data without explicit consent and access rules could harm families and create compliance exposure."}
-    - {id: RISK-002, status: open, statement: "Current public pages contain repeated content and apparent inconsistencies in dates, addresses, and contact details that may reduce trust or cause enrollment errors."}
+    - {id: RISK-002, status: open, statement: "Current public pages contain repeated content and apparent inconsistencies in dates, addresses, and contact details that may reduce trust or cause enrollment errors.", update_2026_09_16: "Address and offering facts reconciled to owner evidence (DEC-024). The Gardening price conflict (QA-007) remains open."}
     - {id: RISK-003, status: monitored, statement: "The private Foundation Release beta reduces simultaneous-launch risk, but the complete launch scope must remain feedback-driven."}
     - {id: RISK-004, status: monitored, statement: "Role overreach could expose minor or family information; beta access must remain limited to the approved authority model."}
   exceptions:
@@ -588,8 +596,47 @@ governance:
       approved_at: "2026-08-26"
       affected: ["MPS state", "Requirements & Rules", "Beta Content Import Inventory", "REL-BETA-001", "MDS product-truth input", "beta readiness"]
       propagation: "DEP-BETA-001 and DEP-BETA-002 are resolved. Private beta content import and MDS exploration may proceed under EXC-001; GAP-005 and GAP-010 still block real-family activation and authoritative policy handoff."
+    - id: CHG-003
+      status: applied
+      statement: "Reconciled public offerings, prices, schedules, and address with Samantha's evidence of 2026-09-14; introduced the offering taxonomy; archived unsupported offerings; opened QA-007."
+      approved_by: "User acting as product-definition collaborator (Closeout Slice 1 instruction and prompt approval, 2026-09-16)"
+      approved_at: "2026-09-16"
+      affected: ["MPS state", "Beta Content Import Inventory", "MPS-REQ-008", "MDS-DEC-021", "MDS-DEC-022", "MTS-CHG-008"]
+      propagation: "MDS composition and MTS data-model records updated. The hosted database requires the owner to run supabase db push; hosted sample fixtures still reference archived offerings until they are deliberately refreshed."
+    - id: CHG-004
+      status: applied
+      statement: "Audit of Closeout Slice 1 against the repository, and the fixes it required. One functional defect was found: tests/e2e/admin-programs.spec.ts navigated to /admin/programs?q=art while its assertion had been changed to expect Tutoring, so the search returned nothing. Nine ARIA baselines and the affected screenshot baselines had not been regenerated after the sample fixtures moved off the archived offerings, and contact-main.aria.yml had been hand-edited for the address only, leaving its program list stale. The migration's rollback header overstated what audit_events can restore. Two placeholder images were left orphaned and unlabelled."
+      approved_by: "User acting as product-definition collaborator (audit review and prompt approval, 2026-09-17)"
+      approved_at: "2026-09-17"
+      affected: ["MPS state", "prompts/closeout-slice-1-audit-fixes.md", "e2e baselines", "supabase/seed.sql", "public/placeholder/", "20260916000000_public_offering_model.sql (comment only)"]
+      propagation: "No product decision, requirement, rule, or acceptance criterion changed. DEC-024 and every offering fact stand as approved on 2026-09-16; the audit confirmed programs.ts, the migration, and the inventory agree on every price, schedule, age, and season, and that no published fact carries a year. The evidence documents themselves remain outside the repository, so owner confirmation of the facts is still outstanding."
   versions: []
-  validation_findings: []
+  validation_findings:
+    - id: FIND-001
+      status: resolved
+      raised_at: "2026-09-17"
+      statement: "tests/e2e/admin-programs.spec.ts:164 searched for a term no current offering contains: the expectation was updated from Art Lab to Tutoring but the ?q=art query that produced it was not."
+      resolution: "Query changed to ?q=tutor, which matches Tutoring and not the draft fixture, so the test keeps both halves of its assertion."
+    - id: FIND-002
+      status: resolved
+      raised_at: "2026-09-17"
+      statement: "Nine ARIA baselines and several screenshot baselines still asserted archived offerings and archived UUIDs after the sample fixtures were re-pointed."
+      resolution: "Regenerated and each diff reviewed for structural change before acceptance."
+    - id: FIND-003
+      status: resolved
+      raised_at: "2026-09-17"
+      statement: "tests/e2e/password-recovery.spec.ts left the shared sample parent's password changed, so authorization.spec.ts and three schedule-capacity.spec.ts tests failed in any full sweep for reasons unrelated to what they test."
+      resolution: "An afterAll restores it through the public recovery flow. Predates Closeout Slice 1; fixed here because it made the sweep unreadable."
+    - id: FIND-004
+      status: open_nonblocking
+      raised_at: "2026-09-17"
+      statement: "About, Contact composition, resources, auth, password-recovery, family-setup, and admin-families baselines were captured before the public footer was recomposed on 2026-09-02 and have never been refreshed. Three further specs assert selectors or copy that later work invalidated. None is caused by Closeout Slice 1."
+      resolution: "Recorded, not fixed. Owner decision of 2026-09-17: a content slice should not carry a large unreviewed visual diff across authentication and public pages."
+    - id: FIND-005
+      status: open_nonblocking
+      raised_at: "2026-09-17"
+      statement: "scripts/check-demo-placeholders.mjs counts a JSDoc line in src/content/programs.ts as a placeholder reference, because it skips lines beginning with '*' but not '/**'. The asset count is correct and the gate still blocks production builds as designed."
+      resolution: "Recorded, not fixed. Out of scope for the audit-fix prompt."
 
 artifacts:
   state: {path: mps/MPS-PROJECT-STATE.yaml, status: current}

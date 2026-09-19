@@ -64,7 +64,10 @@ const ACCOUNTS = {
 
 /* The educator holds 0004 and 00ff, and holds neither 0002 nor 0005. Family A
    (sample.parent.one) is enrolled in 0004; family B is enrolled in 0005. */
-const ASSIGNED = { id: "10000000-0000-4000-8000-000000000004", name: "Art Lab" }
+const ASSIGNED = {
+  id: "10000000-0000-4000-8000-00000000000c",
+  name: "Tutoring",
+}
 const UNASSIGNED = { id: "10000000-0000-4000-8000-000000000002" }
 const OTHER_FAMILY_PROGRAM = { id: "10000000-0000-4000-8000-000000000005" }
 

@@ -4,10 +4,10 @@
   - paragraph: "Here’s what needs attention across Home School Haven. This review is read-only: nothing on this page changes a record."
   - region "Programs":
     - heading "Programs" [level=3]
-    - text: All programs 9 Published 8 Draft 1 Archived 0
+    - text: /All programs \d+ Published 9 Draft 1 Archived 5/
   - region "Enrollments":
     - heading "Enrollments" [level=3]
-    - text: All records 5 Pending review 1 Payment verification pending 1 Waitlisted 1 Enrolled 2
+    - text: All records 7 Pending review 1 Payment verification pending 1 Waitlisted 1 Enrolled 4
     - paragraph: Every enrollment record in this review is a sanitized sample. None of them is evidence that anyone has paid.
   - region "Families":
     - heading "Families" [level=3]
@@ -15,7 +15,7 @@
     - paragraph: Sanitized sample families and student profiles. No real child or family record exists in this environment.
   - region "Educators":
     - heading "Educators" [level=3]
-    - text: Educator accounts 1 Program assignments 2 Published, no educator 7
+    - text: Educator accounts 1 Program assignments 2 Published, no educator 8
   - region "Programs":
     - heading "Programs" [level=3]
     - table "Every program, with its publication state, educator assignment, and registration path.":
@@ -28,41 +28,41 @@
           - columnheader "Registration path"
           - columnheader "Next action"
       - rowgroup:
-        - row "Ready Set Prep & Learn Published Not assigned No checkout link published Review Ready Set Prep & Learn":
-          - rowheader "Ready Set Prep & Learn"
+        - row "Haven Days Published Not assigned No checkout link published Review Haven Days":
+          - rowheader "Haven Days"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-          - cell "Review Ready Set Prep & Learn":
-            - link "Review Ready Set Prep & Learn":
-              - /url: /admin/programs/10000000-0000-4000-8000-000000000001
-              - text: ""
-        - row "Haven Days Enrichment Published Not assigned No checkout link published Review Haven Days Enrichment":
-          - rowheader "Haven Days Enrichment"
-          - cell "Published"
-          - cell "Not assigned"
-          - cell "No checkout link published"
-          - cell "Review Haven Days Enrichment":
-            - link "Review Haven Days Enrichment":
+          - cell "Review Haven Days":
+            - link "Review Haven Days":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000002
               - text: ""
-        - row "Etiquette Series Published Not assigned No checkout link published Review Etiquette Series":
-          - rowheader "Etiquette Series"
+        - row "Ready Set Prep Published Not assigned No checkout link published Review Ready Set Prep":
+          - rowheader "Ready Set Prep"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-          - cell "Review Etiquette Series":
-            - link "Review Etiquette Series":
-              - /url: /admin/programs/10000000-0000-4000-8000-000000000003
+          - cell "Review Ready Set Prep":
+            - link "Review Ready Set Prep":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000009
               - text: ""
-        - row "Art Lab Published Assigned No checkout link published Review Art Lab":
-          - rowheader "Art Lab"
+        - row "Ready Set Learn Published Not assigned No checkout link published Review Ready Set Learn":
+          - rowheader "Ready Set Learn"
           - cell "Published"
-          - cell "Assigned"
+          - cell "Not assigned"
           - cell "No checkout link published"
-          - cell "Review Art Lab":
-            - link "Review Art Lab":
-              - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+          - cell "Review Ready Set Learn":
+            - link "Review Ready Set Learn":
+              - /url: /admin/programs/10000000-0000-4000-8000-00000000000a
+              - text: ""
+        - row "Ready Set Sensory Published Not assigned No checkout link published Review Ready Set Sensory":
+          - rowheader "Ready Set Sensory"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Ready Set Sensory":
+            - link "Review Ready Set Sensory":
+              - /url: /admin/programs/10000000-0000-4000-8000-00000000000b
               - text: ""
         - row "Sewing Published Not assigned No checkout link published Review Sewing":
           - rowheader "Sewing"
@@ -73,6 +73,15 @@
             - link "Review Sewing":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000005
               - text: ""
+        - row "Crochet Published Not assigned No checkout link published Review Crochet":
+          - rowheader "Crochet"
+          - cell "Published"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Crochet":
+            - link "Review Crochet":
+              - /url: /admin/programs/10000000-0000-4000-8000-00000000000e
+              - text: ""
         - row "Gardening Published Not assigned No checkout link published Review Gardening":
           - rowheader "Gardening"
           - cell "Published"
@@ -82,23 +91,23 @@
             - link "Review Gardening":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000006
               - text: ""
-        - row "Harvest Explorers Published Not assigned No checkout link published Review Harvest Explorers":
-          - rowheader "Harvest Explorers"
+        - row "Tutoring Published Assigned No checkout link published Review Tutoring":
+          - rowheader "Tutoring"
           - cell "Published"
-          - cell "Not assigned"
+          - cell "Assigned"
           - cell "No checkout link published"
-          - cell "Review Harvest Explorers":
-            - link "Review Harvest Explorers":
-              - /url: /admin/programs/10000000-0000-4000-8000-000000000007
+          - cell "Review Tutoring":
+            - link "Review Tutoring":
+              - /url: /admin/programs/10000000-0000-4000-8000-00000000000c
               - text: ""
-        - row "History Explorers Published Not assigned No checkout link published Review History Explorers":
-          - rowheader "History Explorers"
+        - row "Monthly Clubs Published Not assigned No checkout link published Review Monthly Clubs":
+          - rowheader "Monthly Clubs"
           - cell "Published"
           - cell "Not assigned"
           - cell "No checkout link published"
-          - cell "Review History Explorers":
-            - link "Review History Explorers":
-              - /url: /admin/programs/10000000-0000-4000-8000-000000000008
+          - cell "Review Monthly Clubs":
+            - link "Review Monthly Clubs":
+              - /url: /admin/programs/10000000-0000-4000-8000-00000000000d
               - text: ""
         - row "Sample Unpublished Draft (test fixture) Draft Assigned No checkout link published Review Sample Unpublished Draft (test fixture)":
           - rowheader "Sample Unpublished Draft (test fixture)"
@@ -108,6 +117,51 @@
           - cell "Review Sample Unpublished Draft (test fixture)":
             - link "Review Sample Unpublished Draft (test fixture)":
               - /url: /admin/programs/10000000-0000-4000-8000-0000000000ff
+              - text: ""
+        - row "Ready Set Prep & Learn Archived Not assigned No checkout link published Review Ready Set Prep & Learn":
+          - rowheader "Ready Set Prep & Learn"
+          - cell "Archived"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Ready Set Prep & Learn":
+            - link "Review Ready Set Prep & Learn":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000001
+              - text: ""
+        - row "Etiquette Series Archived Not assigned No checkout link published Review Etiquette Series":
+          - rowheader "Etiquette Series"
+          - cell "Archived"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Etiquette Series":
+            - link "Review Etiquette Series":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000003
+              - text: ""
+        - row "Art Lab Archived Not assigned No checkout link published Review Art Lab":
+          - rowheader "Art Lab"
+          - cell "Archived"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Art Lab":
+            - link "Review Art Lab":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+              - text: ""
+        - row "Harvest Explorers Archived Not assigned No checkout link published Review Harvest Explorers":
+          - rowheader "Harvest Explorers"
+          - cell "Archived"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review Harvest Explorers":
+            - link "Review Harvest Explorers":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000007
+              - text: ""
+        - row "History Explorers Archived Not assigned No checkout link published Review History Explorers":
+          - rowheader "History Explorers"
+          - cell "Archived"
+          - cell "Not assigned"
+          - cell "No checkout link published"
+          - cell "Review History Explorers":
+            - link "Review History Explorers":
+              - /url: /admin/programs/10000000-0000-4000-8000-000000000008
               - text: ""
   - region "Quick Actions":
     - heading "Quick Actions" [level=2]
@@ -136,7 +190,7 @@
       - listitem:
         - paragraph: Missing educator assignment
         - paragraph: Published programs have no assigned educator, so no educator can reach their schedule, roster, or announcements.
-        - text: 7 published programs
+        - text: 8 published programs
       - listitem:
         - paragraph: Content review required
         - paragraph: The approved content import flagged these programs for a title or detail review before public launch.
@@ -144,34 +198,34 @@
       - listitem:
         - paragraph: Program details not published
         - paragraph: Published programs have no published price, schedule, or dates in the approved source. Families see “Contact for details” rather than an invented value.
-        - text: 8 published programs
+        - text: 5 published programs
   - region "Recent activity":
     - heading "Recent activity" [level=3]
     - list:
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - text: Enrollment record created · set up by the review environment
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - text: Enrollment record created · set up by the review environment
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
       - listitem:
-        - text: Operational change recorded · set up by the review environment
-        - time: /Sep 1, \d+, \d+:\d+ PM UTC/
+        - text: Program details updated · set up by the review environment
+        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
   - complementary "Authority and environment":
     - paragraph: This is a private beta environment with sample data. Continuing to external checkout is a handoff to Home School Haven’s payment provider — it is not payment confirmation, and payment activity is not confirmed enrollment.
     - paragraph: Samantha Dodson remains the final decision owner. Administrators hold delegated operational authority, and only an administrator or Samantha publishes program, price, availability, registration, or cancellation changes.

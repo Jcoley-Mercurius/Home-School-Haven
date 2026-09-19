@@ -1,6 +1,6 @@
 - main:
   - heading "Your registration" [level=1]
-  - paragraph: Ready Set Prep & Learn — Sample Student A2
+  - paragraph: Ready Set Prep — Sample Student A2
   - status:
     - paragraph: You already registered this student
     - paragraph: This student is already registered for this program. Nothing was added and nothing was charged. Their current state is shown below.
@@ -8,7 +8,7 @@
     - heading "Current state" [level=2]
     - text: Pending review
     - paragraph: Home School Haven has your request and is reviewing it. Enrollment is not confirmed yet.
-    - paragraph: Tuesdays and Thursdays
+    - paragraph: /Tuesday and Thursday, 9:\d+–\d+:\d+ AM/
   - paragraph:
     - text: Questions about this registration?
     - link "Ask Home School Haven":

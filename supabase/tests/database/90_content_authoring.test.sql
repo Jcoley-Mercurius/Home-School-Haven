@@ -39,8 +39,8 @@ select plan(61);
 \set educator '20000000-0000-4000-8000-00000000000e'
 \set norole   '20000000-0000-4000-8000-0000000000f0'
 
--- Art Lab: the educator IS assigned, and family A holds enrollments.
-\set art_lab '10000000-0000-4000-8000-000000000004'
+-- Tutoring: the educator IS assigned, and family A holds enrollments.
+\set tutoring '10000000-0000-4000-8000-00000000000c'
 -- Sewing: the educator is NOT assigned, and family A is NOT enrolled.
 \set sewing  '10000000-0000-4000-8000-000000000005'
 
@@ -59,7 +59,7 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","r
 
 select throws_ok(
   $$ insert into public.announcements (program_id, title, body)
-       values ('10000000-0000-4000-8000-000000000004', 'x', 'y') $$,
+       values ('10000000-0000-4000-8000-00000000000c', 'x', 'y') $$,
   '42501', null,
   'an assigned educator cannot insert an announcement through the table'
 );
@@ -75,7 +75,7 @@ select throws_ok(
 );
 select throws_ok(
   $$ insert into public.learning_resources (program_id, title, kind, url)
-       values ('10000000-0000-4000-8000-000000000004', 'x', 'link', 'https://e.org') $$,
+       values ('10000000-0000-4000-8000-00000000000c', 'x', 'link', 'https://e.org') $$,
   '42501', null,
   'an assigned educator cannot insert a resource through the table'
 );
@@ -94,7 +94,7 @@ select throws_ok(
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-000000000ad0","role":"authenticated"}';
 select throws_ok(
   $$ insert into public.announcements (program_id, title, body)
-       values ('10000000-0000-4000-8000-000000000004', 'x', 'y') $$,
+       values ('10000000-0000-4000-8000-00000000000c', 'x', 'y') $$,
   '42501', null,
   'an administrator cannot insert an announcement through the table either'
 );
@@ -111,12 +111,12 @@ select throws_ok(
 -- A parent.
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000a","role":"authenticated"}';
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'tutoring'),
   '42501', null,
   'a parent cannot author an announcement on a program their child attends'
 );
 select throws_ok(
-  format($$ select public.content_create_resource_draft(%L, 'x', '', 'link', 'https://e.org') $$, :'art_lab'),
+  format($$ select public.content_create_resource_draft(%L, 'x', '', 'link', 'https://e.org') $$, :'tutoring'),
   '42501', null,
   'a parent cannot author a resource'
 );
@@ -124,7 +124,7 @@ select throws_ok(
 -- A signed-in account with no role at all.
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-0000000000f0","role":"authenticated"}';
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'tutoring'),
   '42501', null,
   'an account with no role cannot author'
 );
@@ -146,7 +146,7 @@ select throws_ok(
 set local role anon;
 set local request.jwt.claims = '';
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, 'x', 'y') $$, :'tutoring'),
   '42501', null,
   'an anonymous visitor cannot author'
 );
@@ -159,7 +159,7 @@ set local role authenticated;
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
 select lives_ok(
-  format($$ select public.content_create_announcement_draft(%L, 'Test draft', 'Body text alpha') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, 'Test draft', 'Body text alpha') $$, :'tutoring'),
   'an assigned educator authors an announcement on their own program'
 );
 
@@ -230,32 +230,32 @@ select throws_ok(
 -- 6. Field bounds are enforced in the database, not only in the form
 -- ---------------------------------------------------------------------------
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, '', 'body') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, '', 'body') $$, :'tutoring'),
   '22023', null,
   'an empty title is refused'
 );
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, repeat('x', 161), 'body') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, repeat('x', 161), 'body') $$, :'tutoring'),
   '22023', null,
   'an over-long title is refused'
 );
 select throws_ok(
-  format($$ select public.content_create_announcement_draft(%L, 'ok', '') $$, :'art_lab'),
+  format($$ select public.content_create_announcement_draft(%L, 'ok', '') $$, :'tutoring'),
   '22023', null,
   'an empty body is refused'
 );
 select throws_ok(
-  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'link', 'javascript:alert(1)') $$, :'art_lab'),
+  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'link', 'javascript:alert(1)') $$, :'tutoring'),
   '22023', null,
   'a javascript: URL is not storable, so no renderer has to defend against one'
 );
 select throws_ok(
-  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'link', '') $$, :'art_lab'),
+  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'link', '') $$, :'tutoring'),
   '22023', null,
   'a link resource with no address is refused'
 );
 select throws_ok(
-  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'document', 'https://e.org') $$, :'art_lab'),
+  format($$ select public.content_create_resource_draft(%L, 'ok', '', 'document', 'https://e.org') $$, :'tutoring'),
   '22023', null,
   'a file resource carrying a web address is refused — one medium, never two'
 );

@@ -13,6 +13,7 @@ import { VerifiedFacts } from "@/components/program/verified-facts"
 import { SessionList } from "@/components/schedule/session-list"
 import { positioning } from "@/content/foundation-content"
 import { isDemoPreview } from "@/lib/env"
+import { offeringLabel } from "@/lib/programs/offering-groups"
 import {
   getPublishedProgram,
   listPublishedProgramSlugs,
@@ -29,13 +30,17 @@ import { listPublicSessions } from "@/lib/schedule/repository"
  * the approved import inventory, so a program with few published facts renders
  * the same shell with honest "Contact for details" values rather than filler.
  *
- * The page publishes no description: the inventory contains none, and
- * MDS-REF-005 shows only the literal placeholder "Approved program description
- * appears here." Writing one here would invent product content (import rule 3).
+ * The eyebrow names how the program is offered ("Ready Set program",
+ * "Individual class", …) rather than the generic "Program".
  *
- * Details whose source association is unproven (QA-001 — the Etiquette Series
- * dates, the Gardening session length) live in `Program.unverifiedDetails` and
- * are deliberately not rendered.
+ * "About this program" shows the verified summary where the owner evidence
+ * gives one (Crochet, Tutoring, Monthly Clubs) and otherwise says plainly that
+ * none is published. Writing one here would invent product content (import
+ * rule 3).
+ *
+ * Details whose source association is unproven or contradicted (QA-007 — the
+ * Gardening price) live in `Program.unverifiedDetails` and are deliberately not
+ * rendered.
  *
  * Programs come from Supabase. `getPublishedProgram` distinguishes three
  * answers that must not be collapsed into one: a program (render it),
@@ -164,7 +169,7 @@ export default async function ProgramDetailPage({
           <div className="flex flex-col gap-[var(--hsh-space-8)] lg:col-start-1 lg:row-start-1">
             <div className="flex flex-col gap-[var(--hsh-space-4)]">
               <p className="hsh-label tracking-wide text-[var(--hsh-text-muted)] uppercase">
-                Program
+                {offeringLabel(program.offeringType)}
               </p>
               <h1 className="hsh-display-lg text-[var(--hsh-text-primary)]">
                 {program.name}
@@ -263,12 +268,18 @@ export default async function ProgramDetailPage({
               >
                 About this program
               </h2>
-              <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
-                Home School Haven has not published a full description for{" "}
-                {program.name} yet, so none is shown here rather than an
-                approximation. The details above are exactly what is published
-                today.
-              </p>
+              {program.summary ? (
+                <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+                  {program.summary}
+                </p>
+              ) : (
+                <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
+                  Home School Haven has not published a full description for{" "}
+                  {program.name} yet, so none is shown here rather than an
+                  approximation. The details above are exactly what is published
+                  today.
+                </p>
+              )}
               <p className="hsh-body max-w-[var(--hsh-content-reading)] text-[var(--hsh-text-secondary)]">
                 {positioning.faithIdentity}
               </p>

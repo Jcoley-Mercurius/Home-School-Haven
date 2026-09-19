@@ -33,6 +33,7 @@ import type { Enums, Tables } from "@/lib/supabase/types"
 
 type Availability = Enums<"availability_state">
 type ConfirmationMode = Enums<"program_confirmation_mode">
+type OfferingType = Enums<"offering_type">
 
 /**
  * A program as the operations surfaces show it.
@@ -45,6 +46,11 @@ type AdminProgram = {
   id: string
   slug: string
   name: string
+  /**
+   * How the program is offered, or `null` for an unclassified draft. A program
+   * cannot be published without one (owner evidence 2026-09-14).
+   */
+  offeringType: OfferingType | null
   summary: string | null
   audience: string | null
   format: string | null
@@ -83,13 +89,14 @@ type AdminProgram = {
 /* One unbroken string literal: PostgREST infers the row type from the literal,
    and a concatenation degrades every column to `GenericStringError`. */
 // prettier-ignore
-const SELECT_COLUMNS = "id,slug,name,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,confirmation_mode,import_status,updated_at"
+const SELECT_COLUMNS = "id,slug,name,offering_type,summary,audience,format,location,educator,published_dates,published_schedule,published_duration,published_session_length,published_price,availability,publication_state,checkout_url,capacity,waitlist_enabled,confirmation_mode,import_status,updated_at"
 
 type ProgramRow = Pick<
   Tables<"programs">,
   | "id"
   | "slug"
   | "name"
+  | "offering_type"
   | "summary"
   | "audience"
   | "format"
@@ -124,6 +131,7 @@ function mapRow(
     id: row.id,
     slug: row.slug,
     name: row.name,
+    offeringType: row.offering_type,
     summary: row.summary,
     audience: row.audience,
     format: row.format,
@@ -314,6 +322,7 @@ async function updateProgramFacts(input: {
   availability: Availability
   checkoutUrl: string | null
   confirmationMode: ConfirmationMode
+  offeringType: OfferingType | null
 }): Promise<MutationResult> {
   if (!isSupabaseConfigured()) return { ok: false, reason: "failed" }
 
@@ -343,6 +352,10 @@ async function updateProgramFacts(input: {
     program_availability: input.availability,
     program_checkout_url: orEmpty(input.checkoutUrl),
     program_confirmation_mode: input.confirmationMode,
+    /* A PostgreSQL argument carries no nullability, so the generated type says
+       the enum. NULL is a real value here — an unclassified draft — and the
+       function refuses it for a published program. */
+    program_offering_type: input.offeringType as OfferingType,
   })
 
   if (error) return mapError(error.code, error.message)
@@ -378,4 +391,10 @@ export {
   setProgramPublication,
   updateProgramFacts,
 }
-export type { AdminProgram, Availability, ConfirmationMode, MutationResult }
+export type {
+  AdminProgram,
+  Availability,
+  ConfirmationMode,
+  MutationResult,
+  OfferingType,
+}

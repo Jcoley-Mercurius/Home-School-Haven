@@ -233,7 +233,7 @@ describe("checkout URL validation", () => {
   const base = {
     programId: "00000000-0000-4000-8000-000000000001",
     expectedUpdatedAt: "2026-08-30T00:00:00Z",
-    name: "Art Lab",
+    name: "Sewing",
     summary: "",
     audience: "",
     format: "",
@@ -249,13 +249,16 @@ describe("checkout URL validation", () => {
        program a confirmation mode, and the schema will not accept a save that
        omits it. */
     confirmationMode: "administrator_approval",
+    /* Owner evidence of 2026-09-14: an offering type, or "" for an
+       unclassified draft. */
+    offeringType: "",
   }
 
   const parse = (checkoutUrl: string) =>
     programFactsSchema.safeParse({ ...base, checkoutUrl })
 
   it("accepts the approved host over https", () => {
-    assert.equal(parse("https://pay.homeschoolhaven.org/art-lab").success, true)
+    assert.equal(parse("https://pay.homeschoolhaven.org/sewing").success, true)
     assert.equal(parse("https://pay.homeschoolhaven.org").success, true)
   })
 
@@ -268,7 +271,7 @@ describe("checkout URL validation", () => {
   })
 
   it("refuses http, so a payment destination is never plaintext", () => {
-    assert.equal(parse("http://pay.homeschoolhaven.org/art-lab").success, false)
+    assert.equal(parse("http://pay.homeschoolhaven.org/sewing").success, false)
   })
 
   it("refuses any other host, including lookalikes", () => {
@@ -305,6 +308,35 @@ describe("checkout URL validation", () => {
     assert.equal(result.data?.summary, null)
     assert.equal(result.data?.audience, null)
     assert.equal(result.data?.price, null)
+  })
+
+  it("stores an unclassified offering type as null, never as an empty string", () => {
+    assert.equal(parse("").data?.offeringType, null)
+  })
+
+  it("accepts each offering type and refuses anything else", () => {
+    for (const offeringType of [
+      "haven_days",
+      "ready_set",
+      "individual_class",
+      "tutoring",
+      "monthly_club",
+    ]) {
+      const result = programFactsSchema.safeParse({
+        ...base,
+        checkoutUrl: "",
+        offeringType,
+      })
+      assert.equal(result.data?.offeringType, offeringType)
+    }
+    assert.equal(
+      programFactsSchema.safeParse({
+        ...base,
+        checkoutUrl: "",
+        offeringType: "workshop",
+      }).success,
+      false,
+    )
   })
 })
 

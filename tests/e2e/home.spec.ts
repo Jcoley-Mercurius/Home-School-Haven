@@ -92,7 +92,7 @@ test.describe("structure", () => {
     const ctas = [
       { name: "Explore Programs", href: "/programs" },
       { name: "Request Guidance", href: "/contact" },
-      { name: /^View Details for /, href: "/programs/art-lab" },
+      { name: /^View Details for /, href: "/programs/haven-days-enrichment" },
     ]
 
     for (const cta of ctas) {
@@ -369,10 +369,10 @@ test.describe("imagery provenance", () => {
        must name them; the home panels are approved photography as of
        2026-09-03, so the sentence points at the program cards instead. */
     await expect(page.getByRole("contentinfo")).toContainText(
-      "the three program card images are placeholder art for layout review only",
+      "the Haven Days program image is placeholder art for layout review only",
     )
     await expect(page.getByRole("contentinfo")).toContainText(
-      "do not show real students",
+      "does not show real students",
     )
   })
 })
@@ -397,8 +397,8 @@ test.describe("MPS trust rules", () => {
     ]) {
       expect(body).not.toContain(forbidden)
     }
-    /* Only the price the source actually publishes may appear. */
-    expect(body).toContain("$180 for all six weeks")
+    /* Only prices the owner evidence actually publishes may appear. */
+    expect(body).toContain("$80/week")
     expect(await page.locator('a[href*="checkout"]').count()).toBe(0)
   })
 
@@ -410,9 +410,11 @@ test.describe("MPS trust rules", () => {
     for (let i = 0; i < 3; i++) {
       await expect(cards.nth(i)).toContainText("Contact for details")
     }
-    await expect(cards.nth(0)).toContainText("August 22–September 26, 2026")
-    await expect(cards.nth(1)).toContainText("September 2026–June 2027")
-    await expect(cards.nth(2)).toContainText("$180 for all six weeks")
+    await expect(cards.nth(0)).toContainText("September–June")
+    await expect(cards.nth(1)).toContainText("Ages 3–4")
+    await expect(cards.nth(1)).toContainText("$80/week")
+    await expect(cards.nth(2)).toContainText("Wednesday, 4:45–6:15 PM")
+    await expect(cards.nth(2)).toContainText("$45/week")
   })
 })
 

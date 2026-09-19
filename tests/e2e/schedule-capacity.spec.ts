@@ -42,8 +42,8 @@ const VIEWPORTS = {
   desktop: { width: 1280, height: 900 },
 } as const
 
-/** Art Lab — the program the sample educator holds and family A is enrolled in. */
-const ART_LAB = "10000000-0000-4000-8000-000000000004"
+/** Tutoring — the program the sample educator holds and family A is enrolled in. */
+const TUTORING = "10000000-0000-4000-8000-00000000000c"
 
 async function signIn(page: Page, email: string) {
   await page.goto("/sign-in")
@@ -64,7 +64,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     page,
   }) => {
     await signIn(page, ACCOUNTS.admin)
-    await page.goto(`/admin/programs/${ART_LAB}`)
+    await page.goto(`/admin/programs/${TUTORING}`)
 
     await expect(
       page.getByRole("heading", { name: "Schedule", exact: true }),
@@ -75,7 +75,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
 
     /* The seeded sessions, including the two whose state is a decision. */
     await expect(
-      page.getByText("Sample session — Art Lab meeting").first(),
+      page.getByText("Sample session — Tutoring meeting").first(),
     ).toBeVisible()
     await expect(page.getByText("Rescheduled").first()).toBeVisible()
 
@@ -94,7 +94,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
 
   test("a program with no capacity set claims no number", async ({ page }) => {
     await signIn(page, ACCOUNTS.admin)
-    /* Nature Explorers carries no seeded capacity. GAP-ADMIN-004: the numbers
+    /* Haven Days carries no seeded capacity. GAP-ADMIN-004: the numbers
        are unconfirmed, so "not established" is the honest state and it must
        render as words rather than as a zero, a dash, or an empty meter. */
     await page.goto("/admin/programs/10000000-0000-4000-8000-000000000002")
@@ -113,12 +113,12 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     baseURL,
   }) => {
     await signIn(page, ACCOUNTS.admin)
-    await page.goto(`/admin/programs/${ART_LAB}`)
+    await page.goto(`/admin/programs/${TUTORING}`)
 
-    /* The upcoming Art Lab session — the one seeded as `scheduled`. */
+    /* The upcoming Tutoring session — the one seeded as `scheduled`. */
     const card = page
       .getByRole("listitem")
-      .filter({ hasText: "Sample session — Art Lab meeting" })
+      .filter({ hasText: "Sample session — Tutoring meeting" })
       .filter({ hasText: "Upcoming" })
       .first()
 
@@ -191,7 +191,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     page,
   }) => {
     await signIn(page, ACCOUNTS.educator)
-    await page.goto(`/educator/programs/${ART_LAB}`)
+    await page.goto(`/educator/programs/${TUTORING}`)
 
     await expect(
       page.getByRole("heading", { name: "Attendance" }),
@@ -232,7 +232,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     /* MPS-ACC-027 and MPS-RUL-005. The database refusal is proven in pgTAP;
        this proves the educator is not shown a control that would be refused. */
     await signIn(page, ACCOUNTS.educator)
-    await page.goto(`/educator/programs/${ART_LAB}`)
+    await page.goto(`/educator/programs/${TUTORING}`)
 
     await expect(
       page.getByRole("button", { name: "Cancel session" }),
@@ -267,10 +267,10 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
   }) => {
     await page.goto("/calendar")
 
-    /* The seeded Art Lab sessions carry a day and a year, which is the
+    /* The seeded Tutoring sessions carry a day and a year, which is the
        condition the calendar requires before plotting anything. */
     await expect(
-      page.getByText("Sample session — Art Lab meeting").first(),
+      page.getByText("Sample session — Tutoring meeting").first(),
     ).toBeVisible()
 
     /* The draft fixture's session must reach nobody. */
@@ -308,7 +308,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     page,
   }) => {
     await signIn(page, ACCOUNTS.admin)
-    await page.goto(`/admin/programs/${ART_LAB}`)
+    await page.goto(`/admin/programs/${TUTORING}`)
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
@@ -320,7 +320,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
     page,
   }) => {
     await signIn(page, ACCOUNTS.educator)
-    await page.goto(`/educator/programs/${ART_LAB}`)
+    await page.goto(`/educator/programs/${TUTORING}`)
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
@@ -337,7 +337,7 @@ test.describe("schedule, capacity, waitlist, and attendance", () => {
        is not a Base UI Field control, so its label has to be paired
        explicitly or it has no name at all. */
     await signIn(page, ACCOUNTS.admin)
-    await page.goto(`/admin/programs/${ART_LAB}`)
+    await page.goto(`/admin/programs/${TUTORING}`)
 
     const cancel = page.getByRole("button", { name: "Cancel session" }).first()
     await cancel.focus()

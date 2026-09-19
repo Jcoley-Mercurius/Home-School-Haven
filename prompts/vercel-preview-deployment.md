@@ -182,6 +182,78 @@ URL that is not in Supabase's allow-list. Set it explicitly.
    verification links stay broken until it is done by hand.
 6. **Confirm `enable_signup` is off** on the hosted project. It is `false` in
    local `config.toml`; the hosted value is dashboard state and must be checked.
+7. **Generate a Protection Bypass for Automation secret** and hand the owner a
+   bypass link rather than an expiring share link. See "Sending the review link
+   to the owner" below — the first attempt failed on exactly this.
+
+## Sending the review link to the owner (learned 2026-09-05)
+
+Deployment protection does its job, and the first handoff email walked straight
+into it. Samantha could not sign in and reported that the site "asked for a
+verification code to those specific emails."
+
+Nothing in the application asks for a code. `src/app/(auth)/sign-in/actions.ts`
+calls `signInWithPassword` and the sign-in page renders an email field and a
+password field, nothing else. All six sample accounts are seeded
+email-confirmed. What she saw was **Vercel's own login wall**: the
+`?_vercel_share=` token in the email had expired, so every request redirected to
+`https://vercel.com/sso-api?...`. That page asks for an email address and mails a
+login code to it. She entered the demo addresses, so Vercel mailed codes to
+`sample.*@example.com` inboxes that do not exist. She never reached the
+Home School Haven sign-in page.
+
+Diagnose it the same way next time — an expired or absent token is visible in one
+request, with no browser needed:
+
+```bash
+curl -s -o /dev/null -w "%{http_code} -> %{redirect_url}\n" \
+  "https://<deployment-url>/sign-in"
+```
+
+A redirect to `vercel.com/sso-api` means the caller is at the protection wall,
+not at the application.
+
+### Use a bypass link, not a share link
+
+`?_vercel_share=` tokens expire, which is precisely how the first attempt failed.
+For a review the owner returns to over several days, use **Settings → Deployment
+Protection → Protection Bypass for Automation** instead. It does not expire, it
+is included on Pro, and it needs no redeploy: enforcement is at the edge, and
+although Vercel also exposes the value to the runtime as
+`VERCEL_AUTOMATION_BYPASS_SECRET`, no code path here reads it.
+
+Send the owner this shape, with the generated secret substituted in:
+
+```
+https://<deployment-url>/?x-vercel-protection-bypass=<SECRET>&x-vercel-set-bypass-cookie=samesitenone
+```
+
+The first load answers `307` back to `/` — that is the parameters being stripped
+once the `_vercel_jwt` cookie is set, and it is expected, not a failure. Every
+later navigation rides the cookie. Verify before sending:
+
+```bash
+curl -s -L -c jar.txt -o /dev/null -w "%{http_code} %{url_effective}\n" \
+  "https://<deployment-url>/?x-vercel-protection-bypass=<SECRET>&x-vercel-set-bypass-cookie=samesitenone"
+curl -s -L -b jar.txt -o /dev/null -w "%{http_code}\n" "https://<deployment-url>/sign-in"
+```
+
+Both must answer `200`. Then sign in as `sample.admin@example.com` in a real
+browser — the curl checks confirm the wall is passed, not that authentication
+works.
+
+Three standing cautions:
+
+- **The secret is a live access key to the private preview.** Keep it out of the
+  repository, out of commits, and out of transcripts and screenshots. Rotate it
+  in the same settings panel if it is exposed, and reissue the link. It is
+  project-wide, so it covers production too once production is deployed.
+- **The link is bound to one deployment.** Every push mints a new
+  `home-school-haven-<hash>-…` hostname and strands the old link. Add a stable
+  preview alias under **Settings → Domains** and send the owner that hostname, so
+  the link survives redeploys and the handoff email is written once.
+- **Do not turn protection off to solve this.** The preview holds sanitized
+  child-shaped records; an unprotected preview URL is a public URL (step 4).
 
 ## What I would do in the repository
 

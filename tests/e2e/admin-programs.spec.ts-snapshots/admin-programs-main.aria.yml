@@ -24,7 +24,7 @@
       - text: Published
       - radio "Archived"
       - text: Archived
-  - status: Showing 9 of 9 programs.
+  - status: /Showing \d+ of \d+ programs\./
   - table "Programs, with publication status, availability, educator assignment, and registration path. Select a program to open its detail.":
     - caption: Programs, with publication status, availability, educator assignment, and registration path. Select a program to open its detail.
     - rowgroup:
@@ -36,42 +36,46 @@
         - columnheader "Registration path"
         - columnheader "Action"
     - rowgroup:
-      - row "Ready Set Prep & Learn /ready-set-prep-and-learn Published Availability not published Not assigned No checkout link published Review Ready Set Prep & Learn":
-        - rowheader "Ready Set Prep & Learn /ready-set-prep-and-learn"
+      - row "Haven Days /haven-days-enrichment Published Availability not published Not assigned No checkout link published Review Haven Days":
+        - rowheader "Haven Days /haven-days-enrichment"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
         - cell "No checkout link published"
-        - cell "Review Ready Set Prep & Learn":
-          - link "Review Ready Set Prep & Learn":
-            - /url: /admin/programs/10000000-0000-4000-8000-000000000001
-      - row "Haven Days Enrichment /haven-days-enrichment Published Availability not published Not assigned No checkout link published Review Haven Days Enrichment":
-        - rowheader "Haven Days Enrichment /haven-days-enrichment"
-        - cell "Published"
-        - cell "Availability not published"
-        - cell "Not assigned"
-        - cell "No checkout link published"
-        - cell "Review Haven Days Enrichment":
-          - link "Review Haven Days Enrichment":
+        - cell "Review Haven Days":
+          - link "Review Haven Days":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000002
-      - row "Etiquette Series /etiquette-series Published Availability not published Not assigned No checkout link published Review Etiquette Series":
-        - rowheader "Etiquette Series /etiquette-series"
+            - text: ""
+      - row "Ready Set Prep /ready-set-prep Published Availability not published Not assigned No checkout link published Review Ready Set Prep":
+        - rowheader "Ready Set Prep /ready-set-prep"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
         - cell "No checkout link published"
-        - cell "Review Etiquette Series":
-          - link "Review Etiquette Series":
-            - /url: /admin/programs/10000000-0000-4000-8000-000000000003
-      - row "Art Lab /art-lab Published Availability not published Assigned No checkout link published Review Art Lab":
-        - rowheader "Art Lab /art-lab"
+        - cell "Review Ready Set Prep":
+          - link "Review Ready Set Prep":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000009
+            - text: ""
+      - row "Ready Set Learn /ready-set-learn Published Availability not published Not assigned No checkout link published Review Ready Set Learn":
+        - rowheader "Ready Set Learn /ready-set-learn"
         - cell "Published"
         - cell "Availability not published"
-        - cell "Assigned"
+        - cell "Not assigned"
         - cell "No checkout link published"
-        - cell "Review Art Lab":
-          - link "Review Art Lab":
-            - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+        - cell "Review Ready Set Learn":
+          - link "Review Ready Set Learn":
+            - /url: /admin/programs/10000000-0000-4000-8000-00000000000a
+            - text: ""
+      - row "Ready Set Sensory /ready-set-sensory Published Availability not published Not assigned No checkout link published Review Ready Set Sensory":
+        - rowheader "Ready Set Sensory /ready-set-sensory"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Ready Set Sensory":
+          - link "Review Ready Set Sensory":
+            - /url: /admin/programs/10000000-0000-4000-8000-00000000000b
+            - text: ""
       - row "Sewing /sewing Published Availability not published Not assigned No checkout link published Review Sewing":
         - rowheader "Sewing /sewing"
         - cell "Published"
@@ -81,6 +85,17 @@
         - cell "Review Sewing":
           - link "Review Sewing":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000005
+            - text: ""
+      - row "Crochet /crochet Published Availability not published Not assigned No checkout link published Review Crochet":
+        - rowheader "Crochet /crochet"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Crochet":
+          - link "Review Crochet":
+            - /url: /admin/programs/10000000-0000-4000-8000-00000000000e
+            - text: ""
       - row "Gardening /gardening Published Availability not published Not assigned No checkout link published Review Gardening":
         - rowheader "Gardening /gardening"
         - cell "Published"
@@ -90,24 +105,27 @@
         - cell "Review Gardening":
           - link "Review Gardening":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000006
-      - row "Harvest Explorers /harvest-explorers Published Availability not published Not assigned No checkout link published Review Harvest Explorers":
-        - rowheader "Harvest Explorers /harvest-explorers"
+            - text: ""
+      - row "Tutoring /tutoring Published Availability not published Assigned No checkout link published Review Tutoring":
+        - rowheader "Tutoring /tutoring"
+        - cell "Published"
+        - cell "Availability not published"
+        - cell "Assigned"
+        - cell "No checkout link published"
+        - cell "Review Tutoring":
+          - link "Review Tutoring":
+            - /url: /admin/programs/10000000-0000-4000-8000-00000000000c
+            - text: ""
+      - row "Monthly Clubs /monthly-clubs Published Availability not published Not assigned No checkout link published Review Monthly Clubs":
+        - rowheader "Monthly Clubs /monthly-clubs"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
         - cell "No checkout link published"
-        - cell "Review Harvest Explorers":
-          - link "Review Harvest Explorers":
-            - /url: /admin/programs/10000000-0000-4000-8000-000000000007
-      - row "History Explorers /history-explorers Published Availability not published Not assigned No checkout link published Review History Explorers":
-        - rowheader "History Explorers /history-explorers"
-        - cell "Published"
-        - cell "Availability not published"
-        - cell "Not assigned"
-        - cell "No checkout link published"
-        - cell "Review History Explorers":
-          - link "Review History Explorers":
-            - /url: /admin/programs/10000000-0000-4000-8000-000000000008
+        - cell "Review Monthly Clubs":
+          - link "Review Monthly Clubs":
+            - /url: /admin/programs/10000000-0000-4000-8000-00000000000d
+            - text: ""
       - row "Sample Unpublished Draft (test fixture) /sample-unpublished-draft Draft Availability not published Assigned No checkout link published Review Sample Unpublished Draft (test fixture)":
         - rowheader "Sample Unpublished Draft (test fixture) /sample-unpublished-draft"
         - cell "Draft"
@@ -117,3 +135,54 @@
         - cell "Review Sample Unpublished Draft (test fixture)":
           - link "Review Sample Unpublished Draft (test fixture)":
             - /url: /admin/programs/10000000-0000-4000-8000-0000000000ff
+            - text: ""
+      - row "Ready Set Prep & Learn /ready-set-prep-and-learn Archived Availability not published Not assigned No checkout link published Review Ready Set Prep & Learn":
+        - rowheader "Ready Set Prep & Learn /ready-set-prep-and-learn"
+        - cell "Archived"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Ready Set Prep & Learn":
+          - link "Review Ready Set Prep & Learn":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000001
+            - text: ""
+      - row "Etiquette Series /etiquette-series Archived Availability not published Not assigned No checkout link published Review Etiquette Series":
+        - rowheader "Etiquette Series /etiquette-series"
+        - cell "Archived"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Etiquette Series":
+          - link "Review Etiquette Series":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000003
+            - text: ""
+      - row "Art Lab /art-lab Archived Availability not published Not assigned No checkout link published Review Art Lab":
+        - rowheader "Art Lab /art-lab"
+        - cell "Archived"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Art Lab":
+          - link "Review Art Lab":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000004
+            - text: ""
+      - row "Harvest Explorers /harvest-explorers Archived Availability not published Not assigned No checkout link published Review Harvest Explorers":
+        - rowheader "Harvest Explorers /harvest-explorers"
+        - cell "Archived"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review Harvest Explorers":
+          - link "Review Harvest Explorers":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000007
+            - text: ""
+      - row "History Explorers /history-explorers Archived Availability not published Not assigned No checkout link published Review History Explorers":
+        - rowheader "History Explorers /history-explorers"
+        - cell "Archived"
+        - cell "Availability not published"
+        - cell "Not assigned"
+        - cell "No checkout link published"
+        - cell "Review History Explorers":
+          - link "Review History Explorers":
+            - /url: /admin/programs/10000000-0000-4000-8000-000000000008
+            - text: ""

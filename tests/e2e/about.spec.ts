@@ -349,14 +349,16 @@ test.describe("footer", () => {
       footer.getByRole("link", { name: "239-347-9356" }),
     ).toHaveAttribute("href", "tel:2393479356")
     await expect(footer).not.toContainText("239-347-93556")
-    await expect(footer).toContainText("2930 Del Prado Boulevard South")
+    await expect(footer).toContainText(
+      "1329 Hibiscus Drive, Cape Coral, FL 33909",
+    )
 
     /* The guard that stops a reviewer reading demo art as real photography.
        Scoped, not blanket, and it narrows as placeholders are retired: three
        program card images are still demo art. It goes when
        `public/placeholder/` goes. */
     await expect(footer).toContainText(
-      "the three program card images are placeholder art for layout review only",
+      "the Haven Days program image is placeholder art for layout review only",
     )
     await expect(footer).toContainText(
       "Photography is supplied and approved by Home School Haven",

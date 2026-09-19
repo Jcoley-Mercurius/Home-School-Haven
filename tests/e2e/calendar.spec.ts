@@ -8,8 +8,9 @@ import { expect, test } from "./fixtures"
  * data, and the list transformation below the desktop breakpoint.
  *
  * Covers MPS-ACC-009, MPS-ACC-010; import rules 1 and 3 (nothing plotted
- * without a published day and year); QA-002 (a published chronology is shown,
- * never silently corrected); DESIGN-SYSTEM.md §8 responsive behavior and §10
+ * without a published day and year); owner evidence of 2026-09-14 (weekly
+ * schedules and month seasons listed beside the grid, never turned into dates,
+ * never given a year); DESIGN-SYSTEM.md §8 responsive behavior and §10
  * accessibility.
  *
  * Every test pins the clock. The page follows the visitor's date by design, so
@@ -97,8 +98,9 @@ test.describe("published content", () => {
     const grid = page.getByRole("table")
     await expect(grid).toContainText("Fall Preview Day / Open House")
     await expect(grid).toContainText("Ready Set Prep begins")
-    await expect(grid).toContainText("Art Lab")
     await expect(grid).toContainText("Summer Break")
+    /* Art Lab's range left with the offering. */
+    await expect(grid).not.toContainText("Art Lab")
   })
 
   test("navigation moves to September and Today returns", async ({ page }) => {
@@ -129,27 +131,73 @@ test.describe("published content", () => {
     ).toBeVisible()
   })
 
-  test("a range published without a year is never plotted on the grid", async ({
+  test("a schedule or season published without a date is never plotted", async ({
     page,
   }) => {
     await page.setViewportSize(VIEWPORTS.wide)
-    await gotoCalendar(page)
-    /* "September 15–October 5" (Sewing) and "August 20–September 24" (Harvest
-       Explorers) publish no year. Placing them on a dated grid would invent
-       one (import rule 3). */
+    /* November: Crochet publishes "Mondays in November" and no year. Placing
+       it on a dated grid would invent both the dates and the year. */
+    await gotoCalendar(page, new Date("2026-11-10T12:00:00+00:00"))
     const grid = page.getByRole("table")
-    await expect(grid).not.toContainText("Sewing")
-    await expect(grid).not.toContainText("Harvest Explorers")
+    for (const name of ["Crochet", "Sewing", "Gardening", "Monthly Clubs"]) {
+      await expect(grid).not.toContainText(name)
+    }
   })
 
-  test("QA-002 is shown as published and not silently corrected", async ({
+  test("lists weekly schedules and seasons exactly as published, with no year", async ({
     page,
   }) => {
     await gotoCalendar(page)
-    const ranges = page.getByRole("region", { name: "Published term ranges" })
-    await expect(ranges).toContainText("August 2026–May 2026")
-    await expect(ranges).toContainText("under review with Home School Haven")
-    await expect(ranges).not.toContainText("August 2026–May 2027")
+    const schedules = page.getByRole("region", {
+      name: "Weekly schedules and seasons",
+    })
+    await expect(schedules.getByRole("heading", { level: 3 })).toHaveText([
+      "Haven Days",
+      "Ready Set Prep",
+      "Ready Set Learn",
+      "Ready Set Sensory",
+      "Sewing",
+      "Crochet",
+      "Gardening",
+      "Tutoring",
+      "Monthly Clubs",
+    ])
+    const card = (name: string) =>
+      schedules
+        .getByRole("listitem")
+        .filter({ has: page.getByRole("heading", { name, exact: true }) })
+    await expect(card("Haven Days")).toContainText(
+      "Tuesday, Wednesday, and Thursday, 9:00 AM–1:30 PM",
+    )
+    await expect(card("Haven Days")).toContainText("September–June")
+    await expect(card("Ready Set Prep")).toContainText("August–May")
+    await expect(card("Crochet")).toContainText(
+      "Mondays in November, 2:00–4:00 PM",
+    )
+    await expect(card("Gardening")).toContainText(
+      "October–June; no class during the final week of October",
+    )
+    await expect(card("Monthly Clubs")).toContainText("Thursday, 4:30–6:30 PM")
+
+    /* QA-002 retired: the owner evidence gives Ready Set as August–May, and
+       no year is supplied in place of the anomalous one. */
+    const text = await schedules.innerText()
+    expect(text).not.toMatch(/\b20\d{2}\b/)
+    await expect(page.locator("body")).not.toContainText("August 2026–May 2026")
+  })
+
+  test("names no archived offering anywhere on the page", async ({ page }) => {
+    await gotoCalendar(page)
+    const body = page.locator("body")
+    for (const name of [
+      "Art Lab",
+      "Etiquette Series",
+      "Harvest Explorers",
+      "History Explorers",
+      "Ready Set Prep & Learn",
+    ]) {
+      await expect(body).not.toContainText(name)
+    }
   })
 
   test("offers no invented category filters", async ({ page }) => {
@@ -178,7 +226,36 @@ test.describe("responsive", () => {
     await gotoCalendar(page)
     await expect(page.getByRole("table")).toHaveCount(0)
     await expect(page.getByText("Fall Preview Day / Open House")).toBeVisible()
+    /* The month switch stays usable without the Month/List toggle. */
+    await page.getByRole("button", { name: /Next month/ }).click()
+    await expect(
+      page.getByText("Haven Days Enrichment begins", { exact: true }),
+    ).toBeVisible()
   })
+
+  for (const name of ["mobile", "tablet"] as const) {
+    test(`schedules and seasons stay readable in one column at ${name}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(VIEWPORTS[name])
+      await gotoCalendar(page)
+      const cards = page
+        .getByRole("region", { name: "Weekly schedules and seasons" })
+        .getByRole("listitem")
+      await expect(cards).toHaveCount(9)
+      const box = await cards.first().boundingBox()
+      const viewportWidth = VIEWPORTS[name].width
+      expect(box!.x).toBeGreaterThanOrEqual(0)
+      expect(box!.x + box!.width).toBeLessThanOrEqual(viewportWidth)
+      /* Month navigation remains on screen and inside the viewport. */
+      for (const label of [/Previous month/, /Next month/]) {
+        const control = await page
+          .getByRole("button", { name: label })
+          .boundingBox()
+        expect(control!.x + control!.width).toBeLessThanOrEqual(viewportWidth)
+      }
+    })
+  }
 
   test("the view switch shows the same entries in both views", async ({
     page,
@@ -223,8 +300,8 @@ test.describe("visual", () => {
     await page.setViewportSize(VIEWPORTS.wide)
     await gotoCalendar(page)
     await expect(
-      page.getByRole("region", { name: "Published term ranges" }),
-    ).toMatchAriaSnapshot({ name: "calendar-term-ranges.aria.yml" })
+      page.getByRole("region", { name: "Weekly schedules and seasons" }),
+    ).toMatchAriaSnapshot({ name: "calendar-schedules.aria.yml" })
   })
 
   for (const [name, viewport] of Object.entries(VIEWPORTS)) {

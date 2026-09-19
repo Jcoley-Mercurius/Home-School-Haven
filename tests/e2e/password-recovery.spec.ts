@@ -269,6 +269,56 @@ test.describe("recovery round trip", () => {
     )
   })
 
+  /*
+   * Put the shared sample parent's password back.
+   *
+   * These tests must change it -- proving the old password stops working is the
+   * whole point of "the new password works and the old one does not" -- but
+   * `sample.parent.one@example.com` is a SHARED seed fixture. Leaving it on
+   * REUSED_LINK_PASSWORD meant every later spec that signs that parent in with
+   * SampleFoundationReview2026 failed: in the sweep of 2026-09-17,
+   * `authorization.spec.ts` and three `schedule-capacity.spec.ts` tests timed
+   * out on `waitForURL` while the auth container logged
+   * "400: Invalid login credentials". Those look exactly like product defects
+   * and are not; they are damage from this file. All four pass on a freshly
+   * reset database.
+   *
+   * Restoring it through the public recovery flow, not a privileged reset: no
+   * spec may hold a service-role credential (AGENTS.md §11). A recovery link
+   * needs no knowledge of the current password, so this works whatever the
+   * tests above left in force -- and the target differs from
+   * REUSED_LINK_PASSWORD, which matters because Supabase refuses to set a
+   * password to the one already in force.
+   */
+  test.afterAll(async ({ browser }) => {
+    const page = await browser.newPage()
+    try {
+      if (!(await localStackIsUp(page))) return
+
+      await page.goto("/forgot-password")
+      await clearMailbox(page)
+      await page.getByLabel("Email").fill(SAMPLE_PARENT)
+      await page.getByRole("button", { name: "Email a reset link" }).click()
+
+      const link = await latestRecoveryLink(page, SAMPLE_PARENT)
+      if (!link) {
+        throw new Error(
+          "Could not restore the sample parent's password: no recovery email " +
+            "arrived. Run `npm run db:reset` before the next sweep, or later " +
+            "specs will fail to sign that parent in.",
+        )
+      }
+
+      await page.goto(link)
+      await page.getByLabel("New password", { exact: true }).fill(OLD_PASSWORD)
+      await page.getByLabel("Confirm new password").fill(OLD_PASSWORD)
+      await page.getByRole("button", { name: "Save new password" }).click()
+      await page.waitForURL(/\/family$/)
+    } finally {
+      await page.close()
+    }
+  })
+
   test("a parent recovers a password and lands where they were going", async ({
     page,
   }) => {
