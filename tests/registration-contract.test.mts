@@ -7,6 +7,7 @@ import {
   parseRegistrationOutcome,
   registrationInputSchema,
   REGISTRATION_OUTCOMES,
+  STEP_UP_STATES,
   toRegistrationPayload,
   type RegistrationInput,
 } from "../src/lib/registration/contract.ts"
@@ -22,6 +23,7 @@ import {
  */
 
 const PROGRAM = "10000000-0000-4000-8000-000000000009"
+const HAVEN_DAYS = "10000000-0000-4000-8000-000000000002"
 const STUDENT = "40000000-0000-4000-8000-000000000001"
 
 function valid(): RegistrationInput {
@@ -40,13 +42,24 @@ function valid(): RegistrationInput {
       {
         studentId: STUDENT,
         hasAllergies: false,
+        hasMedicalNeeds: false,
+        hasAccommodationNeeds: false,
         photoVideoPermission: false,
-        selections: [{ programId: PROGRAM, attendanceDays: ["tuesday"] }],
+        selections: [
+          {
+            programId: HAVEN_DAYS,
+            attendanceDays: ["tuesday"],
+            planDaysPerWeek: 1,
+          },
+        ],
       },
       {
         newStudent: { preferredName: "Sample Student New" },
         hasAllergies: true,
         allergyDetails: "Sample allergy detail",
+        hasMedicalNeeds: true,
+        medicalInformation: "Sample medical detail",
+        hasAccommodationNeeds: false,
         photoVideoPermission: true,
         stepUp: { selected: true, reference: "SAMPLE-REF" },
         selections: [{ programId: PROGRAM }],
@@ -98,6 +111,96 @@ describe("registrationInputSchema", () => {
       registrationInputSchema.safeParse(blankDetailsOnYes).success,
       false,
     )
+  })
+
+  it("requires explicit medical and accommodation answers", () => {
+    for (const key of ["hasMedicalNeeds", "hasAccommodationNeeds"]) {
+      const missing = valid() as unknown as {
+        children: Record<string, unknown>[]
+      }
+      delete missing.children[0][key]
+      assert.equal(
+        registrationInputSchema.safeParse(missing).success,
+        false,
+        `${key} must be answered`,
+      )
+    }
+  })
+
+  it("follows the explicit medical and accommodation Yes/No", () => {
+    const medicalYesWithout = valid()
+    medicalYesWithout.children[1] = {
+      ...medicalYesWithout.children[1],
+      medicalInformation: undefined,
+    }
+    assert.equal(
+      registrationInputSchema.safeParse(medicalYesWithout).success,
+      false,
+    )
+
+    const accommodationNoWith = valid()
+    accommodationNoWith.children[0] = {
+      ...accommodationNoWith.children[0],
+      accommodationInformation: "Sample detail",
+    }
+    assert.equal(
+      registrationInputSchema.safeParse(accommodationNoWith).success,
+      false,
+    )
+
+    const accommodationYesWith = valid()
+    accommodationYesWith.children[0] = {
+      ...accommodationYesWith.children[0],
+      hasAccommodationNeeds: true,
+      accommodationInformation: "Sample detail",
+    }
+    assert.equal(
+      registrationInputSchema.safeParse(accommodationYesWith).success,
+      true,
+    )
+  })
+
+  it("requires at least one emergency contact and one pickup person", () => {
+    const noEmergency = valid()
+    noEmergency.emergencyContacts = []
+    assert.equal(registrationInputSchema.safeParse(noEmergency).success, false)
+
+    const noPickup = valid()
+    noPickup.pickupPersons = []
+    assert.equal(registrationInputSchema.safeParse(noPickup).success, false)
+
+    const omitted = valid() as unknown as Record<string, unknown>
+    delete omitted.pickupPersons
+    assert.equal(registrationInputSchema.safeParse(omitted).success, false)
+  })
+
+  it("requires the parent or guardian phone", () => {
+    const input = valid() as unknown as {
+      guardianContacts: Record<string, unknown>[]
+    }
+    delete input.guardianContacts[0].phone
+    assert.equal(registrationInputSchema.safeParse(input).success, false)
+  })
+
+  it("accepts a whole-number plan from one to seven days only", () => {
+    for (const plan of [0, 8, 1.5]) {
+      const input = valid()
+      input.children[0] = {
+        ...input.children[0],
+        selections: [
+          {
+            programId: HAVEN_DAYS,
+            attendanceDays: ["tuesday"],
+            planDaysPerWeek: plan,
+          },
+        ],
+      }
+      assert.equal(
+        registrationInputSchema.safeParse(input).success,
+        false,
+        `plan ${plan} must be refused`,
+      )
+    }
   })
 
   it("refuses a signature on the Parent Handbook", () => {
@@ -239,6 +342,18 @@ describe("toRegistrationPayload", () => {
     assert.deepEqual(payload.children[0].selections[0].attendance_days, [
       "tuesday",
     ])
+    assert.equal(payload.children[0].selections[0].plan_days_per_week, 1)
+    assert.equal(
+      "plan_days_per_week" in payload.children[1].selections[0],
+      false,
+    )
+    assert.equal(payload.children[0].has_medical_needs, false)
+    assert.equal(payload.children[0].has_accommodation_needs, false)
+    assert.equal("medical_information" in payload.children[0], false)
+    assert.equal(
+      payload.children[1].medical_information,
+      "Sample medical detail",
+    )
     assert.deepEqual(payload.documents.parent_handbook, {
       version_id: "d0000000-0000-4000-8000-000000000003",
       acknowledged: true,
@@ -279,6 +394,33 @@ describe("registration outcomes", () => {
     }
     for (const unknown of ["confirmed", "paid", "", null, undefined, 1]) {
       assert.equal(parseRegistrationOutcome(unknown), null)
+    }
+  })
+
+  it("recognises the unconfigured-attendance blocker", () => {
+    assert.equal(
+      parseRegistrationOutcome("blocked_attendance_unconfigured"),
+      "blocked_attendance_unconfigured",
+    )
+    assert.equal(isRecorded("blocked_attendance_unconfigured"), false)
+  })
+
+  it("lists exactly the five STEP UP review outcomes, none of them payment", () => {
+    assert.deepEqual(
+      [...STEP_UP_STATES],
+      [
+        "pending_verification",
+        "needs_information",
+        "verified",
+        "declined",
+        "canceled",
+      ],
+    )
+    for (const forbidden of ["paid", "confirmed", "enrolled"]) {
+      assert.equal(
+        (STEP_UP_STATES as readonly string[]).includes(forbidden),
+        false,
+      )
     }
   })
 

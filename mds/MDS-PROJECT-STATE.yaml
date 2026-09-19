@@ -4,12 +4,12 @@ mds:
   project_id: "home-school-haven-learning-platform"
   project_name: "Home School Haven Learning Platform"
   lifecycle: active
-  mds_version: "v1.1"
+  mds_version: "v1.2"
   current_gate: implementation_readiness
   mps_project_id: "home-school-haven-learning-platform"
   mps_version: "unversioned draft; Library version 11 consumed"
   created_at: "2026-08-27T00:00:00Z"
-  updated_at: "2026-09-18T00:00:00Z"
+  updated_at: "2026-09-19T00:00:00Z"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -411,6 +411,19 @@ components:
     states: [default, action_required, accepted, expired, error]
     specification:
       rule: "Show policy name/version and acceptance state when known; unresolved policy language remains blocked"
+      acceptance_method: "signature (typed name: liability waiver, Code of Conduct) or acknowledgment (checkbox, no signature: Parent Handbook); never merged into one control (v1.2, MDS-DEC-023)"
+      renewal_required: "Shown when a newly published version supersedes the one the family accepted; draft edits never trigger it (MPS DEC-029)"
+  step_up_review_state:
+    applicability: required
+    status: approved
+    introduced_version: "v1.2"
+    variants: [pending_verification, needs_information, verified, declined, canceled]
+    sizes: [badge, inline_panel]
+    states: [default, action_required, complete]
+    specification:
+      composition: "Reuses the enrollment_state badge and inline_panel sizes, tokens, and icon treatment; no new visual convention"
+      rule: "Never displayed as payment, a discount, or enrollment. verified hands the registration to enrollment review and uses complete, not success, styling. Each variant has a distinct label and icon; meaning never depends on color alone."
+      labels: "Working labels subject to content-owner review (DESIGN-SYSTEM §9.1)"
   assistance_request:
     applicability: required
     status: approved
@@ -567,6 +580,7 @@ patterns:
     enrollment_handoff: {applicability: required, status: approved, composition: "Student selection, consent readiness, summary, explicit external checkout notice, return status"}
     waitlist: {applicability: required, status: approved, composition: "Program context, non-enrollment explanation, contact details, submit, received state"}
     consent: {applicability: required, status: approved, composition: "Owner-approved policy content, version/context, explicit acceptance, retained status"}
+    family_registration: {applicability: required, status: approved, introduced_version: "v1.2", composition: "One route, one atomic submission, family-first sections: guardian contact, emergency contacts, pickup persons, collapsible child cards with per-child selections and attendance, STEP UP or external-checkout handoff, documents/media permission/acknowledgments/signature, review and submit", responsive_behavior: "8/12 form plus 4-column sticky review rail on desktop; below 1024 px one column with the review section at the end", specification: "mds/specification/DESIGN-SYSTEM.md §9.1"}
     assistance_request: {applicability: required, status: approved, composition: "Private supportive introduction, minimum necessary fields, manual-review expectation, received state"}
     educator_content_studio: {applicability: optional, status: approved, horizon: "Future LMS", composition: "Assigned-program selector, course outline, material editor, resource upload, draft/preview/review actions, authoring boundaries"}
     admin_operations: {applicability: required, status: approved, horizon: "Foundation Beta", composition: "Attention overview, program operations, quick actions, payment/consent/content states, recent activity, owner-authority reminder"}
@@ -804,7 +818,8 @@ governance:
     - {id: MDS-GAP-007, area: references, statement: "Initial full-size homepage and family-dashboard UI references require generation, reconciliation, and user approval", status: resolved}
     - {id: MDS-GAP-008, area: product_authority, statement: "Educator full-course authoring is future-platform scope; exact create, submit, review, and publish authority requires MPS confirmation and must not expand Foundation Beta permissions", status: resolved, resolution: "User placed the full Course Builder in the future platform; Foundation Beta permissions remain unchanged"}
     - {id: MDS-GAP-009, area: references, statement: "Educator and administrator back-office references require generation, reconciliation, and user approval", status: resolved}
-    - {id: MDS-GAP-010, area: components, statement: "The future one-step family registration UI needs presentation states that MDS v1.1 does not yet define: a STEP UP 'pending administrative verification' state that is visibly distinct from payment, discount, and confirmed enrollment; signature versus acknowledgment within components.consent_state (typed signature for the liability waiver and Code of Conduct, acknowledgment without signature for the Parent Handbook); the conditional allergy-details disclosure driven by an explicit Yes/No; and the multi-child, per-child selection composition with attendance days. Slice 2 builds only the data contract, so no screen is affected and nothing was designed. To be resolved before the registration UI slice, reusing forms, consent_state, enrollment_state, and page_patterns.consent/enrollment_handoff.", status: open, opened_at: "2026-09-18", source: "prompts/registration-data-foundation.md; MPS DEC-025, EXC-002"}
+    - {id: MDS-DEC-023, area: page_patterns, key: family_registration_pattern, value: "Family registration pattern (DESIGN-SYSTEM §9.1): one route and one atomic submission in family-first sections; collapsible child cards with Add another child; conditional health details only after an explicit Yes; attendance controls driven by the program's attendance rule; per-child STEP UP review state or external-checkout handoff; signature and acknowledgment as separate consent_state controls; a neutral, unpreselected media-permission Yes/No that does not affect eligibility; value-preserving error summary with focus on the first invalid section; specified loading, retry, empty, blocked, responsive, keyboard, and screen-reader behavior", status: approved, source: "Slice 2.5 instruction of 2026-09-19; prompts/registration-readiness.md §8; MPS DEC-026–DEC-030, DEC-032", dependencies: [forms, consent_state, enrollment_state, payment_handoff, consent, enrollment_handoff, error, loading, empty, responsive, accessibility]}
+    - {id: MDS-GAP-010, area: components, statement: "The future one-step family registration UI needs presentation states that MDS v1.1 does not yet define: a STEP UP 'pending administrative verification' state that is visibly distinct from payment, discount, and confirmed enrollment; signature versus acknowledgment within components.consent_state (typed signature for the liability waiver and Code of Conduct, acknowledgment without signature for the Parent Handbook); the conditional allergy-details disclosure driven by an explicit Yes/No; and the multi-child, per-child selection composition with attendance days. Slice 2 builds only the data contract, so no screen is affected and nothing was designed. To be resolved before the registration UI slice, reusing forms, consent_state, enrollment_state, and page_patterns.consent/enrollment_handoff.", status: resolved, opened_at: "2026-09-18", source: "prompts/registration-data-foundation.md; MPS DEC-025, EXC-002", resolved_at: "2026-09-19", resolution: "Resolved at the specification level by MDS-DEC-023 (DESIGN-SYSTEM §9.1, MDS v1.2): the STEP UP review state, signature versus acknowledgment, the conditional health disclosures, and the multi-child composition with attendance are all specified. No canonical visual reference exists; the written pattern governs, and rendered MDS validation at 390, 768, 1024, and 1440 px is required in the registration UI slice."}
   exceptions:
     - {id: MDS-EXC-001, area: beta_data, statement: "Private beta references may use sample or sanitized family and student data until MPS policy gaps are resolved", status: approved}
   deviations: []
@@ -898,22 +913,35 @@ governance:
       version_impact: "None. No token, component, layout, or reference change; the locked visual system is untouched."
       affected_artifacts: [project_state]
       approved_at: "2026-09-18"
+    - id: MDS-CHG-012
+      area: page_patterns
+      previous_value: "MDS-GAP-010 open: no registration presentation states beyond consent_state and enrollment_state"
+      new_value: "Family registration pattern (DESIGN-SYSTEM §9.1), components.step_up_review_state, and consent_state acceptance methods; MDS-GAP-010 resolved at the specification level (MDS-DEC-023)"
+      reason: "Slice 2.5 (prompts/registration-readiness.md, approved 2026-09-19) must settle every design question before the registration UI slice begins"
+      version_impact: "Backward-compatible pattern and state addition, released as MDS v1.2 per DESIGN-SYSTEM.md §13. No token, color, type, spacing, component visual, layout-system, or reference change."
+      affected_artifacts: [design_specification, reference_index, implementation_manifest, project_state]
+      approved_at: "2026-09-19"
+      note: "Specification only. No UI was built and no visual reference was generated, so MDS compliance validation remains not_started."
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"
       scope: "Approved Home School Haven visual foundations, components, composition, and canonical public, family, educator-future, and administrator references"
     - version: "v1.1"
-      status: active
+      status: superseded
       activated_at: "2026-08-28"
       scope: "Approved and locked v1.0 system plus the canonical MDS-REF-010 public calendar reference"
+    - version: "v1.2"
+      status: active
+      activated_at: "2026-09-19"
+      scope: "v1.1 plus the family registration pattern, the STEP UP review state, and consent-state acceptance methods (MDS-DEC-023)"
 
 artifacts:
   handoff_index: {path: "mds/MDS-HANDOFF-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
-  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-08-28T00:00:00Z"}
+  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-09-19T00:00:00Z"}
   principles: {path: "mds/specification/PRINCIPLES.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   do_dont: {path: "mds/specification/DO-DONT.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   tokens: {path: "mds/tokens", status: current, last_updated: "2026-08-27T02:37:26Z"}
-  reference_index: {path: "mds/references/REFERENCE-INDEX.md", status: current, last_updated: "2026-08-28T00:00:00Z"}
+  reference_index: {path: "mds/references/REFERENCE-INDEX.md", status: current, last_updated: "2026-09-19T00:00:00Z"}
   core_reference: {path: "/Home School Haven Learning Platform/Home School Haven design foundations sheet.png", status: current, last_updated: "2026-08-27T01:40:00Z"}
   layout_reference: {path: "/Home School Haven Learning Platform/Home School Haven Navigation Blueprint.png", status: current, last_updated: "2026-08-27T03:10:00Z"}
   component_reference: {path: "/Home School Haven Learning Platform/Proposed component library visual reference.png", status: current, last_updated: "2026-08-27T02:35:00Z"}
@@ -951,7 +979,7 @@ compliance:
   gate_2: null
   gate_3: null
   overall_status: null
-  open_gaps: 1
+  open_gaps: 0
   approved_exceptions: 1
   open_deviations: 0
   reviewed_at: null

@@ -18,6 +18,14 @@ The written MDS state and specification outrank generated imagery if a conflict 
 | MDS-REF-009 | Home School Haven admin dashboard | Administrator operations shell and hierarchy | Foundation Release | `libfile_b2ede9df68988191a47c28de82268ee7` |
 | MDS-REF-010 | Home School Haven public calendar | Public calendar shell, month grid, published-detail notes, guidance pathway | Foundation Release | Local asset only |
 
+## Patterns without a canonical visual reference
+
+| Pattern | Governing source | Since |
+|---|---|---|
+| Family registration (MDS-DEC-023) | `specification/DESIGN-SYSTEM.md` §9.1, composed from MDS-REF-004 component states and MDS-REF-005 grid and responsive rules | v1.2, 2026-09-19 |
+
+No reference image exists for this pattern. The written specification governs, and rendered output must be validated against it (and against MDS-REF-004/005) at 390, 768, 1024, and 1440 px in the registration UI slice. A reference generated later must be reconciled to §9.1, not the other way round.
+
 ## Reference protocol
 
 When implementing a page, compare composition, alignment, spacing, hierarchy, typography, color, borders, radius, shadow, proportions, density, states, and content placement against the relevant reference.

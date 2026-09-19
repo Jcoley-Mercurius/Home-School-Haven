@@ -70,6 +70,8 @@ This checklist captures Home School Haven's existing policies and owner-approved
 
 **Owner notes or attached source:**
 
+> *Working decision recorded 2026-09-19 (MPS DEC-029), pending Samantha's sign-off:* publishing any new version of a registration document, including a spelling, formatting, or new-school-year change, requires fresh acceptance, and editing a draft does not. The supplied Liability Waiver is intended to be used verbatim, but no approved source, content hash, or approval record is in the repository yet, so no document can be published (GAP-014). Code of Conduct and Parent Handbook wording is still needed.
+
 ## 7. Student-profile information
 
 - [ ] Confirm the minimum required fields: legal name, preferred name, age or date of birth, grade level, guardian relationship, and enrollment information.
@@ -80,6 +82,8 @@ This checklist captures Home School Haven's existing policies and owner-approved
 
 **Owner notes or attached source:**
 
+> *Working decisions recorded 2026-09-19 (MPS DEC-026, DEC-031), pending Samantha's sign-off:* a parent or guardian phone, at least one emergency contact, at least one approved pickup person, and explicit Yes/No answers for allergies, medical needs, and accommodation needs are required, with details only after Yes. Sensitive registration and medical information may remain on record for at least 30 days after the child leaves. The maximum period, clock-start event, holds, surviving audit records, and deletion authority are still needed (GAP-016).
+
 ## 8. Photo, video, and media permissions
 
 - [ ] Provide the current photo and media-release language.
@@ -88,6 +92,8 @@ This checklist captures Home School Haven's existing policies and owner-approved
 - [ ] Confirm how withdrawal of permission is handled.
 
 **Owner notes or attached source:**
+
+> *Working decision recorded 2026-09-19 (MPS DEC-030), pending content-owner and legal approval:* one neutral Yes/No question, "Do you give Home School Haven permission to photograph or record your child and use those photos or videos for educational and promotional purposes?", with the note "Choosing No will not affect your child's registration eligibility." It is kept separate from signatures. The items above remain open.
 
 ## 9. Staff and educator access
 
@@ -98,6 +104,8 @@ This checklist captures Home School Haven's existing policies and owner-approved
 - [ ] Confirm who may export, download, or print family or roster information.
 
 **Owner notes or attached source:**
+
+> *Working decision recorded 2026-09-19 (MPS DEC-027), pending Samantha's sign-off:* an assigned educator sees only the allergy answer and details, emergency contacts, and approved pickup persons for confirmed children in their assigned programs. They never see parent phone numbers, medical or accommodation information, signatures, acceptances, media choices, STEP UP, or payment information. Still to confirm: whether children attending a trial or pending registration also need to appear.
 
 ## 10. Communication consent
 
@@ -118,6 +126,8 @@ This checklist captures Home School Haven's existing policies and owner-approved
 - [ ] Identify who may approve exports or deletion.
 
 **Owner notes or attached source:**
+
+> *Working decision recorded 2026-09-19 (MPS DEC-031):* a minimum only. Registration data may remain at least 30 days after the child leaves. No automatic deletion is built until the items above are answered.
 
 ## 12. Beta content and launch authority
 
