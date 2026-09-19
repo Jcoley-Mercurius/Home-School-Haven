@@ -68,10 +68,11 @@ import { ReviewStep } from "./review-step"
  *
  * THE ATTEMPT KEY
  *
- * `attemptKey` comes from the page and never changes while the page is open.
- * Every submit and every retry sends it. If an answer is lost after the
- * database committed, the retry is answered `replayed` with the same
- * registration, so nothing is recorded twice. If the parent edits the form
+ * `attemptKey` comes from the page, and the first value received is pinned in
+ * state, so a later server re-render that generates a new key cannot swap it
+ * mid-attempt. Every submit and every retry sends the pinned key. If an answer
+ * is lost after the database committed, the retry is answered `replayed` with
+ * the same registration, so nothing is recorded twice. If the parent edits the form
  * after such a loss and submits again, the database answers
  * `idempotency_conflict`, and this form says that an earlier attempt was
  * recorded. It never says success for a registration it did not see recorded.
@@ -106,6 +107,7 @@ export function RegistrationForm({
   guardianName: string
   guardianEmail: string
 }) {
+  const [pinnedAttemptKey] = useState(attemptKey)
   const [draft, setDraft] = useState<RegistrationDraft>(() =>
     initialDraft({ guardianName, guardianEmail }),
   )
@@ -395,7 +397,7 @@ export function RegistrationForm({
     startTransition(async () => {
       let result: RegistrationActionResult
       try {
-        result = await submitRegistrationAction(input, attemptKey)
+        result = await submitRegistrationAction(input, pinnedAttemptKey)
       } catch {
         /* A dropped connection or a timeout. Whether the database committed
            is unknown, and the same attempt key makes trying again safe. */

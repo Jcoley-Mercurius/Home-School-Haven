@@ -361,6 +361,14 @@ missing product decision, or security problem turned up. The notes below record 
   already registered, so the missing-link sentence changes only its closing clause there. The defaults are unchanged.
 - **No `beforeunload` guard.** The repository has no established pattern for one, and it would block Playwright
   navigation. It is reported rather than invented.
+- **No success ARIA snapshot (deviation from §9).** §9 asked for ARIA snapshots of step 1, the child card, and success.
+  Only step 1 and the child card have one. The success state is covered by its functional e2e assertions and by
+  screenshots at 390, 768, 1024, and 1440, but its accessibility tree is not pinned. The post-implementation review
+  of 2026-09-19 found the gap, and the owner accepted it as a recorded deviation rather than a new snapshot.
+- **Attempt key pinned (review follow-up).** The form now holds the first `attemptKey` it receives in state, instead of
+  reading the prop on every submit. Nothing in this slice re-renders the page's server component, so behavior is
+  unchanged. The pin keeps a later `router.refresh()` or revalidation from swapping the key mid-attempt, which would
+  have given up the `replayed` protection.
 - **`db:types:check -- --local`** reports only the hosted-template difference adopted in `5511c24`
   (`__InternalSupabase.PostgrestVersion` and parenthesized generics). Every declaration matches. The file was not
   touched.
