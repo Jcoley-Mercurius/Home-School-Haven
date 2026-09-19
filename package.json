@@ -11,6 +11,7 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --linked --schema public > src/lib/supabase/database.types.ts.tmp && node scripts/apply-db-types.mjs",
     "db:types:check": "node scripts/check-db-types.mjs",
+    "db:types:local": "supabase gen types typescript --local --schema public > src/lib/supabase/database.types.ts.tmp && node scripts/apply-db-types.mjs",
     "dev": "next dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

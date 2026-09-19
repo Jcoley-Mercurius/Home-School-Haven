@@ -80,6 +80,8 @@ Content may be normalized for structure, layout, capitalization, spacing, and de
 
 GAP-005 and GAP-010 remain unresolved until Samantha completes the applicable checklist sections. Under EXC-001, private beta design, content import, and owner walkthrough may proceed with sample or sanitized family data, published website content, and the current external checkout handoff. This does not authorize real-family activation, invented policy, automated financial exceptions, or an unverified claim of successful payment.
 
+Under EXC-002 (2026-09-18), sample-only registration infrastructure for health, contact, pickup, selection, document-acceptance, and STEP UP records may exist. It is locked to sample data at the database level and exposes no UI. MPS-RUL-006 still governs real-family collection. STEP UP is pending administrative verification only, and never payment, a discount, or confirmed enrollment (DEC-025). GAP-014 (legal document text), GAP-015 (STEP UP outcomes), and GAP-016 (sensitive-field purpose, viewers, retention, and deletion) block real-family activation.
+
 ## Approval record
 
 MPS-REQ-007 through MPS-REQ-024 were approved on August 26, 2026. Authoritative handoff remains blocked by GAP-005 and GAP-010.

@@ -279,6 +279,7 @@ These decisions are approved and do not need to be reopened during routine imple
 - Never infer payment success from a checkout redirect or client event.
 - Never automate scholarship, discount, refund, cancellation, credit, transfer, or related policy decisions.
 - Do not enable real-family use until the policy checklist and production security, recovery, email, abuse-protection, and operational gates are approved and verified.
+- Registration health, contact, pickup, STEP UP, and acceptance data lives only in the restricted `registration_*` tables. It is written only by `public.submit_family_registration`, is sample-only by constraint, and is never readable by educators. Do not copy those fields onto `students`, roster views, audit payloads, URLs, or logs.
 
 ---
 
@@ -292,6 +293,7 @@ These decisions are approved and do not need to be reopened during routine imple
 - A public analytics configuration must not leak into authenticated layouts through a shared root provider.
 - Session replay is disabled. Do not enable it as a debugging shortcut.
 - Sanitized review approval is not approval for real-family activation.
+- A STEP UP selection is pending administrative verification, not payment, a discount, or confirmed enrollment. A draft registration document never counts as accepted policy, and no approved document version can exist until an owner-approved migration lifts the approval lock.
 - Supabase Free is approved for sanitized review only; production readiness requires the approved paid and recovery posture.
 - Do not install a replacement design library or create one-off styling when approved MDS tokens and components apply.
 - Do not assume package commands, paths, environment variables, schemas, or migrations. Discover them from the repository.
