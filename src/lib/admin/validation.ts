@@ -40,14 +40,43 @@ const CHECKOUT_URL_MAX = 300
 const NOTE_MAX = 400
 
 /**
- * The one host an external checkout link may point at.
- *
- * `mps/BETA-CONTENT-IMPORT-INVENTORY.md` names the current program-specific
- * `pay.homeschoolhaven.org` links as the approved beta checkout path. Anything
- * else is a payment destination nobody approved, so the allowlist is a literal
- * rather than a "looks like a URL" check.
+ * Home School Haven's GoDaddy business id. Every approved checkout on
+ * poynt.godaddy.com sits under it (prompts/external-checkout-payment-truth.md §4).
  */
-const CHECKOUT_HOST = "pay.homeschoolhaven.org"
+const GODADDY_BUSINESS_ID = "2bf1b322-d362-4d5d-a4a7-5e5791473f14"
+
+/**
+ * The approved external checkout destinations, and nothing else.
+ *
+ * Mirrors `private.is_approved_checkout_url` in
+ * `supabase/migrations/20260919200000_external_checkout_activation.sql`, which
+ * is the control; this copy only lets the form say so before the round trip.
+ *
+ *   * `pay.homeschoolhaven.org` — Home School Haven's own checkout alias, the
+ *     path the MPS originally named.
+ *   * `poynt.godaddy.com/checkout/<Home School Haven's business id>/<id>` — what
+ *     every "Register & Pay" and "Pay Now" button on the approved classes page
+ *     actually opens (verified 2026-09-19). Another merchant's checkout on the
+ *     same host is refused: this is not "any GoDaddy URL".
+ */
+const CHECKOUT_DESTINATIONS = [
+  /^https:\/\/pay\.homeschoolhaven\.org(\/[A-Za-z0-9._~/-]*)?$/,
+  new RegExp(
+    `^https://poynt\\.godaddy\\.com/checkout/${GODADDY_BUSINESS_ID}/[A-Za-z0-9-]+$`,
+  ),
+] as const
+
+/** How the admin form describes an acceptable link. */
+const CHECKOUT_DESTINATION_HINT = `https://poynt.godaddy.com/checkout/${GODADDY_BUSINESS_ID}/…`
+
+/**
+ * Whether a value is an approved checkout destination.
+ * @param value - A candidate URL.
+ * @returns True only for an exact approved form.
+ */
+function isApprovedCheckoutUrl(value: string): boolean {
+  return CHECKOUT_DESTINATIONS.some((pattern) => pattern.test(value))
+}
 
 /**
  * An optional published fact.
@@ -92,14 +121,14 @@ const programSlug = z
 /**
  * The external checkout link.
  *
- * Parsed rather than pattern-matched, then checked part by part:
+ * Parsed first, then checked part by part, then matched whole:
  *
  *   * `https:` only — a payment destination must not be reachable over http.
- *   * exactly the approved host — no other checkout provider is approved.
  *   * no query string and no fragment — an identifier appended to a checkout
  *     link is private data leaving the platform in a URL, which
  *     SECURITY-ARCHITECTURE forbids outright. Refusing it at the point of
  *     storage means no later code has to remember to strip it.
+ *   * one of the approved destinations — no other checkout is approved.
  */
 const checkoutUrl = z
   .string()
@@ -116,11 +145,11 @@ const checkoutUrl = z
     }
     return (
       parsed.protocol === "https:" &&
-      parsed.host === CHECKOUT_HOST &&
       parsed.search === "" &&
-      parsed.hash === ""
+      parsed.hash === "" &&
+      isApprovedCheckoutUrl(value)
     )
-  }, `Enter the program's https://${CHECKOUT_HOST} link, with no extra information after a ? or #.`)
+  }, "Enter the program's own Home School Haven checkout link from the classes page — a https://poynt.godaddy.com/checkout/… or https://pay.homeschoolhaven.org address, with no extra information after a ? or #.")
 
 /** MDS `enrollment_state` availability vocabulary, verbatim. */
 const availability = z.enum(
@@ -277,7 +306,8 @@ const enrollmentStateSchema = z.object({
 })
 
 export {
-  CHECKOUT_HOST,
+  CHECKOUT_DESTINATION_HINT,
+  isApprovedCheckoutUrl,
   CHECKOUT_URL_MAX,
   FACT_MAX,
   NOTE_MAX,

@@ -92,6 +92,11 @@ Required patterns: public landing, program catalog/results, program detail, form
 - `program_attendance_rules`, `program_attendance_days`, and `program_attendance_plans`, which drive attendance controls;
 - `registration_documents_requiring_acceptance`, which drives `renewal_required`;
 - **v1.2.1:** the registration UI does not read or write `registration_step_up_requests` and renders no STEP UP state. STEP UP is a coupon applied at the end of checkout (MPS DEC-033, MDS-DEC-024), designed in the checkout slice.
+- **Checkout handoff (Slice 4, 2026-09-19, MDS-CHG-015):** `CheckoutHandoff` takes a required `placement`:
+  - `catalog` is the public program page. It shows the notice and says checkout opens from a registration. It never renders a link.
+  - `eligible` is used only after `mayOfferCheckout`. It renders "Continue to Secure Checkout" as `target="_blank"` with `rel="noopener noreferrer"`. The heading reads "Checkout for {program}". The accessible name reads "… for {program} ({child}) — opens … in a new tab". A visible muted line says the checkout opens in a new tab, that returning marks nothing paid, and that payment stays pending verification.
+
+  The component was reused and extended, so there is no new component, token, or visual convention. No STEP UP element is rendered, and `step_up_review_state` stays on hold (MPS GAP-015: the approved checkout has no coupon field). Baselines at 390, 768, 1024, and 1440 are in `tests/e2e/external-checkout.spec.ts-snapshots/`. They are evidence, not a canonical reference.
 - **Implemented (Slice 3, 2026-09-19, MDS-CHG-014):** `/family/registration`, in `src/components/registration/`. `consent-state.tsx` is the first `consent_state` implementation. Visual baselines at 390, 768, 1024, and 1440 are in `tests/e2e/family-registration.spec.ts-snapshots/`. They are evidence for this pattern, not a canonical reference.
 
 The educator Content Studio/Course Builder is future-platform visual direction. Do not implement it as Foundation Release functionality without an approved MPS change.

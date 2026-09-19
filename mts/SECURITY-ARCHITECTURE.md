@@ -62,7 +62,15 @@ STEP UP gained outcomes in Slice 2.5 but stays sample-only by table constraint. 
 
 ## Payments and notifications
 
-The external checkout redirect is not authoritative evidence. Enrollment/payment remains pending or unknown until a trustworthy provider signal or authorized manual verification exists. Retry paths must not create duplicate enrollment or unintended duplicate charges. Email must disclose only the minimum necessary information.
+The external checkout redirect is not authoritative evidence. Trust boundary (Slice 4, 2026-09-19):
+
+- Outbound, the browser opens the stored GoDaddy URL in a new tab with `rel="noopener noreferrer"`.
+- Nothing is appended to the URL, and no Referer is sent, so no child, family, or enrollment data reaches GoDaddy from this platform.
+- Nothing comes back inbound: there is no return route, webhook, or client event, and opening, returning, or reloading writes nothing.
+- The destination allowlist is exact, lives in the database, and is mirrored in TypeScript.
+- Only `private.is_admin()` can change a link, and every change is audited.
+
+ Enrollment/payment remains pending or unknown until a trustworthy provider signal or authorized manual verification exists. Retry paths must not create duplicate enrollment or unintended duplicate charges. Email must disclose only the minimum necessary information.
 
 ## Backup and incident readiness
 

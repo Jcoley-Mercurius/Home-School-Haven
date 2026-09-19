@@ -262,6 +262,47 @@ describe("checkout URL validation", () => {
     assert.equal(parse("https://pay.homeschoolhaven.org").success, true)
   })
 
+  it("accepts Home School Haven's own GoDaddy checkout, as the classes page opens it", () => {
+    assert.equal(
+      parse(
+        "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/cd911575-37c3-4e2e-ad66-1b2",
+      ).success,
+      true,
+    )
+  })
+
+  it("refuses any other GoDaddy checkout — the allowlist is not 'any GoDaddy URL'", () => {
+    for (const other of [
+      // Another merchant on the same host.
+      "https://poynt.godaddy.com/checkout/00000000-0000-4000-8000-000000000000/cd911575-37c3-4e2e-ad66-1b2",
+      // Home School Haven's business id, but not a checkout path.
+      "https://poynt.godaddy.com/2bf1b322-d362-4d5d-a4a7-5e5791473f14/x",
+      // No checkout id at all.
+      "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/",
+      // A nested path smuggling more segments.
+      "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/x/student",
+      // Other GoDaddy hosts and lookalikes.
+      "https://www.godaddy.com/checkout/x",
+      "https://paylinks.commerce.godaddy.com/x",
+      "https://poynt.godaddy.com.evil.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/x",
+      "http://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/cd911575-37c3-4e2e-ad66-1b2",
+    ]) {
+      assert.equal(parse(other).success, false, other)
+    }
+  })
+
+  it("refuses GoDaddy's own ?sourceApp tag and any family data in a query or fragment", () => {
+    const bare =
+      "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/cd911575-37c3-4e2e-ad66-1b2"
+    assert.equal(parse(`${bare}?sourceApp=wam.paybutton`).success, false)
+    assert.equal(parse(`${bare}?email=parent@example.com`).success, false)
+    assert.equal(parse(`${bare}#student=abc`).success, false)
+  })
+
+  it("refuses the classes page itself, which is the source and not a checkout", () => {
+    assert.equal(parse("https://homeschoolhaven.org/classes").success, false)
+  })
+
   it("accepts an empty value and stores it as null, not an empty string", () => {
     const result = parse("")
     assert.equal(result.success, true)
