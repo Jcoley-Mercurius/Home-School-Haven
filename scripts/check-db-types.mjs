@@ -9,7 +9,14 @@
  * it exits 0 with a clear "not run" message rather than pretending to have
  * passed — AGENTS.md §12: never claim a check passed if it was not run.
  *
- *   npm run db:types:check
+ *   npm run db:types:check              # against the linked (hosted) project
+ *   npm run db:types:check -- --local   # against the local stack only
+ *
+ * `--local` exists for work that must not touch hosted credentials, such as a
+ * migration that has not been pushed yet (prompts/registration-data-foundation.md
+ * §11.1). It proves the committed file matches the LOCAL schema; it says
+ * nothing about the hosted project, which still needs the linked check after
+ * the owner pushes.
  */
 
 import { execFileSync } from "node:child_process"
@@ -32,19 +39,25 @@ function normalize(source) {
     .join("\n")
 }
 
+const local = process.argv.includes("--local")
+const target = local ? "--local" : "--linked"
+const label = local ? "local" : "linked"
+
 let generated
 try {
   generated = execFileSync(
     "supabase",
-    ["gen", "types", "typescript", "--linked", "--schema", "public"],
+    ["gen", "types", "typescript", target, "--schema", "public"],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
   )
 } catch (error) {
   console.log(
-    "SKIPPED: could not reach the linked Supabase project, so database types " +
-      "were not verified against a real schema.\n" +
-      "Run `supabase link --project-ref <ref>`, check network access, then " +
-      "re-run `npm run db:types:check`.",
+    `SKIPPED: could not reach the ${label} Supabase database, so database ` +
+      "types were not verified against a real schema.\n" +
+      (local
+        ? "Run `npm run db:start`, then re-run `npm run db:types:check -- --local`."
+        : "Run `supabase link --project-ref <ref>`, check network access, then " +
+          "re-run `npm run db:types:check`."),
   )
   console.log(`Reason: ${error.shortMessage ?? error.message}`)
   process.exit(0)
@@ -55,10 +68,11 @@ const committed = readFileSync(TYPES_PATH, "utf8")
 if (normalize(committed) !== normalize(generated)) {
   console.error(
     `FAILED: ${TYPES_PATH} does not match the database schema.\n` +
-      "Run `npm run db:types` and commit the result. Treat the committed file " +
+      `Run \`npm run db:types${local ? ":local" : ""}\` and commit the result. ` +
+      "Treat the committed file " +
       "as wrong, not the database.",
   )
   process.exit(1)
 }
 
-console.log(`OK: ${TYPES_PATH} matches the database schema.`)
+console.log(`OK: ${TYPES_PATH} matches the ${label} database schema.`)

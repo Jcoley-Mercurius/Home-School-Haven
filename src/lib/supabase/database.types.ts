@@ -648,6 +648,421 @@ export type Database = {
         }
         Relationships: []
       }
+      registration_acceptance_children: {
+        Row: {
+          acceptance_id: string
+          created_at: string
+          is_sample: boolean
+          registration_child_id: string
+          registration_id: string
+        }
+        Insert: {
+          acceptance_id: string
+          created_at?: string
+          is_sample?: boolean
+          registration_child_id: string
+          registration_id: string
+        }
+        Update: {
+          acceptance_id?: string
+          created_at?: string
+          is_sample?: boolean
+          registration_child_id?: string
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_acceptance_child_acceptance_id_registration_i_fkey"
+            columns: ["acceptance_id", "registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_document_acceptances"
+            referencedColumns: ["id", "registration_id"]
+          },
+          {
+            foreignKeyName: "registration_acceptance_child_registration_child_id_regist_fkey"
+            columns: ["registration_child_id", "registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_children"
+            referencedColumns: ["id", "registration_id"]
+          },
+        ]
+      }
+      registration_child_health: {
+        Row: {
+          accommodation_information: string | null
+          allergy_details: string | null
+          created_at: string
+          has_allergies: boolean
+          is_sample: boolean
+          medical_information: string | null
+          registration_child_id: string
+          registration_id: string
+        }
+        Insert: {
+          accommodation_information?: string | null
+          allergy_details?: string | null
+          created_at?: string
+          has_allergies: boolean
+          is_sample?: boolean
+          medical_information?: string | null
+          registration_child_id: string
+          registration_id: string
+        }
+        Update: {
+          accommodation_information?: string | null
+          allergy_details?: string | null
+          created_at?: string
+          has_allergies?: boolean
+          is_sample?: boolean
+          medical_information?: string | null
+          registration_child_id?: string
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_child_health_registration_child_id_registrati_fkey"
+            columns: ["registration_child_id", "registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_children"
+            referencedColumns: ["id", "registration_id"]
+          },
+        ]
+      }
+      registration_children: {
+        Row: {
+          created_at: string
+          created_student: boolean
+          id: string
+          is_sample: boolean
+          photo_video_permission: boolean
+          registration_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_student: boolean
+          id?: string
+          is_sample?: boolean
+          photo_video_permission: boolean
+          registration_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          created_student?: boolean
+          id?: string
+          is_sample?: boolean
+          photo_video_permission?: boolean
+          registration_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_children_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "registration_children_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registration_contacts: {
+        Row: {
+          contact_kind: Database["public"]["Enums"]["registration_contact_kind"]
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_sample: boolean
+          is_submitter: boolean
+          phone: string | null
+          registration_id: string
+          relationship: string | null
+          sort_order: number
+        }
+        Insert: {
+          contact_kind: Database["public"]["Enums"]["registration_contact_kind"]
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_sample?: boolean
+          is_submitter?: boolean
+          phone?: string | null
+          registration_id: string
+          relationship?: string | null
+          sort_order: number
+        }
+        Update: {
+          contact_kind?: Database["public"]["Enums"]["registration_contact_kind"]
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_sample?: boolean
+          is_submitter?: boolean
+          phone?: string | null
+          registration_id?: string
+          relationship?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_contacts_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registration_document_acceptances: {
+        Row: {
+          acceptance_method: Database["public"]["Enums"]["document_acceptance_method"]
+          accepted_at: string
+          created_at: string
+          document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          document_status_at_acceptance: Database["public"]["Enums"]["document_version_status"]
+          document_version_id: string
+          id: string
+          is_sample: boolean
+          registration_id: string
+          signer_user_id: string
+          typed_signature: string | null
+        }
+        Insert: {
+          acceptance_method: Database["public"]["Enums"]["document_acceptance_method"]
+          accepted_at?: string
+          created_at?: string
+          document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          document_status_at_acceptance: Database["public"]["Enums"]["document_version_status"]
+          document_version_id: string
+          id?: string
+          is_sample?: boolean
+          registration_id: string
+          signer_user_id: string
+          typed_signature?: string | null
+        }
+        Update: {
+          acceptance_method?: Database["public"]["Enums"]["document_acceptance_method"]
+          accepted_at?: string
+          created_at?: string
+          document_kind?: Database["public"]["Enums"]["registration_document_kind"]
+          document_status_at_acceptance?: Database["public"]["Enums"]["document_version_status"]
+          document_version_id?: string
+          id?: string
+          is_sample?: boolean
+          registration_id?: string
+          signer_user_id?: string
+          typed_signature?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_document_accepta_document_version_id_document_fkey"
+            columns: ["document_version_id", "document_kind"]
+            isOneToOne: false
+            referencedRelation: "registration_document_versions"
+            referencedColumns: ["id", "document_kind"]
+          },
+          {
+            foreignKeyName: "registration_document_acceptances_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registration_document_versions: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          content_reference: string | null
+          content_sha256: string | null
+          created_at: string
+          document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          id: string
+          is_sample: boolean
+          status: Database["public"]["Enums"]["document_version_status"]
+          title: string
+          version_label: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content_reference?: string | null
+          content_sha256?: string | null
+          created_at?: string
+          document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          id?: string
+          is_sample?: boolean
+          status?: Database["public"]["Enums"]["document_version_status"]
+          title: string
+          version_label: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content_reference?: string | null
+          content_sha256?: string | null
+          created_at?: string
+          document_kind?: Database["public"]["Enums"]["registration_document_kind"]
+          id?: string
+          is_sample?: boolean
+          status?: Database["public"]["Enums"]["document_version_status"]
+          title?: string
+          version_label?: string
+        }
+        Relationships: []
+      }
+      registration_selections: {
+        Row: {
+          attendance_days: Database["public"]["Enums"]["attendance_day"][]
+          created_at: string
+          enrollment_id: string
+          id: string
+          is_sample: boolean
+          program_id: string
+          registration_child_id: string
+          registration_id: string
+        }
+        Insert: {
+          attendance_days?: Database["public"]["Enums"]["attendance_day"][]
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          is_sample?: boolean
+          program_id: string
+          registration_child_id: string
+          registration_id: string
+        }
+        Update: {
+          attendance_days?: Database["public"]["Enums"]["attendance_day"][]
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          is_sample?: boolean
+          program_id?: string
+          registration_child_id?: string
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_selections_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: true
+            referencedRelation: "educator_session_roster"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
+            foreignKeyName: "registration_selections_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: true
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "registration_selections_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "registration_selections_registration_child_id_registration_fkey"
+            columns: ["registration_child_id", "registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_children"
+            referencedColumns: ["id", "registration_id"]
+          },
+        ]
+      }
+      registration_step_up_requests: {
+        Row: {
+          created_at: string
+          is_sample: boolean
+          reference: string | null
+          registration_child_id: string
+          registration_id: string
+          verification_state: Database["public"]["Enums"]["step_up_verification_state"]
+        }
+        Insert: {
+          created_at?: string
+          is_sample?: boolean
+          reference?: string | null
+          registration_child_id: string
+          registration_id: string
+          verification_state?: Database["public"]["Enums"]["step_up_verification_state"]
+        }
+        Update: {
+          created_at?: string
+          is_sample?: boolean
+          reference?: string | null
+          registration_child_id?: string
+          registration_id?: string
+          verification_state?: Database["public"]["Enums"]["step_up_verification_state"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_step_up_requests_registration_child_id_regist_fkey"
+            columns: ["registration_child_id", "registration_id"]
+            isOneToOne: false
+            referencedRelation: "registration_children"
+            referencedColumns: ["id", "registration_id"]
+          },
+        ]
+      }
+      registration_submissions: {
+        Row: {
+          authority_affirmation_version: string
+          created_at: string
+          family_id: string
+          id: string
+          idempotency_key: string
+          is_sample: boolean
+          request_fingerprint: string
+          submitted_at: string
+          submitted_by: string
+        }
+        Insert: {
+          authority_affirmation_version?: string
+          created_at?: string
+          family_id: string
+          id?: string
+          idempotency_key: string
+          is_sample?: boolean
+          request_fingerprint: string
+          submitted_at?: string
+          submitted_by: string
+        }
+        Update: {
+          authority_affirmation_version?: string
+          created_at?: string
+          family_id?: string
+          id?: string
+          idempotency_key?: string
+          is_sample?: boolean
+          request_fingerprint?: string
+          submitted_at?: string
+          submitted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_submissions_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       review_feedback: {
         Row: {
           created_at: string
@@ -1137,9 +1552,22 @@ export type Database = {
         Args: { target_enrollment: string; target_session: string }
         Returns: string
       }
+      registration_policy_satisfied: {
+        Args: { target_registration: string }
+        Returns: boolean
+      }
       remove_student_from_own_family: {
         Args: { student_id: string }
         Returns: boolean
+      }
+      submit_family_registration: {
+        Args: { idempotency_key: string; payload: Json }
+        Returns: {
+          blocker_child_index: number
+          blocker_program_id: string
+          outcome: string
+          registration_id: string
+        }[]
       }
       submit_inquiry: {
         Args: {
@@ -1156,8 +1584,18 @@ export type Database = {
     }
     Enums: {
       app_role: "parent" | "educator" | "admin" | "owner"
+      attendance_day:
+        | "monday"
+        | "tuesday"
+        | "wednesday"
+        | "thursday"
+        | "friday"
+        | "saturday"
+        | "sunday"
       availability_state: "open" | "limited" | "waitlist" | "closed" | "unknown"
       content_state: "draft" | "published" | "replaced" | "removed"
+      document_acceptance_method: "signature" | "acknowledgment"
+      document_version_status: "draft" | "approved" | "retired"
       enrollment_state:
         | "started"
         | "approval_pending"
@@ -1185,6 +1623,11 @@ export type Database = {
         | "monthly_club"
       program_confirmation_mode: "instant" | "administrator_approval"
       program_publication_state: "draft" | "published" | "archived"
+      registration_contact_kind: "guardian" | "emergency" | "pickup"
+      registration_document_kind:
+        | "liability_waiver"
+        | "code_of_conduct"
+        | "parent_handbook"
       resource_kind: "document" | "link" | "video" | "activity" | "download"
       review_disposition:
         | "must_fix_beta_defect"
@@ -1201,6 +1644,7 @@ export type Database = {
         | "disposition_approved"
         | "review_complete"
       session_state: "scheduled" | "rescheduled" | "canceled" | "completed"
+      step_up_verification_state: "pending_verification"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1329,8 +1773,19 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["parent", "educator", "admin", "owner"],
+      attendance_day: [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+      ],
       availability_state: ["open", "limited", "waitlist", "closed", "unknown"],
       content_state: ["draft", "published", "replaced", "removed"],
+      document_acceptance_method: ["signature", "acknowledgment"],
+      document_version_status: ["draft", "approved", "retired"],
       enrollment_state: [
         "started",
         "approval_pending",
@@ -1361,6 +1816,12 @@ export const Constants = {
       ],
       program_confirmation_mode: ["instant", "administrator_approval"],
       program_publication_state: ["draft", "published", "archived"],
+      registration_contact_kind: ["guardian", "emergency", "pickup"],
+      registration_document_kind: [
+        "liability_waiver",
+        "code_of_conduct",
+        "parent_handbook",
+      ],
       resource_kind: ["document", "link", "video", "activity", "download"],
       review_disposition: [
         "must_fix_beta_defect",
@@ -1379,6 +1840,7 @@ export const Constants = {
         "review_complete",
       ],
       session_state: ["scheduled", "rescheduled", "canceled", "completed"],
+      step_up_verification_state: ["pending_verification"],
     },
   },
 } as const

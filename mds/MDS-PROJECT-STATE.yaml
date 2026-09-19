@@ -9,7 +9,7 @@ mds:
   mps_project_id: "home-school-haven-learning-platform"
   mps_version: "unversioned draft; Library version 11 consumed"
   created_at: "2026-08-27T00:00:00Z"
-  updated_at: "2026-09-16T00:00:00Z"
+  updated_at: "2026-09-18T00:00:00Z"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -804,6 +804,7 @@ governance:
     - {id: MDS-GAP-007, area: references, statement: "Initial full-size homepage and family-dashboard UI references require generation, reconciliation, and user approval", status: resolved}
     - {id: MDS-GAP-008, area: product_authority, statement: "Educator full-course authoring is future-platform scope; exact create, submit, review, and publish authority requires MPS confirmation and must not expand Foundation Beta permissions", status: resolved, resolution: "User placed the full Course Builder in the future platform; Foundation Beta permissions remain unchanged"}
     - {id: MDS-GAP-009, area: references, statement: "Educator and administrator back-office references require generation, reconciliation, and user approval", status: resolved}
+    - {id: MDS-GAP-010, area: components, statement: "The future one-step family registration UI needs presentation states that MDS v1.1 does not yet define: a STEP UP 'pending administrative verification' state that is visibly distinct from payment, discount, and confirmed enrollment; signature versus acknowledgment within components.consent_state (typed signature for the liability waiver and Code of Conduct, acknowledgment without signature for the Parent Handbook); the conditional allergy-details disclosure driven by an explicit Yes/No; and the multi-child, per-child selection composition with attendance days. Slice 2 builds only the data contract, so no screen is affected and nothing was designed. To be resolved before the registration UI slice, reusing forms, consent_state, enrollment_state, and page_patterns.consent/enrollment_handoff.", status: open, opened_at: "2026-09-18", source: "prompts/registration-data-foundation.md; MPS DEC-025, EXC-002"}
   exceptions:
     - {id: MDS-EXC-001, area: beta_data, statement: "Private beta references may use sample or sanitized family and student data until MPS policy gaps are resolved", status: approved}
   deviations: []
@@ -889,6 +890,14 @@ governance:
       affected_artifacts: [project_state]
       approved_at: "2026-09-17"
       note: "NOT a claim of MDS compliance validation, which remains not_started. The About, Contact composition, resources, auth, password-recovery, family-setup, and admin-families baselines were captured before the footer was recomposed on 2026-09-02 and are still unrefreshed; those pages are unverified (MPS FIND-004). The desktop chip word-break at 1280 px routed to MDS during Slice 1 is still open and was not touched."
+    - id: MDS-CHG-011
+      area: product_truth_intake
+      previous_value: "No registration presentation states recorded beyond components.consent_state and components.enrollment_state"
+      new_value: "MDS-GAP-010 opened for the STEP UP pending-verification state, signature versus acknowledgment, conditional allergy disclosure, and multi-child selection composition"
+      reason: "MPS Slice 2 (DEC-025, EXC-002) created the registration data contract those states will present. No UI was built."
+      version_impact: "None. No token, component, layout, or reference change; the locked visual system is untouched."
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-18"
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"
@@ -942,7 +951,7 @@ compliance:
   gate_2: null
   gate_3: null
   overall_status: null
-  open_gaps: 0
+  open_gaps: 1
   approved_exceptions: 1
   open_deviations: 0
   reviewed_at: null

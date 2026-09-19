@@ -25,6 +25,15 @@ Roles are public visitor, parent/guardian, educator, administrator, owner, and s
 - Rate-limit abuse-prone actions; add an approved bot-control before public/real-family activation.
 - Use sample or sanitized child/family data for the private review.
 
+## Registration data (Slice 2, 2026-09-18)
+
+Registration health (allergy, medical, accommodation), guardian, emergency, and pickup contacts, STEP UP references, and acceptance evidence are high-sensitivity minor and family data. They live only in the nine `registration_*` tables, never on `students` or any other broadly read table.
+
+- **Write path:** only `public.submit_family_registration(uuid, jsonb)`. It derives the family and parent role from `auth.uid()`, rejects unknown payload keys, is idempotent per (parent, key), and is atomic. Its errors name payload paths, never values.
+- **Read path:** the owning family and administrators (read-only) through deny-by-default RLS. Educators have no policy, and both roster views are unchanged. `anon` holds nothing.
+- **Evidence:** immutable once written. The audit trail holds counts and document version ids only.
+- **Activation locks:** `check (is_sample)` on every table; `registration_document_versions_approval_locked`, so no document version can be approved and no draft acceptance qualifies; `step_up_verification_state = pending_verification` only. Each must be lifted by an owner-approved migration (MPS GAP-014, GAP-015, GAP-016).
+
 ## Payments and notifications
 
 The external checkout redirect is not authoritative evidence. Enrollment/payment remains pending or unknown until a trustworthy provider signal or authorized manual verification exists. Retry paths must not create duplicate enrollment or unintended duplicate charges. Email must disclose only the minimum necessary information.

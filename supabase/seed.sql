@@ -599,3 +599,23 @@ begin
   on conflict (id) do nothing;
 end;
 $$;
+
+
+-- ---------------------------------------------------------------------------
+-- Registration document versions (sample drafts — Slice 2)
+-- ---------------------------------------------------------------------------
+-- One DRAFT version of each registration document, so the registration
+-- contract has something to present and the tests have something to accept.
+-- Titles and labels only: no legal text is written anywhere (MPS-RUL-010,
+-- GAP-014). `registration_document_versions_approval_locked` makes it
+-- impossible for any of these to be marked approved, so an acceptance of one
+-- can never qualify as accepted policy (`registration_policy_satisfied`).
+insert into public.registration_document_versions
+  (id, document_kind, version_label, title, status) values
+  ('d0000000-0000-4000-8000-000000000001', 'liability_waiver', 'sample-draft-v0',
+   'Sample liability waiver — draft, not approved', 'draft'),
+  ('d0000000-0000-4000-8000-000000000002', 'code_of_conduct', 'sample-draft-v0',
+   'Sample Code of Conduct — draft, not approved', 'draft'),
+  ('d0000000-0000-4000-8000-000000000003', 'parent_handbook', 'sample-draft-v0',
+   'Sample Parent Handbook — draft, not approved', 'draft')
+on conflict (id) do nothing;

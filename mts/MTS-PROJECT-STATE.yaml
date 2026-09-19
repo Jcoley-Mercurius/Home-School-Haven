@@ -11,7 +11,7 @@ mts:
   mds_project_id: "home-school-haven-learning-platform"
   mds_version: "v1.0"
   created_at: "2026-08-26"
-  updated_at: "2026-09-16"
+  updated_at: "2026-09-18"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -661,7 +661,7 @@ governance:
       recorded_at: "2026-09-16"
       hosted_status: "APPLIED, verified 2026-09-18. `supabase migration list --linked` against uedgcwoxyhtirsihvrnf shows all 21 migrations, including 20260916000000, with matching remote timestamps. (Until 2026-09-17 it was unapplied with nothing partially applied; the owner ran `supabase db push --linked`.)"
       verification: "`npm run db:types:check` PASSED on 2026-09-18: src/lib/supabase/database.types.ts matches the linked schema."
-      hosted_fixtures: "PENDING OWNER APPLY (prompts/hosted-preview-fixture-refresh.md, approved 2026-09-18). A read-only inspection on 2026-09-18 found the hosted sample fixtures predate the dashboard, enrollment, schedule, and inquiry slices: no enrollments, sessions, attendance, announcements, resources, or inquiries; no demo capacity or confirmation-mode configuration; the sample educator still assigned to archived Art Lab (…0004); and a leftover Sample Family Four. seed.sql now removes the stale Art Lab assignment on re-seed. The owner applies seed.sql to the preview with hsh_seed_environment=preview; the agent then re-verifies read-only. Seeded rows bypass record_program_audit, as all seeding does."
+      hosted_fixtures: "APPLIED 2026-09-18 by the owner (prompts/hosted-preview-fixture-refresh.md): seed.sql run against uedgcwoxyhtirsihvrnf with hsh_seed_environment=preview, psql exit 0. Verified read-only the same day with supabase db query --linked: educator assigned to Tutoring (…000c) and the draft fixture only; 7 enrollments on published programs (payment_pending, confirmed ×4, approval_pending, waitlisted); 6 sessions, 1 attendance record, 4 announcements, 4 resources, 4 inquiries; demo capacity and confirmation modes on Sewing, Gardening, Ready Set Sensory, Tutoring, Monthly Clubs; families A and B only, Sample Family Four removed; 6 sample accounts, passwords unchanged. Before the refresh the hosted fixtures predated the dashboard, enrollment, schedule, and inquiry slices. Seeded rows bypass record_program_audit, as all seeding does."
     - id: MTS-CHG-009
       area: data_model
       previous_value: "The 20260916000000 rollback header claimed prior content of …0002, …0005, and …0006 is recoverable from audit_events.changed_fields"
@@ -672,6 +672,25 @@ governance:
       recorded_at: "2026-09-17"
       routed_to: MPS
       open_question: "Whether unverified_details, audience, import_status, source, image_*, and sort_order should join record_program_audit's material fields is an MPS-REQ-024 decision and was deliberately not made by the agent."
+    - id: MTS-CHG-010
+      area: data_model
+      previous_value: "No registration records; public.family_request_enrollment holds the only enrollment-creation evaluation; no document-version or acceptance-evidence model; no STEP UP model"
+      new_value: "Migration 20260918120000_family_registration_foundation.sql adds nine restricted, sample-only tables (registration_document_versions, registration_submissions, registration_children, registration_child_health, registration_contacts, registration_selections, registration_step_up_requests, registration_document_acceptances, registration_acceptance_children), six enums, and one atomic SECURITY DEFINER mutation, public.submit_family_registration(uuid, jsonb). It is idempotent per (submitted_by, idempotency_key) with a sha256 payload fingerprint (replayed or idempotency_conflict), atomic across children and selections (a blocked selection rolls back the whole submission through a subtransaction), locks program rows in program-id order, validates every payload field in SQL with path-only error messages, and writes one value-free audit event. The family_request_enrollment evaluation moved into private.request_enrollment_core without a behavior change (110_family_conversion_journey.test.sql unchanged and passing); both paths use it. registration_policy_satisfied(uuid) is always false while registration_document_versions_approval_locked forbids approved versions."
+      reason: "Slice 2 (prompts/registration-data-foundation.md, approved 2026-09-18); MPS DEC-025, EXC-002"
+      version_impact: "Additive within MTS v1.0. Deny-by-default RLS: family ownership and administrator read-only via private.can_read_registration; no educator policy and no change to educator_roster_students or educator_session_roster; anon holds nothing; no client INSERT/UPDATE/DELETE privilege or policy; evidence rows immutable (BEFORE UPDATE trigger). Grants are placed after all DDL (DEFECT-FF1)."
+      affected_artifacts: [state, "supabase/migrations/20260918120000_family_registration_foundation.sql", "supabase/seed.sql", "supabase/tests/database/160_family_registration_foundation.test.sql", "src/lib/registration/", "src/lib/supabase/database.types.ts"]
+      recorded_at: "2026-09-18"
+      hosted_status: "APPLIED by the owner on 2026-09-18, ahead of PR #28's merge. The owner ran supabase db push --linked and confirmed 20260918120000 in supabase migration list --linked. The owner then ran npm run db:types (linked), which regenerated src/lib/supabase/database.types.ts from the hosted schema: every registration type present, with only the template-only drift from MTS-CHG-011. That file is committed. The agent used no hosted credential at any point. Hosted sample document versions do not exist until seed.sql is re-run on the preview, so a hosted submission returns blocked_documents_unavailable."
+      verification: "Local, 2026-09-18: db:reset canonical; db:test 690/690 across 19 files (99 new in 160_family_registration_foundation); db:types:check -- --local OK; db:advisors --local shows no new security finding, only the multiple_permissive_policies performance WARN every family/admin table already carries."
+      rollback: "The migration header lists the drop order and restoring family_request_enrollment verbatim from 20260903000000. No hosted data exists to preserve."
+    - id: MTS-CHG-011
+      area: tooling
+      previous_value: "npm run db:types and db:types:check generate types only from the linked hosted project"
+      new_value: "npm run db:types:local and npm run db:types:check -- --local generate from the local stack; the linked defaults are unchanged"
+      reason: "Owner decision of 2026-09-18: a slice whose migration is not yet pushed must be verifiable without hosted credentials."
+      version_impact: "Tooling only. The local CLI (v2.111.0) omits the __InternalSupabase.PostgrestVersion block and parenthesizes some generic helpers differently from the hosted generator. That is template-only drift, and the owner's post-push npm run db:types restores the hosted template. typecheck passes with either."
+      affected_artifacts: [state, package.json, scripts/check-db-types.mjs]
+      recorded_at: "2026-09-18"
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 
