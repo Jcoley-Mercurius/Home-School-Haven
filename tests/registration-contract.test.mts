@@ -61,7 +61,6 @@ function valid(): RegistrationInput {
         medicalInformation: "Sample medical detail",
         hasAccommodationNeeds: false,
         photoVideoPermission: true,
-        stepUp: { selected: true, reference: "SAMPLE-REF" },
         selections: [{ programId: PROGRAM }],
       },
     ],
@@ -231,12 +230,9 @@ describe("registrationInputSchema", () => {
     assert.equal(registrationInputSchema.safeParse(withState).success, false)
 
     const withVerification = valid() as unknown as {
-      children: { stepUp?: Record<string, unknown> }[]
+      children: Record<string, unknown>[]
     }
-    withVerification.children[1].stepUp = {
-      selected: true,
-      verificationState: "verified",
-    }
+    withVerification.children[1].verificationState = "verified"
     assert.equal(
       registrationInputSchema.safeParse(withVerification).success,
       false,
@@ -292,13 +288,18 @@ describe("registrationInputSchema", () => {
     assert.equal(registrationInputSchema.safeParse(none).success, false)
   })
 
-  it("refuses a STEP UP reference without a STEP UP selection", () => {
-    const input = valid()
-    input.children[1] = {
-      ...input.children[1],
-      stepUp: { selected: false, reference: "SAMPLE-REF" },
+  it("refuses any STEP UP key, selected or not (MPS DEC-033)", () => {
+    for (const stepUp of [
+      { selected: true },
+      { selected: false },
+      { selected: true, reference: "SAMPLE-REF" },
+    ]) {
+      const input = valid() as unknown as {
+        children: Record<string, unknown>[]
+      }
+      input.children[1].stepUp = stepUp
+      assert.equal(registrationInputSchema.safeParse(input).success, false)
     }
-    assert.equal(registrationInputSchema.safeParse(input).success, false)
   })
 
   it("enforces the same limits the database enforces", () => {
@@ -334,11 +335,11 @@ describe("toRegistrationPayload", () => {
       "Sample Student New",
     )
     assert.equal("allergy_details" in payload.children[0], false)
-    assert.equal("step_up" in payload.children[0], false)
-    assert.deepEqual(payload.children[1].step_up, {
-      selected: true,
-      reference: "SAMPLE-REF",
-    })
+    // DEC-033: no child ever carries a step_up key.
+    for (const child of payload.children) {
+      assert.equal("step_up" in child, false)
+    }
+    assert.equal(JSON.stringify(payload).includes("step_up"), false)
     assert.deepEqual(payload.children[0].selections[0].attendance_days, [
       "tuesday",
     ])
@@ -427,6 +428,12 @@ describe("registration outcomes", () => {
   it("treats only submitted and replayed as recorded", () => {
     const recorded = REGISTRATION_OUTCOMES.filter(isRecorded)
     assert.deepEqual(recorded, ["submitted", "replayed"])
+  })
+
+  it("does not claim nothing was recorded when the result is unknown", () => {
+    const sentence = describeRegistrationFailure("failed")
+    assert.equal(/nothing was recorded/i.test(sentence), false)
+    assert.match(sentence, /could not confirm/i)
   })
 
   it("never puts submitted values into a failure sentence", () => {

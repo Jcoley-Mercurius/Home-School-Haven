@@ -195,10 +195,24 @@ export default async function FamilyOverviewPage({
             </p>
           </div>
 
-          <StudentSelector
-            students={students}
-            selectedId={selected?.id ?? ""}
-          />
+          <div className="flex flex-wrap items-end gap-[var(--hsh-space-3)]">
+            <StudentSelector
+              students={students}
+              selectedId={selected?.id ?? ""}
+            />
+            {/* The standing way in to family registration (Slice 3). A
+                secondary action: the page's one primary next step stays the
+                Next Action card. */}
+            {family.status === "ready" ? (
+              <Button
+                variant="secondary"
+                size="md"
+                render={<Link href="/family/registration" />}
+              >
+                Register for Programs
+              </Button>
+            ) : null}
+          </div>
         </header>
 
         {family.status === "ready" && students.length === 0 ? (

@@ -1,0 +1,17 @@
+- form "Parent or guardian":
+  - paragraph: Step 1 of 8
+  - heading "Parent or guardian" [level=2]
+  - paragraph: Home School Haven uses these details to reach you about this registration. Your phone number is required.
+  - region "You":
+    - heading "You" [level=3]
+    - text: Full name
+    - textbox "Full name": Sample Parent One
+    - text: Phone number
+    - textbox "Phone number"
+    - text: Email (optional)
+    - textbox "Email (optional)": sample.parent.one@example.com
+    - text: Relationship to the children (optional)
+    - paragraph: For example Mother, Father, or Guardian.
+    - textbox "Relationship to the children (optional)"
+  - button "Add another parent or guardian"
+  - button "Continue"

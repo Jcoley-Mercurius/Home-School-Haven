@@ -708,6 +708,14 @@ governance:
       reason: "MPS DEC-033 (Samantha Dodson, relayed 2026-09-19): STEP UP is a scholarship coupon applied at the end of checkout; checkout is the same for every family"
       version_impact: "None. Documents only: no migration, schema, type, or code change, and nothing to push."
       recorded_at: "2026-09-19"
+    - id: MTS-CHG-014
+      area: integration
+      previous_value: "submit_family_registration had no caller; the TS contract still accepted an optional stepUp"
+      new_value: "Server action submitRegistrationAction (re-runs requireRole, validates the attempt key as a UUID, and calls submitFamilyRegistration with the cookie-bound client) is the only caller. The TS contract refuses any stepUp key. A 22023 refusal passes on only a grammar-checked payload path, never a value. Per-child states are read back under RLS (registration_selections, registration_children, enrollments, programs). The attempt key is generated once per page render (node:crypto) and reused for every retry, so a lost answer replays instead of recording twice."
+      reason: "Slice 3 (prompts/family-registration-ui.md)"
+      version_impact: "None. No migration, RLS, grant, dependency, environment variable, or Vercel change. Nothing to push."
+      recorded_at: "2026-09-19"
+      verification: "Local stack only: db:reset verified, db:test 854 pass, db:advisors unchanged from Slice 2.5 (14 multiple_permissive_policies WARN, 2 security_definer_view ERROR on the educator roster views, 2 function_search_path_mutable WARN; none from this slice). db:types:check --local reports only the hosted-template difference adopted in 5511c24 (__InternalSupabase.PostgrestVersion and parenthesized generics); every table, function, and enum declaration matches."
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 

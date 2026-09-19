@@ -1,0 +1,38 @@
+- region "New child":
+  - paragraph: Child 1
+  - heading "New child" [level=3]
+  - button "Collapse New child" [expanded]
+  - group "Which child is this?":
+    - text: ""
+    - paragraph: Choose a child already on your family profile, or add a new one.
+    - radiogroup "Which child is this?":
+      - radio "Sample Student A1"
+      - text: Sample Student A1
+      - radio "Sample Student A2"
+      - text: Sample Student A2
+      - radio "A child who is not listed here"
+      - text: A child who is not listed here
+  - heading "Health and support" [level=4]
+  - paragraph: Answer each question Yes or No. Home School Haven uses these answers to care for your child. Only the allergy answer and details are shared with your child’s assigned educators.
+  - group "Does this child have any allergies?":
+    - text: ""
+    - radiogroup "Does this child have any allergies?":
+      - radio "Yes"
+      - text: "Yes"
+      - radio "No"
+      - text: "No"
+  - group "Does this child have any medical needs?":
+    - text: ""
+    - radiogroup "Does this child have any medical needs?":
+      - radio "Yes"
+      - text: "Yes"
+      - radio "No"
+      - text: "No"
+  - group "Does this child need any accommodations?":
+    - text: ""
+    - radiogroup "Does this child need any accommodations?":
+      - radio "Yes"
+      - text: "Yes"
+      - radio "No"
+      - text: "No"
+  - button "Remove New child"

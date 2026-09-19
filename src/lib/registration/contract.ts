@@ -15,7 +15,13 @@
  *
  * No family id, role, enrollment state, payment state, STEP UP verification
  * state, or administrative flag. Every object is `strict`, so a payload that
- * carries one is refused here, and the database refuses it again. No legal,
+ * carries one is refused here, and the database refuses it again.
+ *
+ * No STEP UP selection or reference either (MPS DEC-033, MTS-CHG-013). STEP UP
+ * is a coupon applied at the end of checkout, so registration sends no
+ * `step_up` key and every selection takes the ordinary enrollment evaluation.
+ * The database still accepts the key; this contract is where the UI's path
+ * refuses it. No legal,
  * waiver, consent, or media-release wording either: none is approved
  * (MPS-RUL-010, GAP-014).
  */
@@ -126,12 +132,6 @@ const childBase = {
   hasAccommodationNeeds: z.boolean(),
   accommodationInformation: optionalText(L.healthText),
   photoVideoPermission: z.boolean(),
-  stepUp: z
-    .strictObject({
-      selected: z.boolean(),
-      reference: optionalText(L.stepUpReference),
-    })
-    .optional(),
   selections: z
     .array(selectionSchema)
     .min(1)
@@ -178,10 +178,6 @@ const childSchema = z
       path: ["accommodationInformation"],
     },
   )
-  .refine((child) => child.stepUp?.selected || !child.stepUp?.reference, {
-    message: "A STEP UP reference goes with a STEP UP selection.",
-    path: ["stepUp", "reference"],
-  })
 
 const signedDocumentSchema = z.strictObject({
   versionId: z.uuid(),
@@ -265,9 +261,6 @@ export function toRegistrationPayload(input: ParsedRegistrationInput) {
       has_accommodation_needs: child.hasAccommodationNeeds,
       accommodation_information: child.accommodationInformation,
       photo_video_permission: child.photoVideoPermission,
-      step_up: child.stepUp
-        ? { selected: child.stepUp.selected, reference: child.stepUp.reference }
-        : undefined,
       selections: child.selections.map((s) => ({
         program_id: s.programId,
         attendance_days: s.attendanceDays,
@@ -361,6 +354,8 @@ export function describeRegistrationFailure(
     case "unavailable":
       return "Registration is not available in this environment."
     case "failed":
-      return "The registration could not be submitted. Nothing was recorded. Please try again."
+      /* Not "nothing was recorded": after a timeout the database may have
+         committed. Only a replayed retry with the same attempt key can say. */
+      return "We could not confirm whether this registration was recorded. Trying again with the same details is safe and will not register anyone twice."
   }
 }
