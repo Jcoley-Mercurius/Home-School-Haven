@@ -701,6 +701,13 @@ governance:
       verification: "Local, 2026-09-19: db:reset canonical; db:test 854/854 across 21 files (112 in 170_registration_readiness, 52 in 180_registration_document_versions, 160 updated, 110 unchanged); test:unit 316/316; typecheck, lint, format:check, build pass; db:types:check -- --local OK; db:advisors --local shows no finding on any object added here."
       rollback: "The 20260919120100 header lists the reverse order. It restores four functions, one policy, one index, and one trigger verbatim from 20260918120000, and restores approval_paired. Enum values need the type recreated (20260919120000 header); that is safe only while no row uses them."
       open_risks: "programs.published_schedule (display text) and the structured attendance days can drift, because admin_set_program_attendance does not rewrite the text; the admin UI slice should edit both together. The educator safety function covers confirmed children only, matching the rosters."
+    - id: MTS-CHG-013
+      area: integration_scope
+      previous_value: "The registration UI sends a per-child step_up payload; a STEP UP selection is evaluated to approval_pending and enters the admin STEP UP review queue"
+      new_value: "The registration UI sends no step_up payload, so every selection takes the ordinary enrollment evaluation. registration_step_up_requests, the review states, admin_set_step_up_state, admin_step_up_review_queue, and the require_review path stay in the schema unused. The checkout slice decides whether to reuse, change, or remove them."
+      reason: "MPS DEC-033 (Samantha Dodson, relayed 2026-09-19): STEP UP is a scholarship coupon applied at the end of checkout; checkout is the same for every family"
+      version_impact: "None. Documents only: no migration, schema, type, or code change, and nothing to push."
+      recorded_at: "2026-09-19"
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 

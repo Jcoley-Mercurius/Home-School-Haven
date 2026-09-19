@@ -140,7 +140,7 @@ All applicable components include default, hover, focus, active or selected, dis
 - Enrollment state: open, limited, waitlist, pending review, awaiting external payment, payment pending verification, enrolled, not confirmed, closed, cancelled.
 - Payment handoff: external checkout notice, return pending, status unknown.
 - Consent state: required, accepted, renewal required, unavailable, blocked. Acceptance method is either a **signature** (typed name, for the liability waiver and Code of Conduct) or an **acknowledgment** (a checkbox with no signature, for the Parent Handbook). The two are never visually merged (v1.2, MDS-DEC-023).
-- STEP UP review state (v1.2): pending verification, needs information, verified, declined, canceled. Uses the enrollment-state badge and inline-panel sizes. It is never shown as payment, a discount, or enrollment (see §9.1).
+- STEP UP review state (v1.2): pending verification, needs information, verified, declined, canceled. Uses the enrollment-state badge and inline-panel sizes. It is never shown as payment, a discount, or enrollment. **On hold (v1.2.1, MDS-DEC-024):** STEP UP is a coupon applied at the end of checkout (MPS DEC-033), so registration does not render this state. The checkout slice decides whether it is kept, changed, or retired.
 - Assistance request: private, dignified, manually reviewed, no promised outcome.
 - Family student selector: parent-controlled and minimum-information.
 - Schedule item, announcement, learning resource, empty state, and skeleton.
@@ -153,7 +153,7 @@ All applicable components include default, hover, focus, active or selected, dis
 - Waitlist is never enrollment.
 - Missing verified program facts remain unset or use “Contact for details.”
 - Consent requires owner-approved policy content and an explicit acceptance state.
-- STEP UP verified is never enrollment. It hands the registration to administrative enrollment review, and enrollment is shown only from the enrollment state.
+- STEP UP is never shown as payment, a discount, or enrollment. Enrollment is shown only from the enrollment state.
 
 ## 7. Layout and composition
 
@@ -222,7 +222,7 @@ It resolves MDS-GAP-010 at the specification level. It is composed from `forms`,
 3. Approved pickup persons.
 4. Children, as repeating child cards.
 5. Per-child program and attendance selections, inside each child card.
-6. STEP UP or ordinary external-checkout handoff, per child.
+6. External-checkout handoff, per child. STEP UP is not part of registration; it belongs to checkout (MPS DEC-033).
 7. Documents, media permission, acknowledgments, and signature.
 8. Review and submit.
 
@@ -256,19 +256,10 @@ Multi-step progress (`forms`: “progress when multi-step”) may present sectio
 - Tutoring shows its available days as checkboxes, with “Choose at least one day”.
 - The server remains the authority. A mismatch it reports is shown on the selection, never silently corrected.
 
-**STEP UP versus checkout, per child.**
+**Checkout handoff, per child.**
 
-- A child using STEP UP shows the STEP UP review state (“pending verification” after submission). No external-checkout notice or link is shown for that child.
-- A child not using STEP UP shows the existing `payment_handoff` external-checkout notice.
-- After submission, STEP UP states render with the enrollment-state badge and inline panel in five visibly distinct variants. Each has a distinct label and icon, and meaning never depends on color alone. Labels are working labels, subject to content-owner review:
-
-| Variant | Meaning | Tone |
-|---|---|---|
-| Pending verification | Received; Home School Haven is reviewing. Not payment, a discount, or enrollment. | attention (neutral-warm) |
-| Needs information | Home School Haven needs something from the family before review continues. | action required |
-| Verified | Verification is complete; enrollment review continues. Not enrollment. | complete, **not** success styling |
-| Declined | Verification did not succeed. Next steps come from Home School Haven. | neutral, non-stigmatizing |
-| Canceled | The STEP UP request was withdrawn or closed. | neutral |
+- Each child shows the existing `payment_handoff` external-checkout notice.
+- STEP UP is not shown in registration. It is a scholarship coupon applied at the end of checkout (MPS DEC-033, v1.2.1, MDS-DEC-024). Its presentation is designed in the checkout slice, which may reuse, change, or retire `step_up_review_state`.
 
 **Documents, permissions, and signature.**
 
@@ -290,7 +281,7 @@ Multi-step progress (`forms`: “progress when multi-step”) may present sectio
 - *Validation error:* all entered values are preserved. An error summary (a `role="alert"` region) appears at the top of the current step and lists each problem as a link. Focus moves to the summary heading. Activating a link expands any collapsed child card and moves focus to the field. Each field shows its message inline via `aria-describedby`.
 - *Blocked outcome* (for example program full, closed, unavailable, attendance not configured, or document version changed): the `error` pattern names the affected child and program and preserves every value. For a changed document version it shows the new version for acceptance.
 - *Network failure or timeout:* plain-language “Nothing was recorded” reassurance and a “Try again” action. The retry reuses the same attempt key, so a retry can never create a second registration. It is never presented as success.
-- *Success:* a confirmation listing each child’s enrollment state (from `enrollment_state`) and, per child, either the STEP UP review state or the external-checkout handoff.
+- *Success:* a confirmation listing each child’s enrollment state (from `enrollment_state`) and, per child, the external-checkout handoff.
 
 **Responsive.**
 
@@ -345,6 +336,6 @@ The state and this written specification outrank generated imagery if a conflict
 
 ## 13. Change control
 
-MDS v1.2 is locked. v1.2 (2026-09-19) is a backward-compatible pattern addition: the family registration pattern in §9.1, the STEP UP review state, and consent-state acceptance methods (MDS-DEC-023, MDS-CHG-012). A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
+MDS v1.2 is locked. v1.2 (2026-09-19) is a backward-compatible pattern addition: the family registration pattern in §9.1, the STEP UP review state, and consent-state acceptance methods (MDS-DEC-023, MDS-CHG-012). v1.2.1 (2026-09-19) removes STEP UP from the registration pattern and puts the STEP UP review state on hold for the checkout slice, following MPS DEC-033 (MDS-DEC-024, MDS-CHG-013). It adds nothing visual. A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
 
 No coding agent may redesign, modernize, embellish, simplify, or “improve” this system without explicit approval and state propagation.

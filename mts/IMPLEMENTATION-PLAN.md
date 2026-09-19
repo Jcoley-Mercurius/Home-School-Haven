@@ -16,7 +16,7 @@ Import verified website content and program-specific checkout URLs. Build public
 
 Implement parent authentication, family setup, sanitized student profiles, duplicate/recovery behavior, program eligibility checks, checkout handoff, pending enrollment/payment states, and the family dashboard.
 
-Registration readiness (Slice 2.5, 2026-09-19, MTS-CHG-012) is complete at the data and design-specification level. Next is the registration UI slice. It uses `submit_family_registration`, the attendance rules, `registration_documents_requiring_acceptance`, and the STEP UP review state, follows MDS `DESIGN-SYSTEM.md` §9.1, and never offers checkout to a STEP UP child. The educator workspace reads child-safety data only through `educator_child_safety(program)`.
+Registration readiness (Slice 2.5, 2026-09-19, MTS-CHG-012) is complete at the data and design-specification level. Next is the registration UI slice. It uses `submit_family_registration`, the attendance rules, and `registration_documents_requiring_acceptance`, and follows MDS `DESIGN-SYSTEM.md` §9.1. It sends no STEP UP data (MPS DEC-033, MTS-CHG-013). STEP UP is a coupon applied at the end of checkout and belongs to a later checkout slice, which maps Samantha's GoDaddy classes and checkout and decides what happens to the existing STEP UP data model. The educator workspace reads child-safety data only through `educator_child_safety(program)`.
 
 ## Phase 4 — Educator and administration
 
