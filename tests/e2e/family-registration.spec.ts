@@ -138,13 +138,13 @@ const injectedFailureTest = test.extend({
   },
 })
 
-test.skip(!SUPABASE_CONFIGURED, "Needs the local Supabase stack.")
+test.skip(!(SUPABASE_CONFIGURED && LOCAL), "Needs the local Supabase stack.")
 
 test.beforeEach(() => {
-  if (LOCAL) restoreFixture()
+  restoreFixture()
 })
 test.afterAll(() => {
-  if (LOCAL) restoreFixture()
+  restoreFixture()
 })
 
 // ---------------------------------------------------------------------------

@@ -468,8 +468,8 @@ export function RegistrationForm({
 
   return (
     <RegistrationContext.Provider value={context}>
-      <p aria-live="polite" className="sr-only" key={announcement.n}>
-        {announcement.text}
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        <span key={announcement.n}>{announcement.text}</span>
       </p>
       <div className="grid grid-cols-1 gap-[var(--hsh-grid-gap-mobile)] sm:gap-[var(--hsh-grid-gap-tablet)] lg:grid-cols-12 lg:items-start lg:gap-[var(--hsh-grid-gap-desktop)]">
         <form
