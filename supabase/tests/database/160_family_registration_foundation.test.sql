@@ -1,4 +1,10 @@
 -- Slice 2 — registration policy and data foundation
+--
+-- Updated for Slice 2.5 (prompts/registration-readiness.md): payloads carry the
+-- explicit medical and accommodation answers DEC-026 requires, selections obey
+-- the structured attendance rules (DEC-032), a STEP UP child never reaches
+-- `started` (DEC-028), and the STEP UP enum has its five review outcomes. Every
+-- original intent below is kept; 170 and 180 cover the new rules themselves.
 -- (MPS-REQ-002/003/004/005/006/012/014/018/024; MPS-RUL-006/007/008/009/010;
 --  MPS-ACC-002/003/005/018/023/028; DEC-025; EXC-002; GAP-014/015)
 --
@@ -78,6 +84,8 @@ returns jsonb language sql immutable as $$
   select jsonb_build_object(
     'student_id', student,
     'has_allergies', false,
+    'has_medical_needs', false,
+    'has_accommodation_needs', false,
     'photo_video_permission', false,
     'selections', jsonb_build_array(jsonb_build_object('program_id', program))
   ) || extra;
@@ -100,8 +108,9 @@ returns jsonb language sql immutable as $$
 $$;
 
 -- The main multi-child payload for parent A: an existing child with allergies,
--- medical and accommodation notes, and STEP UP on an approval program; and a
--- new child on an instant program.
+-- medical and accommodation notes, and STEP UP on an approval program (Ready
+-- Set Prep, fixed Tuesday and Thursday, so no days are sent); and a new child
+-- on an instant program.
 create function public._t_main_a()
 returns jsonb language sql immutable as $$
   select public._t_payload(jsonb_build_array(
@@ -110,15 +119,16 @@ returns jsonb language sql immutable as $$
       jsonb_build_object(
         'has_allergies', true,
         'allergy_details', 'ZZSENS allergy detail',
+        'has_medical_needs', true,
         'medical_information', 'ZZSENS medical detail',
+        'has_accommodation_needs', true,
         'accommodation_information', 'ZZSENS accommodation detail',
-        'step_up', jsonb_build_object('selected', true, 'reference', 'ZZSENS-STEPUP-REF'),
-        'selections', jsonb_build_array(jsonb_build_object(
-          'program_id', '10000000-0000-4000-8000-000000000009',
-          'attendance_days', jsonb_build_array('thursday', 'tuesday'))))),
+        'step_up', jsonb_build_object('selected', true, 'reference', 'ZZSENS-STEPUP-REF'))),
     jsonb_build_object(
       'new_student', jsonb_build_object('preferred_name', 'Sample Student A3'),
       'has_allergies', false,
+      'has_medical_needs', false,
+      'has_accommodation_needs', false,
       'photo_video_permission', true,
       'selections', jsonb_build_array(jsonb_build_object(
         'program_id', '10000000-0000-4000-8000-000000000006')))));
@@ -180,7 +190,7 @@ select ok(
 );
 select ok(
   not has_function_privilege('authenticated',
-    'private.request_enrollment_core(uuid, uuid, uuid, uuid)', 'EXECUTE'),
+    'private.request_enrollment_core(uuid, uuid, uuid, uuid, boolean)', 'EXECUTE'),
   'the shared enrollment core is not callable by a client role'
 );
 
@@ -230,8 +240,8 @@ select is(
   (select array_agg(enumlabel::text order by enumsortorder) from pg_enum e
      join pg_type t on t.oid = e.enumtypid
     where t.typname = 'step_up_verification_state'),
-  array['pending_verification'],
-  'STEP UP has exactly one state: pending_verification'
+  array['pending_verification', 'needs_information', 'verified', 'declined', 'canceled'],
+  'STEP UP has exactly the five review outcomes of DEC-028, none of them payment or enrollment'
 );
 select is(
   (select count(*)::int from information_schema.columns
@@ -317,7 +327,7 @@ select is(
      join _t_first f on f.registration_id = s.registration_id
     where s.program_id = :'p_approval'),
   array['tuesday', 'thursday'],
-  'attendance days are stored, ordered, as selected');
+  'a fixed program stores its configured days, ordered, as evidence');
 
 -- Allergy Yes/No.
 select is(
@@ -340,7 +350,7 @@ select is(
      join public.enrollments e on e.id = s.enrollment_id
      join _t_first f on f.registration_id = su.registration_id),
   'approval_pending',
-  'STEP UP leaves the enrollment exactly where the evaluation put it');
+  'STEP UP on an approval program is approval_pending, never further');
 
 -- Acceptance evidence.
 select is(
@@ -424,7 +434,8 @@ select is(
      from public.submit_family_registration(:'key_a3', public._t_payload(jsonb_build_array(
        jsonb_build_object(
          'new_student', jsonb_build_object('preferred_name', 'Sample Student A4'),
-         'has_allergies', false, 'photo_video_permission', false,
+         'has_allergies', false, 'has_medical_needs', false,
+         'has_accommodation_needs', false, 'photo_video_permission', false,
          'step_up', jsonb_build_object('selected', true),
          'selections', jsonb_build_array(jsonb_build_object('program_id', :'p_approval'))),
        public._t_kid(:'student_a2', :'p_full'))))),
@@ -548,8 +559,9 @@ select throws_ok(
   'registration evidence cannot be updated even by the owner role');
 select throws_ok(
   $$ insert into public.registration_child_health
-       (registration_child_id, registration_id, has_allergies, allergy_details)
-     select c.id, c.registration_id, false, 'x'
+       (registration_child_id, registration_id, has_allergies, allergy_details,
+        has_medical_needs, has_accommodation_needs)
+     select c.id, c.registration_id, false, 'x', false, false
      from public.registration_children c limit 1 $$,
   '23514', null,
   'the allergy Yes/No constraint holds below the function');
@@ -560,8 +572,8 @@ select throws_ok(
      select r.id, 'd0000000-0000-4000-8000-000000000002', 'code_of_conduct',
             'signature', '20000000-0000-4000-8000-00000000000b', 'Someone else', 'draft'
      from public.registration_submissions r limit 1 $$,
-  '23514', 'acceptance signer must be the submitting parent or guardian',
-  'only the submitting parent can sign the Code of Conduct');
+  '23514', 'acceptance signer must be a parent or guardian in the registration''s family',
+  'a parent from another family cannot sign the Code of Conduct');
 select throws_ok(
   $$ insert into public.registration_document_acceptances
        (registration_id, document_version_id, document_kind, acceptance_method,
@@ -616,7 +628,8 @@ create temp table _t_b on commit drop as
       '{"step_up": {"selected": true}}'),
     jsonb_build_object(
       'new_student', jsonb_build_object('preferred_name', 'Sample Student B2'),
-      'has_allergies', false, 'photo_video_permission', false,
+      'has_allergies', false, 'has_medical_needs', false,
+      'has_accommodation_needs', false, 'photo_video_permission', false,
       'step_up', jsonb_build_object('selected', true),
       'selections', jsonb_build_array(jsonb_build_object('program_id', :'p_waitlist'))))));
 
@@ -627,8 +640,8 @@ select is(
      join public.registration_selections s on s.registration_child_id = su.registration_child_id
      join public.enrollments e on e.id = s.enrollment_id
      join _t_b b on b.registration_id = su.registration_id),
-  array['started', 'waitlisted'],
-  'STEP UP on an instant program is started and on a full one waitlisted: never more');
+  array['approval_pending', 'waitlisted'],
+  'STEP UP on an instant program is approval_pending (no checkout) and on a full one waitlisted: never more');
 select is((select count(*)::int from public.registration_submissions), 1,
   'parent B reads only their own submission');
 

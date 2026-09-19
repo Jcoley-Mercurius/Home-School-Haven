@@ -86,6 +86,13 @@ Required shared components are specified in `DESIGN-SYSTEM.md` and the canonical
 
 Required patterns: public landing, program catalog/results, program detail, forms, authentication, family dashboard, enrollment handoff, waitlist, consent, assistance request, admin operations, loading, empty, and error.
 
+**v1.2 (2026-09-19):** the family registration pattern (`DESIGN-SYSTEM.md` §9.1, MDS-DEC-023) is also required, together with `step_up_review_state` and the `consent_state` signature/acknowledgment distinction. It composes existing primitives and components only. Data sources for the UI slice:
+
+- `public.submit_family_registration`, the one atomic submission;
+- `program_attendance_rules`, `program_attendance_days`, and `program_attendance_plans`, which drive attendance controls;
+- `registration_documents_requiring_acceptance`, which drives `renewal_required`;
+- **v1.2.1:** the registration UI does not read or write `registration_step_up_requests` and renders no STEP UP state. STEP UP is a coupon applied at the end of checkout (MPS DEC-033, MDS-DEC-024), designed in the checkout slice.
+
 The educator Content Studio/Course Builder is future-platform visual direction. Do not implement it as Foundation Release functionality without an approved MPS change.
 
 ## Responsive implementation

@@ -11,7 +11,7 @@ mts:
   mds_project_id: "home-school-haven-learning-platform"
   mds_version: "v1.0"
   created_at: "2026-08-26"
-  updated_at: "2026-09-18"
+  updated_at: "2026-09-19"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -691,6 +691,23 @@ governance:
       version_impact: "Tooling only. The local CLI (v2.111.0) omits the __InternalSupabase.PostgrestVersion block and parenthesizes some generic helpers differently from the hosted generator. That is template-only drift, and the owner's post-push npm run db:types restores the hosted template. typecheck passes with either."
       affected_artifacts: [state, package.json, scripts/check-db-types.mjs]
       recorded_at: "2026-09-18"
+    - id: MTS-CHG-012
+      area: data_security
+      previous_value: "Registration contract with optional emergency and pickup contacts, free-text-validated attendance days, a single-value STEP UP state, one non-retired document version per kind, acceptance keyed by kind, and no educator path to any registration data"
+      new_value: "Migrations 20260919120000_step_up_review_states.sql (enum values only) and 20260919120100_registration_readiness.sql. The latter adds: explicit has_medical_needs and has_accommodation_needs with details CHECKs; program_attendance_rules, program_attendance_days, and program_attendance_plans (public program facts, readable through programs RLS, seeded for the nine verified offerings) with admin_set_program_attendance; attendance validation and blocked_attendance_unconfigured in submit_family_registration; private.request_enrollment_core(…, require_review) so a STEP UP selection is approval_pending, never started; STEP UP outcomes via private.step_up_transition_allowed, a column-limited guard trigger, admin_set_step_up_state (compare-and-set, idempotent, audited, never touches enrollments), and admin_step_up_review_queue; one approved plus one draft document version per kind, private.presented_document_version, a version edit guard, registration_document_versions_approval_recorded (replacing approval_paired so a retired version keeps its approval time), acceptance unique per (registration, version, status) with a sha256 snapshot, registration_documents_requiring_acceptance, renew_registration_documents, and owner_publish_registration_document (returns blocked_approval_locked while the lock stands); and public.educator_child_safety(program), the only educator path to registration data."
+      reason: "Slice 2.5 (prompts/registration-readiness.md, approved 2026-09-19); MPS DEC-026–DEC-032"
+      version_impact: "Additive within MTS v1.0. No RLS policy on any registration_* table names an educator; the educator subset is an assignment-checked SECURITY DEFINER function rather than a view, so it adds no security_definer_view finding. Every sample-only lock stands: check (is_sample), demo-unapproved-v0, and registration_document_versions_approval_locked. Grants are last (DEFECT-FF1)."
+      hosted_status: "APPLIED by the owner on 2026-09-19. The owner ran supabase db push --linked, and supabase migration list --linked shows 20260919120000 and 20260919120100 in both the local and remote columns. The owner then ran npm run db:types (linked); the regenerated database.types.ts differed only by generator-template drift and is committed (5511c24). The agent used no hosted credential."
+      verification: "Local, 2026-09-19: db:reset canonical; db:test 854/854 across 21 files (112 in 170_registration_readiness, 52 in 180_registration_document_versions, 160 updated, 110 unchanged); test:unit 316/316; typecheck, lint, format:check, build pass; db:types:check -- --local OK; db:advisors --local shows no finding on any object added here."
+      rollback: "The 20260919120100 header lists the reverse order. It restores four functions, one policy, one index, and one trigger verbatim from 20260918120000, and restores approval_paired. Enum values need the type recreated (20260919120000 header); that is safe only while no row uses them."
+      open_risks: "programs.published_schedule (display text) and the structured attendance days can drift, because admin_set_program_attendance does not rewrite the text; the admin UI slice should edit both together. The educator safety function covers confirmed children only, matching the rosters."
+    - id: MTS-CHG-013
+      area: integration_scope
+      previous_value: "The registration UI sends a per-child step_up payload; a STEP UP selection is evaluated to approval_pending and enters the admin STEP UP review queue"
+      new_value: "The registration UI sends no step_up payload, so every selection takes the ordinary enrollment evaluation. registration_step_up_requests, the review states, admin_set_step_up_state, admin_step_up_review_queue, and the require_review path stay in the schema unused. The checkout slice decides whether to reuse, change, or remove them."
+      reason: "MPS DEC-033 (Samantha Dodson, relayed 2026-09-19): STEP UP is a scholarship coupon applied at the end of checkout; checkout is the same for every family"
+      version_impact: "None. Documents only: no migration, schema, type, or code change, and nothing to push."
+      recorded_at: "2026-09-19"
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 

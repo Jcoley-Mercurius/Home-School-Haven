@@ -25,14 +25,40 @@ Roles are public visitor, parent/guardian, educator, administrator, owner, and s
 - Rate-limit abuse-prone actions; add an approved bot-control before public/real-family activation.
 - Use sample or sanitized child/family data for the private review.
 
-## Registration data (Slice 2, 2026-09-18)
+## Registration data (Slice 2, 2026-09-18; Slice 2.5, 2026-09-19)
 
-Registration health (allergy, medical, accommodation), guardian, emergency, and pickup contacts, STEP UP references, and acceptance evidence are high-sensitivity minor and family data. They live only in the nine `registration_*` tables, never on `students` or any other broadly read table.
+Registration health data (allergy, medical, accommodation), guardian, emergency, and pickup contacts, STEP UP references, and acceptance evidence are high-sensitivity minor and family data. They live only in the nine `registration_*` tables, never on `students` or any other broadly read table.
 
-- **Write path:** only `public.submit_family_registration(uuid, jsonb)`. It derives the family and parent role from `auth.uid()`, rejects unknown payload keys, is idempotent per (parent, key), and is atomic. Its errors name payload paths, never values.
-- **Read path:** the owning family and administrators (read-only) through deny-by-default RLS. Educators have no policy, and both roster views are unchanged. `anon` holds nothing.
-- **Evidence:** immutable once written. The audit trail holds counts and document version ids only.
-- **Activation locks:** `check (is_sample)` on every table; `registration_document_versions_approval_locked`, so no document version can be approved and no draft acceptance qualifies; `step_up_verification_state = pending_verification` only. Each must be lifted by an owner-approved migration (MPS GAP-014, GAP-015, GAP-016).
+- **Write path:** only `public.submit_family_registration(uuid, jsonb)`.
+  - It derives the family and parent role from `auth.uid()`, rejects unknown payload keys, is idempotent per (parent, key), and is atomic.
+  - It requires a guardian phone, at least one emergency contact and one pickup person, and explicit health answers.
+  - It validates attendance against `program_attendance_rules`.
+  - Its errors name payload paths, never values.
+- **Renewal path:** `public.renew_registration_documents`, for a parent in the registration's family.
+- **Admin path:** `admin_set_step_up_state` (STEP UP outcomes only; never enrollments) and `owner_publish_registration_document` (owner role only; blocked while the approval lock stands).
+
+**Access matrix (MPS DEC-027):**
+
+| Data | Family (own) | Assigned educator | Unassigned educator / anon | Admin / owner |
+|---|---|---|---|---|
+| Guardian contacts, medical, accommodation, media choice, signatures, acceptances, STEP UP | read (RLS) | — | — | read (RLS) |
+| Allergy answer and details, emergency contacts, pickup persons | read (RLS) | confirmed children in assigned programs, via `educator_child_safety(program)` only | — | read (RLS) |
+
+- Educators have **no** policy on any registration table.
+- The function refuses a nonexistent program and an unassigned one identically (`42501`).
+- Neither roster view reads registration data.
+
+**Evidence:** immutable once written, except the STEP UP review state, which may change only along the allowed transitions, enforced by a guard trigger. The audit trail holds counts, states, and ids only.
+
+**Activation locks:**
+
+- `check (is_sample)` on every table.
+- `demo-unapproved-v0`.
+- `registration_document_versions_approval_locked`: no document version can be approved, so no draft acceptance qualifies.
+
+STEP UP gained outcomes in Slice 2.5 but stays sample-only by table constraint. Each lock must be lifted by an owner-approved migration carrying the approval evidence (MPS GAP-014, GAP-016).
+
+**Retention:** there is a minimum only. Data may remain at least 30 days after the child leaves (DEC-031). No deletion job exists. Deletion still cascades from student and family removal, and deletion policy is GAP-016.
 
 ## Payments and notifications
 

@@ -1,5 +1,6 @@
 /**
- * The family registration contract (Slice 2, prompts/registration-data-foundation.md).
+ * The family registration contract (Slice 2, prompts/registration-data-foundation.md;
+ * tightened by Slice 2.5, prompts/registration-readiness.md).
  *
  * `public.submit_family_registration` is the control: it derives the family and
  * role from the session, validates every field again, and is the only write
@@ -97,6 +98,12 @@ const pickupPersonSchema = z.strictObject({
   phone: optionalPhone,
 })
 
+/**
+ * Which days are allowed, and how many, depends on the program's attendance
+ * rule (DEC-032), which only the database knows: a fixed-day program takes no
+ * days at all, Haven Days takes exactly its plan's count, Tutoring takes any of
+ * its available days. This schema checks shape only.
+ */
 const selectionSchema = z.strictObject({
   programId: z.uuid(),
   attendanceDays: z
@@ -106,12 +113,17 @@ const selectionSchema = z.strictObject({
     .refine((days) => new Set(days).size === days.length, {
       message: "Choose each day once.",
     }),
+  planDaysPerWeek: z.number().int().min(1).max(7).optional(),
 })
 
+// DEC-026: every health question is an explicit Yes/No. `z.boolean()` refuses
+// a missing answer, so a blank is never read as No.
 const childBase = {
   hasAllergies: z.boolean(),
   allergyDetails: optionalText(L.healthText),
+  hasMedicalNeeds: z.boolean(),
   medicalInformation: optionalText(L.healthText),
+  hasAccommodationNeeds: z.boolean(),
   accommodationInformation: optionalText(L.healthText),
   photoVideoPermission: z.boolean(),
   stepUp: z
@@ -149,6 +161,23 @@ const childSchema = z
       "Allergy details go with a Yes answer, and only with a Yes answer.",
     path: ["allergyDetails"],
   })
+  .refine(
+    (child) => child.hasMedicalNeeds === Boolean(child.medicalInformation),
+    {
+      message:
+        "Medical details go with a Yes answer, and only with a Yes answer.",
+      path: ["medicalInformation"],
+    },
+  )
+  .refine(
+    (child) =>
+      child.hasAccommodationNeeds === Boolean(child.accommodationInformation),
+    {
+      message:
+        "Accommodation details go with a Yes answer, and only with a Yes answer.",
+      path: ["accommodationInformation"],
+    },
+  )
   .refine((child) => child.stepUp?.selected || !child.stepUp?.reference, {
     message: "A STEP UP reference goes with a STEP UP selection.",
     path: ["stepUp", "reference"],
@@ -166,11 +195,12 @@ export const registrationInputSchema = z
       .array(guardianContactSchema)
       .min(1)
       .max(L.guardianContacts),
+    // DEC-026: at least one of each.
     emergencyContacts: z
       .array(emergencyContactSchema)
-      .max(L.emergencyContacts)
-      .default([]),
-    pickupPersons: z.array(pickupPersonSchema).max(L.pickupPersons).default([]),
+      .min(1)
+      .max(L.emergencyContacts),
+    pickupPersons: z.array(pickupPersonSchema).min(1).max(L.pickupPersons),
     children: z.array(childSchema).min(1).max(L.children),
     documents: z.strictObject({
       liabilityWaiver: signedDocumentSchema,
@@ -230,7 +260,9 @@ export function toRegistrationPayload(input: ParsedRegistrationInput) {
           }),
       has_allergies: child.hasAllergies,
       allergy_details: child.allergyDetails,
+      has_medical_needs: child.hasMedicalNeeds,
       medical_information: child.medicalInformation,
+      has_accommodation_needs: child.hasAccommodationNeeds,
       accommodation_information: child.accommodationInformation,
       photo_video_permission: child.photoVideoPermission,
       step_up: child.stepUp
@@ -239,6 +271,7 @@ export function toRegistrationPayload(input: ParsedRegistrationInput) {
       selections: child.selections.map((s) => ({
         program_id: s.programId,
         attendance_days: s.attendanceDays,
+        plan_days_per_week: s.planDaysPerWeek,
       })),
     })),
     documents: {
@@ -266,6 +299,7 @@ export const REGISTRATION_OUTCOMES = [
   "blocked_authority",
   "blocked_documents_unavailable",
   "blocked_document_version_stale",
+  "blocked_attendance_unconfigured",
   "blocked_unavailable",
   "blocked_closed",
   "blocked_full",
@@ -273,6 +307,21 @@ export const REGISTRATION_OUTCOMES = [
 ] as const
 
 export type RegistrationOutcome = (typeof REGISTRATION_OUTCOMES)[number]
+
+/**
+ * The STEP UP administrative review outcomes (DEC-028), in the database's
+ * enum order. None is payment, a discount, confirmation, or enrollment;
+ * `verified` hands the registration to the ordinary enrollment review.
+ */
+export const STEP_UP_STATES = [
+  "pending_verification",
+  "needs_information",
+  "verified",
+  "declined",
+  "canceled",
+] as const
+
+export type StepUpState = (typeof STEP_UP_STATES)[number]
 
 /**
  * An outcome this build does not recognise is `null`, which callers must treat

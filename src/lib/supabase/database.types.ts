@@ -487,6 +487,84 @@ export type Database = {
         }
         Relationships: []
       }
+      program_attendance_days: {
+        Row: {
+          day: Database["public"]["Enums"]["attendance_day"]
+          program_id: string
+        }
+        Insert: {
+          day: Database["public"]["Enums"]["attendance_day"]
+          program_id: string
+        }
+        Update: {
+          day?: Database["public"]["Enums"]["attendance_day"]
+          program_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_attendance_days_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program_attendance_rules"
+            referencedColumns: ["program_id"]
+          },
+        ]
+      }
+      program_attendance_plans: {
+        Row: {
+          days_per_week: number
+          program_id: string
+          selection_mode: Database["public"]["Enums"]["attendance_selection_mode"]
+        }
+        Insert: {
+          days_per_week: number
+          program_id: string
+          selection_mode?: Database["public"]["Enums"]["attendance_selection_mode"]
+        }
+        Update: {
+          days_per_week?: number
+          program_id?: string
+          selection_mode?: Database["public"]["Enums"]["attendance_selection_mode"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_attendance_plans_program_id_selection_mode_fkey"
+            columns: ["program_id", "selection_mode"]
+            isOneToOne: false
+            referencedRelation: "program_attendance_rules"
+            referencedColumns: ["program_id", "selection_mode"]
+          },
+        ]
+      }
+      program_attendance_rules: {
+        Row: {
+          program_id: string
+          selection_mode: Database["public"]["Enums"]["attendance_selection_mode"]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          program_id: string
+          selection_mode: Database["public"]["Enums"]["attendance_selection_mode"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          program_id?: string
+          selection_mode?: Database["public"]["Enums"]["attendance_selection_mode"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_attendance_rules_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: true
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       program_sessions: {
         Row: {
           change_note: string | null
@@ -692,7 +770,9 @@ export type Database = {
           accommodation_information: string | null
           allergy_details: string | null
           created_at: string
+          has_accommodation_needs: boolean
           has_allergies: boolean
+          has_medical_needs: boolean
           is_sample: boolean
           medical_information: string | null
           registration_child_id: string
@@ -702,7 +782,9 @@ export type Database = {
           accommodation_information?: string | null
           allergy_details?: string | null
           created_at?: string
+          has_accommodation_needs: boolean
           has_allergies: boolean
+          has_medical_needs: boolean
           is_sample?: boolean
           medical_information?: string | null
           registration_child_id: string
@@ -712,7 +794,9 @@ export type Database = {
           accommodation_information?: string | null
           allergy_details?: string | null
           created_at?: string
+          has_accommodation_needs?: boolean
           has_allergies?: boolean
+          has_medical_needs?: boolean
           is_sample?: boolean
           medical_information?: string | null
           registration_child_id?: string
@@ -829,6 +913,7 @@ export type Database = {
           accepted_at: string
           created_at: string
           document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          document_sha256_at_acceptance: string | null
           document_status_at_acceptance: Database["public"]["Enums"]["document_version_status"]
           document_version_id: string
           id: string
@@ -842,6 +927,7 @@ export type Database = {
           accepted_at?: string
           created_at?: string
           document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          document_sha256_at_acceptance?: string | null
           document_status_at_acceptance: Database["public"]["Enums"]["document_version_status"]
           document_version_id: string
           id?: string
@@ -855,6 +941,7 @@ export type Database = {
           accepted_at?: string
           created_at?: string
           document_kind?: Database["public"]["Enums"]["registration_document_kind"]
+          document_sha256_at_acceptance?: string | null
           document_status_at_acceptance?: Database["public"]["Enums"]["document_version_status"]
           document_version_id?: string
           id?: string
@@ -929,6 +1016,7 @@ export type Database = {
           enrollment_id: string
           id: string
           is_sample: boolean
+          plan_days_per_week: number | null
           program_id: string
           registration_child_id: string
           registration_id: string
@@ -939,6 +1027,7 @@ export type Database = {
           enrollment_id: string
           id?: string
           is_sample?: boolean
+          plan_days_per_week?: number | null
           program_id: string
           registration_child_id: string
           registration_id: string
@@ -949,6 +1038,7 @@ export type Database = {
           enrollment_id?: string
           id?: string
           is_sample?: boolean
+          plan_days_per_week?: number | null
           program_id?: string
           registration_child_id?: string
           registration_id?: string
@@ -991,6 +1081,8 @@ export type Database = {
           reference: string | null
           registration_child_id: string
           registration_id: string
+          state_changed_at: string
+          state_changed_by: string | null
           verification_state: Database["public"]["Enums"]["step_up_verification_state"]
         }
         Insert: {
@@ -999,6 +1091,8 @@ export type Database = {
           reference?: string | null
           registration_child_id: string
           registration_id: string
+          state_changed_at?: string
+          state_changed_by?: string | null
           verification_state?: Database["public"]["Enums"]["step_up_verification_state"]
         }
         Update: {
@@ -1007,6 +1101,8 @@ export type Database = {
           reference?: string | null
           registration_child_id?: string
           registration_id?: string
+          state_changed_at?: string
+          state_changed_by?: string | null
           verification_state?: Database["public"]["Enums"]["step_up_verification_state"]
         }
         Relationships: [
@@ -1380,6 +1476,15 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["inquiry_state"]
       }
+      admin_set_program_attendance: {
+        Args: {
+          attendance_mode: Database["public"]["Enums"]["attendance_selection_mode"]
+          available_days: Database["public"]["Enums"]["attendance_day"][]
+          plan_day_counts?: number[]
+          target_program: string
+        }
+        Returns: string
+      }
       admin_set_program_capacity: {
         Args: {
           expected_updated_at: string
@@ -1405,6 +1510,28 @@ export type Database = {
           target_id: string
         }
         Returns: string
+      }
+      admin_set_step_up_state: {
+        Args: {
+          expected_state: Database["public"]["Enums"]["step_up_verification_state"]
+          next_state: Database["public"]["Enums"]["step_up_verification_state"]
+          target_registration_child: string
+        }
+        Returns: string
+      }
+      admin_step_up_review_queue: {
+        Args: never
+        Returns: {
+          family_id: string
+          preferred_name: string
+          reference: string
+          registration_child_id: string
+          registration_id: string
+          selections: Json
+          state_changed_at: string
+          submitted_at: string
+          verification_state: Database["public"]["Enums"]["step_up_verification_state"]
+        }[]
       }
       admin_unassign_educator: {
         Args: { educator_id: string; note: string; target_program_id: string }
@@ -1535,6 +1662,19 @@ export type Database = {
         Args: { family_name: string }
         Returns: string
       }
+      educator_child_safety: {
+        Args: { target_program: string }
+        Returns: {
+          allergy_details: string
+          emergency_contacts: Json
+          enrollment_id: string
+          has_allergies: boolean
+          pickup_persons: Json
+          preferred_name: string
+          recorded_at: string
+          safety_on_file: boolean
+        }[]
+      }
       family_invitation_status: { Args: never; Returns: string }
       family_request_enrollment: {
         Args: {
@@ -1548,9 +1688,20 @@ export type Database = {
           state: Database["public"]["Enums"]["enrollment_state"]
         }[]
       }
+      owner_publish_registration_document: {
+        Args: { target_version: string }
+        Returns: string
+      }
       record_session_attendance: {
         Args: { target_enrollment: string; target_session: string }
         Returns: string
+      }
+      registration_documents_requiring_acceptance: {
+        Args: { target_registration: string }
+        Returns: {
+          document_kind: Database["public"]["Enums"]["registration_document_kind"]
+          version_id: string
+        }[]
       }
       registration_policy_satisfied: {
         Args: { target_registration: string }
@@ -1559,6 +1710,12 @@ export type Database = {
       remove_student_from_own_family: {
         Args: { student_id: string }
         Returns: boolean
+      }
+      renew_registration_documents: {
+        Args: { documents: Json; target_registration: string }
+        Returns: {
+          outcome: string
+        }[]
       }
       submit_family_registration: {
         Args: { idempotency_key: string; payload: Json }
@@ -1592,6 +1749,7 @@ export type Database = {
         | "friday"
         | "saturday"
         | "sunday"
+      attendance_selection_mode: "fixed" | "family_selects"
       availability_state: "open" | "limited" | "waitlist" | "closed" | "unknown"
       content_state: "draft" | "published" | "replaced" | "removed"
       document_acceptance_method: "signature" | "acknowledgment"
@@ -1644,7 +1802,12 @@ export type Database = {
         | "disposition_approved"
         | "review_complete"
       session_state: "scheduled" | "rescheduled" | "canceled" | "completed"
-      step_up_verification_state: "pending_verification"
+      step_up_verification_state:
+        | "pending_verification"
+        | "needs_information"
+        | "verified"
+        | "declined"
+        | "canceled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1782,6 +1945,7 @@ export const Constants = {
         "saturday",
         "sunday",
       ],
+      attendance_selection_mode: ["fixed", "family_selects"],
       availability_state: ["open", "limited", "waitlist", "closed", "unknown"],
       content_state: ["draft", "published", "replaced", "removed"],
       document_acceptance_method: ["signature", "acknowledgment"],
@@ -1840,7 +2004,13 @@ export const Constants = {
         "review_complete",
       ],
       session_state: ["scheduled", "rescheduled", "canceled", "completed"],
-      step_up_verification_state: ["pending_verification"],
+      step_up_verification_state: [
+        "pending_verification",
+        "needs_information",
+        "verified",
+        "declined",
+        "canceled",
+      ],
     },
   },
 } as const

@@ -82,6 +82,8 @@ GAP-005 and GAP-010 remain unresolved until Samantha completes the applicable ch
 
 Under EXC-002 (2026-09-18), sample-only registration infrastructure for health, contact, pickup, selection, document-acceptance, and STEP UP records may exist. It is locked to sample data at the database level and exposes no UI. MPS-RUL-006 still governs real-family collection. STEP UP is pending administrative verification only, and never payment, a discount, or confirmed enrollment (DEC-025). GAP-014 (legal document text), GAP-015 (STEP UP outcomes), and GAP-016 (sensitive-field purpose, viewers, retention, and deletion) block real-family activation.
 
+Under DEC-033 (2026-09-19), STEP UP is a scholarship coupon applied at the end of checkout, not part of registration. Every family completes the same registration and the same checkout; some pay in full and some apply a STEP UP coupon. The checkout slice defines the coupon and the fee and tuition rules by mapping Samantha's current GoDaddy setup (GAP-015). Neither a checkout nor an applied coupon is ever proof of payment or enrollment.
+
 ## Approval record
 
 MPS-REQ-007 through MPS-REQ-024 were approved on August 26, 2026. Authoritative handoff remains blocked by GAP-005 and GAP-010.

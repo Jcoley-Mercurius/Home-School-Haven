@@ -139,7 +139,8 @@ All applicable components include default, hover, focus, active or selected, dis
 - Program card: catalog, featured, compact, enrolled; truthful verified content only.
 - Enrollment state: open, limited, waitlist, pending review, awaiting external payment, payment pending verification, enrolled, not confirmed, closed, cancelled.
 - Payment handoff: external checkout notice, return pending, status unknown.
-- Consent state: required, accepted, renewal required, unavailable, blocked.
+- Consent state: required, accepted, renewal required, unavailable, blocked. Acceptance method is either a **signature** (typed name, for the liability waiver and Code of Conduct) or an **acknowledgment** (a checkbox with no signature, for the Parent Handbook). The two are never visually merged (v1.2, MDS-DEC-023).
+- STEP UP review state (v1.2): pending verification, needs information, verified, declined, canceled. Uses the enrollment-state badge and inline-panel sizes. It is never shown as payment, a discount, or enrollment. **On hold (v1.2.1, MDS-DEC-024):** STEP UP is a coupon applied at the end of checkout (MPS DEC-033), so registration does not render this state. The checkout slice decides whether it is kept, changed, or retired.
 - Assistance request: private, dignified, manually reviewed, no promised outcome.
 - Family student selector: parent-controlled and minimum-information.
 - Schedule item, announcement, learning resource, empty state, and skeleton.
@@ -152,6 +153,7 @@ All applicable components include default, hover, focus, active or selected, dis
 - Waitlist is never enrollment.
 - Missing verified program facts remain unset or use “Contact for details.”
 - Consent requires owner-approved policy content and an explicit acceptance state.
+- STEP UP is never shown as payment, a discount, or enrollment. Enrollment is shown only from the enrollment state.
 
 ## 7. Layout and composition
 
@@ -209,6 +211,92 @@ Responsive implementation changes composition rather than shrinking desktop:
 
 Required patterns: landing, dashboard, search/results, detail, forms, authentication, empty, error, loading, program discovery, enrollment handoff, waitlist, consent, assistance request, and admin operations.
 
+### 9.1 Family registration pattern (v1.2, MDS-DEC-023)
+
+It resolves MDS-GAP-010 at the specification level. It is composed from `forms`, `consent`, `enrollment_handoff`, `consent_state`, `enrollment_state`, and `payment_handoff`, with no new token, color, type role, or visual convention. No canonical visual reference exists yet, so this written pattern governs, and rendered validation belongs to the registration UI slice.
+
+**Structure.** The pattern is one route with one final atomic submission, but not one long screen. The sections run in a fixed, family-first order:
+
+1. Parent or guardian contact information.
+2. Emergency contacts.
+3. Approved pickup persons.
+4. Children, as repeating child cards.
+5. Per-child program and attendance selections, inside each child card.
+6. External-checkout handoff, per child. STEP UP is not part of registration; it belongs to checkout (MPS DEC-033).
+7. Documents, media permission, acknowledgments, and signature.
+8. Review and submit.
+
+Multi-step progress (`forms`: “progress when multi-step”) may present sections 1–8 as steps. Moving between steps never submits anything, and nothing is recorded until section 8.
+
+**Contacts.**
+
+- The guardian phone is required.
+- At least one emergency contact and one approved pickup person are required.
+- Each list offers an “Add another” text action, up to its limit.
+- Removing an entry is a quiet destructive action with an accessible name that includes the person’s position, for example “Remove emergency contact 2”.
+
+**Child cards.**
+
+- Each card is a bordered card using the existing card, radius, and spacing tokens, with the child’s preferred name (or “New child”) as its heading.
+- Cards may be collapsed. A collapsed card shows a one-line summary and, when relevant, its error count (“2 items need attention”).
+- The expand control is a 44 px button with `aria-expanded` and `aria-controls`.
+- “Add another child” is a secondary button after the last card, up to 10 children. Removing a card asks for confirmation.
+
+**Health questions.**
+
+- There are three explicit Yes/No radio groups: allergies, medical needs, and accommodation needs.
+- Neither option is preselected, and a blank is an unanswered error, never “No”.
+- The details textarea appears only after Yes. It is inserted directly after its radio group, linked by `aria-controls`, and announced politely.
+- Switching back to No hides the textarea and excludes it from submission. The typed text is kept in memory only until the page is left, so an accidental toggle is recoverable.
+
+**Attendance, per selection.**
+
+- A fixed-day program shows its configured day or days as read-only text (for example “Meets Tuesday and Thursday”) with no control.
+- Haven Days asks for a plan first (a one-, two-, or three-day radio group), then shows Tuesday, Wednesday, and Thursday as checkboxes. The helper text states the count (“Choose 2 days”).
+- Tutoring shows its available days as checkboxes, with “Choose at least one day”.
+- The server remains the authority. A mismatch it reports is shown on the selection, never silently corrected.
+
+**Checkout handoff, per child.**
+
+- Each child shows the existing `payment_handoff` external-checkout notice.
+- STEP UP is not shown in registration. It is a scholarship coupon applied at the end of checkout (MPS DEC-033, v1.2.1, MDS-DEC-024). Its presentation is designed in the checkout slice, which may reuse, change, or retire `step_up_review_state`.
+
+**Documents, permissions, and signature.**
+
+- Each document is a `consent_state` panel showing its name and version.
+- The waiver and Code of Conduct take a typed-name signature field. The Parent Handbook takes an acknowledgment checkbox and has no signature field.
+- The signature and the acknowledgments are separate controls, never one “I agree to everything” checkbox.
+- Unapproved policy language stays in the `consent_state` *unavailable* or *blocked* variant. When a newly published version supersedes one already accepted, the *renewal_required* variant is used.
+- Media permission is its own fieldset, placed after the documents and before the signature. It is headed by the approved question, “Do you give Home School Haven permission to photograph or record your child and use those photos or videos for educational and promotional purposes?”, with the radios “Yes, I give permission.” and “No, I do not give permission.” Neither is preselected. The supporting copy reads “Choosing No will not affect your child’s registration eligibility.” Both options have the same visual weight. The fieldset is not active for real families until approved (MPS DEC-030).
+
+**Review and submit.**
+
+- The review section is a read-only summary grouped by section, each group with an “Edit” text link back to it.
+- There is one primary “Submit registration” button.
+
+**States.**
+
+- *Loading:* a layout-preserving skeleton while programs, attendance rules, and document versions load. While submitting, the primary button shows a spinner and disables itself (`aria-busy`), and a polite status reads “Submitting registration…”.
+- *Empty:* with no children yet, the children section shows the `empty` pattern with one action, “Add a child”.
+- *Validation error:* all entered values are preserved. An error summary (a `role="alert"` region) appears at the top of the current step and lists each problem as a link. Focus moves to the summary heading. Activating a link expands any collapsed child card and moves focus to the field. Each field shows its message inline via `aria-describedby`.
+- *Blocked outcome* (for example program full, closed, unavailable, attendance not configured, or document version changed): the `error` pattern names the affected child and program and preserves every value. For a changed document version it shows the new version for acceptance.
+- *Network failure or timeout:* state that the result could not be confirmed and offer a “Try again” action. The retry reuses the same attempt key and resolves the replayed result without creating a duplicate registration. It is never presented as success.
+- *Success:* a confirmation listing each child’s enrollment state (from `enrollment_state`) and, per child, the external-checkout handoff.
+
+**Responsive.**
+
+- Desktop and wide: the form spans 8 of 12 columns, and a 4-column sticky review rail summarizes progress.
+- Below 1024 px the rail becomes the inline review section at the end, as the detail action rail does (§8).
+- Tablet and mobile are one column. Child cards default to collapsed after the first, and every control keeps a 44 px target.
+
+**Keyboard and screen reader.**
+
+- Everything is operable by keyboard in visual order.
+- Radio groups and checkboxes use `fieldset` and `legend`.
+- Step changes move focus to the new step heading and announce “Step N of 8: <name>”.
+- Added and removed entries announce politely.
+- Reduced motion disables card expand animation.
+
 The educator Content Studio is optional future-platform scope. Its approved reference may guide later MPS evolution but grants no Foundation Release permissions.
 
 ## 10. Accessibility
@@ -248,6 +336,6 @@ The state and this written specification outrank generated imagery if a conflict
 
 ## 13. Change control
 
-MDS v1.1 is locked. A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
+MDS v1.2 is locked. v1.2 (2026-09-19) is a backward-compatible pattern addition: the family registration pattern in §9.1, the STEP UP review state, and consent-state acceptance methods (MDS-DEC-023, MDS-CHG-012). v1.2.1 (2026-09-19) removes STEP UP from the registration pattern and puts the STEP UP review state on hold for the checkout slice, following MPS DEC-033 (MDS-DEC-024, MDS-CHG-013). It adds nothing visual. A clarification with no intended behavior change is a patch. A backward-compatible token, component, pattern, or state addition is a minor release. A foundational or breaking change is a major release.
 
 No coding agent may redesign, modernize, embellish, simplify, or “improve” this system without explicit approval and state propagation.
