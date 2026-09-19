@@ -202,3 +202,21 @@ No price, availability, date, capacity, or confirmation mode is touched. Rollbac
   3. re-create `admin_update_program_facts` from `20260916000000`;
   4. drop the helper.
 - The audit history of the clears remains.
+
+## 13. Results (2026-09-19)
+
+- **Checks:**
+  - Format, lint, typecheck, and build: pass.
+  - Unit tests: 387/387.
+  - `db:test`: 888 pass, including the 34 new tests.
+  - `db:advisors`: the same 18 pre-existing findings.
+  - `db:types:check -- --local`: shows only the known hosted-template difference.
+- **Full e2e sweep:** 637 passed, 43 failed, 1 skipped, and 32 did not run. None of the failures comes from this slice.
+  - The following specs failed on the base as well: password-recovery (8), educator-workspace (6), admin-families (6), family-setup (4), auth (4), admin-overview (4), admin-programs (2, the duplicate "External checkout link" label), resources (1), contact (1), and about (1).
+  - family-dashboard had 5 failures. Four are screenshots whose session times come from the seed's `now()`. The fifth is the ARIA snapshot, contaminated by announcements that `content-authoring.spec.ts` leaves behind. It passes in isolation.
+  - admin-enrollments had 1 failure and 32 tests that did not run. A `supabase db reset` inside the spec hung for 41 minutes (a Docker flake) and was killed. Rerun in isolation, all 33 tests pass.
+- **Visual evidence reviewed:**
+  - new `enrollment-checkout` baselines at 390, 768, 1024, and 1440;
+  - `programs` detail baselines, regenerated because the checkout-rail copy changed;
+  - `admin-programs` baselines, regenerated because 8 rows now read "External checkout", with ARIA hand-edited for those rows only.
+- **Hosted:** the owner ran `supabase db push` on 2026-09-19.
