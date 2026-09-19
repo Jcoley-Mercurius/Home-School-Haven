@@ -629,7 +629,7 @@ governance:
       approved_by: "User acting as product-definition collaborator (owner-ratified Slice 2 instruction and prompt approval, 2026-09-18)"
       approved_at: "2026-09-18"
       affected: ["MPS state", "DEC-025", "EXC-002", "GAP-014", "GAP-015", "GAP-016", "MPS-REQ-002", "MPS-REQ-003", "MPS-REQ-005", "MPS-REQ-014", "MPS-REQ-024", "MDS-GAP-010", "MTS-CHG-010", "MTS-CHG-011"]
-      propagation: "Administrator read of registration health and contacts is read-only and sample-only (owner decision, 2026-09-18); real-family staff access stays checklist §9. The migration is applied locally only; the hosted project needs the owner's supabase db push."
+      propagation: "Administrator read of registration health and contacts is read-only and sample-only (owner decision, 2026-09-18); real-family staff access stays checklist §9. The owner applied the migration to the hosted project on 2026-09-18 (MTS-CHG-010); the hosted preview has no sample document versions until it is re-seeded."
   versions: []
   validation_findings:
     - id: FIND-001
