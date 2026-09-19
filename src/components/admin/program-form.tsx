@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  CHECKOUT_HOST,
+  CHECKOUT_DESTINATION_HINT,
   CHECKOUT_URL_MAX,
   FACT_MAX,
   PROGRAM_NAME_MAX,
@@ -431,10 +431,12 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
         <Field invalid={Boolean(state.fieldErrors.checkoutUrl)}>
           <FieldLabel>External checkout link</FieldLabel>
           <FieldDescription>
-            The program&rsquo;s own https://{CHECKOUT_HOST} address. Leaving for
-            checkout is a handoff: it is not payment and it is not enrollment.
-            Do not add anything after a ? or # — nothing about a family may
-            travel in this link.
+            The program&rsquo;s own GoDaddy checkout, exactly as the
+            &ldquo;Register &amp; Pay&rdquo; or &ldquo;Pay Now&rdquo; button on
+            the Home School Haven classes page opens it. Leave it empty when the
+            program has no checkout. Leaving for checkout is a handoff: it is
+            not payment and it is not enrollment. Do not add anything after a ?
+            or # — nothing about a family may travel in this link.
           </FieldDescription>
           <Input
             key={`checkoutUrl-${value("checkoutUrl")}`}
@@ -444,7 +446,7 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
             autoComplete="off"
             maxLength={CHECKOUT_URL_MAX}
             defaultValue={value("checkoutUrl")}
-            placeholder={`https://${CHECKOUT_HOST}/…`}
+            placeholder={CHECKOUT_DESTINATION_HINT}
           />
           <FieldError match={Boolean(state.fieldErrors.checkoutUrl)}>
             {state.fieldErrors.checkoutUrl}

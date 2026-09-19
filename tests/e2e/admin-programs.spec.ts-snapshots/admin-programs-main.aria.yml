@@ -36,72 +36,72 @@
         - columnheader "Registration path"
         - columnheader "Action"
     - rowgroup:
-      - row "Haven Days /haven-days-enrichment Published Availability not published Not assigned No checkout link published Review Haven Days":
+      - row "Haven Days /haven-days-enrichment Published Availability not published Not assigned External checkout Review Haven Days":
         - rowheader "Haven Days /haven-days-enrichment"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Haven Days":
           - link "Review Haven Days":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000002
             - text: ""
-      - row "Ready Set Prep /ready-set-prep Published Availability not published Not assigned No checkout link published Review Ready Set Prep":
+      - row "Ready Set Prep /ready-set-prep Published Availability not published Not assigned External checkout Review Ready Set Prep":
         - rowheader "Ready Set Prep /ready-set-prep"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Ready Set Prep":
           - link "Review Ready Set Prep":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000009
             - text: ""
-      - row "Ready Set Learn /ready-set-learn Published Availability not published Not assigned No checkout link published Review Ready Set Learn":
+      - row "Ready Set Learn /ready-set-learn Published Availability not published Not assigned External checkout Review Ready Set Learn":
         - rowheader "Ready Set Learn /ready-set-learn"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Ready Set Learn":
           - link "Review Ready Set Learn":
             - /url: /admin/programs/10000000-0000-4000-8000-00000000000a
             - text: ""
-      - row "Ready Set Sensory /ready-set-sensory Published Availability not published Not assigned No checkout link published Review Ready Set Sensory":
+      - row "Ready Set Sensory /ready-set-sensory Published Availability not published Not assigned External checkout Review Ready Set Sensory":
         - rowheader "Ready Set Sensory /ready-set-sensory"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Ready Set Sensory":
           - link "Review Ready Set Sensory":
             - /url: /admin/programs/10000000-0000-4000-8000-00000000000b
             - text: ""
-      - row "Sewing /sewing Published Availability not published Not assigned No checkout link published Review Sewing":
+      - row "Sewing /sewing Published Availability not published Not assigned External checkout Review Sewing":
         - rowheader "Sewing /sewing"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Sewing":
           - link "Review Sewing":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000005
             - text: ""
-      - row "Crochet /crochet Published Availability not published Not assigned No checkout link published Review Crochet":
+      - row "Crochet /crochet Published Availability not published Not assigned External checkout Review Crochet":
         - rowheader "Crochet /crochet"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Crochet":
           - link "Review Crochet":
             - /url: /admin/programs/10000000-0000-4000-8000-00000000000e
             - text: ""
-      - row "Gardening /gardening Published Availability not published Not assigned No checkout link published Review Gardening":
+      - row "Gardening /gardening Published Availability not published Not assigned External checkout Review Gardening":
         - rowheader "Gardening /gardening"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Gardening":
           - link "Review Gardening":
             - /url: /admin/programs/10000000-0000-4000-8000-000000000006
@@ -116,12 +116,12 @@
           - link "Review Tutoring":
             - /url: /admin/programs/10000000-0000-4000-8000-00000000000c
             - text: ""
-      - row "Monthly Clubs /monthly-clubs Published Availability not published Not assigned No checkout link published Review Monthly Clubs":
+      - row "Monthly Clubs /monthly-clubs Published Availability not published Not assigned External checkout Review Monthly Clubs":
         - rowheader "Monthly Clubs /monthly-clubs"
         - cell "Published"
         - cell "Availability not published"
         - cell "Not assigned"
-        - cell "No checkout link published"
+        - cell "External checkout"
         - cell "Review Monthly Clubs":
           - link "Review Monthly Clubs":
             - /url: /admin/programs/10000000-0000-4000-8000-00000000000d

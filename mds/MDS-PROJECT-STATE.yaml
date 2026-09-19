@@ -942,6 +942,16 @@ governance:
       approved_at: "2026-09-19"
       evidence: "tests/e2e/family-registration.spec.ts-snapshots: step 1, validation error, empty children, programs, documents, review, and success at 390, 768, 1024, and 1440; registration-step-1 and registration-child-card ARIA snapshots; Axe with WCAG 2.2 AA tags at every step and on success."
       note: "Rendered validation of this one pattern against the written specification. It is not a site-wide MDS compliance claim; compliance stays not_started (MPS FIND-004). No canonical reference image exists, so the new baselines are evidence, not a reference."
+    - id: MDS-CHG-015
+      area: component_states
+      previous_value: "CheckoutHandoff rendered the same way everywhere. Every URL was NULL, so only 'Registration link not published' had ever rendered. The public program page would have rendered a live link to any visitor once a URL existed."
+      new_value: "CheckoutHandoff requires a placement. `catalog` (public program page) renders the payment_handoff notice and a sentence that checkout opens from a registration, and never renders a link. `eligible` (a family's own started registration) renders 'Continue to Secure Checkout' with a program-named heading, an accessible name that includes the program and child, and a visible new-tab and pending-verification line. The registration result says each program has its own checkout when there is more than one. No STEP UP element is rendered. step_up_review_state stays on hold."
+      reason: "Slice 4 (prompts/external-checkout-payment-truth.md); MPS CHG-009"
+      version_impact: "None. REUSE and EXTEND of an existing component with existing Button, Badge, card, and type tokens. No new token, component, visual convention, or reference."
+      affected_artifacts: [implementation_manifest, qa_protocol, project_state]
+      approved_at: "2026-09-19"
+      evidence: "tests/e2e/external-checkout.spec.ts-snapshots (enrollment-checkout at 390, 768, 1024, 1440; enrollment-checkout-handoff ARIA snapshot); Axe WCAG 2.2 AA at each width; keyboard focus outline and 44 px target; tests/e2e/family-registration.spec.ts two-child test."
+      note: "Rendered validation of the handoff against DESIGN-SYSTEM §6 payment_handoff, §9.1, and DO-DONT 'Trust states'. It is not a site-wide compliance claim."
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"

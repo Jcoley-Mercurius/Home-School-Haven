@@ -81,7 +81,7 @@ function ProgramActionRail({
         </Button>
       </div>
 
-      <CheckoutHandoff program={program} />
+      <CheckoutHandoff program={program} placement="catalog" />
 
       <div className="flex flex-col gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-card)] bg-[var(--hsh-surface-quiet)] p-[var(--hsh-space-5)]">
         <h3 className="hsh-label text-[var(--hsh-text-primary)]">

@@ -51,6 +51,11 @@ const ACCOUNTS = {
 
 const FAMILY_A = "30000000-0000-4000-8000-00000000000a"
 const CROCHET = "10000000-0000-4000-8000-00000000000e"
+const SEWING = "10000000-0000-4000-8000-000000000005"
+const GARDENING_CHECKOUT =
+  "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/cd911575-37c3-4e2e-ad66-1b2"
+const SEWING_CHECKOUT =
+  "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/568b1ef2-952a-499b-878a-599"
 const WAIVER_V0 = "d0000000-0000-4000-8000-000000000001"
 const WAIVER_V1 = "d0000000-0000-4000-8000-0000000000f1"
 
@@ -391,7 +396,7 @@ test.describe("submission", () => {
     ).toBe("3")
 
     // States come from the database. Gardening is instant (started), so it
-    // alone carries the checkout handoff; no link is published, so none shows.
+    // alone carries the checkout handoff, with its approved GoDaddy link.
     const main = page.locator("main")
     await expect(
       main.locator('[data-slot="enrollment-state"][data-state="confirmed"]'),
@@ -408,10 +413,97 @@ test.describe("submission", () => {
     await expect(main).toContainText(
       "Starting checkout does not confirm payment",
     )
-    await expect(main).toContainText("Registration link not published")
+    const checkout = page.getByRole("link", {
+      name: /Continue to Secure Checkout/,
+    })
+    await expect(checkout).toHaveCount(1)
+    await expect(checkout).toHaveAttribute("href", GARDENING_CHECKOUT)
+    // One checkout is not described as covering several.
+    await expect(main).not.toContainText("Each program below has its own")
 
     // Nothing sensitive in the URL.
     expect(page.url()).toMatch(/\/family\/registration$/)
+  })
+
+  test("two children with checkout-eligible programs get separately named checkouts", async ({
+    page,
+  }) => {
+    test.setTimeout(90_000)
+    /* Sewing is made instant for this test only, so both children reach
+       `started`. The seed default is administrator approval. */
+    psql(
+      `update public.programs set confirmation_mode = 'instant' where id = '${SEWING}'`,
+    )
+    try {
+      await signIn(page, ACCOUNTS.parent)
+      await reachReview(page)
+      const bodies: string[] = []
+      page.on("request", (request) => {
+        if (request.method() === "POST") bodies.push(request.postData() ?? "")
+      })
+      await page.getByRole("button", { name: "Submit registration" }).click()
+      await expect(
+        page.getByRole("heading", { name: "Registration received" }),
+      ).toBeVisible({ timeout: SUBMIT_TIMEOUT })
+
+      const main = page.locator("main")
+      const links = page.getByRole("link", {
+        name: /Continue to Secure Checkout/,
+      })
+      await expect(links).toHaveCount(2)
+      const names = await links.evaluateAll((els) =>
+        els.map((el) => el.textContent?.replace(/\s+/g, " ").trim() ?? ""),
+      )
+      /* Each name says which program — and which child — it pays for. */
+      expect(names.some((n) => /for Sewing \(.+\)/.test(n))).toBe(true)
+      expect(names.some((n) => /for Gardening \(.+\)/.test(n))).toBe(true)
+      expect(new Set(names).size).toBe(2)
+
+      await expect(
+        page.getByRole("link", { name: /for Sewing/ }),
+      ).toHaveAttribute("href", SEWING_CHECKOUT)
+      await expect(
+        page.getByRole("link", { name: /for Gardening/ }),
+      ).toHaveAttribute("href", GARDENING_CHECKOUT)
+
+      // Two separate checkouts, and the page says so rather than implying one.
+      await expect(main).toContainText(
+        "Each program below has its own checkout link. Complete each one on its own: starting one checkout does not pay for any other program or child.",
+      )
+
+      // Headings are unique, so each region has its own name.
+      const ids = await main
+        .locator(
+          'section[aria-labelledby^="reg-result-"][aria-labelledby$="-checkout"]',
+        )
+        .evaluateAll((els) =>
+          els.map((el) => el.getAttribute("aria-labelledby")),
+        )
+      expect(ids).toHaveLength(2)
+      expect(new Set(ids).size).toBe(2)
+
+      // No STEP UP in the payload, the page, or the database (DEC-033).
+      expect(bodies.join("\n")).not.toMatch(/step_?up|coupon/i)
+      await expect(page.locator("body")).not.toContainText(/STEP UP|coupon/i)
+      expect(
+        query("select count(*) from public.registration_step_up_requests"),
+      ).toBe("0")
+      // Rendering the checkouts moved nothing past `started`.
+      expect(
+        query(
+          `select count(*) from public.enrollments e join public.registration_selections rs on rs.enrollment_id = e.id join public.registration_submissions r on r.id = rs.registration_id where r.family_id = '${FAMILY_A}' and e.state not in ('started', 'approval_pending')`,
+        ),
+      ).toBe("0")
+
+      const results = await new AxeBuilder({ page })
+        .withTags(AXE_TAGS)
+        .analyze()
+      expect(results.violations).toEqual([])
+    } finally {
+      psql(
+        `update public.programs set confirmation_mode = 'administrator_approval' where id = '${SEWING}'`,
+      )
+    }
   })
 
   injectedFailureTest(
