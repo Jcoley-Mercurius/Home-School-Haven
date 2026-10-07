@@ -256,7 +256,9 @@ test.describe("search", () => {
      changes when the search does. */
   test("announces the result count", async ({ page }) => {
     await expect(page.getByRole("table")).toContainText("Sample Family A")
-    const status = page.getByRole("status")
+    /* Scoped by its text: the Invitations region above the directory has its
+       own polite status, and an unscoped role locator matches both. */
+    const status = page.getByRole("status").filter({ hasText: /families\.$/ })
     await expect(status).toContainText(/^Showing all \d+ families\.$/)
 
     await page.getByLabel("Search families").fill("Family A")

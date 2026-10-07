@@ -327,7 +327,12 @@ test.describe("recovery round trip", () => {
        and submitting let a re-render clear the input. */
     await clearMailbox(page)
     await page.getByRole("link", { name: "Forgot your password?" }).click()
+    /* A client navigation: filling before the form hydrates lets hydration
+       clear the field, and the empty submit is refused (seen 2026-10-07). */
+    await page.waitForURL(/\/forgot-password/)
+    await page.waitForLoadState("networkidle")
     await page.getByLabel("Email").fill(SAMPLE_PARENT)
+    await expect(page.getByLabel("Email")).toHaveValue(SAMPLE_PARENT)
     await page.getByRole("button", { name: "Email a reset link" }).click()
     /* By role: the confirmation is rendered twice on purpose -- once as the
        visible heading and once in an sr-only live region so it is announced --

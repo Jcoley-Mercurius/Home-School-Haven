@@ -56,6 +56,18 @@ async function signIn(page: Page, email: string) {
   await page.waitForURL((url: URL) => !url.pathname.startsWith("/sign-in"))
 }
 
+/** Replace clock-derived session text with one fixed value of the same shape. */
+async function pinSessionTimes(page: Page) {
+  await page.locator("main time").evaluateAll((times) => {
+    for (const time of times) {
+      const text = time.textContent ?? ""
+      time.textContent = text.includes("–")
+        ? "Wed, Sep 30, 2026, 10:00 AM – 12:00 PM ET"
+        : "Wed, Sep 23, 2026, 10:00 AM"
+    }
+  })
+}
+
 test.describe("signed out", () => {
   for (const route of PROTECTED) {
     test(`${route} redirects to sign-in and preserves the destination`, async ({
@@ -414,16 +426,14 @@ test.describe("shell, accessibility, and responsive behaviour", () => {
       await signIn(page, ACCOUNTS.parentWithFamily)
       await page.goto("/family")
       await page.waitForLoadState("networkidle")
-      /* KNOWN UNSTABLE -- see prompts/closeout-slice-1-audit-fixes.md §7.
-         This page renders several clock-derived values: session times seeded as
-         `now() + interval '7 days'` and announcement dates as
-         `now() - interval '9 days'` (supabase/seed.sql). Every `db:reset`
-         changes them, and the differing string lengths shift wrapping and page
-         height, so these four baselines cannot match across two resets.
-         Masking `time` alone was tried on 2026-09-18 and is NOT sufficient.
-         Stabilising this needs deterministic seed timestamps, which is a seed
-         change other specs depend on and is not in this slice. Until then,
-         treat a failure here as unproven rather than as a regression. */
+      /* Session times are seeded relative to `now()` (supabase/seed.sql), so
+         their text changes with every `db:reset`. Weekday and month names
+         differ in length, which shifts wrapping and page height, so masking
+         `time` alone was not enough (tried 2026-09-18). Each <time> gets one
+         fixed string of the same shape before capture. This baseline proves
+         the composition; the ARIA snapshot above proves the date format.
+         prompts/foundation-review-readiness.md §13. */
+      await pinSessionTimes(page)
       await expect(page).toHaveScreenshot(`family-dashboard-${name}.png`, {
         fullPage: true,
       })

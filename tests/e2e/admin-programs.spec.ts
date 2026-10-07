@@ -269,6 +269,11 @@ test.describe("program detail and approved actions", () => {
       .getByRole("button", { name: "Publish to the catalog" })
       .click()
     await expect(page.getByText("Publication updated")).toBeVisible()
+    /* Publishing renders "View the public page families see", and Next.js
+       prefetches it. Under load that prefetch landed after the unpublish
+       below and logged a 404 (2026-10-07 sweep). Let it finish while the page
+       still exists. */
+    await page.waitForLoadState("networkidle")
 
     /* MPS-REQ-020: the same program state must be true on the public surface.
        A fresh anonymous context, so this is what a visitor actually sees. */
@@ -303,7 +308,9 @@ test.describe("program detail and approved actions", () => {
     page,
   }) => {
     await openDraft(page)
-    const field = page.getByLabel("External checkout link")
+    /* By role: the "Instant confirmation" radio's description mentions the
+       external checkout link, so a label locator matches it too. */
+    const field = page.getByRole("textbox", { name: "External checkout link" })
     await field.fill("https://evil.example.com/pay")
     await page.getByRole("button", { name: "Save program details" }).click()
 
@@ -324,7 +331,7 @@ test.describe("program detail and approved actions", () => {
        it at storage means no later code has to remember to strip it. */
     await openDraft(page)
     await page
-      .getByLabel("External checkout link")
+      .getByRole("textbox", { name: "External checkout link" })
       .fill("https://pay.homeschoolhaven.org/x?student=abc")
     await page.getByRole("button", { name: "Save program details" }).click()
     await expect(
