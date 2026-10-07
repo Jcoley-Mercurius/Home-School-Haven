@@ -20,4 +20,4 @@ Slice 4 (2026-09-19, CHG-009, `prompts/external-checkout-payment-truth.md`) acti
 
 ## Foundation Review readiness
 
-On 2026-10-07 (`prompts/foundation-review-readiness.md`) the MPS requirement records were reconciled with the repository. Every Must requirement except MPS-REQ-006 is implemented or partially implemented with sample data and locally validated by a clean full e2e sweep. MPS-REQ-006 is blocked by policy: no approved policy text exists. The walkthrough packet for Samantha is `docs/foundation-review-walkthrough.md`.
+On 2026-10-07 (`prompts/foundation-review-readiness.md`) the MPS requirement records were reconciled with the repository. Every Must requirement except MPS-REQ-006 is implemented or partially implemented with sample data and locally validated with a full e2e sweep recording 710 passes, 2 failures, and 1 designed skip; both failures passed on rerun. MPS-REQ-006 is blocked by policy: no approved policy text exists. The walkthrough packet for Samantha is `docs/foundation-review-walkthrough.md`.

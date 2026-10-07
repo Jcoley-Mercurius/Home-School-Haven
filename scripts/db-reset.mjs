@@ -229,14 +229,24 @@ function resetDatabase() {
   const result = spawnSync(
     "supabase",
     ["db", "reset", "--local", "--no-seed"],
-    { encoding: "utf8", timeout: RESET_TIMEOUT_MS, killSignal: "SIGKILL" },
+    {
+      encoding: "utf8",
+      timeout: RESET_TIMEOUT_MS,
+      killSignal: "SIGKILL",
+      detached: true,
+    },
   )
   if (result.stdout) process.stdout.write(result.stdout)
   if (result.stderr) process.stderr.write(result.stderr)
-  if (isTimeout(result)) {
-    /* `supabase` is a Node wrapper around the CLI binary. Killing the wrapper
-       orphans the binary, which would keep resetting under the next attempt. */
-    spawnSync("pkill", ["-KILL", "-f", "supabase db reset --local"])
+  if (isTimeout(result) && result.pid > 0) {
+    /* The detached wrapper leads its own process group. Kill only that
+       attempt's descendants so they cannot keep resetting under the retry. */
+    try {
+      process.kill(-result.pid, "SIGKILL")
+    } catch (error) {
+      // The wrapper and its descendants may already have exited.
+      if (error.code !== "ESRCH") throw error
+    }
   }
   return result
 }

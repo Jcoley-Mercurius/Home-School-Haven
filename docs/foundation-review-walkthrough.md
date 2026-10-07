@@ -2,7 +2,7 @@
 
 For Samantha Dodson and invited reviewers.
 
-This is a private preview of the Home School Haven platform. Everything you see uses **sample families and sample children**. No real family's information is in it. Nothing you do here charges anyone, enrolls anyone, or sends anything to a real family.
+This is a private preview of the Home School Haven platform. Everything you see uses **sample families and sample children**. No real family's information is in it. Checkout opens a **live GoDaddy payment page**. **Do not submit payment during this review.** Opening or returning from checkout does not confirm payment or enrollment in the platform.
 
 Your job in this review is to look, try things, and tell us what is right, what is wrong, and what is missing. You can record that feedback inside the platform (step 8).
 
@@ -13,8 +13,8 @@ Your job in this review is to look, try things, and tell us what is right, what 
 You will receive a link from Josh. Open it in a normal browser window.
 
 - The first time the link opens, the address may change once. That is expected.
-- **If you see a Vercel page asking for an email or a verification code, stop.** That page belongs to the hosting service, not to Home School Haven, and it means the link has expired. Send Josh a note and he will send a fresh link. Do not enter the sample email addresses there.
-- After the link has opened once, the preview stays open in that browser.
+- **If you see a Vercel page asking for an email or a verification code, stop.** That page belongs to the hosting service, not to Home School Haven. The protection bypass link may be missing or stale. Ask Josh for a current bypass link. Do not enter the sample email addresses there.
+- Opening the bypass link establishes the preview access session in that browser. Access persists while that session remains valid.
 
 ## 2. Sample sign-ins
 
