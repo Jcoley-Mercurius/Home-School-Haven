@@ -148,6 +148,8 @@ export default async function FamilyEnrollmentPage({
                 name: enrollment.program.name,
                 checkoutUrl: enrollment.program.checkoutUrl,
               }}
+              placement="eligible"
+              studentName={enrollment.studentName}
             />
           ) : null}
 

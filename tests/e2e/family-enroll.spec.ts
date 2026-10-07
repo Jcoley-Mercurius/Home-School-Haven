@@ -283,15 +283,21 @@ test.describe("registration", () => {
       ),
     ).toBeVisible()
 
-    /* The handoff panel is present. Its checkout link is not, because no
-       program publishes one — and the page says so rather than inventing a
-       destination (F-1). */
+    /* The handoff carries Gardening's approved checkout, exactly as the
+       classes page publishes it, and nothing appended to it
+       (prompts/external-checkout-payment-truth.md §4). The full matrix is
+       external-checkout.spec.ts. */
     await expect(
-      page.getByRole("heading", { name: "Registration", exact: true }).first(),
+      page.getByRole("heading", { name: "Checkout for Gardening" }),
     ).toBeVisible()
     await expect(
-      page.getByText(/Registration link not published/i),
-    ).toBeVisible()
+      page.getByRole("link", {
+        name: /Continue to Secure Checkout for Gardening/,
+      }),
+    ).toHaveAttribute(
+      "href",
+      "https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/cd911575-37c3-4e2e-ad66-1b2",
+    )
     /* Nothing on this page claims enrollment. */
     await expect(page.getByText("Enrolled", { exact: true })).toHaveCount(0)
   })

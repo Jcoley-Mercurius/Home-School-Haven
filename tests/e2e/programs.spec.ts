@@ -274,9 +274,14 @@ test.describe("program detail", () => {
       "Enrollment is confirmed only after Home School Haven verifies it with you.",
     )
 
-    /* No program-specific checkout URL is recorded in any approved artifact
-       (gap F-1), so no checkout link may exist and none may be constructed. */
-    expect(await page.locator('a[href*="pay.homeschoolhaven"]').count()).toBe(0)
+    /* Tutoring has no checkout on the approved classes page, and no public
+       program page renders a checkout link at all: checkout follows the
+       MPS-REQ-012 evaluation (prompts/external-checkout-payment-truth.md). */
+    expect(
+      await page
+        .locator('a[href*="pay.homeschoolhaven"], a[href*="poynt.godaddy.com"]')
+        .count(),
+    ).toBe(0)
     await expect(
       registration.getByText("Registration link not published"),
     ).toBeVisible()

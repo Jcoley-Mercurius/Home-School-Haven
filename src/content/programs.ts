@@ -23,6 +23,7 @@
  * undecided, so they are absent (owner decision, 2026-08-27).
  */
 
+import { checkoutUrlForSlug } from "./checkout-sources.ts"
 import type { OfferingType } from "@/lib/programs/offering-groups"
 
 export type { OfferingType }
@@ -125,12 +126,12 @@ export type Program = {
   /** See {@link AvailabilityState}. `unknown` for every program today. */
   availability: AvailabilityState
   /**
-   * Program-specific `pay.homeschoolhaven.org` checkout URL (MPS-REQ-013).
+   * Program-specific external checkout URL (MPS-REQ-013), exactly as the
+   * approved source page publishes it (`@/content/checkout-sources`).
    *
-   * `null` for every program: the approved artifacts authorize "the current
-   * program-specific checkout links" but record no actual URL, and constructing
-   * one would invent a payment destination. The handoff renders its truthful
-   * unavailable state until the owner supplies them.
+   * `null` where the source page offers no checkout for the program (Tutoring).
+   * Never constructed from a name or slug: that would invent a payment
+   * destination. The handoff renders its truthful unavailable state instead.
    */
   checkoutUrl: string | null
   importStatus: ImportStatus
@@ -176,7 +177,7 @@ const READY_SET_COMBINED =
  * ARCHIVED in the database and absent here, because this list is what a
  * visitor may see. Their history stays in the database and in the inventory.
  */
-export const programs: Program[] = [
+const catalog: Program[] = [
   {
     ...UNPUBLISHED,
     slug: "haven-days-enrichment",
@@ -324,6 +325,13 @@ export const programs: Program[] = [
     audience: null,
   },
 ]
+
+/* The checkout link is joined from the source mapping rather than written into
+   each entry, so there is one place a destination is recorded in code. */
+export const programs: Program[] = catalog.map((program) => ({
+  ...program,
+  checkoutUrl: checkoutUrlForSlug(program.slug),
+}))
 
 /** Detail route for a program (MDS-REF-005 §2: Home / Programs / Art Lab). */
 export function programHref(slug: string): string {

@@ -27,7 +27,12 @@ import type { RegistrationChildResult } from "@/lib/registration/repository"
  *
  * The heading says "received", not "complete": nothing about a registration is
  * complete until Home School Haven confirms each enrollment. STEP UP is not
- * mentioned (MPS DEC-033).
+ * mentioned (MPS DEC-033; no coupon field exists on the approved checkout,
+ * prompts/external-checkout-payment-truth.md §5).
+ *
+ * Every GoDaddy checkout is one program's page, so when more than one checkout
+ * is offered the page says each is separate. Nothing here suggests that one
+ * payment covers several children or programs.
  */
 export function RegistrationResult({
   replayed,
@@ -40,6 +45,9 @@ export function RegistrationResult({
   draftDocuments: boolean
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const checkoutCount = (results ?? [])
+    .flatMap((child) => child.selections)
+    .filter((s) => mayOfferCheckout(s.state) && s.checkoutUrl).length
   useEffect(() => {
     headingRef.current?.focus()
   }, [])
@@ -81,6 +89,14 @@ export function RegistrationResult({
         </Alert>
       ) : null}
 
+      {checkoutCount > 1 ? (
+        <p className="hsh-body text-[var(--hsh-text-secondary)]">
+          Each program below has its own checkout link. Complete each one on its
+          own: starting one checkout does not pay for any other program or
+          child.
+        </p>
+      ) : null}
+
       {results === null ? (
         <Alert tone="warning" title="We could not load each program's status">
           <p>
@@ -114,10 +130,10 @@ export function RegistrationResult({
                           name: s.programName,
                           checkoutUrl: s.checkoutUrl,
                         }}
+                        placement="eligible"
+                        studentName={child.studentName}
                         headingId={`reg-result-${s.enrollmentId}-checkout`}
-                        heading={`Checkout for ${s.programName}`}
                         headingLevel="h4"
-                        afterRegistration
                       />
                     ) : null}
                   </li>

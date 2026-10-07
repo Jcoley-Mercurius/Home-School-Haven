@@ -18,6 +18,8 @@ Implement parent authentication, family setup, sanitized student profiles, dupli
 
 Registration readiness (Slice 2.5, 2026-09-19, MTS-CHG-012) is complete at the data and design-specification level. The registration UI slice (Slice 3, 2026-09-19, MTS-CHG-014) is implemented at `/family/registration` as a sanitized preview. It uses `submit_family_registration`, the attendance rules, and `registration_documents_requiring_acceptance`, and follows MDS `DESIGN-SYSTEM.md` §9.1. It sends no STEP UP data (MPS DEC-033, MTS-CHG-013). STEP UP is a coupon applied at the end of checkout and belongs to a later checkout slice, which maps Samantha's GoDaddy classes and checkout and decides what happens to the existing STEP UP data model. The educator workspace reads child-safety data only through `educator_child_safety(program)`.
 
+External checkout (Slice 4, 2026-09-19, MTS-CHG-015) is activated from the approved classes page. See `prompts/external-checkout-payment-truth.md`. The owner must run `supabase db push` for `20260919200000_external_checkout_activation.sql`, then `npm run db:types:check`. STEP UP stays unbuilt: the approved checkout has no coupon field (MPS GAP-015). The unused Slice 2.5 STEP UP tables, states, and RPCs remain pending a retirement decision.
+
 ## Phase 4 — Educator and administration
 
 Implement assigned-program educator access, rosters with minimum approved fields, announcements/resources, and administrator program/enrollment/assignment operations with attributable history. Do not implement the future Course Builder.

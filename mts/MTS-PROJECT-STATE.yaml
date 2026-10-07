@@ -716,6 +716,15 @@ governance:
       version_impact: "None. No migration, RLS, grant, dependency, environment variable, or Vercel change. Nothing to push."
       recorded_at: "2026-09-19"
       verification: "Local stack only: db:reset verified, db:test 854 pass, db:advisors unchanged from Slice 2.5 (14 multiple_permissive_policies WARN, 2 security_definer_view ERROR on the educator roster views, 2 function_search_path_mutable WARN; none from this slice). db:types:check --local reports only the hosted-template difference adopted in 5511c24 (__InternalSupabase.PostgrestVersion and parenthesized generics); every table, function, and enum declaration matches."
+    - id: MTS-CHG-015
+      area: integration
+      previous_value: "programs.checkout_url NULL everywhere; allowlist pay.homeschoolhaven.org only (inline regex in admin_update_program_facts); public program page rendered the handoff with no enrollment state"
+      new_value: "Migration 20260919200000_external_checkout_activation adds private.is_approved_checkout_url, which allows exactly pay.homeschoolhaven.org and poynt.godaddy.com/checkout/<Home School Haven business id>/<id>, with no query or fragment. admin_update_program_facts uses it, and the CHECK programs_checkout_url_approved enforces it on every write path. The migration stores the 8 verified mappings by fixed id, only where the value is NULL and the program is published, and each is audited. The TypeScript validation mirrors the allowlist. CheckoutHandoff renders a link only for a family's own started enrollment. There is no return route, webhook, payment record, or STEP UP write."
+      reason: "Slice 4 (prompts/external-checkout-payment-truth.md); MPS CHG-009"
+      version_impact: "One additive migration. No new service, dependency, environment variable, RLS policy, or grant. No Vercel or hosted Supabase change was made. The owner must run supabase db push."
+      recorded_at: "2026-09-19"
+      verification: "Local stack: db:reset verified; db:test 888 pass (34 new in 190_external_checkout); db:advisors shows the same 18 pre-existing findings and none for this slice; db:types:check --local reports only the hosted-template difference adopted in 5511c24, and locally generated types are byte-identical to the base."
+      finding: "Build-time program fetches are stored in .next/cache/fetch-cache (revalidate 31536000). A build can therefore render statically generated program pages from stale rows after a database change. It was observed locally and cleared. On Vercel, redeploy without the build cache after the hosted db push."
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 

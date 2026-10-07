@@ -31,6 +31,7 @@ import {
   entriesInMonth,
   scheduleAndSeasons,
 } from "../src/content/calendar.ts"
+import { checkoutUrlForSlug } from "../src/content/checkout-sources.ts"
 import { contact } from "../src/content/foundation-content.ts"
 
 import type { Program } from "../src/content/programs.ts"
@@ -237,14 +238,22 @@ describe("verified prices and schedules", () => {
     assert.equal(programs.length, 9)
   })
 
-  it("claims no capacity, educator, location, enrollment window, or checkout link", () => {
+  it("claims no capacity, educator, location, or enrollment window", () => {
     for (const item of programs) {
       assert.equal(item.availability, "unknown", item.slug)
       assert.equal(item.educator, null, item.slug)
       assert.equal(item.location, null, item.slug)
       assert.equal(item.enrollmentWindow, null, item.slug)
-      assert.equal(item.checkoutUrl, null, item.slug)
     }
+  })
+
+  it("carries only the checkout link the approved classes page publishes", () => {
+    /* prompts/external-checkout-payment-truth.md §4. Tutoring has no checkout
+       action on the source page, so it has no link; nothing is constructed. */
+    for (const item of programs) {
+      assert.equal(item.checkoutUrl, checkoutUrlForSlug(item.slug), item.slug)
+    }
+    assert.equal(program("tutoring").checkoutUrl, null)
   })
 
   it("puts age or grade on the card before the price", () => {
