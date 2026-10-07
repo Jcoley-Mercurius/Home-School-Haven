@@ -28,65 +28,65 @@
           - columnheader "Registration path"
           - columnheader "Next action"
       - rowgroup:
-        - row "Haven Days Published Not assigned No checkout link published Review Haven Days":
+        - row "Haven Days Published Not assigned External checkout Review Haven Days":
           - rowheader "Haven Days"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Haven Days":
             - link "Review Haven Days":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000002
               - text: ""
-        - row "Ready Set Prep Published Not assigned No checkout link published Review Ready Set Prep":
+        - row "Ready Set Prep Published Not assigned External checkout Review Ready Set Prep":
           - rowheader "Ready Set Prep"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Ready Set Prep":
             - link "Review Ready Set Prep":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000009
               - text: ""
-        - row "Ready Set Learn Published Not assigned No checkout link published Review Ready Set Learn":
+        - row "Ready Set Learn Published Not assigned External checkout Review Ready Set Learn":
           - rowheader "Ready Set Learn"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Ready Set Learn":
             - link "Review Ready Set Learn":
               - /url: /admin/programs/10000000-0000-4000-8000-00000000000a
               - text: ""
-        - row "Ready Set Sensory Published Not assigned No checkout link published Review Ready Set Sensory":
+        - row "Ready Set Sensory Published Not assigned External checkout Review Ready Set Sensory":
           - rowheader "Ready Set Sensory"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Ready Set Sensory":
             - link "Review Ready Set Sensory":
               - /url: /admin/programs/10000000-0000-4000-8000-00000000000b
               - text: ""
-        - row "Sewing Published Not assigned No checkout link published Review Sewing":
+        - row "Sewing Published Not assigned External checkout Review Sewing":
           - rowheader "Sewing"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Sewing":
             - link "Review Sewing":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000005
               - text: ""
-        - row "Crochet Published Not assigned No checkout link published Review Crochet":
+        - row "Crochet Published Not assigned External checkout Review Crochet":
           - rowheader "Crochet"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Crochet":
             - link "Review Crochet":
               - /url: /admin/programs/10000000-0000-4000-8000-00000000000e
               - text: ""
-        - row "Gardening Published Not assigned No checkout link published Review Gardening":
+        - row "Gardening Published Not assigned External checkout Review Gardening":
           - rowheader "Gardening"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Gardening":
             - link "Review Gardening":
               - /url: /admin/programs/10000000-0000-4000-8000-000000000006
@@ -100,11 +100,11 @@
             - link "Review Tutoring":
               - /url: /admin/programs/10000000-0000-4000-8000-00000000000c
               - text: ""
-        - row "Monthly Clubs Published Not assigned No checkout link published Review Monthly Clubs":
+        - row "Monthly Clubs Published Not assigned External checkout Review Monthly Clubs":
           - rowheader "Monthly Clubs"
           - cell "Published"
           - cell "Not assigned"
-          - cell "No checkout link published"
+          - cell "External checkout"
           - cell "Review Monthly Clubs":
             - link "Review Monthly Clubs":
               - /url: /admin/programs/10000000-0000-4000-8000-00000000000d
@@ -204,28 +204,28 @@
     - list:
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Operational change recorded · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Enrollment record created · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Enrollment record created · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
       - listitem:
         - text: Program details updated · set up by the review environment
-        - time: /Sep \d+, \d+, \d+:\d+ AM UTC/
+        - time: /\w+ \d+, \d+, \d+:\d+ [AP]M UTC/
   - complementary "Authority and environment":
     - paragraph: This is a private beta environment with sample data. Continuing to external checkout is a handoff to Home School Haven’s payment provider — it is not payment confirmation, and payment activity is not confirmed enrollment.
     - paragraph: Samantha Dodson remains the final decision owner. Administrators hold delegated operational authority, and only an administrator or Samantha publishes program, price, availability, registration, or cancellation changes.

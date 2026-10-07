@@ -110,8 +110,9 @@ capabilities:
     strategy: integrate
     candidates: ["Next.js on Vercel"]
     approved_selection: "Next.js App Router with TypeScript on Vercel"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Next.js 16 App Router + TypeScript; Vercel preview from release/foundation-preview (deployment 6910844267 at 4cf66d4 succeeded, protected). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: []
   - id: MTS-CAP-002
@@ -129,8 +130,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase Auth"]
     approved_selection: "Supabase Auth with server-managed sessions and recovery"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Supabase Auth sign-in, invitation provisioning, and password recovery (prompts/supabase-auth-foundation.md, family-invitation-provisioning.md). Custom SMTP through Resend is not configured yet (MTS-CAP-009). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: [MTS-RSK-001]
   - id: MTS-CAP-003
@@ -148,8 +150,9 @@ capabilities:
     strategy: configure
     candidates: ["Supabase Row Level Security plus server authorization"]
     approved_selection: "Server-derived roles and assignments enforced through application checks and deny-by-default Supabase RLS"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Server-derived roles and deny-by-default RLS with pgTAP coverage (supabase/tests/database) and the cross-role matrix (tests/e2e/authorization.spec.ts). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-004
@@ -167,8 +170,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase Postgres"]
     approved_selection: "Supabase Postgres with versioned migrations, generated types, and attributable audit history"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "25 versioned migrations, generated types matched against the hosted project 2026-10-07, attributable audit history for material changes. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-005
@@ -186,8 +190,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase-backed in-app administration", "Sanity"]
     approved_selection: "Supabase-backed in-app program and course administration; Sanity deferred for Foundation Release"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Supabase-backed program administration and public offering model (prompts/admin-operations-foundation.md, public-offering-model.md). No Sanity. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-006
@@ -205,8 +210,9 @@ capabilities:
     strategy: keep_and_integrate
     candidates: ["Existing program-specific checkout URLs with manual reconciliation"]
     approved_selection: "Existing checkout links with explicit pending/unknown states and authorized manual administrator verification"
-    implementation_status: existing
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Approved GoDaddy links per program; checkout only on a family's own started registration; manual audited administrator verification (prompts/external-checkout-payment-truth.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: [MTS-RSK-002]
   - id: MTS-CAP-007
@@ -224,8 +230,9 @@ capabilities:
     strategy: build
     candidates: ["Next.js server-controlled forms with Supabase records and Cloudflare Turnstile"]
     approved_selection: "Server-validated inquiry and private-assistance intake; Turnstile before public or real-family activation"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Server-validated inquiry and private assistance intake built (prompts/inquiry-capture-foundation.md). Cloudflare Turnstile not yet integrated; required before public or real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-008
@@ -243,8 +250,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase private Storage", "Cloudflare R2 recovery copy"]
     approved_selection: "Private Supabase Storage with signed scoped access and scheduled Cloudflare R2 recovery copy before real-family activation"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Private program-resources bucket with signed scoped access (src/lib/content/storage.ts). Scheduled Cloudflare R2 recovery copy not built; required before real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-003]
   - id: MTS-CAP-009
@@ -262,8 +270,9 @@ capabilities:
     strategy: integrate
     candidates: ["Resend through Supabase custom SMTP"]
     approved_selection: "Resend for authentication and transactional email using the controlled domain and Supabase custom SMTP"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Program announcements built (prompts/program-announcements-resources.md). Resend custom SMTP, domain authentication, and transactional notifications not configured. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-010
@@ -281,8 +290,9 @@ capabilities:
     strategy: build
     candidates: ["Versioned consent records in Supabase Postgres"]
     approved_selection: "Structured Supabase consent evidence and policy versioning; real-family use remains policy-gated"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Versioned registration documents, acceptance evidence, and renewal mechanics built and tested, sample-only; no approved document version can exist until the approval lock is lifted (MPS GAP-014). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002, MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-011
@@ -300,8 +310,9 @@ capabilities:
     strategy: integrate
     candidates: ["Vercel runtime logs", "PostHog browser error tracking", "Sentry"]
     approved_selection: "Vercel runtime logs plus privacy-scrubbed PostHog browser errors; Sentry deferred until evidenced"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Vercel runtime logs only. PostHog browser-error visibility is staged and not integrated. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-001]
     risks: []
   - id: MTS-CAP-012
@@ -319,8 +330,9 @@ capabilities:
     strategy: configure_and_integrate
     candidates: ["Vercel previews", "Playwright and axe", "Supabase Pro backups", "Cloudflare R2 recovery"]
     approved_selection: "Vercel preview/deployment, repository-compatible TypeScript/ESLint, Playwright, axe, screenshot/ARIA checks, Supabase Pro database backups, and R2 object recovery"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Vercel preview, TypeScript, ESLint, Playwright, axe, screenshot and ARIA checks in place. Supabase Pro backups, the R2 copy, and a tested restore are not in place; required before real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-001, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-013
@@ -338,8 +350,9 @@ capabilities:
     strategy: staged_integrate
     candidates: ["Structured walkthrough evidence", "PostHog Free"]
     approved_selection: "Structured feedback for the first walkthrough; PostHog Free after core stability on anonymous public routes only"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Structured walkthrough evidence and feedback classification at /admin/reports (prompts/beta-review-evidence-classification.md). PostHog public analytics remains a later staged step. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-011]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-014
@@ -359,6 +372,7 @@ capabilities:
     approved_selection: "Server-generated calendar download with minimum private detail when retained in Should scope"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "No calendar download exists. Should scope; not required for the walkthrough. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: []
   - id: MTS-CAP-015
@@ -376,8 +390,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase Postgres attendance records"]
     approved_selection: "Assignment-scoped Supabase attendance records when retained in Should scope"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Assignment-scoped session attendance (prompts/schedule-capacity-waitlist-attendance.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-016
@@ -395,8 +410,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase relational capacity and waitlist state"]
     approved_selection: "Supabase-backed program-specific capacity and waitlist state"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Program-specific capacity and waitlist state (prompts/schedule-capacity-waitlist-attendance.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004, MTS-CAP-006]
     risks: []
   - id: MTS-CAP-017
@@ -416,6 +432,7 @@ capabilities:
     approved_selection: "Supabase Auth and explicit family-membership invitations if retained after Should-scope complexity review"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "The invited_guardian role exists in the schema, but no secondary-guardian invitation flow is built (prompts/family-invitation-provisioning.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002, MTS-CAP-003]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-018
@@ -435,6 +452,7 @@ capabilities:
     approved_selection: "No Foundation Release implementation; future-platform capability only"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "Deferred by MTS-DEC-004; correctly not built. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: [MTS-RSK-004]
 

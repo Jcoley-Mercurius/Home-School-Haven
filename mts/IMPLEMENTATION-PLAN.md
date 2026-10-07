@@ -28,6 +28,8 @@ Implement assigned-program educator access, rosters with minimum approved fields
 
 Run MPS acceptance, MDS visual/responsive/accessibility QA, MTS architecture/security checks, and exact manual paths. Deploy a private Vercel preview with sanitized fixtures. Record Samantha's feedback as approved change, gap, defect, or future idea without silently changing scope.
 
+Foundation Review readiness (2026-10-07, `prompts/foundation-review-readiness.md`) recorded a full end-to-end sweep with 710 passes, 2 failures, and 1 designed skip. Both failures passed on rerun; the triage and fixes are recorded in §13 of the readiness prompt. It also hardened `scripts/db-reset.mjs` against hung and failed container starts, confirmed the hosted project matches the code (types, all 25 migrations, canonical fixtures), and prepared the walkthrough packet at `docs/foundation-review-walkthrough.md`. Next: Samantha's walkthrough on the protected preview.
+
 ## Activation gate
 
 Do not activate real-family use until owner policy is approved, checkout truth is reconciled, RLS/access tests pass, email and DNS are verified, abuse controls are in place, backup and restore are tested, and all critical/major findings are resolved or explicitly accepted.

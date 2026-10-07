@@ -17,3 +17,7 @@ Slice 4 (2026-09-19, CHG-009, `prompts/external-checkout-payment-truth.md`) acti
 - **Truth.** Opening checkout, returning, or reloading records nothing: no payment row, state change, STEP UP row, or analytics. Payment is verified only when an administrator makes the audited transition to `confirmed`. "Payment verified" is not a separate state.
 - **Missing links.** A program with no approved checkout (Tutoring) shows "Registration link not published" with the phone path. Administrators see "No checkout link published" in the program list.
 - **STEP UP.** No coupon line, control, or data. The approved checkout has no coupon field (GAP-015 open).
+
+## Foundation Review readiness
+
+On 2026-10-07 (`prompts/foundation-review-readiness.md`) the MPS requirement records were reconciled with the repository. Every Must requirement except MPS-REQ-006 is implemented or partially implemented with sample data and locally validated with a full e2e sweep recording 710 passes, 2 failures, and 1 designed skip; both failures passed on rerun. MPS-REQ-006 is blocked by policy: no approved policy text exists. The walkthrough packet for Samantha is `docs/foundation-review-walkthrough.md`.

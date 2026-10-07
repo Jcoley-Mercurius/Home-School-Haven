@@ -420,12 +420,17 @@ test.describe("responsive transformation", () => {
   test("matches the approved composition at each viewport", async ({
     page,
   }) => {
+    test.slow()
     for (const [name, viewport] of Object.entries(VIEWPORTS)) {
       await page.setViewportSize(viewport)
       await gotoAbout(page)
       await expect(page).toHaveScreenshot(`about-${name}.png`, {
         fullPage: true,
         maxDiffPixelRatio: 0.01,
+        /* With the team section and its portraits the mobile page is over
+           8,000 px tall, and one full-page capture alone outran the 5 s
+           default here (2026-10-07). The diff threshold is unchanged. */
+        timeout: 20_000,
       })
     }
   })

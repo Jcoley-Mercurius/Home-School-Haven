@@ -37,7 +37,7 @@
         - text: Published
         - paragraph: Tutoring
         - paragraph: This is sample content for the Foundation Review. Home School Haven has not published a real announcement here yet.
-        - paragraph: /Published 9\/\d+\/\d+/
+        - paragraph: /Published \d+\/\d+\/\d+/
       - listitem:
         - paragraph: Sample unpublished announcement (test fixture)
         - text: Draft
