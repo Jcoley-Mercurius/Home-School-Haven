@@ -8,6 +8,17 @@
       - listitem: Families
   - heading "Families" [level=1]
   - paragraph: Every family account, its guardians, its students, and what each student is enrolled in.
+  - region "Invitations":
+    - heading "Invitations" [level=2]
+    - paragraph: A parent cannot create their own account. Inviting one here sends a link that lets them set a password and start their family setup.
+    - status
+    - text: Parent or guardian email
+    - paragraph: The adult who will control the family account. They choose their own password from the emailed link.
+    - textbox "Parent or guardian email"
+    - button "Send invitation"
+    - paragraph: An invitation creates a parent account and nothing else. It cannot create an educator or an administrator, and the email contains no information about children, enrollments, or requests for assistance.
+    - paragraph: No invitations yet
+    - paragraph: No family has been invited. A parent cannot create their own account — an invitation from this page is the only way one begins.
   - paragraph: Families control their own records
   - text: This directory is read-only. A parent or guardian adds, changes, and removes their family’s details and student profiles; an administrator cannot edit or delete them here. Enrollment states are changed on the Enrollments page, where each decision is recorded with a reason.
   - search:
@@ -31,10 +42,10 @@
         - cell "2 of 4"
         - cell "View the Sample Family A account":
           - button "View the Sample Family A account"
-      - row "Sample Family B Sample Parent Two 1 0 of 1 View the Sample Family B account":
+      - row "Sample Family B Sample Parent Two 1 2 of 3 View the Sample Family B account":
         - rowheader "Sample Family B"
         - cell "Sample Parent Two"
         - cell "1"
-        - cell "0 of 1"
+        - cell "2 of 3"
         - cell "View the Sample Family B account":
           - button "View the Sample Family B account"
