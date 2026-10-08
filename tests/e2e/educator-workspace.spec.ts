@@ -62,8 +62,8 @@ const ACCOUNTS = {
    holds neither 0002 nor 0005 — so "sees assigned" and "does not see
    unassigned" both have a target. */
 const ASSIGNED_PROGRAM = {
-  id: "10000000-0000-4000-8000-000000000004",
-  name: "Art Lab",
+  id: "10000000-0000-4000-8000-00000000000c",
+  name: "Tutoring",
 }
 const ASSIGNED_DRAFT = {
   id: "10000000-0000-4000-8000-0000000000ff",
@@ -71,7 +71,7 @@ const ASSIGNED_DRAFT = {
 }
 const UNASSIGNED_PROGRAM = {
   id: "10000000-0000-4000-8000-000000000002",
-  name: "Haven Days Enrichment",
+  name: "Haven Days",
 }
 const UNASSIGNED_OTHER_FAMILY = { id: "10000000-0000-4000-8000-000000000005" }
 
@@ -119,6 +119,25 @@ async function signIn(page: Page, email: string) {
   await page.getByLabel("Password").fill(SAMPLE_PASSWORD)
   await page.getByRole("button", { name: "Sign In" }).click()
   await page.waitForURL((url: URL) => !url.pathname.startsWith("/sign-in"))
+}
+
+/**
+ * Pin the clock-derived "Published <date>" text before a screenshot.
+ *
+ * Seeded announcements are published `now() - interval '2 days'`
+ * (supabase/seed.sql), so the date, and its width, changes with every reset.
+ * The baseline proves composition; the date itself is not what it checks.
+ */
+async function pinPublishedDates(page: Page) {
+  await page.locator("main").evaluate((main) => {
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT)
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      node.textContent = (node.textContent ?? "").replace(
+        /Published \d{1,2}\/\d{1,2}\/\d{4}/,
+        "Published 9/30/2026",
+      )
+    }
+  })
 }
 
 /**
@@ -189,8 +208,8 @@ test.describe("assignment boundary", () => {
 
     for (const absent of [
       UNASSIGNED_PROGRAM.name,
-      "Harvest Explorers",
-      "Etiquette Series",
+      "Crochet",
+      "Ready Set Sensory",
     ]) {
       await expect(page.getByText(absent, { exact: false })).toHaveCount(0)
     }
@@ -291,7 +310,7 @@ test.describe("roster", () => {
     /* The state is named in the educator's words, and it says what it is. */
     await expect(main).toContainText("Payment verification pending")
     await expect(main).toContainText(
-      "These records are not enrolled in Art Lab",
+      "These records are not enrolled in Tutoring",
     )
     await expect(main).toContainText(
       "Students are not named until their place is confirmed",
@@ -450,7 +469,13 @@ test.describe("read-only surfaces", () => {
     /* The educator policies do not filter on `published`, so the draft is
        visible — and is labelled rather than dressed as published. */
     await expect(main).toContainText("Sample unpublished announcement")
-    await expect(main).toContainText("Not published")
+    /* Content authoring (95cd40e) replaced "Not published" with the
+       content-state label and an explicit visibility sentence. */
+    const draft = main
+      .getByRole("listitem")
+      .filter({ hasText: "Sample unpublished announcement" })
+    await expect(draft).toContainText("Draft")
+    await expect(draft).toContainText("Families cannot see this yet.")
   })
 
   test("offers no authoring control on announcements or resources", async ({
@@ -758,6 +783,7 @@ test.describe("visual baselines", () => {
       await page.setViewportSize(viewport)
       await page.goto("/educator")
       await expect(page.locator("main")).toContainText(ASSIGNED_PROGRAM.name)
+      await pinPublishedDates(page)
       await expect(page).toHaveScreenshot(`educator-overview-${name}.png`, {
         fullPage: true,
       })

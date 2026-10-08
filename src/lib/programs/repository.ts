@@ -46,6 +46,7 @@ import {
   type Program,
 } from "@/content/programs"
 import { mapProgramRow } from "./map-program-row"
+import { reportProgramQueryFailure } from "./query-diagnostics"
 
 /** `null` means "the system of record could not be read" — never "no programs". */
 export type ProgramReadResult = Program[] | null
@@ -54,20 +55,31 @@ export type ProgramReadResult = Program[] | null
    literal type of this string, and a concatenation widens it to `string` and
    loses that inference. */
 // prettier-ignore
-const SELECT_COLUMNS = "slug,name,published_dates,published_schedule,published_duration,published_session_length,published_price,published_registration_options,summary,audience,format,location,educator,enrollment_window,availability,checkout_url,import_status,source,unverified_details,image_src,image_alt,image_width,image_height,image_is_placeholder,sort_order"
+const SELECT_COLUMNS = "slug,name,offering_type,published_dates,published_schedule,published_duration,published_session_length,published_price,published_registration_options,summary,audience,format,location,educator,enrollment_window,availability,checkout_url,import_status,source,unverified_details,image_src,image_alt,image_width,image_height,image_is_placeholder,sort_order"
 
 export async function listPublishedPrograms(): Promise<ProgramReadResult> {
   if (!isSupabaseConfigured()) return stagingPrograms
 
   const supabase = createAnonymousClient()
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from("programs")
     .select(SELECT_COLUMNS)
     .order("sort_order", { ascending: true })
 
   /* The error object can carry query detail; only its code is safe to surface,
      and nothing here logs a value. */
-  if (error || !data) return null
+  if (error || !data) {
+    /* TEMPORARY — see `./query-diagnostics`. Reports why the read failed in
+       credential-free fields, then returns `null` exactly as before. Remove
+       this call and that module once the Preview failure is classified. */
+    reportProgramQueryFailure({
+      operation: "listPublishedPrograms",
+      error,
+      status,
+      dataWasNull: !data,
+    })
+    return null
+  }
 
   return data.map(mapProgramRow)
 }
@@ -107,10 +119,9 @@ export async function listFeaturedPrograms(): Promise<ProgramReadResult> {
 }
 
 /**
- * Related programs for the detail page. There is no published category, format,
- * or audience to relate on (QA-005), so this stays the next programs in
- * inventory order rather than an invented affinity — the same rule the staging
- * module documents.
+ * Related programs for the detail page: the next programs in `sort_order`, which
+ * keeps each offering group together — the same rule the staging module
+ * documents.
  */
 export async function listRelatedPrograms(
   slug: string,

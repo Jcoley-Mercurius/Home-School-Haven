@@ -46,13 +46,13 @@ select plan(39);
 \set student_b1 '40000000-0000-4000-8000-000000000003'
 
 -- administrator_approval, no capacity — the MPS-ACC-019 target.
-\set p_approval  '10000000-0000-4000-8000-000000000001'
+\set p_approval  '10000000-0000-4000-8000-000000000009'
 -- instant, no capacity — the MPS-ACC-021 target.
 \set p_instant   '10000000-0000-4000-8000-000000000006'
 -- instant, capacity 1 taken, waitlist ON — the MPS-ACC-020 target.
-\set p_waitlist  '10000000-0000-4000-8000-000000000008'
+\set p_waitlist  '10000000-0000-4000-8000-00000000000d'
 -- instant, capacity 1 taken, waitlist OFF — full without waitlist.
-\set p_full      '10000000-0000-4000-8000-000000000003'
+\set p_full      '10000000-0000-4000-8000-00000000000b'
 -- Never published.
 \set p_draft     '10000000-0000-4000-8000-0000000000ff'
 
@@ -368,8 +368,8 @@ select lives_ok(
   format(
     $$ select public.admin_update_program_facts(
          %L, (select updated_at from public.programs where id = %L),
-         'Ready Set Prep & Learn', '', '', '', '', '', '', '', '', '', '',
-         'unknown', '', 'instant') $$,
+         'Ready Set Prep', '', '', '', '', '', '', '', '', '', '',
+         'unknown', '', 'instant', 'ready_set') $$,
     :'p_approval', :'p_approval'),
   'an administrator can set a program''s confirmation mode'
 );

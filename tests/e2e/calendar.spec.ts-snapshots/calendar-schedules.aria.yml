@@ -1,0 +1,68 @@
+- region "Weekly schedules and seasons":
+  - heading "Weekly schedules and seasons" [level=2]
+  - paragraph: These are published by weekday and month rather than by date, so they are listed here instead of being placed on the calendar.
+  - list:
+    - listitem:
+      - heading "Haven Days" [level=3]
+      - term: Schedule
+      - definition: /Tuesday, Wednesday, and Thursday, 9:\d+ AM–1:\d+ PM/
+      - term: Season
+      - definition: September–June
+      - link "View Haven Days":
+        - /url: /programs/haven-days-enrichment
+    - listitem:
+      - heading "Ready Set Prep" [level=3]
+      - term: Schedule
+      - definition: /Tuesday and Thursday, 9:\d+–\d+:\d+ AM/
+      - term: Season
+      - definition: August–May
+      - link "View Ready Set Prep":
+        - /url: /programs/ready-set-prep
+    - listitem:
+      - heading "Ready Set Learn" [level=3]
+      - term: Schedule
+      - definition: /Tuesday and Thursday, \d+:\d+ AM–2:\d+ PM/
+      - term: Season
+      - definition: August–May
+      - link "View Ready Set Learn":
+        - /url: /programs/ready-set-learn
+    - listitem:
+      - heading "Ready Set Sensory" [level=3]
+      - term: Schedule
+      - definition: /Wednesday, 9:\d+–\d+:\d+ AM/
+      - link "View Ready Set Sensory":
+        - /url: /programs/ready-set-sensory
+    - listitem:
+      - heading "Sewing" [level=3]
+      - term: Schedule
+      - definition: /Wednesday, 4:\d+–6:\d+ PM/
+      - link "View Sewing":
+        - /url: /programs/sewing
+    - listitem:
+      - heading "Crochet" [level=3]
+      - term: Schedule
+      - definition: /Mondays in November, 2:\d+–4:\d+ PM/
+      - term: Season
+      - definition: November
+      - link "View Crochet":
+        - /url: /programs/crochet
+    - listitem:
+      - heading "Gardening" [level=3]
+      - term: Schedule
+      - definition: /Thursday, 2:\d+–3:\d+ PM/
+      - term: Season
+      - definition: October–June; no class during the final week of October
+      - link "View Gardening":
+        - /url: /programs/gardening
+    - listitem:
+      - heading "Tutoring" [level=3]
+      - term: Schedule
+      - definition: Tuesday, Wednesday, and Thursday
+      - link "View Tutoring":
+        - /url: /programs/tutoring
+    - listitem:
+      - heading "Monthly Clubs" [level=3]
+      - term: Schedule
+      - definition: /Thursday, 4:\d+–6:\d+ PM/
+      - link "View Monthly Clubs":
+        - /url: /programs/monthly-clubs

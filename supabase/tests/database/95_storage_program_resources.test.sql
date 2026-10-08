@@ -38,7 +38,7 @@ select plan(19);
 \set parent_b '20000000-0000-4000-8000-00000000000b'
 \set educator '20000000-0000-4000-8000-00000000000e'
 
-\set art_lab '10000000-0000-4000-8000-000000000004'
+\set tutoring '10000000-0000-4000-8000-00000000000c'
 \set sewing  '10000000-0000-4000-8000-000000000005'
 
 
@@ -58,7 +58,7 @@ select is(
 
 
 -- ---------------------------------------------------------------------------
--- Fixtures: one published and one draft file resource on Art Lab, and one on
+-- Fixtures: one published and one draft file resource on Tutoring, and one on
 -- Sewing, which the educator does not hold and family A is not enrolled in.
 -- ---------------------------------------------------------------------------
 set local role postgres;
@@ -67,13 +67,13 @@ insert into public.learning_resources
   (id, program_id, title, kind, state, storage_path, file_name,
    file_size_bytes, content_type)
 values
-  ('70000000-0000-4000-8000-00000000aa01', :'art_lab'::uuid,
+  ('70000000-0000-4000-8000-00000000aa01', :'tutoring'::uuid,
    'Published file', 'document', 'published',
-   '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000aa01/a.pdf',
+   '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000aa01/a.pdf',
    'a.pdf', 1024, 'application/pdf'),
-  ('70000000-0000-4000-8000-00000000aa02', :'art_lab'::uuid,
+  ('70000000-0000-4000-8000-00000000aa02', :'tutoring'::uuid,
    'Draft file', 'document', 'draft',
-   '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000aa02/b.pdf',
+   '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000aa02/b.pdf',
    'b.pdf', 1024, 'application/pdf'),
   ('70000000-0000-4000-8000-00000000aa03', :'sewing'::uuid,
    'Other program file', 'document', 'published',
@@ -83,15 +83,15 @@ values
 insert into storage.objects (bucket_id, name, owner)
 values
   ('program-resources',
-   '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000aa01/a.pdf', null),
+   '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000aa01/a.pdf', null),
   ('program-resources',
-   '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000aa02/b.pdf', null),
+   '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000aa02/b.pdf', null),
   ('program-resources',
    '10000000-0000-4000-8000-000000000005/70000000-0000-4000-8000-00000000aa03/c.pdf', null),
   -- An object with a perfectly well-formed path that NO resource row claims.
   -- A path is an index, not an authorization, and this is what proves it.
   ('program-resources',
-   '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000aa99/orphan.pdf', null);
+   '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000aa99/orphan.pdf', null);
 
 
 -- ---------------------------------------------------------------------------
@@ -103,7 +103,7 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","r
 select is(
   (select count(*)::int from storage.objects
      where bucket_id = 'program-resources'
-       and name like :'art_lab' || '/%'),
+       and name like :'tutoring' || '/%'),
   2,
   'an assigned educator reads their program''s objects, published and draft'
 );
@@ -206,7 +206,7 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000b","r
 select is(
   (select count(*)::int from storage.objects
      where bucket_id = 'program-resources'
-       and name like :'art_lab' || '/%'),
+       and name like :'tutoring' || '/%'),
   0,
   'a family with no enrollment in the program reads none of its objects'
 );
@@ -245,7 +245,7 @@ select is(
 select throws_ok(
   $$ insert into storage.objects (bucket_id, name)
        values ('program-resources',
-               '10000000-0000-4000-8000-000000000004/70000000-0000-4000-8000-00000000bb01/x.pdf') $$,
+               '10000000-0000-4000-8000-00000000000c/70000000-0000-4000-8000-00000000bb01/x.pdf') $$,
   '42501', null,
   'an upload that belongs to no draft is refused — no orphan can be created'
 );

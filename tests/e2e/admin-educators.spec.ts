@@ -42,17 +42,29 @@ import { expect, test } from "./fixtures"
  */
 test.describe.configure({ mode: "serial" })
 
+/** Above db:reset's worst case: three bounded attempts plus health waits. */
+const RESET_TIMEOUT_MS = 1_500_000
+
 const LOCAL_STACK = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
 )
 
 /** Rebuild the sanitized fixture. Local stack only. */
 function reseed() {
-  execFileSync("npm", ["run", "db:reset"], { stdio: "inherit" })
+  /* `execFileSync` blocks the worker's event loop, so Playwright's hook
+     timeout cannot fire while it runs: a hung reset stalled a whole sweep for
+     41 minutes on 2026-09-19. The bound has to live on the call itself.
+     db:reset bounds each of its attempts (scripts/db-reset.mjs), so this
+     outer limit is only a backstop above its worst case. */
+  execFileSync("npm", ["run", "db:reset"], {
+    stdio: "inherit",
+    timeout: RESET_TIMEOUT_MS,
+    killSignal: "SIGKILL",
+  })
 }
 
 test.afterAll(async () => {
-  test.setTimeout(300_000)
+  test.setTimeout(RESET_TIMEOUT_MS + 60_000)
   if (LOCAL_STACK) reseed()
 })
 
@@ -73,9 +85,9 @@ const ACCOUNTS = {
 } as const
 
 /** The program the sample educator is NOT seeded onto. */
-const UNASSIGNED_PROGRAM = "Haven Days Enrichment"
+const UNASSIGNED_PROGRAM = "Haven Days"
 /** The program they ARE seeded onto, which carries the confirmed roster. */
-const ASSIGNED_PROGRAM = "Art Lab"
+const ASSIGNED_PROGRAM = "Tutoring"
 
 async function signIn(page: Page, email: string) {
   await page.goto("/sign-in")
@@ -258,7 +270,7 @@ test.describe("the program roster", () => {
       .click()
   })
 
-  /* MPS-ACC-028. Art Lab carries one confirmed enrollment and one
+  /* MPS-ACC-028. Tutoring carries one confirmed enrollment and one
      payment_pending one, so this asserts both halves at once: the confirmed
      child is on the roster exactly once, and the other child is not. */
   test("lists the confirmed student exactly once", async ({ page }) => {

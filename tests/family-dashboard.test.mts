@@ -100,6 +100,19 @@ describe("nextAction", () => {
     assert.match(action!.body, /not yet confirmed/)
   })
 
+  it("says a started registration awaits checkout without claiming it was opened", () => {
+    const action = nextAction(STUDENTS, [
+      enrollment("confirmed"),
+      enrollment("started"),
+    ])
+    assert.equal(action?.title, "A registration is waiting on checkout")
+    /* Following the checkout link is not recorded, so nothing may say it happened. */
+    assert.doesNotMatch(`${action?.title} ${action?.body}`, /was started|paid/i)
+    assert.match(action!.body, /not confirmed/)
+    /* The page that carries this enrollment's own checkout, not a list. */
+    assert.equal(action?.href, "/family/enrollments/enrollment-started")
+  })
+
   it("never lets a confirmed enrollment mask an unresolved one", () => {
     for (const unresolved of [
       "started",
@@ -120,10 +133,10 @@ describe("nextAction", () => {
     }
   })
 
-  it("offers the catalog only when there is genuinely nothing", () => {
+  it("offers family registration only when there is genuinely nothing", () => {
     const action = nextAction(STUDENTS, [])
-    assert.equal(action?.title, "Explore what is on offer")
-    assert.equal(action?.href, "/programs")
+    assert.equal(action?.title, "Register for programs")
+    assert.equal(action?.href, "/family/registration")
   })
 
   it("stays quiet when every enrollment is settled", () => {

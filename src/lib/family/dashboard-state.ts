@@ -96,13 +96,20 @@ export function nextAction(
     }
   }
 
-  if (enrollments.some((enrollment) => enrollment.state === "started")) {
+  /* `started` means the registration is recorded and its checkout is offered.
+     It does not mean the parent opened checkout — following the link is not
+     recorded, because navigation is not a payment event — so the action says
+     only what is known and leads to the page that carries the checkout. */
+  const awaitingCheckout = enrollments.find(
+    (enrollment) => enrollment.state === "started",
+  )
+  if (awaitingCheckout) {
     return {
       tone: "attention",
-      title: "Checkout was started",
-      body: "Checkout was started on Home School Haven's payment provider and no result has been recorded yet. Enrollment is not confirmed.",
-      href: "/family/schedule",
-      linkLabel: "View Details",
+      title: "A registration is waiting on checkout",
+      body: "Its checkout is on Home School Haven's own payment page. Payment and enrollment are not confirmed until Home School Haven verifies them.",
+      href: `/family/enrollments/${awaitingCheckout.id}`,
+      linkLabel: "View Registration",
     }
   }
 
@@ -148,13 +155,17 @@ export function nextAction(
     }
   }
 
+  /* Nothing registered yet: the next step is the family registration itself
+     (Slice 3), which lists the published programs inside it. Sending the
+     parent to the public catalog first would add a detour before the same
+     form. */
   if (enrollments.length === 0) {
     return {
       tone: "calm",
-      title: "Explore what is on offer",
-      body: "Your family has no registrations yet. Have a look at the programs Home School Haven has published.",
-      href: "/programs",
-      linkLabel: "Browse Programs",
+      title: "Register for programs",
+      body: "Your family has no registrations yet. You can register one or more children for Home School Haven's programs in one form.",
+      href: "/family/registration",
+      linkLabel: "Start Registration",
     }
   }
 

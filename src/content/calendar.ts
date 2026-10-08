@@ -1,17 +1,25 @@
 /**
  * Published calendar — Foundation Release staging module.
  *
- * Every entry here comes from the "Calendar inventory" table in
- * `mps/BETA-CONTENT-IMPORT-INVENTORY.md`, plus the one program range whose
- * published text carries an explicit year. Import rules 1, 3, and 7 apply
+ * Every dated entry here comes from the "Calendar inventory" table in
+ * `mps/BETA-CONTENT-IMPORT-INVENTORY.md`. Import rules 1, 3, and 7 apply
  * without exception:
  *
  *   - published detail text is preserved exactly as written;
  *   - an entry is plotted on the month grid ONLY when the source publishes a
- *     day and a year. Ranges such as Sewing's "September 15–October 5" publish
- *     no year, and choosing one would invent a fact, so they are not plotted;
- *   - a chronology the source publishes oddly is preserved for review, never
- *     silently corrected (QA-002).
+ *     day and a year. A weekly schedule ("Wednesday, 4:45–6:15 PM") or a month
+ *     range ("October–June") publishes neither, and choosing one would invent a
+ *     fact, so those are listed beside the grid instead;
+ *   - a chronology the source publishes oddly is never silently corrected.
+ *
+ * WHAT CHANGED WITH THE OWNER EVIDENCE OF 2026-09-14
+ *
+ * The Art Lab range left with the offering, which is archived. The month-level
+ * "term ranges" that used to live here as a second copy of program facts are
+ * gone too: `scheduleAndSeasons` derives them from the published programs
+ * themselves, so the calendar and the program pages can never disagree
+ * (MPS-REQ-020). That also retires QA-002's "August 2026–May 2026": the owner
+ * evidence gives Ready Set as "August–May", with no year.
  *
  * WHAT CHANGED IN HSH-SLICE-ADM-04
  *
@@ -27,9 +35,10 @@
  * a parameter so a caller can pass either set or both.
  */
 
+import type { Program } from "./programs"
+import { OFFERING_ORDER } from "../lib/programs/offering-groups.ts"
+
 const INVENTORY = "BETA-CONTENT-IMPORT-INVENTORY — Calendar inventory"
-const PROGRAM_INVENTORY =
-  "BETA-CONTENT-IMPORT-INVENTORY — Published program inventory"
 
 /**
  * A dated entry. `start` and `end` are inclusive ISO `YYYY-MM-DD` dates and are
@@ -58,20 +67,6 @@ export type CalendarEntry = {
   state?: "scheduled" | "rescheduled" | "canceled" | "completed"
 }
 
-/**
- * A range the source publishes at month resolution only. These are never drawn
- * as day cells, because the source does not publish the days.
- */
-export type CalendarTermRange = {
-  id: string
-  title: string
-  /** Published range text, preserved as written — including QA-002. */
-  publishedRange: string
-  /** Set when the published text carries an open content-QA flag. */
-  qaNote: string | null
-  source: string
-}
-
 export const calendarEntries: CalendarEntry[] = [
   {
     id: "summer-break",
@@ -97,54 +92,68 @@ export const calendarEntries: CalendarEntry[] = [
     publishedDetail: "August 4, 2026.",
     start: "2026-08-04",
     end: "2026-08-04",
-    program: {
-      slug: "ready-set-prep-and-learn",
-      name: "Ready Set Prep & Learn",
-    },
+    /* The published title names Ready Set Prep, which is now its own
+       offering. */
+    program: { slug: "ready-set-prep", name: "Ready Set Prep" },
     source: INVENTORY,
   },
   {
-    /* The only program range whose published text states a year. The rest
-       ("September 15–October 5", "August 20–September 24", …) do not, and
-       assigning them one would invent a fact. */
-    id: "art-lab",
-    title: "Art Lab",
-    publishedDetail: "August 22–September 26, 2026.",
-    start: "2026-08-22",
-    end: "2026-09-26",
-    program: { slug: "art-lab", name: "Art Lab" },
-    source: PROGRAM_INVENTORY,
-  },
-  {
     id: "haven-days-begins",
+    /* Title kept as published; the offering is now named Haven Days. */
     title: "Haven Days Enrichment begins",
     publishedDetail: "September 1, 2026.",
     start: "2026-09-01",
     end: "2026-09-01",
-    program: { slug: "haven-days-enrichment", name: "Haven Days Enrichment" },
+    program: { slug: "haven-days-enrichment", name: "Haven Days" },
     source: INVENTORY,
   },
 ]
 
-export const calendarTermRanges: CalendarTermRange[] = [
-  {
-    id: "ready-set-prep-range",
-    title: "Ready Set Prep operating range",
-    /* QA-002: preserved verbatim. Writing 2027 here would be a silent
-       correction the owner has not authorized. */
-    publishedRange: "August 2026–May 2026",
-    qaNote:
-      "Published as written. The end of this range is under review with Home School Haven.",
-    source: INVENTORY,
-  },
-  {
-    id: "haven-days-range",
-    title: "Haven Days Enrichment range",
-    publishedRange: "September 2026–June 2027",
-    qaNote: null,
-    source: INVENTORY,
-  },
-]
+/**
+ * A published offering that recurs by weekday or runs by month, as the calendar
+ * lists it beside the grid.
+ */
+export type ScheduleAndSeason = {
+  slug: string
+  name: string
+  /** Published weekday and time text, verbatim, or `null`. */
+  schedule: string | null
+  /** Published month range, verbatim, or `null`. Never carries an invented year. */
+  season: string | null
+}
+
+/**
+ * Every published program with a weekly schedule or a month range, ordered by
+ * offering group and then by the order the caller passed.
+ *
+ * Derived rather than stored, so the calendar shows exactly the text the
+ * program pages show. Nothing here is plotted on a day: none of it publishes a
+ * day and a year.
+ *
+ * @param programs - Published programs, in display order.
+ * @returns One entry per program that publishes a schedule or a season.
+ */
+export function scheduleAndSeasons(
+  programs: readonly Program[],
+): ScheduleAndSeason[] {
+  const rank = (program: Program) =>
+    program.offeringType === null
+      ? OFFERING_ORDER.length
+      : OFFERING_ORDER.indexOf(program.offeringType)
+
+  return programs
+    .map((program, index) => ({ program, index }))
+    .filter(
+      ({ program }) => program.publishedSchedule || program.publishedDates,
+    )
+    .sort((a, b) => rank(a.program) - rank(b.program) || a.index - b.index)
+    .map(({ program }) => ({
+      slug: program.slug,
+      name: program.name,
+      schedule: program.publishedSchedule,
+      season: program.publishedDates,
+    }))
+}
 
 /** A month, identified the way the grid navigates it. `month` is 0-indexed. */
 export type MonthKey = { year: number; month: number }

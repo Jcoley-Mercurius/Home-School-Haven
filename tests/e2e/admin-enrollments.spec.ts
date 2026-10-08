@@ -72,18 +72,30 @@ const LOCAL_STACK = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
 )
 
+/** Above db:reset's worst case: three bounded attempts plus health waits. */
+const RESET_TIMEOUT_MS = 1_500_000
+
 /** Rebuild the sanitized fixture. Local stack only. */
 function reseed() {
-  execFileSync("npm", ["run", "db:reset"], { stdio: "inherit" })
+  /* `execFileSync` blocks the worker's event loop, so Playwright's hook
+     timeout cannot fire while it runs: a hung reset stalled a whole sweep for
+     41 minutes on 2026-09-19. The bound has to live on the call itself.
+     db:reset bounds each of its attempts (scripts/db-reset.mjs), so this
+     outer limit is only a backstop above its worst case. */
+  execFileSync("npm", ["run", "db:reset"], {
+    stdio: "inherit",
+    timeout: RESET_TIMEOUT_MS,
+    killSignal: "SIGKILL",
+  })
 }
 
 test.beforeAll(async () => {
-  test.setTimeout(300_000)
+  test.setTimeout(RESET_TIMEOUT_MS + 60_000)
   if (LOCAL_STACK) reseed()
 })
 
 test.afterAll(async () => {
-  test.setTimeout(300_000)
+  test.setTimeout(RESET_TIMEOUT_MS + 60_000)
   if (LOCAL_STACK) reseed()
 })
 
@@ -231,7 +243,7 @@ test.describe("the trust contract", () => {
   test("states non-confirmation in words, not by absence of a tick", async ({
     page,
   }) => {
-    await openDrawer(page, "Sample Student A1", "Art Lab")
+    await openDrawer(page, "Sample Student A1", "Tutoring")
     const dialog = page.getByRole("dialog")
     await expect(dialog).toContainText("not yet confirmed")
     await expect(dialog).toContainText("cannot verify a payment")
@@ -249,7 +261,7 @@ test.describe("the trust contract", () => {
 
   test("puts no student name or record id in the URL", async ({ page }) => {
     await page.goto("/admin/enrollments?state=confirmed")
-    await openDrawer(page, "Sample Student A1", "Haven Days Enrichment")
+    await openDrawer(page, "Sample Student A1", "Haven Days")
     /* The drawer opens from data the list already carries. Nothing about a
        child reaches the address bar, the history, or a referrer header. */
     expect(page.url()).not.toMatch(/Sample|Student|[0-9a-f]{8}-[0-9a-f]{4}/i)
@@ -323,7 +335,7 @@ test.describe("accessibility and responsive behaviour", () => {
   test("the open drawer has no axe violations", async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop)
     await page.goto("/admin/enrollments")
-    await openDrawer(page, "Sample Student A1", "Art Lab")
+    await openDrawer(page, "Sample Student A1", "Tutoring")
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
       .analyze()
@@ -409,7 +421,7 @@ test.describe.serial("approved state changes", () => {
   }) => {
     /* Sample Student A2's enrollment is `approval_pending`: all four targets
        are reachable from it. */
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     const dialog = page.getByRole("dialog")
     for (const action of [
       "Confirm enrollment",
@@ -422,7 +434,7 @@ test.describe.serial("approved state changes", () => {
   })
 
   test("a change requires a recorded reason", async ({ page }) => {
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     await page.getByRole("button", { name: "Hold for review" }).click()
 
     const confirm = page.getByRole("dialog").last()
@@ -439,7 +451,7 @@ test.describe.serial("approved state changes", () => {
     page,
     context,
   }) => {
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     await page.getByRole("button", { name: "Hold for review" }).click()
 
     const confirm = page.getByRole("dialog").last()
@@ -486,7 +498,7 @@ test.describe.serial("approved state changes", () => {
   }) => {
     /* The record is `blocked` from the previous test. Holding it again must
        write nothing and record nothing — what makes a double-click safe. */
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     const dialog = page.getByRole("dialog")
     /* `blocked` cannot transition to itself, so the button is not offered at
        all — the strongest possible form of the same guarantee. */
@@ -501,7 +513,7 @@ test.describe.serial("approved state changes", () => {
   test("a confirmation warns that it cannot be undone", async ({ page }) => {
     /* GAP-ADMIN-008: no approved correction path exists, so the warning has to
        come before the decision — after it there is nothing to offer. */
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     await page.getByRole("button", { name: "Confirm enrollment" }).click()
 
     const confirm = page.getByRole("dialog").last()
@@ -515,7 +527,7 @@ test.describe.serial("approved state changes", () => {
   test("cancelling states that it issues no refund, credit, or transfer", async ({
     page,
   }) => {
-    await openDrawer(page, "Sample Student A2", "Harvest Explorers")
+    await openDrawer(page, "Sample Student A2", "Crochet")
     await page.getByRole("button", { name: "Cancel enrollment" }).click()
 
     const confirm = page.getByRole("dialog").last()
@@ -529,7 +541,7 @@ test.describe.serial("approved state changes", () => {
   test("a confirmed enrollment offers only cancellation", async ({ page }) => {
     /* Sample Student A1 holds the seeded `confirmed` enrollment. */
     await page.goto("/admin/enrollments?state=confirmed")
-    await openDrawer(page, "Sample Student A1", "Haven Days Enrichment")
+    await openDrawer(page, "Sample Student A1", "Haven Days")
     const dialog = page.getByRole("dialog")
     await expect(
       dialog.getByRole("button", { name: "Cancel enrollment" }),

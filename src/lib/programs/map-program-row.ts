@@ -19,6 +19,7 @@ export type ProgramRow = Pick<
   Tables<"programs">,
   | "slug"
   | "name"
+  | "offering_type"
   | "published_dates"
   | "published_schedule"
   | "published_duration"
@@ -53,6 +54,7 @@ export function mapProgramRow(row: ProgramRow): Program {
   return {
     slug: row.slug,
     name: row.name,
+    offeringType: row.offering_type,
     publishedDates: row.published_dates,
     publishedSchedule: row.published_schedule,
     publishedDuration: row.published_duration,

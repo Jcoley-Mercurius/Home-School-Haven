@@ -11,7 +11,7 @@ mts:
   mds_project_id: "home-school-haven-learning-platform"
   mds_version: "v1.0"
   created_at: "2026-08-26"
-  updated_at: "2026-08-27"
+  updated_at: "2026-09-19"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -64,8 +64,8 @@ existing_system:
   repositories:
     - name: "Target application repository"
       classification: observed
-      status: "Will be supplied later"
-      inspection_status: "Unavailable; Gate 2 remains blocked"
+      status: "https://github.com/Jcoley-Mercurius/Home-School-Haven (supplied; corrected 2026-09-16)"
+      inspection_status: "Inspected and implemented against since 2026-08-27: Next.js 16.3.3 App Router + TypeScript, Supabase migrations under supabase/migrations with pgTAP tests, Playwright + @axe-core/playwright, Vercel preview from release/foundation-preview. Per-slice inspection evidence is recorded in prompts/. Not a verification of the full release."
   runtime: {}
   deployment: {}
   packages: []
@@ -110,8 +110,9 @@ capabilities:
     strategy: integrate
     candidates: ["Next.js on Vercel"]
     approved_selection: "Next.js App Router with TypeScript on Vercel"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Next.js 16 App Router + TypeScript; Vercel preview from release/foundation-preview (deployment 6910844267 at 4cf66d4 succeeded, protected). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: []
   - id: MTS-CAP-002
@@ -129,8 +130,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase Auth"]
     approved_selection: "Supabase Auth with server-managed sessions and recovery"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Supabase Auth sign-in, invitation provisioning, and password recovery (prompts/supabase-auth-foundation.md, family-invitation-provisioning.md). Custom SMTP through Resend is not configured yet (MTS-CAP-009). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: [MTS-RSK-001]
   - id: MTS-CAP-003
@@ -148,8 +150,9 @@ capabilities:
     strategy: configure
     candidates: ["Supabase Row Level Security plus server authorization"]
     approved_selection: "Server-derived roles and assignments enforced through application checks and deny-by-default Supabase RLS"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Server-derived roles and deny-by-default RLS with pgTAP coverage (supabase/tests/database) and the cross-role matrix (tests/e2e/authorization.spec.ts). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-004
@@ -167,8 +170,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase Postgres"]
     approved_selection: "Supabase Postgres with versioned migrations, generated types, and attributable audit history"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "25 versioned migrations, generated types matched against the hosted project 2026-10-07, attributable audit history for material changes. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-005
@@ -186,8 +190,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase-backed in-app administration", "Sanity"]
     approved_selection: "Supabase-backed in-app program and course administration; Sanity deferred for Foundation Release"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Supabase-backed program administration and public offering model (prompts/admin-operations-foundation.md, public-offering-model.md). No Sanity. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-006
@@ -205,8 +210,9 @@ capabilities:
     strategy: keep_and_integrate
     candidates: ["Existing program-specific checkout URLs with manual reconciliation"]
     approved_selection: "Existing checkout links with explicit pending/unknown states and authorized manual administrator verification"
-    implementation_status: existing
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Approved GoDaddy links per program; checkout only on a family's own started registration; manual audited administrator verification (prompts/external-checkout-payment-truth.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: [MTS-RSK-002]
   - id: MTS-CAP-007
@@ -224,8 +230,9 @@ capabilities:
     strategy: build
     candidates: ["Next.js server-controlled forms with Supabase records and Cloudflare Turnstile"]
     approved_selection: "Server-validated inquiry and private-assistance intake; Turnstile before public or real-family activation"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Server-validated inquiry and private assistance intake built (prompts/inquiry-capture-foundation.md). Cloudflare Turnstile not yet integrated; required before public or real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-008
@@ -243,8 +250,9 @@ capabilities:
     strategy: integrate
     candidates: ["Supabase private Storage", "Cloudflare R2 recovery copy"]
     approved_selection: "Private Supabase Storage with signed scoped access and scheduled Cloudflare R2 recovery copy before real-family activation"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Private program-resources bucket with signed scoped access (src/lib/content/storage.ts). Scheduled Cloudflare R2 recovery copy not built; required before real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-003]
   - id: MTS-CAP-009
@@ -262,8 +270,9 @@ capabilities:
     strategy: integrate
     candidates: ["Resend through Supabase custom SMTP"]
     approved_selection: "Resend for authentication and transactional email using the controlled domain and Supabase custom SMTP"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Program announcements built (prompts/program-announcements-resources.md). Resend custom SMTP, domain authentication, and transactional notifications not configured. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-010
@@ -281,8 +290,9 @@ capabilities:
     strategy: build
     candidates: ["Versioned consent records in Supabase Postgres"]
     approved_selection: "Structured Supabase consent evidence and policy versioning; real-family use remains policy-gated"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Versioned registration documents, acceptance evidence, and renewal mechanics built and tested, sample-only; no approved document version can exist until the approval lock is lifted (MPS GAP-014). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002, MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-011
@@ -300,8 +310,9 @@ capabilities:
     strategy: integrate
     candidates: ["Vercel runtime logs", "PostHog browser error tracking", "Sentry"]
     approved_selection: "Vercel runtime logs plus privacy-scrubbed PostHog browser errors; Sentry deferred until evidenced"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Vercel runtime logs only. PostHog browser-error visibility is staged and not integrated. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-001]
     risks: []
   - id: MTS-CAP-012
@@ -319,8 +330,9 @@ capabilities:
     strategy: configure_and_integrate
     candidates: ["Vercel previews", "Playwright and axe", "Supabase Pro backups", "Cloudflare R2 recovery"]
     approved_selection: "Vercel preview/deployment, repository-compatible TypeScript/ESLint, Playwright, axe, screenshot/ARIA checks, Supabase Pro database backups, and R2 object recovery"
-    implementation_status: absent
+    implementation_status: partial
     validation_status: unverified
+    implementation_evidence: "Vercel preview, TypeScript, ESLint, Playwright, axe, screenshot and ARIA checks in place. Supabase Pro backups, the R2 copy, and a tested restore are not in place; required before real-family activation. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-001, MTS-CAP-004]
     risks: []
   - id: MTS-CAP-013
@@ -338,8 +350,9 @@ capabilities:
     strategy: staged_integrate
     candidates: ["Structured walkthrough evidence", "PostHog Free"]
     approved_selection: "Structured feedback for the first walkthrough; PostHog Free after core stability on anonymous public routes only"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Structured walkthrough evidence and feedback classification at /admin/reports (prompts/beta-review-evidence-classification.md). PostHog public analytics remains a later staged step. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-011]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-014
@@ -359,6 +372,7 @@ capabilities:
     approved_selection: "Server-generated calendar download with minimum private detail when retained in Should scope"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "No calendar download exists. Should scope; not required for the walkthrough. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004]
     risks: []
   - id: MTS-CAP-015
@@ -376,8 +390,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase Postgres attendance records"]
     approved_selection: "Assignment-scoped Supabase attendance records when retained in Should scope"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Assignment-scoped session attendance (prompts/schedule-capacity-waitlist-attendance.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-003, MTS-CAP-004]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-016
@@ -395,8 +410,9 @@ capabilities:
     strategy: build
     candidates: ["Supabase relational capacity and waitlist state"]
     approved_selection: "Supabase-backed program-specific capacity and waitlist state"
-    implementation_status: absent
+    implementation_status: implemented
     validation_status: unverified
+    implementation_evidence: "Program-specific capacity and waitlist state (prompts/schedule-capacity-waitlist-attendance.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-004, MTS-CAP-006]
     risks: []
   - id: MTS-CAP-017
@@ -416,6 +432,7 @@ capabilities:
     approved_selection: "Supabase Auth and explicit family-membership invitations if retained after Should-scope complexity review"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "The invited_guardian role exists in the schema, but no secondary-guardian invitation flow is built (prompts/family-invitation-provisioning.md). Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: [MTS-CAP-002, MTS-CAP-003]
     risks: [MTS-RSK-001]
   - id: MTS-CAP-018
@@ -435,6 +452,7 @@ capabilities:
     approved_selection: "No Foundation Release implementation; future-platform capability only"
     implementation_status: absent
     validation_status: unverified
+    implementation_evidence: "Deferred by MTS-DEC-004; correctly not built. Reconciled 2026-10-07 (prompts/foundation-review-readiness.md)."
     dependencies: []
     risks: [MTS-RSK-004]
 
@@ -579,7 +597,7 @@ governance:
     - {id: MTS-DEC-025, area: ui_implementation, key: styling_primitives_icons, value: "MDS CSS variables with constrained Tailwind v4, the accessible primitives already installed in the repository (@base-ui/react via the shadcn base-nova setup), and Lucide React at 1.75 px rounded strokes; do not add Radix Primitives", status: approved, source: "Repository inspection on 2026-08-27 and Josh Coley explicit approval", rationale: "The repository already ships @base-ui/react and no Radix package; adding Radix would duplicate the primitive layer that MTS forbids, and Base UI supplies the same focus, keyboard, and WAI-ARIA behavior without visual opinions", approved_at: "2026-08-27", introduced_version: "v1.0", deprecated_version: null, supersedes: MTS-DEC-022, dependencies: [MTS-CAP-001]}
     - {id: MTS-DEC-024, area: ai, key: foundation_runtime_ai, value: "No runtime AI capability in Foundation Release", status: approved, source: "MPS capability evidence and Josh Coley blanket MTS approval", rationale: "No approved Foundation requirement needs runtime AI", approved_at: "2026-08-26", introduced_version: "v1.0", deprecated_version: null, dependencies: []}
   gaps:
-    - {id: MTS-GAP-001, area: inspection, statement: "The target application repository will be supplied later; manifests, schemas, deployment configuration, tests, and environment-variable names cannot yet be inspected.", severity: high, status: open, owner: "Project team", resolution_trigger: "Repository supplied"}
+    - {id: MTS-GAP-001, area: inspection, statement: "The target application repository will be supplied later; manifests, schemas, deployment configuration, tests, and environment-variable names cannot yet be inspected.", severity: high, status: resolved, owner: "Project team", resolution_trigger: "Repository supplied", resolution: "Repository supplied and inspected (MTS-CHG-007). Recorded as resolved on 2026-09-16; the state had not been updated when inspection happened."}
     - {id: MTS-GAP-002, area: delivery_constraints, statement: "Implementation ownership, budget ceiling, and review timeline are confirmed; architecture should favor low-operational-burden managed services within the stated ceiling.", severity: high, status: resolved, owner: "Josh Coley / project team", resolution: "Josh with Codex; 2–5 day Samantha-review window; under $100/month with free tiers explored"}
     - {id: MTS-GAP-003, area: payments, statement: "Only current checkout links are available; the provider, technical integration surface, account ownership, test mode, and authoritative payment-status signal remain unverified.", severity: high, status: open, owner: "Samantha Dodson"}
     - {id: MTS-GAP-004, area: product_policy, statement: "MPS-GAP-005 remains open for parental authority, child-data fields, consent, retention, deletion, media, communication, and staff-access policy.", severity: critical, status: open, owner: "Samantha Dodson", routed_to: MPS}
@@ -643,6 +661,88 @@ governance:
       version_impact: "Backward-compatible substitution within MTS v1.0; no change to architecture, data, security, or deployment decisions"
       affected_artifacts: [state, selection_record, mds_implementation_manifest, agents_md]
       recorded_at: "2026-08-26"
+    - id: MTS-CHG-007
+      area: inspection
+      previous_value: "Repository unavailable; inspection gate not started; MTS-GAP-001 open"
+      new_value: "Repository supplied and inspected; inspection gate complete; MTS-GAP-001 resolved"
+      reason: "Stale state corrected during Closeout Slice 1. Implementation has run against the inspected repository since 2026-08-27 (see MTS-DEC-025 and prompts/)."
+      version_impact: "State correction only; no architecture decision changed and no release verification claimed"
+      affected_artifacts: [state]
+      recorded_at: "2026-09-16"
+    - id: MTS-CHG-008
+      area: data_model
+      previous_value: "public.programs carries no offering classification; public program content was seeded from the 2026-08-26 website capture"
+      new_value: "public.offering_type enum and nullable programs.offering_type; a published program must carry one (table constraint plus admin_set_program_publication refusal); admin_update_program_facts accepts it; offering_type and summary are audited material fields; the nine offerings in the 2026-09-14 owner evidence are upserted by fixed id and five unsupported offerings are archived, never deleted"
+      reason: "Closeout Slice 1 (prompts/public-offering-model.md, approved 2026-09-16); Supabase remains the single system of record"
+      version_impact: "Additive migration 20260916000000_public_offering_model.sql within MTS v1.0; RLS unchanged; hosted application requires supabase db push by the owner"
+      affected_artifacts: [state]
+      recorded_at: "2026-09-16"
+      hosted_status: "APPLIED, verified 2026-09-18. `supabase migration list --linked` against uedgcwoxyhtirsihvrnf shows all 21 migrations, including 20260916000000, with matching remote timestamps. (Until 2026-09-17 it was unapplied with nothing partially applied; the owner ran `supabase db push --linked`.)"
+      verification: "`npm run db:types:check` PASSED on 2026-09-18: src/lib/supabase/database.types.ts matches the linked schema."
+      hosted_fixtures: "APPLIED 2026-09-18 by the owner (prompts/hosted-preview-fixture-refresh.md): seed.sql run against uedgcwoxyhtirsihvrnf with hsh_seed_environment=preview, psql exit 0. Verified read-only the same day with supabase db query --linked: educator assigned to Tutoring (…000c) and the draft fixture only; 7 enrollments on published programs (payment_pending, confirmed ×4, approval_pending, waitlisted); 6 sessions, 1 attendance record, 4 announcements, 4 resources, 4 inquiries; demo capacity and confirmation modes on Sewing, Gardening, Ready Set Sensory, Tutoring, Monthly Clubs; families A and B only, Sample Family Four removed; 6 sample accounts, passwords unchanged. Before the refresh the hosted fixtures predated the dashboard, enrollment, schedule, and inquiry slices. Seeded rows bypass record_program_audit, as all seeding does."
+    - id: MTS-CHG-009
+      area: data_model
+      previous_value: "The 20260916000000 rollback header claimed prior content of …0002, …0005, and …0006 is recoverable from audit_events.changed_fields"
+      new_value: "The header names the columns record_program_audit actually treats as material, and states plainly that audience, import_status, source, unverified_details, image_*, and sort_order are NOT recoverable from the database"
+      reason: "Audit of 2026-09-17. The claim was false for every column the upsert writes that is not audited. The concrete loss on the hosted project is Gardening's prior unverified_details, the QA-001 session-length note, which the QA-007 price conflict replaces; the header now points at mps/BETA-CONTENT-IMPORT-INVENTORY.md as the restore source."
+      version_impact: "Comment only. No schema, function, grant, policy, or data change. Safe to edit in place because the migration has never been applied to the hosted project."
+      affected_artifacts: [state, "supabase/migrations/20260916000000_public_offering_model.sql"]
+      recorded_at: "2026-09-17"
+      routed_to: MPS
+      open_question: "Whether unverified_details, audience, import_status, source, image_*, and sort_order should join record_program_audit's material fields is an MPS-REQ-024 decision and was deliberately not made by the agent."
+    - id: MTS-CHG-010
+      area: data_model
+      previous_value: "No registration records; public.family_request_enrollment holds the only enrollment-creation evaluation; no document-version or acceptance-evidence model; no STEP UP model"
+      new_value: "Migration 20260918120000_family_registration_foundation.sql adds nine restricted, sample-only tables (registration_document_versions, registration_submissions, registration_children, registration_child_health, registration_contacts, registration_selections, registration_step_up_requests, registration_document_acceptances, registration_acceptance_children), six enums, and one atomic SECURITY DEFINER mutation, public.submit_family_registration(uuid, jsonb). It is idempotent per (submitted_by, idempotency_key) with a sha256 payload fingerprint (replayed or idempotency_conflict), atomic across children and selections (a blocked selection rolls back the whole submission through a subtransaction), locks program rows in program-id order, validates every payload field in SQL with path-only error messages, and writes one value-free audit event. The family_request_enrollment evaluation moved into private.request_enrollment_core without a behavior change (110_family_conversion_journey.test.sql unchanged and passing); both paths use it. registration_policy_satisfied(uuid) is always false while registration_document_versions_approval_locked forbids approved versions."
+      reason: "Slice 2 (prompts/registration-data-foundation.md, approved 2026-09-18); MPS DEC-025, EXC-002"
+      version_impact: "Additive within MTS v1.0. Deny-by-default RLS: family ownership and administrator read-only via private.can_read_registration; no educator policy and no change to educator_roster_students or educator_session_roster; anon holds nothing; no client INSERT/UPDATE/DELETE privilege or policy; evidence rows immutable (BEFORE UPDATE trigger). Grants are placed after all DDL (DEFECT-FF1)."
+      affected_artifacts: [state, "supabase/migrations/20260918120000_family_registration_foundation.sql", "supabase/seed.sql", "supabase/tests/database/160_family_registration_foundation.test.sql", "src/lib/registration/", "src/lib/supabase/database.types.ts"]
+      recorded_at: "2026-09-18"
+      hosted_status: "APPLIED by the owner on 2026-09-18, ahead of PR #28's merge. The owner ran supabase db push --linked and confirmed 20260918120000 in supabase migration list --linked. The owner then ran npm run db:types (linked), which regenerated src/lib/supabase/database.types.ts from the hosted schema: every registration type present, with only the template-only drift from MTS-CHG-011. That file is committed. The agent used no hosted credential at any point. Hosted sample document versions do not exist until seed.sql is re-run on the preview, so a hosted submission returns blocked_documents_unavailable."
+      verification: "Local, 2026-09-18: db:reset canonical; db:test 690/690 across 19 files (99 new in 160_family_registration_foundation); db:types:check -- --local OK; db:advisors --local shows no new security finding, only the multiple_permissive_policies performance WARN every family/admin table already carries."
+      rollback: "The migration header lists the drop order and restoring family_request_enrollment verbatim from 20260903000000. No hosted data exists to preserve."
+    - id: MTS-CHG-011
+      area: tooling
+      previous_value: "npm run db:types and db:types:check generate types only from the linked hosted project"
+      new_value: "npm run db:types:local and npm run db:types:check -- --local generate from the local stack; the linked defaults are unchanged"
+      reason: "Owner decision of 2026-09-18: a slice whose migration is not yet pushed must be verifiable without hosted credentials."
+      version_impact: "Tooling only. The local CLI (v2.111.0) omits the __InternalSupabase.PostgrestVersion block and parenthesizes some generic helpers differently from the hosted generator. That is template-only drift, and the owner's post-push npm run db:types restores the hosted template. typecheck passes with either."
+      affected_artifacts: [state, package.json, scripts/check-db-types.mjs]
+      recorded_at: "2026-09-18"
+    - id: MTS-CHG-012
+      area: data_security
+      previous_value: "Registration contract with optional emergency and pickup contacts, free-text-validated attendance days, a single-value STEP UP state, one non-retired document version per kind, acceptance keyed by kind, and no educator path to any registration data"
+      new_value: "Migrations 20260919120000_step_up_review_states.sql (enum values only) and 20260919120100_registration_readiness.sql. The latter adds: explicit has_medical_needs and has_accommodation_needs with details CHECKs; program_attendance_rules, program_attendance_days, and program_attendance_plans (public program facts, readable through programs RLS, seeded for the nine verified offerings) with admin_set_program_attendance; attendance validation and blocked_attendance_unconfigured in submit_family_registration; private.request_enrollment_core(…, require_review) so a STEP UP selection is approval_pending, never started; STEP UP outcomes via private.step_up_transition_allowed, a column-limited guard trigger, admin_set_step_up_state (compare-and-set, idempotent, audited, never touches enrollments), and admin_step_up_review_queue; one approved plus one draft document version per kind, private.presented_document_version, a version edit guard, registration_document_versions_approval_recorded (replacing approval_paired so a retired version keeps its approval time), acceptance unique per (registration, version, status) with a sha256 snapshot, registration_documents_requiring_acceptance, renew_registration_documents, and owner_publish_registration_document (returns blocked_approval_locked while the lock stands); and public.educator_child_safety(program), the only educator path to registration data."
+      reason: "Slice 2.5 (prompts/registration-readiness.md, approved 2026-09-19); MPS DEC-026–DEC-032"
+      version_impact: "Additive within MTS v1.0. No RLS policy on any registration_* table names an educator; the educator subset is an assignment-checked SECURITY DEFINER function rather than a view, so it adds no security_definer_view finding. Every sample-only lock stands: check (is_sample), demo-unapproved-v0, and registration_document_versions_approval_locked. Grants are last (DEFECT-FF1)."
+      hosted_status: "APPLIED by the owner on 2026-09-19. The owner ran supabase db push --linked, and supabase migration list --linked shows 20260919120000 and 20260919120100 in both the local and remote columns. The owner then ran npm run db:types (linked); the regenerated database.types.ts differed only by generator-template drift and is committed (5511c24). The agent used no hosted credential."
+      verification: "Local, 2026-09-19: db:reset canonical; db:test 854/854 across 21 files (112 in 170_registration_readiness, 52 in 180_registration_document_versions, 160 updated, 110 unchanged); test:unit 316/316; typecheck, lint, format:check, build pass; db:types:check -- --local OK; db:advisors --local shows no finding on any object added here."
+      rollback: "The 20260919120100 header lists the reverse order. It restores four functions, one policy, one index, and one trigger verbatim from 20260918120000, and restores approval_paired. Enum values need the type recreated (20260919120000 header); that is safe only while no row uses them."
+      open_risks: "programs.published_schedule (display text) and the structured attendance days can drift, because admin_set_program_attendance does not rewrite the text; the admin UI slice should edit both together. The educator safety function covers confirmed children only, matching the rosters."
+    - id: MTS-CHG-013
+      area: integration_scope
+      previous_value: "The registration UI sends a per-child step_up payload; a STEP UP selection is evaluated to approval_pending and enters the admin STEP UP review queue"
+      new_value: "The registration UI sends no step_up payload, so every selection takes the ordinary enrollment evaluation. registration_step_up_requests, the review states, admin_set_step_up_state, admin_step_up_review_queue, and the require_review path stay in the schema unused. The checkout slice decides whether to reuse, change, or remove them."
+      reason: "MPS DEC-033 (Samantha Dodson, relayed 2026-09-19): STEP UP is a scholarship coupon applied at the end of checkout; checkout is the same for every family"
+      version_impact: "None. Documents only: no migration, schema, type, or code change, and nothing to push."
+      recorded_at: "2026-09-19"
+    - id: MTS-CHG-014
+      area: integration
+      previous_value: "submit_family_registration had no caller; the TS contract still accepted an optional stepUp"
+      new_value: "Server action submitRegistrationAction (re-runs requireRole, validates the attempt key as a UUID, and calls submitFamilyRegistration with the cookie-bound client) is the only caller. The TS contract refuses any stepUp key. A 22023 refusal passes on only a grammar-checked payload path, never a value. Per-child states are read back under RLS (registration_selections, registration_children, enrollments, programs). The attempt key is generated once per page render (node:crypto) and reused for every retry, so a lost answer replays instead of recording twice."
+      reason: "Slice 3 (prompts/family-registration-ui.md)"
+      version_impact: "None. No migration, RLS, grant, dependency, environment variable, or Vercel change. Nothing to push."
+      recorded_at: "2026-09-19"
+      verification: "Local stack only: db:reset verified, db:test 854 pass, db:advisors unchanged from Slice 2.5 (14 multiple_permissive_policies WARN, 2 security_definer_view ERROR on the educator roster views, 2 function_search_path_mutable WARN; none from this slice). db:types:check --local reports only the hosted-template difference adopted in 5511c24 (__InternalSupabase.PostgrestVersion and parenthesized generics); every table, function, and enum declaration matches."
+    - id: MTS-CHG-015
+      area: integration
+      previous_value: "programs.checkout_url NULL everywhere; allowlist pay.homeschoolhaven.org only (inline regex in admin_update_program_facts); public program page rendered the handoff with no enrollment state"
+      new_value: "Migration 20260919200000_external_checkout_activation adds private.is_approved_checkout_url, which allows exactly pay.homeschoolhaven.org and poynt.godaddy.com/checkout/<Home School Haven business id>/<id>, with no query or fragment. admin_update_program_facts uses it, and the CHECK programs_checkout_url_approved enforces it on every write path. The migration stores the 8 verified mappings by fixed id, only where the value is NULL and the program is published, and each is audited. The TypeScript validation mirrors the allowlist. CheckoutHandoff renders a link only for a family's own started enrollment. There is no return route, webhook, payment record, or STEP UP write."
+      reason: "Slice 4 (prompts/external-checkout-payment-truth.md); MPS CHG-009"
+      version_impact: "One additive migration. No new service, dependency, environment variable, RLS policy, or grant. No Vercel or hosted Supabase change was made. The owner must run supabase db push."
+      recorded_at: "2026-09-19"
+      verification: "Local stack: db:reset verified; db:test 888 pass (34 new in 190_external_checkout); db:advisors shows the same 18 pre-existing findings and none for this slice; db:types:check --local reports only the hosted-template difference adopted in 5511c24, and locally generated types are byte-identical to the base."
+      finding: "Build-time program fetches are stored in .next/cache/fetch-cache (revalidate 31536000). A build can therefore render statically generated program pages from stale rows after a database change. It was observed locally and cleared. On Vercel, redeploy without the build cache after the hosted db push."
   versions:
     - {version: "v1.0", status: active, approved_at: "2026-08-26", summary: "Fully approved Home School Haven Foundation architecture and Codex handoff"}
 
@@ -669,12 +769,12 @@ gates:
       - "Record minors/privacy and unresolved product-policy blockers"
     blocking_items: []
     completed_at: "2026-08-26"
-  inspection: {status: not_started, requirements: ["Inspect target repository, runtime, configuration, schemas, tests, and deployment"], blocking_items: [MTS-GAP-001], completed_at: null}
+  inspection: {status: complete, requirements: ["Inspect target repository, runtime, configuration, schemas, tests, and deployment"], blocking_items: [], completed_at: "2026-08-27", note: "Recorded 2026-09-16 (MTS-CHG-007)"}
   capability_mapping: {status: complete, requirements: ["Trace approved MPS requirements and MDS states to technical capabilities"], blocking_items: [], completed_at: "2026-08-26"}
   research: {status: complete, requirements: ["Research viable providers from current first-party sources after disqualifying constraints are known"], blocking_items: [], completed_at: "2026-08-26"}
   recommendation: {status: complete, requirements: ["Compare viable keep/build/buy options and propose a coherent architecture"], blocking_items: [], completed_at: "2026-08-26"}
   approval: {status: complete, requirements: ["Obtain explicit approval for providers, persistent dependencies, data flows, cost, and lock-in"], blocking_items: [], completed_at: "2026-08-26"}
-  implementation_readiness: {status: in_progress, requirements: ["Produce blueprint, manifests, security architecture, plan, QA, and reconciled AGENTS.md", "Reconcile repository-specific paths, commands, packages, schemas, and deployment configuration"], blocking_items: [MTS-GAP-001], completed_at: null}
+  implementation_readiness: {status: in_progress, requirements: ["Produce blueprint, manifests, security architecture, plan, QA, and reconciled AGENTS.md", "Reconcile repository-specific paths, commands, packages, schemas, and deployment configuration"], blocking_items: [], note: "Repository reconciliation is ongoing per slice; mts/INTEGRATION-MANIFEST.md paths have not been re-audited against the repository.", completed_at: null}
   verification: {status: not_started, requirements: ["Verify implemented architecture, integrations, security, recovery, and synchronization"], blocking_items: [], completed_at: null}
 
 verification:

@@ -24,13 +24,13 @@ export {
   programs,
   publishedFacts,
   relatedPrograms,
-} from "./programs"
+} from "./programs.ts"
 export type {
   AvailabilityState,
   ImportStatus,
   PlaceholderImage,
   Program,
-} from "./programs"
+} from "./programs.ts"
 
 /**
  * Approved photography for the two home panels.
@@ -96,10 +96,12 @@ export const positioning = {
 
 /** Inventory "Contact, assistance, privacy, and checkout" rows. */
 export const contact = {
-  addressLines: [
-    "2930 Del Prado Boulevard South, Suite D",
-    "Cape Coral, Florida",
-  ],
+  /**
+   * Owner evidence of 2026-09-14 replaces the website-captured Del Prado
+   * Boulevard address everywhere. The previous address must not be
+   * reintroduced.
+   */
+  addressLines: ["1329 Hibiscus Drive", "Cape Coral, FL 33909"],
   /**
    * QA-003 resolved by owner decision 2026-08-27: the Contact-page number is
    * the single published number everywhere. The conflicting variant recorded in

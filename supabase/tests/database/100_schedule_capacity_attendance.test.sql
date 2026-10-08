@@ -39,7 +39,7 @@ select plan(76);
 \set educator '20000000-0000-4000-8000-00000000000e'
 \set norole   '20000000-0000-4000-8000-0000000000f0'
 
-\set art_lab  '10000000-0000-4000-8000-000000000004'
+\set tutoring  '10000000-0000-4000-8000-00000000000c'
 \set nature   '10000000-0000-4000-8000-000000000002'
 \set sewing   '10000000-0000-4000-8000-000000000005'
 \set draft    '10000000-0000-4000-8000-0000000000ff'
@@ -51,11 +51,11 @@ select plan(76);
 \set s_draft       '80000000-0000-4000-8000-0000000000f1'
 \set s_otherfamily '80000000-0000-4000-8000-0000000000f2'
 
--- The confirmed Art Lab enrollment. The only attendance-eligible record.
+-- The confirmed Tutoring enrollment. The only attendance-eligible record.
 \set e_confirmed_artlab '50000000-0000-4000-8000-000000000005'
--- Payment-pending, also Art Lab. Attendance must refuse it.
+-- Payment-pending, also Tutoring. Attendance must refuse it.
 \set e_paypending       '50000000-0000-4000-8000-000000000001'
--- Confirmed, but on Nature Explorers. Attendance at an Art Lab session must
+-- Confirmed, but on Haven Days. Attendance at an Tutoring session must
 -- refuse it: the pairing is well-formed and still wrong.
 \set e_other_program    '50000000-0000-4000-8000-000000000002'
 
@@ -132,7 +132,7 @@ set local request.jwt.claims = '{"role":"anon"}';
 
 select is(
   (select count(*)::int from public.program_sessions
-   where program_id = :'art_lab'),
+   where program_id = :'tutoring'),
   3,
   'a visitor reads the sessions of a published program'
 );
@@ -156,7 +156,7 @@ select is(
 
 select throws_ok(
   format($$ select public.admin_create_program_session(
-    %L, 'Forged', now(), now() + interval '1 hour', null) $$, :'art_lab'),
+    %L, 'Forged', now(), now() + interval '1 hour', null) $$, :'tutoring'),
   '42501',
   null,
   'a visitor cannot create a session'
@@ -170,10 +170,10 @@ set local role authenticated;
 set local request.jwt.claims =
   '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
--- The educator holds Art Lab and the draft fixture, and no others.
+-- The educator holds Tutoring and the draft fixture, and no others.
 select is(
   (select count(*)::int from public.program_sessions
-   where program_id = :'art_lab'),
+   where program_id = :'tutoring'),
   3,
   'an assigned educator reads their assigned published program''s sessions'
 );
@@ -201,7 +201,7 @@ select is(
 select throws_ok(
   format($$ select public.admin_create_program_session(
     %L, 'Educator authored', now(), now() + interval '1 hour', null) $$,
-    :'art_lab'),
+    :'tutoring'),
   '42501',
   null,
   'an assigned educator cannot create a session on their own program'
@@ -223,7 +223,7 @@ select throws_ok(
 );
 select throws_ok(
   format($$ select public.admin_set_program_capacity(%L, now(), 5, true) $$,
-    :'art_lab'),
+    :'tutoring'),
   '42501',
   null,
   'an assigned educator cannot set capacity (MPS-RUL-005)'
@@ -330,7 +330,7 @@ set local request.jwt.claims =
 
 select is(
   (select count(*)::int from public.program_sessions
-   where program_id = :'art_lab'),
+   where program_id = :'tutoring'),
   3,
   'a parent reads the schedule of a program their family holds'
 );
@@ -360,7 +360,7 @@ select throws_ok(
 );
 select throws_ok(
   format($$ select public.admin_set_program_capacity(%L, now(), 1, false) $$,
-    :'art_lab'),
+    :'tutoring'),
   '42501',
   null,
   'a parent cannot set capacity'
@@ -378,14 +378,14 @@ set local request.jwt.claims =
 
 select throws_ok(
   format($$ select public.admin_create_program_session(
-    %L, 'Forged', now(), now() + interval '1 hour', null) $$, :'art_lab'),
+    %L, 'Forged', now(), now() + interval '1 hour', null) $$, :'tutoring'),
   '42501',
   null,
   'a JWT metadata role claim does not create a session'
 );
 select throws_ok(
   format($$ select public.admin_set_program_capacity(%L, now(), 99, true) $$,
-    :'art_lab'),
+    :'tutoring'),
   '42501',
   null,
   'a JWT metadata role claim does not set capacity'
@@ -421,7 +421,7 @@ select lives_ok(
   format($$ select public.admin_create_program_session(
     %L, 'Sample session — added by test',
     now() + interval '30 days', now() + interval '30 days 1 hour',
-    'Sample location') $$, :'art_lab'),
+    'Sample location') $$, :'tutoring'),
   'an administrator creates a session'
 );
 select is(
@@ -447,7 +447,7 @@ select is(
 -- A session must end after it starts, and the rule lives in the database.
 select throws_ok(
   format($$ select public.admin_create_program_session(
-    %L, 'Backwards', now() + interval '2 hours', now(), null) $$, :'art_lab'),
+    %L, 'Backwards', now() + interval '2 hours', now(), null) $$, :'tutoring'),
   '22023',
   null,
   'a session that ends before it starts is refused'
@@ -467,7 +467,7 @@ select throws_ok(
 select throws_ok(
   format($$ select public.admin_update_program_session(
     %L, (select updated_at from public.program_sessions where id = %L),
-    'Sample session — Art Lab meeting',
+    'Sample session — Tutoring meeting',
     now() + interval '40 days', now() + interval '40 days 2 hours',
     'Sample location', null) $$, :'s_upcoming', :'s_upcoming'),
   '22023',
@@ -479,7 +479,7 @@ select is(
   (select public.admin_update_program_session(
     :'s_upcoming',
     (select updated_at from public.program_sessions where id = :'s_upcoming'),
-    'Sample session — Art Lab meeting',
+    'Sample session — Tutoring meeting',
     now() + interval '40 days', now() + interval '40 days 2 hours',
     'Sample location', 'Sample record. Moved for testing.')),
   'rescheduled',

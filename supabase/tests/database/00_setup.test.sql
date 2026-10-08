@@ -50,16 +50,19 @@ select is(
 -- only table added to that surface. A session of a PUBLISHED program is public
 -- information -- it is what the public calendar plots -- and the policy on that
 -- table admits nothing else: a draft or archived program's sessions reach no
--- visitor. Any third name appearing here is a mistake, which is what this
--- assertion is for.
+-- visitor. The three `program_attendance_*` tables joined in
+-- `20260919120100_registration_readiness.sql` on the same terms: the days a
+-- PUBLISHED program meets are public program facts (DEC-032), and their policy
+-- reads through `programs` RLS. Any other name appearing here is a mistake,
+-- which is what this assertion is for.
 select is(
   (
     select coalesce(string_agg(distinct table_name, ', ' order by table_name), '')
     from information_schema.table_privileges
     where table_schema = 'public' and grantee in ('anon', 'public')
   ),
-  'program_sessions, programs',
-  'anon and PUBLIC reach exactly two tables: programs and program_sessions'
+  'program_attendance_days, program_attendance_plans, program_attendance_rules, program_sessions, programs',
+  'anon and PUBLIC reach exactly programs, program_sessions, and the attendance configuration'
 );
 
 -- No client role may write a role grant. This is the privilege-layer half of

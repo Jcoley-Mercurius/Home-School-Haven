@@ -16,6 +16,10 @@ Import verified website content and program-specific checkout URLs. Build public
 
 Implement parent authentication, family setup, sanitized student profiles, duplicate/recovery behavior, program eligibility checks, checkout handoff, pending enrollment/payment states, and the family dashboard.
 
+Registration readiness (Slice 2.5, 2026-09-19, MTS-CHG-012) is complete at the data and design-specification level. The registration UI slice (Slice 3, 2026-09-19, MTS-CHG-014) is implemented at `/family/registration` as a sanitized preview. It uses `submit_family_registration`, the attendance rules, and `registration_documents_requiring_acceptance`, and follows MDS `DESIGN-SYSTEM.md` §9.1. It sends no STEP UP data (MPS DEC-033, MTS-CHG-013). STEP UP is a coupon applied at the end of checkout and belongs to a later checkout slice, which maps Samantha's GoDaddy classes and checkout and decides what happens to the existing STEP UP data model. The educator workspace reads child-safety data only through `educator_child_safety(program)`.
+
+External checkout (Slice 4, 2026-09-19, MTS-CHG-015) is activated from the approved classes page. See `prompts/external-checkout-payment-truth.md`. The owner must run `supabase db push` for `20260919200000_external_checkout_activation.sql`, then `npm run db:types:check`. STEP UP stays unbuilt: the approved checkout has no coupon field (MPS GAP-015). The unused Slice 2.5 STEP UP tables, states, and RPCs remain pending a retirement decision.
+
 ## Phase 4 — Educator and administration
 
 Implement assigned-program educator access, rosters with minimum approved fields, announcements/resources, and administrator program/enrollment/assignment operations with attributable history. Do not implement the future Course Builder.
@@ -23,6 +27,8 @@ Implement assigned-program educator access, rosters with minimum approved fields
 ## Phase 5 — Validate Samantha's walkthrough
 
 Run MPS acceptance, MDS visual/responsive/accessibility QA, MTS architecture/security checks, and exact manual paths. Deploy a private Vercel preview with sanitized fixtures. Record Samantha's feedback as approved change, gap, defect, or future idea without silently changing scope.
+
+Foundation Review readiness (2026-10-07, `prompts/foundation-review-readiness.md`) recorded a full end-to-end sweep with 710 passes, 2 failures, and 1 designed skip. Both failures passed on rerun; the triage and fixes are recorded in §13 of the readiness prompt. It also hardened `scripts/db-reset.mjs` against hung and failed container starts, confirmed the hosted project matches the code (types, all 25 migrations, canonical fixtures), and prepared the walkthrough packet at `docs/foundation-review-walkthrough.md`. Next: Samantha's walkthrough on the protected preview.
 
 ## Activation gate
 

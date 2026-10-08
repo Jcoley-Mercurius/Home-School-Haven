@@ -23,9 +23,9 @@
         - columnheader "Assigned programs"
         - columnheader "Action"
     - rowgroup:
-      - row "Sample Educator Linked Art Lab, Sample Unpublished Draft (test fixture) Manage Sample Educator's program assignments":
+      - row "Sample Educator Linked Sample Unpublished Draft (test fixture), Tutoring Manage Sample Educator's program assignments":
         - rowheader "Sample Educator"
         - cell "Linked"
-        - cell "Art Lab, Sample Unpublished Draft (test fixture)"
+        - cell "Sample Unpublished Draft (test fixture), Tutoring"
         - cell "Manage Sample Educator's program assignments":
           - button "Manage Sample Educator's program assignments"

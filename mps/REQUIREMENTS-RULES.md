@@ -10,7 +10,7 @@
 
 This document defines the approved product behavior required for the Must-priority Foundation Release beta. Requirements MPS-REQ-001 through MPS-REQ-024 are approved. Implementation remains unverified and absent.
 
-The beta is private, uses sample or sanitized student data, preserves the existing payment provider, and does not automate scholarship, refund, cancellation, credit, or transfer decisions. The current website's program and course listings are the approved beta content source, and the current program-specific `pay.homeschoolhaven.org` checkout links are the approved beta checkout path. Unresolved owner policy remains governed by the [Samantha Policy Confirmation Checklist](SAMANTHA-POLICY-CONFIRMATION-CHECKLIST.md).
+The beta is private, uses sample or sanitized student data, preserves the existing payment provider, and does not automate scholarship, refund, cancellation, credit, or transfer decisions. The current website's program and course listings are the approved beta content source, and the current program-specific checkout links are the approved beta checkout path. Those links are recorded exactly, per program, in the Beta Content Import Inventory's "Checkout source mapping (verified 2026-09-19)". The approved buttons open GoDaddy checkouts at `poynt.godaddy.com` under Home School Haven's own business path. `pay.homeschoolhaven.org` is a Home School Haven alias for the same service. Unresolved owner policy remains governed by the [Samantha Policy Confirmation Checklist](SAMANTHA-POLICY-CONFIRMATION-CHECKLIST.md).
 
 Content may be normalized for structure, layout, capitalization, spacing, and deduplication without changing published facts. Missing or structurally ambiguous program details must remain unset or flagged for review; they must not be invented. The source inventory and content-QA flags are recorded in [Beta Content Import Inventory](BETA-CONTENT-IMPORT-INVENTORY.md).
 
@@ -79,6 +79,10 @@ Content may be normalized for structure, layout, capitalization, spacing, and de
 ## Open blocking policy
 
 GAP-005 and GAP-010 remain unresolved until Samantha completes the applicable checklist sections. Under EXC-001, private beta design, content import, and owner walkthrough may proceed with sample or sanitized family data, published website content, and the current external checkout handoff. This does not authorize real-family activation, invented policy, automated financial exceptions, or an unverified claim of successful payment.
+
+Under EXC-002 (2026-09-18), sample-only registration infrastructure for health, contact, pickup, selection, document-acceptance, and STEP UP records may exist. It is locked to sample data at the database level and exposes no UI. MPS-RUL-006 still governs real-family collection. STEP UP is pending administrative verification only, and never payment, a discount, or confirmed enrollment (DEC-025). GAP-014 (legal document text), GAP-015 (STEP UP outcomes), and GAP-016 (sensitive-field purpose, viewers, retention, and deletion) block real-family activation.
+
+Under DEC-033 (2026-09-19), STEP UP is a scholarship coupon applied at the end of checkout, not part of registration. Every family completes the same registration and the same checkout; some pay in full and some apply a STEP UP coupon. The checkout slice defines the coupon and the fee and tuition rules by mapping Samantha's current GoDaddy setup (GAP-015). Neither a checkout nor an applied coupon is ever proof of payment or enrollment.
 
 ## Approval record
 

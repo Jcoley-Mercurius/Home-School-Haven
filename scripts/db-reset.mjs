@@ -77,11 +77,17 @@ const EXPECTED = [
   {
     query: `select string_agg(slug || '=' || publication_state::text, ',' order by slug)
       from public.programs;`,
+    /* Nine published offerings come from the 20260916000000 migration (owner
+       evidence of 2026-09-14); the five it no longer supports are seeded as
+       archived, and the draft is the test fixture. */
     expected:
-      "art-lab=published,etiquette-series=published,gardening=published," +
-      "harvest-explorers=published,haven-days-enrichment=published," +
-      "history-explorers=published,ready-set-prep-and-learn=published," +
-      "sample-unpublished-draft=draft,sewing=published",
+      "art-lab=archived,crochet=published,etiquette-series=archived," +
+      "gardening=published,harvest-explorers=archived," +
+      "haven-days-enrichment=published,history-explorers=archived," +
+      "monthly-clubs=published,ready-set-learn=published," +
+      "ready-set-prep=published,ready-set-prep-and-learn=archived," +
+      "ready-set-sensory=published,sample-unpublished-draft=draft," +
+      "sewing=published,tutoring=published",
     label: "programs",
   },
 ]
@@ -91,6 +97,14 @@ const API_URL = "http://127.0.0.1:54321"
 const ATTEMPTS = 3
 const HEALTH_TIMEOUT_MS = 120_000
 const API_TIMEOUT_MS = 60_000
+/**
+ * One `supabase db reset` normally finishes in one to three minutes here. On
+ * 2026-09-19 one sat for 41 minutes with no output and stalled a full e2e
+ * sweep, because nothing above it had a bound. Past this limit the attempt is
+ * killed and counted as failed, so the retry loop handles it like any other
+ * flake.
+ */
+const RESET_TIMEOUT_MS = 240_000
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -215,11 +229,38 @@ function resetDatabase() {
   const result = spawnSync(
     "supabase",
     ["db", "reset", "--local", "--no-seed"],
-    { encoding: "utf8" },
+    {
+      encoding: "utf8",
+      timeout: RESET_TIMEOUT_MS,
+      killSignal: "SIGKILL",
+      detached: true,
+    },
   )
   if (result.stdout) process.stdout.write(result.stdout)
   if (result.stderr) process.stderr.write(result.stderr)
+  if (isTimeout(result) && result.pid > 0) {
+    /* The detached wrapper leads its own process group. Kill only that
+       attempt's descendants so they cannot keep resetting under the retry. */
+    try {
+      process.kill(-result.pid, "SIGKILL")
+    } catch (error) {
+      // The wrapper and its descendants may already have exited.
+      if (error.code !== "ESRCH") throw error
+    }
+  }
   return result
+}
+
+/**
+ * Whether the reset was killed for exceeding RESET_TIMEOUT_MS.
+ * @param {ReturnType<typeof spawnSync>} result - The completed reset process.
+ * @returns {boolean} True when the attempt timed out.
+ */
+function isTimeout(result) {
+  return (
+    /** @type {NodeJS.ErrnoException | undefined} */ (result.error)?.code ===
+    "ETIMEDOUT"
+  )
 }
 
 /**
@@ -271,6 +312,28 @@ function isStorageHealthFailure(result) {
     result.status !== 0 &&
     migrationsCompleted &&
     (unhealthyStorage || storageGateway) &&
+    !/SQLSTATE|At statement:|failed to apply migration/i.test(output) &&
+    !/^ERROR:/m.test(output)
+  )
+}
+
+/**
+ * A container that failed to start during the reset, before any SQL ran.
+ *
+ * Seen 2026-10-07 inside a full e2e sweep: `Initialising schema...` then
+ * `error running container: exit 1`. Nothing was migrated, so unlike
+ * isStorageHealthFailure() this can never be overruled into a seed. But it is
+ * the same Docker flake the memory notes describe ("retry and it passes"), and
+ * throwing on it left the database EMPTY for every suite after it. So it
+ * retries the whole reset. SQL and migration errors stay fatal.
+ * @param {ReturnType<typeof spawnSync>} result - The completed reset process.
+ * @returns {boolean} Whether the attempt should simply be retried.
+ */
+function isContainerStartFailure(result) {
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`
+  return (
+    result.status !== 0 &&
+    /error running container: exit \d+/.test(output) &&
     !/SQLSTATE|At statement:|failed to apply migration/i.test(output) &&
     !/^ERROR:/m.test(output)
   )
@@ -379,6 +442,20 @@ async function main() {
     }
 
     const reset = resetDatabase()
+    if (isTimeout(reset)) {
+      console.warn(
+        `db:reset attempt ${attempt}/${ATTEMPTS} exceeded ${RESET_TIMEOUT_MS}ms and was killed`,
+      )
+      if (attempt < ATTEMPTS) await sleep(10_000)
+      continue
+    }
+    if (isContainerStartFailure(reset)) {
+      console.warn(
+        `db:reset attempt ${attempt}/${ATTEMPTS}: a container failed to start; retrying`,
+      )
+      if (attempt < ATTEMPTS) await sleep(10_000)
+      continue
+    }
     const storageHealthFailure = isStorageHealthFailure(reset)
     if (reset.status !== 0 && !storageHealthFailure) {
       throw reset.error ?? new Error(`supabase db reset exited ${reset.status}`)

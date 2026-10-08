@@ -76,7 +76,13 @@ MPS owns product-scope, business-rule, and acceptance validation. MTS owns archi
 ## Required manual scenarios
 
 1. Keyboard-only public discovery to program detail and guidance path.
-2. Enrollment handoff through the external-checkout notice, return-pending state, and not-confirmed state.
+2. Enrollment handoff through the external-checkout notice, return-pending state, and not-confirmed state. Slice 4 evidence (2026-09-19) is `tests/e2e/external-checkout.spec.ts`:
+   - Axe (WCAG 2.2 AA), no horizontal overflow, and screenshots at 390, 768, 1024, and 1440;
+   - an ARIA snapshot of the handoff region;
+   - keyboard reach with a visible outline and a 44 px target;
+   - no checkout for any state but `started`;
+   - the truthful unavailable state;
+   - two children receiving separately named checkouts (`tests/e2e/family-registration.spec.ts`).
 3. Family dashboard switching between multiple parent-controlled student profiles.
 4. Program with missing optional facts and a long title.
 5. Waitlist and assistance-request submissions.

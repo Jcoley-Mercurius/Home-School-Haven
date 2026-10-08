@@ -11,6 +11,25 @@ Review. They are owner-authorized for demo only (decision 2026-08-27).
 - Every usage carries alt text beginning "Placeholder photo — demo only".
 - They must not ship to a live or production environment.
 
+## Temporary Foundation Demo Preview exception (2026-09-03)
+
+So Samantha can review layout in a browser, a **Vercel Preview** deployment may
+build with these files present. That exception is opt-in and narrow:
+
+| `VERCEL_ENV` | `HSH_ALLOW_DEMO_PLACEHOLDERS` | Build |
+|---|---|---|
+| `production` | anything, including `true` | **blocked** |
+| `preview` | `true` | allowed, with a warning naming the imagery |
+| `preview` | unset or anything else | **blocked** |
+| any other or missing value on Vercel | anything | **blocked** |
+| not on Vercel (local build) | — | allowed, with the same warning |
+
+Set `HSH_ALLOW_DEMO_PLACEHOLDERS=true` on the Vercel **Preview** environment
+only. It is not a production override and cannot become one — the production
+check runs first and never consults the flag. The value must be the exact string
+`true`; `TRUE`, `1`, and `yes` fail closed. The exception ends when the files
+below are replaced.
+
 ## Replacing them with real photography
 
 Do not overwrite these in place. Approved photography goes in
@@ -24,10 +43,16 @@ When the last file here goes, delete this directory and
 `scripts/check-demo-placeholders.mjs` stops blocking production builds.
 
 `hero.jpg` and `community.jpg` were replaced with approved photography on
-2026-09-03 and deleted. What remains:
+2026-09-03 and deleted.
+
+`program-art-lab.jpg` and `program-harvest-explorers.jpg` were deleted on
+2026-09-17. The owner evidence of 2026-09-14 archived both offerings, so nothing
+referenced either file, and the footer disclaimer no longer covered them — but
+they were still being served. Unlabelled generated art of children is exactly
+what that disclaimer exists to prevent, so the files went with the offerings.
+
+What remains:
 
 | File | Used by | Aspect |
 |---|---|---|
-| `program-art-lab.jpg` | Art Lab card | ~0.96 : 1 |
-| `program-haven-days-enrichment.jpg` | Haven Days Enrichment card | ~1.05 : 1 |
-| `program-harvest-explorers.jpg` | Harvest Explorers card | 1 : 1 |
+| `program-haven-days-enrichment.jpg` | Haven Days card | ~1.05 : 1 |

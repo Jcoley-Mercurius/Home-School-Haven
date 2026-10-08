@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process"
+
 import AxeBuilder from "@axe-core/playwright"
 import type { Browser, Page } from "@playwright/test"
 
@@ -64,7 +66,10 @@ const ACCOUNTS = {
 
 /* The educator holds 0004 and 00ff, and holds neither 0002 nor 0005. Family A
    (sample.parent.one) is enrolled in 0004; family B is enrolled in 0005. */
-const ASSIGNED = { id: "10000000-0000-4000-8000-000000000004", name: "Art Lab" }
+const ASSIGNED = {
+  id: "10000000-0000-4000-8000-00000000000c",
+  name: "Tutoring",
+}
 const UNASSIGNED = { id: "10000000-0000-4000-8000-000000000002" }
 const OTHER_FAMILY_PROGRAM = { id: "10000000-0000-4000-8000-000000000005" }
 
@@ -76,6 +81,67 @@ const SEEDED = {
   otherFamilyAnnouncement: "60000000-0000-4000-8000-0000000000f2",
   draftResource: "70000000-0000-4000-8000-0000000000f1",
 } as const
+
+const LOCAL_DB = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+
+const LOCAL_STACK = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("127.0.0.1"),
+)
+
+/**
+ * Put announcements and learning resources back to the seeded set.
+ *
+ * This file composes, publishes, replaces, and removes content on the program
+ * family A holds. Left behind, those rows reach family A's dashboard and broke
+ * `family-dashboard.spec.ts`'s ARIA snapshot in every full sweep (Slice 4
+ * results). Only rows this file can have created are deleted. The seeded rows
+ * keep their ids and return to their seeded state, so the fixtures other
+ * specs read are unchanged. Local stack only, with psql, as
+ * `admin-reports.spec.ts` does.
+ */
+function restoreContentFixture() {
+  const announcements = `'60000000-0000-4000-8000-000000000001','60000000-0000-4000-8000-000000000002','60000000-0000-4000-8000-0000000000f1','60000000-0000-4000-8000-0000000000f2'`
+  const resources = `'70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','70000000-0000-4000-8000-0000000000f1','70000000-0000-4000-8000-0000000000f2'`
+  execFileSync(
+    "psql",
+    [
+      LOCAL_DB,
+      "-v",
+      "ON_ERROR_STOP=1",
+      /* Seeded rows first: deleting a successor sets `replaced_by_id` to
+         null, which a seeded row still in `replaced` would refuse. */
+      "-c",
+      `update public.announcements set replaced_by_id = null, removed_at = null,
+         state = case when id = '60000000-0000-4000-8000-0000000000f1'
+                      then 'draft' else 'published' end::public.content_state,
+         published_at = case when id = '60000000-0000-4000-8000-0000000000f1'
+                             then null else coalesce(published_at, now()) end
+         where id in (${announcements});`,
+      "-c",
+      `update public.learning_resources set replaced_by_id = null, removed_at = null,
+         state = case when id = '70000000-0000-4000-8000-0000000000f1'
+                      then 'draft' else 'published' end::public.content_state
+         where id in (${resources});`,
+      "-c",
+      `delete from public.announcements where id not in (${announcements});`,
+      "-c",
+      `delete from public.learning_resources where id not in (${resources});`,
+      "-c",
+      `delete from public.audit_events
+         where (entity_type = 'announcement' and entity_id not in (${announcements}))
+            or (entity_type = 'learning_resource' and entity_id not in (${resources}));`,
+    ],
+    { stdio: "pipe", timeout: 60_000 },
+  )
+}
+
+test.beforeAll(() => {
+  if (LOCAL_STACK) restoreContentFixture()
+})
+
+test.afterAll(() => {
+  if (LOCAL_STACK) restoreContentFixture()
+})
 
 /**
  * Strings that must never appear in any authenticated response body.
@@ -663,6 +729,9 @@ test.describe("file resources and signed download", () => {
     page,
     browser,
   }) => {
+    /* Three sign-ins, an upload, and a removal: it sat at the 30 s default
+       and timed out on the third sign-in (2026-10-07), not on an assertion. */
+    test.slow()
     await signIn(page, ACCOUNTS.educator)
     const title = `E2E file ${Date.now()}`
     const url = await composeFileResource(page, title)

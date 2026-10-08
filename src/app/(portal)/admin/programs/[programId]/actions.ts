@@ -81,6 +81,7 @@ function readFacts(formData: FormData): ProgramFactsValues {
     availability: read("availability"),
     checkoutUrl: read("checkoutUrl"),
     confirmationMode: read("confirmationMode"),
+    offeringType: read("offeringType"),
   }
 }
 
@@ -130,6 +131,7 @@ export async function saveProgramFactsAction(
         availability: firstOf("availability"),
         checkoutUrl: firstOf("checkoutUrl"),
         confirmationMode: firstOf("confirmationMode"),
+        offeringType: firstOf("offeringType"),
       },
       values,
     }
@@ -158,13 +160,19 @@ export async function saveProgramFactsAction(
     availability: parsed.data.availability,
     checkoutUrl: parsed.data.checkoutUrl,
     confirmationMode: parsed.data.confirmationMode,
+    offeringType: parsed.data.offeringType,
   })
 
   if (!result.ok) {
     if (result.reason === "rejected") {
       return {
         status: "invalid",
-        fieldErrors: { checkoutUrl: result.message },
+        /* 22023 carries one of two sentences: the checkout-host refusal, or
+           the refusal to leave a published program unclassified. Each belongs
+           beside its own field. */
+        fieldErrors: result.message?.includes("offering type")
+          ? { offeringType: result.message }
+          : { checkoutUrl: result.message },
         values,
       }
     }

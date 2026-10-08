@@ -16,13 +16,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  CHECKOUT_HOST,
+  CHECKOUT_DESTINATION_HINT,
   CHECKOUT_URL_MAX,
   FACT_MAX,
   PROGRAM_NAME_MAX,
   SUMMARY_MAX,
 } from "@/lib/admin/validation"
 import { CONFIRMATION_MODE } from "@/lib/enrollment/confirmation-mode"
+import { OFFERING_GROUPS, OFFERING_ORDER } from "@/lib/programs/offering-groups"
 import { AVAILABILITY } from "@/components/program/availability-badge"
 
 import type { ProgramFactsValues } from "@/app/(portal)/admin/programs/[programId]/form-state"
@@ -131,6 +132,7 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
       availability: program.availability,
       checkoutUrl: program.checkoutUrl,
       confirmationMode: program.confirmationMode,
+      offeringType: program.offeringType,
     }
     return fromRow[key] ?? ""
   }
@@ -295,6 +297,48 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
 
         <fieldset className="flex flex-col gap-[var(--hsh-space-3)]">
           <legend className="hsh-label mb-[var(--hsh-space-2)] text-[var(--hsh-text-primary)]">
+            Offering type
+          </legend>
+          <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
+            Decides which group the public catalog lists this program under. A
+            draft may stay unclassified; a published program needs one.
+          </p>
+          <div className="flex flex-col gap-[var(--hsh-space-2)]">
+            {[
+              ...OFFERING_ORDER.map((option) => ({
+                option: option as string,
+                label: OFFERING_GROUPS[option].heading,
+              })),
+              { option: "", label: "Not yet classified" },
+            ].map(({ option, label }) => (
+              <label
+                key={option || "unclassified"}
+                className="hsh-body-sm flex min-h-[var(--hsh-touch-target)] cursor-pointer items-center gap-[var(--hsh-space-3)] rounded-[var(--hsh-radius-control)] border border-[var(--hsh-border-default)] px-[var(--hsh-space-4)] has-[:checked]:border-[var(--hsh-forest-600)] has-[:checked]:bg-[var(--hsh-forest-50)] has-[:focus-visible]:outline-[length:var(--hsh-focus-width)] has-[:focus-visible]:outline-offset-[var(--hsh-focus-offset)] has-[:focus-visible]:outline-[color:var(--hsh-focus)] has-[:focus-visible]:outline-solid"
+              >
+                <input
+                  type="radio"
+                  name="offeringType"
+                  value={option}
+                  defaultChecked={value("offeringType") === option}
+                  className="size-4 accent-[var(--hsh-forest-600)]"
+                />
+                <span className="font-semibold text-[var(--hsh-text-primary)]">
+                  {label}
+                </span>
+              </label>
+            ))}
+          </div>
+          {/* A plain paragraph for the same reason the availability group uses
+              one: this is a radio group, not a Base UI `Field.Root`. */}
+          {state.fieldErrors.offeringType ? (
+            <p role="alert" className="hsh-body-sm text-[var(--hsh-error)]">
+              {state.fieldErrors.offeringType}
+            </p>
+          ) : null}
+        </fieldset>
+
+        <fieldset className="flex flex-col gap-[var(--hsh-space-3)]">
+          <legend className="hsh-label mb-[var(--hsh-space-2)] text-[var(--hsh-text-primary)]">
             Availability
           </legend>
           <p className="hsh-body-sm text-[var(--hsh-text-secondary)]">
@@ -387,10 +431,12 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
         <Field invalid={Boolean(state.fieldErrors.checkoutUrl)}>
           <FieldLabel>External checkout link</FieldLabel>
           <FieldDescription>
-            The program&rsquo;s own https://{CHECKOUT_HOST} address. Leaving for
-            checkout is a handoff: it is not payment and it is not enrollment.
-            Do not add anything after a ? or # — nothing about a family may
-            travel in this link.
+            The program&rsquo;s own GoDaddy checkout, exactly as the
+            &ldquo;Register &amp; Pay&rdquo; or &ldquo;Pay Now&rdquo; button on
+            the Home School Haven classes page opens it. Leave it empty when the
+            program has no checkout. Leaving for checkout is a handoff: it is
+            not payment and it is not enrollment. Do not add anything after a ?
+            or # — nothing about a family may travel in this link.
           </FieldDescription>
           <Input
             key={`checkoutUrl-${value("checkoutUrl")}`}
@@ -400,7 +446,7 @@ function ProgramFactsForm({ program }: { program: AdminProgram }) {
             autoComplete="off"
             maxLength={CHECKOUT_URL_MAX}
             defaultValue={value("checkoutUrl")}
-            placeholder={`https://${CHECKOUT_HOST}/…`}
+            placeholder={CHECKOUT_DESTINATION_HINT}
           />
           <FieldError match={Boolean(state.fieldErrors.checkoutUrl)}>
             {state.fieldErrors.checkoutUrl}

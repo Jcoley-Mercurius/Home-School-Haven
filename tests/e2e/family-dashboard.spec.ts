@@ -56,6 +56,18 @@ async function signIn(page: Page, email: string) {
   await page.waitForURL((url: URL) => !url.pathname.startsWith("/sign-in"))
 }
 
+/** Replace clock-derived session text with one fixed value of the same shape. */
+async function pinSessionTimes(page: Page) {
+  await page.locator("main time").evaluateAll((times) => {
+    for (const time of times) {
+      const text = time.textContent ?? ""
+      time.textContent = text.includes("–")
+        ? "Wed, Sep 30, 2026, 10:00 AM – 12:00 PM ET"
+        : "Wed, Sep 23, 2026, 10:00 AM"
+    }
+  })
+}
+
 test.describe("signed out", () => {
   for (const route of PROTECTED) {
     test(`${route} redirects to sign-in and preserves the destination`, async ({
@@ -181,9 +193,9 @@ test.describe("enrollment trust states", () => {
     await page.goto("/family/schedule")
 
     /* The seed confirms exactly two of family A's FOUR enrollments -- Haven
-       Days for the first child, and Art Lab for the second. The count moved
+       Days for the first child, and Tutoring for the second. The count moved
        from one to two in the family-and-educator-operations slice, which added
-       the Art Lab confirmation so the roster boundary had a target; both are
+       the Tutoring confirmation so the roster boundary had a target; both are
        deliberate administrator confirmations in the fixture.
        
        The guard is unchanged in substance: family A also holds a
@@ -414,6 +426,14 @@ test.describe("shell, accessibility, and responsive behaviour", () => {
       await signIn(page, ACCOUNTS.parentWithFamily)
       await page.goto("/family")
       await page.waitForLoadState("networkidle")
+      /* Session times are seeded relative to `now()` (supabase/seed.sql), so
+         their text changes with every `db:reset`. Weekday and month names
+         differ in length, which shifts wrapping and page height, so masking
+         `time` alone was not enough (tried 2026-09-18). Each <time> gets one
+         fixed string of the same shape before capture. This baseline proves
+         the composition; the ARIA snapshot above proves the date format.
+         prompts/foundation-review-readiness.md §13. */
+      await pinSessionTimes(page)
       await expect(page).toHaveScreenshot(`family-dashboard-${name}.png`, {
         fullPage: true,
       })

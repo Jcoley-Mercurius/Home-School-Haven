@@ -279,6 +279,7 @@ These decisions are approved and do not need to be reopened during routine imple
 - Never infer payment success from a checkout redirect or client event.
 - Never automate scholarship, discount, refund, cancellation, credit, transfer, or related policy decisions.
 - Do not enable real-family use until the policy checklist and production security, recovery, email, abuse-protection, and operational gates are approved and verified.
+- Registration health, contact, pickup, STEP UP, and acceptance data lives only in the restricted `registration_*` tables. It is written only by `public.submit_family_registration` and the narrow Slice 2.5 RPCs (document renewal, admin STEP UP transitions, owner-only publish), and it is sample-only by constraint. Educators have no policy on those tables. Their only path is `public.educator_child_safety(program)`: allergy answer and details, emergency contacts, and pickup persons, for confirmed children in an assigned program (MPS DEC-027). Never widen that function, add an educator policy, or copy those fields onto `students`, roster views, audit payloads, URLs, or logs.
 
 ---
 
@@ -292,6 +293,9 @@ These decisions are approved and do not need to be reopened during routine imple
 - A public analytics configuration must not leak into authenticated layouts through a shared root provider.
 - Session replay is disabled. Do not enable it as a debugging shortcut.
 - Sanitized review approval is not approval for real-family activation.
+- STEP UP is a scholarship coupon applied at the end of checkout, not part of registration or a separate checkout path (MPS DEC-033). The registration UI sends no STEP UP data. The Slice 2.5 STEP UP tables, states, and admin RPCs stay in the schema unused until an owner decision retires them. The approved GoDaddy checkout has no coupon field, so no STEP UP coupon instruction is shown anywhere until Samantha confirms where coupons are used (GAP-015). No STEP UP state or applied coupon is ever payment, a discount, or enrollment. A draft registration document never counts as accepted policy. No approved document version can exist until an owner-approved migration lifts the approval lock, and publishing a new version requires fresh acceptance (DEC-029).
+- Checkout links are the exact destinations recorded in `mps/BETA-CONTENT-IMPORT-INVENTORY.md` ("Checkout source mapping"). Only `https://poynt.godaddy.com/checkout/2bf1b322-d362-4d5d-a4a7-5e5791473f14/<id>` or `https://pay.homeschoolhaven.org/…` is allowed, with no query or fragment (`private.is_approved_checkout_url`). Never derive one from a name or slug, and never append data. A checkout link renders only on a family's own `started` registration, never on a public page. Following it, or returning from it, records nothing.
+- Attendance days are validated against `program_attendance_rules`, not free text. A fixed-day program takes no day choice (DEC-032).
 - Supabase Free is approved for sanitized review only; production readiness requires the approved paid and recovery posture.
 - Do not install a replacement design library or create one-off styling when approved MDS tokens and components apply.
 - Do not assume package commands, paths, environment variables, schemas, or migrations. Discover them from the repository.

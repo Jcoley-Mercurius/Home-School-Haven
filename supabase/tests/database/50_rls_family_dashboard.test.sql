@@ -17,7 +17,7 @@ select plan(17);
 \set parent_a '20000000-0000-4000-8000-00000000000a'
 \set parent_b '20000000-0000-4000-8000-00000000000b'
 \set educator '20000000-0000-4000-8000-00000000000e'
-\set art_lab '10000000-0000-4000-8000-000000000004'
+\set tutoring '10000000-0000-4000-8000-00000000000c'
 \set sewing '10000000-0000-4000-8000-000000000005'
 \set family_b_enrollment '50000000-0000-4000-8000-000000000004'
 
@@ -41,14 +41,14 @@ select is(
 -- The trust states the dashboard exists to distinguish are all present and
 -- readable, so a rendering test has something real to render.
 --
--- Art Lab now carries TWO of family A's enrollments -- one payment_pending for
+-- Tutoring now carries TWO of family A's enrollments -- one payment_pending for
 -- the first child and one confirmed for the second -- so this is narrowed by
 -- student rather than by program. That pairing is deliberate: one program
 -- holding a confirmed and an unconfirmed child on the same screen is exactly
 -- what the roster must not blur together.
 select is(
   (select state::text from public.enrollments
-     where program_id = :'art_lab'::uuid
+     where program_id = :'tutoring'::uuid
        and student_id = '40000000-0000-4000-8000-000000000001'::uuid),
   'payment_pending',
   'the payment-pending enrollment is readable by its own family'
@@ -90,13 +90,13 @@ select is(
 -- state half of the policy, independently of the family half.
 select is(
   (select count(*)::int from public.announcements
-     where program_id = :'art_lab'::uuid and state = 'draft'),
+     where program_id = :'tutoring'::uuid and state = 'draft'),
   0,
   'a draft announcement is invisible even on an enrolled program'
 );
 select is(
   (select count(*)::int from public.learning_resources
-     where program_id = :'art_lab'::uuid and state = 'draft'),
+     where program_id = :'tutoring'::uuid and state = 'draft'),
   0,
   'a draft resource is invisible even on an enrolled program'
 );
@@ -157,14 +157,14 @@ select is(
 -- ---------------------------------------------------------------------------
 set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-00000000000e","role":"authenticated"}';
 
--- Assigned to Art Lab, so its roster is reachable -- both of its enrollments,
+-- Assigned to Tutoring, so its roster is reachable -- both of its enrollments,
 -- the confirmed one and the payment_pending one. Seeing that a place is
 -- unsettled is part of what an assigned educator's roster is for; identifying
 -- the child behind an unsettled place is not, and that narrower rule lives on
 -- `students`, asserted in 60_ and 80_.
 select is(
   (select count(*)::int from public.enrollments
-     where program_id = :'art_lab'::uuid),
+     where program_id = :'tutoring'::uuid),
   2,
   'an assigned educator reads the roster for their assigned program'
 );
@@ -172,7 +172,7 @@ select is(
 -- Not assigned to Sewing or Haven Days, so those rosters are not.
 select is(
   (select count(*)::int from public.enrollments
-     where program_id <> :'art_lab'::uuid),
+     where program_id <> :'tutoring'::uuid),
   0,
   'an assigned educator reads no enrollment for an unassigned program'
 );

@@ -14,8 +14,8 @@ const ROUTES = [
   { path: "/programs", h1: "Published programs" },
   { path: "/calendar", h1: "Plan your learning season" },
   { path: "/about", h1: "A haven for curious learners and connected families" },
-  { path: "/programs/art-lab", h1: "Art Lab" },
-  { path: "/programs/etiquette-series", h1: "Etiquette Series" },
+  { path: "/programs/haven-days-enrichment", h1: "Haven Days" },
+  { path: "/programs/gardening", h1: "Gardening" },
   { path: "/contact", h1: "How can we support your family?" },
   { path: "/resources", h1: "Support for every step of the journey" },
 ] as const
@@ -49,6 +49,16 @@ for (const route of ROUTES) {
       /* QA-003 resolved 2026-08-27: one number everywhere. */
       expect(body).not.toContain("239-347-93556")
       expect(body).toContain("239-347-9356")
+    })
+
+    test("publishes only the owner-confirmed address", async ({ page }) => {
+      await page.goto(route.path)
+      const footer = await page.getByRole("contentinfo").innerText()
+      /* Owner evidence of 2026-09-14 replaced the Del Prado Boulevard address. */
+      expect(footer).toContain("1329 Hibiscus Drive, Cape Coral, FL 33909")
+      const body = await page.locator("body").innerText()
+      expect(body).not.toContain("Del Prado")
+      expect(body).not.toContain("Suite D")
     })
 
     test("asks for no child or student information", async ({ page }) => {
@@ -102,9 +112,9 @@ test("every placeholder image on /programs is labelled demo-only", async ({
   const alts = await page
     .locator("main img")
     .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("alt")))
-  /* Three of the eight published programs have placeholder art; the rest
-     render a decorative panel with no image at all. */
-  expect(alts.length).toBe(3)
+  /* Only Haven Days still carries placeholder art; the other offerings render
+     a decorative panel with no image at all. */
+  expect(alts.length).toBe(1)
   for (const alt of alts) {
     expect(alt).toMatch(/^Placeholder photo — demo only\./)
   }
@@ -113,8 +123,8 @@ test("every placeholder image on /programs is labelled demo-only", async ({
 test("View Details opens the program's own detail page", async ({ page }) => {
   await page.goto("/")
   await page
-    .getByRole("link", { name: /^View Details for Harvest Explorers/ })
+    .getByRole("link", { name: /^View Details for Ready Set Prep/ })
     .click()
-  await expect(page).toHaveURL(/\/programs\/harvest-explorers$/)
-  await expect(page.locator("h1")).toHaveText("Harvest Explorers")
+  await expect(page).toHaveURL(/\/programs\/ready-set-prep$/)
+  await expect(page.locator("h1")).toHaveText("Ready Set Prep")
 })

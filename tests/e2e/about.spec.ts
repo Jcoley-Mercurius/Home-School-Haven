@@ -349,14 +349,16 @@ test.describe("footer", () => {
       footer.getByRole("link", { name: "239-347-9356" }),
     ).toHaveAttribute("href", "tel:2393479356")
     await expect(footer).not.toContainText("239-347-93556")
-    await expect(footer).toContainText("2930 Del Prado Boulevard South")
+    await expect(footer).toContainText(
+      "1329 Hibiscus Drive, Cape Coral, FL 33909",
+    )
 
     /* The guard that stops a reviewer reading demo art as real photography.
        Scoped, not blanket, and it narrows as placeholders are retired: three
        program card images are still demo art. It goes when
        `public/placeholder/` goes. */
     await expect(footer).toContainText(
-      "the three program card images are placeholder art for layout review only",
+      "the Haven Days program image is placeholder art for layout review only",
     )
     await expect(footer).toContainText(
       "Photography is supplied and approved by Home School Haven",
@@ -418,12 +420,17 @@ test.describe("responsive transformation", () => {
   test("matches the approved composition at each viewport", async ({
     page,
   }) => {
+    test.slow()
     for (const [name, viewport] of Object.entries(VIEWPORTS)) {
       await page.setViewportSize(viewport)
       await gotoAbout(page)
       await expect(page).toHaveScreenshot(`about-${name}.png`, {
         fullPage: true,
         maxDiffPixelRatio: 0.01,
+        /* With the team section and its portraits the mobile page is over
+           8,000 px tall, and one full-page capture alone outran the 5 s
+           default here (2026-10-07). The diff threshold is unchanged. */
+        timeout: 20_000,
       })
     }
   })

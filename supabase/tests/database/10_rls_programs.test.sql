@@ -8,7 +8,7 @@ select plan(14);
 \set parent_a  '20000000-0000-4000-8000-00000000000a'
 \set educator  '20000000-0000-4000-8000-00000000000e'
 \set admin     '20000000-0000-4000-8000-000000000ad0'
-\set art_lab   '10000000-0000-4000-8000-000000000004'
+\set tutoring   '10000000-0000-4000-8000-00000000000c'
 \set draft     '10000000-0000-4000-8000-0000000000ff'
 
 -- ---------------------------------------------------------------------------
@@ -20,8 +20,8 @@ set local request.jwt.claims = '{"role":"anon"}';
 -- POSITIVE: published discovery works without an account.
 select is(
   (select count(*)::int from public.programs),
-  8,
-  'anon reads exactly the 8 published programs'
+  9,
+  'anon reads exactly the 9 published programs (owner evidence of 2026-09-14)'
 );
 
 -- NEGATIVE: the draft is invisible.
@@ -102,15 +102,15 @@ select is(
 -- writable" case -- and since option A revoked the write verbs, the refusal is
 -- now a privilege error rather than a silently empty update.
 select throws_ok(
-  $$ update public.programs set published_price = '$1' where slug = 'art-lab' $$,
+  $$ update public.programs set published_price = '$1' where slug = 'tutoring' $$,
   '42501', null,
   'an assigned educator cannot change a program price'
 );
 
 -- ...and the price is untouched.
 select is(
-  (select published_price from public.programs where slug = 'art-lab'),
-  null,
+  (select published_price from public.programs where slug = 'tutoring'),
+  '$65/hour or $40/half-hour',
   'the attempted price change did not land'
 );
 
@@ -125,8 +125,8 @@ set local request.jwt.claims = '{"sub":"20000000-0000-4000-8000-000000000ad0","r
 -- POSITIVE: administrators see drafts as well as published programs.
 select is(
   (select count(*)::int from public.programs),
-  9,
-  'an administrator sees published and draft programs'
+  15,
+  'an administrator sees published, draft, and archived programs'
 );
 
 -- POSITIVE: administrators may publish (MPS-RUL-005).

@@ -4,12 +4,12 @@ mds:
   project_id: "home-school-haven-learning-platform"
   project_name: "Home School Haven Learning Platform"
   lifecycle: active
-  mds_version: "v1.1"
+  mds_version: "v1.2.1"
   current_gate: implementation_readiness
   mps_project_id: "home-school-haven-learning-platform"
   mps_version: "unversioned draft; Library version 11 consumed"
   created_at: "2026-08-27T00:00:00Z"
-  updated_at: "2026-08-28T00:00:00Z"
+  updated_at: "2026-09-19T00:00:00Z"
 
 project:
   name: "Home School Haven Learning Platform"
@@ -411,6 +411,20 @@ components:
     states: [default, action_required, accepted, expired, error]
     specification:
       rule: "Show policy name/version and acceptance state when known; unresolved policy language remains blocked"
+      acceptance_method: "signature (typed name: liability waiver, Code of Conduct) or acknowledgment (checkbox, no signature: Parent Handbook); never merged into one control (v1.2, MDS-DEC-023)"
+      renewal_required: "Shown when a newly published version supersedes the one the family accepted; draft edits never trigger it (MPS DEC-029)"
+  step_up_review_state:
+    applicability: required
+    status: approved
+    introduced_version: "v1.2"
+    variants: [pending_verification, needs_information, verified, declined, canceled]
+    sizes: [badge, inline_panel]
+    states: [default, action_required, complete]
+    specification:
+      composition: "Reuses the enrollment_state badge and inline_panel sizes, tokens, and icon treatment; no new visual convention"
+      rule: "Never displayed as payment, a discount, or enrollment. verified hands the registration to enrollment review and uses complete, not success, styling. Each variant has a distinct label and icon; meaning never depends on color alone."
+      labels: "Working labels subject to content-owner review (DESIGN-SYSTEM §9.1)"
+    on_hold: "v1.2.1 (MDS-DEC-024): STEP UP is a coupon applied at the end of checkout (MPS DEC-033). Registration does not render this state; the checkout slice decides whether it is kept, changed, or retired."
   assistance_request:
     applicability: required
     status: approved
@@ -567,6 +581,7 @@ patterns:
     enrollment_handoff: {applicability: required, status: approved, composition: "Student selection, consent readiness, summary, explicit external checkout notice, return status"}
     waitlist: {applicability: required, status: approved, composition: "Program context, non-enrollment explanation, contact details, submit, received state"}
     consent: {applicability: required, status: approved, composition: "Owner-approved policy content, version/context, explicit acceptance, retained status"}
+    family_registration: {applicability: required, status: approved, introduced_version: "v1.2", composition: "One route, one atomic submission, family-first sections: guardian contact, emergency contacts, pickup persons, collapsible child cards with per-child selections and attendance, external-checkout handoff (no STEP UP, v1.2.1), documents/media permission/acknowledgments/signature, review and submit", responsive_behavior: "8/12 form plus 4-column sticky review rail on desktop; below 1024 px one column with the review section at the end", specification: "mds/specification/DESIGN-SYSTEM.md §9.1"}
     assistance_request: {applicability: required, status: approved, composition: "Private supportive introduction, minimum necessary fields, manual-review expectation, received state"}
     educator_content_studio: {applicability: optional, status: approved, horizon: "Future LMS", composition: "Assigned-program selector, course outline, material editor, resource upload, draft/preview/review actions, authoring boundaries"}
     admin_operations: {applicability: required, status: approved, horizon: "Foundation Beta", composition: "Attention overview, program operations, quick actions, payment/consent/content states, recent activity, owner-authority reminder"}
@@ -766,6 +781,7 @@ references:
       - "Adopt the displayed public calendar shell, month grid, notes rail, program panel, and guidance band"
       - "Plot an entry only where the source publishes a day and a year; never infer a missing year"
       - "Do not build the category chips until an approved source assigns offerings to categories"
+      - "Weekly schedules and month-only seasons are listed beside the grid in the existing card treatment and are never plotted as days (MDS-DEC-022, 2026-09-16)"
 
 technical: {framework: null, framework_version: null, language: null, styling_system: null, component_system: null, icon_implementation: null, font_implementation: null, repository_structure: null, token_location: null, component_location: null, global_style_location: null, layout_location: null, deployment_target: null, accessibility_tools: [], test_tools: []}
 
@@ -791,6 +807,10 @@ governance:
     - {id: MDS-DEC-018, area: references, key: homepage_and_family_dashboard, value: "Reconciled public homepage and parent-controlled family dashboard visual references", status: approved, source: "User approval on 2026-08-26", dependencies: [implementation, visual_qa, responsive_references]}
     - {id: MDS-DEC-019, area: references, key: educator_and_admin_backoffice, value: "Educator content workspace and administrator operations references", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_authority, educator_reference, admin_reference, implementation, qa]}
     - {id: MDS-DEC-020, area: release, key: educator_course_builder_horizon, value: "Future platform; not Foundation Release Beta", status: approved, source: "User approval on 2026-08-26", dependencies: [mps_future_scope, educator_reference, implementation_manifest]}
+    - {id: MDS-DEC-021, area: composition, key: catalog_offering_groups, value: "The public catalog composes one visible h2 per MPS offering type (Haven Days, Ready Set programs, Individual classes, Tutoring, Monthly clubs) over the approved 3/2/1 program grid; empty groups are omitted; the detail eyebrow names the offering type. No filter rail or chips are added (catalog deviation D-2 unchanged).", status: approved, source: "prompts/public-offering-model.md approved 2026-09-16; MPS DEC-024", dependencies: [public_catalog, program_detail, program_card, mps_authority]}
+    - {id: MDS-DEC-022, area: composition, key: calendar_schedules_and_seasons, value: "The public calendar replaces the static term-range list with 'Weekly schedules and seasons', derived from published programs and rendered in the existing term-range card treatment; the month grid, list transformation below 1024 px, notes rail, program panel, and guidance band are unchanged", status: approved, source: "prompts/public-offering-model.md approved 2026-09-16", dependencies: [public_calendar, MDS-REF-010, responsive]}
+    - {id: MDS-DEC-023, area: page_patterns, key: family_registration_pattern, value: "Family registration pattern (DESIGN-SYSTEM §9.1): one route and one atomic submission in family-first sections; collapsible child cards with Add another child; conditional health details only after an explicit Yes; attendance controls driven by the program's attendance rule; per-child STEP UP review state or external-checkout handoff; signature and acknowledgment as separate consent_state controls; a neutral, unpreselected media-permission Yes/No that does not affect eligibility; value-preserving error summary with focus on the first invalid section; specified loading, retry, empty, blocked, responsive, keyboard, and screen-reader behavior", status: approved, source: "Slice 2.5 instruction of 2026-09-19; prompts/registration-readiness.md §8; MPS DEC-026–DEC-030, DEC-032", dependencies: [forms, consent_state, enrollment_state, payment_handoff, consent, enrollment_handoff, error, loading, empty, responsive, accessibility]}
+    - {id: MDS-DEC-024, area: page_patterns, key: step_up_out_of_registration, value: "The family registration pattern no longer includes STEP UP. Each child shows only the external-checkout handoff, and the success state lists enrollment state and the checkout handoff per child. step_up_review_state is on hold until the checkout slice designs STEP UP as a coupon at the end of checkout.", status: approved, source: "MPS DEC-033 (Samantha Dodson, relayed 2026-09-19)", supersedes_in_part: "MDS-DEC-023 (per-child STEP UP review state)"}
   gaps:
     - {id: MDS-GAP-001, area: identity, statement: "Logo preservation or evolution direction is unapproved", status: resolved}
     - {id: MDS-GAP-002, area: visual_language, statement: "Canonical visual personality and mood are unapproved", status: resolved}
@@ -801,6 +821,7 @@ governance:
     - {id: MDS-GAP-007, area: references, statement: "Initial full-size homepage and family-dashboard UI references require generation, reconciliation, and user approval", status: resolved}
     - {id: MDS-GAP-008, area: product_authority, statement: "Educator full-course authoring is future-platform scope; exact create, submit, review, and publish authority requires MPS confirmation and must not expand Foundation Beta permissions", status: resolved, resolution: "User placed the full Course Builder in the future platform; Foundation Beta permissions remain unchanged"}
     - {id: MDS-GAP-009, area: references, statement: "Educator and administrator back-office references require generation, reconciliation, and user approval", status: resolved}
+    - {id: MDS-GAP-010, area: components, statement: "The future one-step family registration UI needs presentation states that MDS v1.1 does not yet define: a STEP UP 'pending administrative verification' state that is visibly distinct from payment, discount, and confirmed enrollment; signature versus acknowledgment within components.consent_state (typed signature for the liability waiver and Code of Conduct, acknowledgment without signature for the Parent Handbook); the conditional allergy-details disclosure driven by an explicit Yes/No; and the multi-child, per-child selection composition with attendance days. Slice 2 builds only the data contract, so no screen is affected and nothing was designed. To be resolved before the registration UI slice, reusing forms, consent_state, enrollment_state, and page_patterns.consent/enrollment_handoff.", status: resolved, opened_at: "2026-09-18", source: "prompts/registration-data-foundation.md; MPS DEC-025, EXC-002", resolved_at: "2026-09-19", resolution: "Resolved at the specification level by MDS-DEC-023 (DESIGN-SYSTEM §9.1, MDS v1.2): the STEP UP review state, signature versus acknowledgment, the conditional health disclosures, and the multi-child composition with attendance are all specified. No canonical visual reference exists; the written pattern governs, and rendered MDS validation at 390, 768, 1024, and 1440 px is required in the registration UI slice."}
   exceptions:
     - {id: MDS-EXC-001, area: beta_data, statement: "Private beta references may use sample or sanitized family and student data until MPS policy gaps are resolved", status: approved}
   deviations: []
@@ -869,23 +890,92 @@ governance:
       version_impact: "Backward-compatible reference addition released as MDS v1.1 per DESIGN-SYSTEM.md §13."
       affected_artifacts: [reference_index, design_specification, ui_references, project_state]
       approved_at: "2026-08-28"
-  versions:
+    - id: MDS-CHG-009
+      area: composition
+      previous_value: "Catalog as one ungrouped grid; calendar term ranges held as a static copy including QA-002 text"
+      new_value: "Catalog grouped by offering type (MDS-DEC-021); calendar lists weekly schedules and seasons derived from published programs (MDS-DEC-022)"
+      reason: "Owner evidence of 2026-09-14 introduced an offering taxonomy and weekday/month schedules; both are composed from existing headings, grids, and cards with no new visual convention"
+      version_impact: "Backward-compatible composition within v1.1; no token, component, or reference change"
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-16"
+    - id: MDS-CHG-010
+      area: verification
+      previous_value: "MDS-DEC-021 and MDS-DEC-022 recorded as implemented, with ARIA and screenshot baselines not regenerated after the sample fixtures moved"
+      new_value: "Both verified against regenerated ARIA and screenshot baselines at 390, 768, 1024, and 1440 px; every diff reviewed for structural change before acceptance"
+      reason: "Audit of 2026-09-17 (prompts/closeout-slice-1-audit-fixes.md). Nine ARIA baselines still asserted archived offerings, so the accessibility evidence for the grouped catalog and the calendar schedule list did not yet exist."
+      version_impact: "No token, component, layout, or reference change. Evidence only."
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-17"
+      note: "NOT a claim of MDS compliance validation, which remains not_started. The About, Contact composition, resources, auth, password-recovery, family-setup, and admin-families baselines were captured before the footer was recomposed on 2026-09-02 and are still unrefreshed; those pages are unverified (MPS FIND-004). The desktop chip word-break at 1280 px routed to MDS during Slice 1 is still open and was not touched."
+    - id: MDS-CHG-011
+      area: product_truth_intake
+      previous_value: "No registration presentation states recorded beyond components.consent_state and components.enrollment_state"
+      new_value: "MDS-GAP-010 opened for the STEP UP pending-verification state, signature versus acknowledgment, conditional allergy disclosure, and multi-child selection composition"
+      reason: "MPS Slice 2 (DEC-025, EXC-002) created the registration data contract those states will present. No UI was built."
+      version_impact: "None. No token, component, layout, or reference change; the locked visual system is untouched."
+      affected_artifacts: [project_state]
+      approved_at: "2026-09-18"
+    - id: MDS-CHG-012
+      area: page_patterns
+      previous_value: "MDS-GAP-010 open: no registration presentation states beyond consent_state and enrollment_state"
+      new_value: "Family registration pattern (DESIGN-SYSTEM §9.1), components.step_up_review_state, and consent_state acceptance methods; MDS-GAP-010 resolved at the specification level (MDS-DEC-023)"
+      reason: "Slice 2.5 (prompts/registration-readiness.md, approved 2026-09-19) must settle every design question before the registration UI slice begins"
+      version_impact: "Backward-compatible pattern and state addition, released as MDS v1.2 per DESIGN-SYSTEM.md §13. No token, color, type, spacing, component visual, layout-system, or reference change."
+      affected_artifacts: [design_specification, reference_index, implementation_manifest, project_state]
+      approved_at: "2026-09-19"
+      note: "Specification only. No UI was built and no visual reference was generated, so MDS compliance validation remains not_started."
+    - id: MDS-CHG-013
+      area: page_patterns
+      previous_value: "Family registration pattern with a per-child STEP UP review state or external-checkout handoff (MDS-DEC-023)"
+      new_value: "Family registration pattern with the external-checkout handoff only; step_up_review_state on hold for the checkout slice (MDS-DEC-024)"
+      reason: "MPS DEC-033: STEP UP is a scholarship coupon applied at the end of checkout, not a registration step or family-facing checklist"
+      version_impact: "Patch release v1.2.1. It removes an element that was never built and adds no token, component, visual, layout, or reference."
+      affected_artifacts: [design_specification, implementation_manifest, project_state]
+      approved_at: "2026-09-19"
+    - id: MDS-CHG-014
+      area: page_patterns
+      previous_value: "Family registration pattern specified (DESIGN-SYSTEM §9.1) but not rendered; no visual evidence"
+      new_value: "Pattern implemented at /family/registration by COMPOSE and EXTEND only. consent_state gets its first implementation (required, unavailable, renewal_required, and blocked; signature or acknowledgment shown per document). RadioGroup gets its first use, in fieldsets with legends. CheckoutHandoff gains optional heading id, text, and level props plus an after-registration sentence; the defaults leave existing pages unchanged. No token, color, type role, spacing value, shadow, or new visual convention."
+      reason: "Slice 3 (prompts/family-registration-ui.md)"
+      version_impact: "None. Implements v1.2.1 as written."
+      affected_artifacts: [implementation_manifest, project_state]
+      approved_at: "2026-09-19"
+      evidence: "tests/e2e/family-registration.spec.ts-snapshots: step 1, validation error, empty children, programs, documents, review, and success at 390, 768, 1024, and 1440; registration-step-1 and registration-child-card ARIA snapshots; Axe with WCAG 2.2 AA tags at every step and on success."
+      note: "Rendered validation of this one pattern against the written specification. It is not a site-wide MDS compliance claim; compliance stays not_started (MPS FIND-004). No canonical reference image exists, so the new baselines are evidence, not a reference."
+    - id: MDS-CHG-015
+      area: component_states
+      previous_value: "CheckoutHandoff rendered the same way everywhere. Every URL was NULL, so only 'Registration link not published' had ever rendered. The public program page would have rendered a live link to any visitor once a URL existed."
+      new_value: "CheckoutHandoff requires a placement. `catalog` (public program page) renders the payment_handoff notice and a sentence that checkout opens from a registration, and never renders a link. `eligible` (a family's own started registration) renders 'Continue to Secure Checkout' with a program-named heading, an accessible name that includes the program and child, and a visible new-tab and pending-verification line. The registration result says each program has its own checkout when there is more than one. No STEP UP element is rendered. step_up_review_state stays on hold."
+      reason: "Slice 4 (prompts/external-checkout-payment-truth.md); MPS CHG-009"
+      version_impact: "None. REUSE and EXTEND of an existing component with existing Button, Badge, card, and type tokens. No new token, component, visual convention, or reference."
+      affected_artifacts: [implementation_manifest, qa_protocol, project_state]
+      approved_at: "2026-09-19"
+      evidence: "tests/e2e/external-checkout.spec.ts-snapshots (enrollment-checkout at 390, 768, 1024, 1440; enrollment-checkout-handoff ARIA snapshot); Axe WCAG 2.2 AA at each width; keyboard focus outline and 44 px target; tests/e2e/family-registration.spec.ts two-child test."
+      note: "Rendered validation of the handoff against DESIGN-SYSTEM §6 payment_handoff, §9.1, and DO-DONT 'Trust states'. It is not a site-wide compliance claim."
     - version: "v1.0"
       status: superseded
       activated_at: "2026-08-26"
       scope: "Approved Home School Haven visual foundations, components, composition, and canonical public, family, educator-future, and administrator references"
     - version: "v1.1"
-      status: active
+      status: superseded
       activated_at: "2026-08-28"
       scope: "Approved and locked v1.0 system plus the canonical MDS-REF-010 public calendar reference"
+    - version: "v1.2"
+      status: superseded
+      activated_at: "2026-09-19"
+      scope: "v1.1 plus the family registration pattern, the STEP UP review state, and consent-state acceptance methods (MDS-DEC-023)"
+    - version: "v1.2.1"
+      status: active
+      activated_at: "2026-09-19"
+      scope: "v1.2 with STEP UP removed from the family registration pattern and step_up_review_state on hold for the checkout slice (MDS-DEC-024)"
 
 artifacts:
   handoff_index: {path: "mds/MDS-HANDOFF-INDEX.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
-  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-08-28T00:00:00Z"}
+  design_specification: {path: "mds/specification/DESIGN-SYSTEM.md", status: current, last_updated: "2026-09-19T00:00:00Z"}
   principles: {path: "mds/specification/PRINCIPLES.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   do_dont: {path: "mds/specification/DO-DONT.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   tokens: {path: "mds/tokens", status: current, last_updated: "2026-08-27T02:37:26Z"}
-  reference_index: {path: "mds/references/REFERENCE-INDEX.md", status: current, last_updated: "2026-08-28T00:00:00Z"}
+  reference_index: {path: "mds/references/REFERENCE-INDEX.md", status: current, last_updated: "2026-09-19T00:00:00Z"}
   core_reference: {path: "/Home School Haven Learning Platform/Home School Haven design foundations sheet.png", status: current, last_updated: "2026-08-27T01:40:00Z"}
   layout_reference: {path: "/Home School Haven Learning Platform/Home School Haven Navigation Blueprint.png", status: current, last_updated: "2026-08-27T03:10:00Z"}
   component_reference: {path: "/Home School Haven Learning Platform/Proposed component library visual reference.png", status: current, last_updated: "2026-08-27T02:35:00Z"}
@@ -896,7 +986,7 @@ artifacts:
     - {id: MDS-UI-REF-004, name: "Administrator Operations", path: "/Home School Haven Learning Platform/Home School Haven admin dashboard.png", status: current, last_updated: "2026-08-27T04:20:00Z", horizon: "Foundation Beta"}
     - {id: MDS-UI-REF-005, name: "Public Calendar", path: "mds/references/assets/public-calendar-reference.png", status: current, last_updated: "2026-08-28T00:00:00Z", horizon: "Foundation Release"}
   agents_md: {path: "AGENTS.md", status: current, last_updated: "2026-08-29T00:00:00Z", note: "MDS guardrails current; MTS approved and repository reconciliation completed 2026-08-27 — real versions, paths, and commands recorded in mds/implementation/MDS-IMPLEMENTATION.md"}
-  implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled; exact repository versions, paths, and commands pending inspection"}
+  implementation_manifest: {path: "mds/implementation/MDS-IMPLEMENTATION.md", status: current, last_updated: "2026-08-27T03:55:00Z", note: "MTS v1.0 selections reconciled. Corrected 2026-09-16: the repository has been inspected and implemented against since 2026-08-27 (Next.js 16.3.3, Tailwind v4, @base-ui/react, Playwright + axe); per-slice evidence lives in prompts/."}
   qa_protocol: {path: "mds/qa/MDS-QA.md", status: current, last_updated: "2026-08-27T02:37:26Z"}
   compliance_report: {path: "mds/qa/MDS-COMPLIANCE.md", status: missing}
 
@@ -915,7 +1005,7 @@ gates:
   composition: {status: complete, requirements: ["Content widths and grids", "Page shells", "Responsive transformations", "Navigation behavior", "Content hierarchy", "Page patterns", "Interaction behavior"], blocking_items: [], completed_at: "2026-08-27T03:10:00Z"}
   references: {status: complete, requirements: ["Core Foundations reference", "Component Library reference", "Layout & Behavior reference", "Canonical public homepage", "Canonical family dashboard", "Educator content workspace", "Administrator operations"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
   approval: {status: complete, requirements: ["Foundations approved", "Components approved", "Composition approved", "Canonical references approved", "Release boundary recorded"], blocking_items: [], completed_at: "2026-08-27T04:20:00Z"}
-  implementation_readiness: {status: in_progress, requirements: ["Design specification", "Principles", "Do/Don't guidance", "Tokens", "Project AGENTS.md", "Implementation manifest", "QA protocol", "Technical implementation inspection"], blocking_items: ["MPS-GAP-005 for real-family policy", "MPS-GAP-010 for authoritative financial policy", "MTS not yet completed", "Target repository and technical stack not yet inspected", "Project AGENTS.md requires MTS reconciliation"], completed_at: null}
+  implementation_readiness: {status: in_progress, requirements: ["Design specification", "Principles", "Do/Don't guidance", "Tokens", "Project AGENTS.md", "Implementation manifest", "QA protocol", "Technical implementation inspection"], blocking_items: ["MPS-GAP-005 for real-family policy", "MPS-GAP-010 for authoritative financial policy"], note: "Corrected 2026-09-16: MTS v1.0 is approved, the repository and stack are inspected, and AGENTS.md is reconciled. This is not a claim of MDS compliance validation, which remains not started.", completed_at: null}
   compliance: {status: not_started, requirements: [], blocking_items: [], completed_at: null}
 
 compliance:

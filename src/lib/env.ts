@@ -48,6 +48,37 @@ export function releaseTarget(): ReleaseTarget {
   return "local"
 }
 
+/**
+ * Whether this is the temporary Foundation **Demo Preview** environment.
+ *
+ * TEMPORARY — remove with the deployment correction it exists for.
+ *
+ * The Vercel build container cannot reach the hosted Supabase project: the
+ * build-time query fails with `transportStatus: 0`, `networkFailure: true`,
+ * `TypeError: fetch failed`, while the identical query succeeds from a
+ * workstation and from the deployed runtime. Public pages that read the system
+ * of record therefore cannot be prerendered there, and they correctly refuse to
+ * bake a database error into static output, so the whole deployment aborts.
+ *
+ * Where this returns `true`, those pages move their read to request time
+ * (`connection()`), against the same real Supabase project with the same
+ * anonymous RLS policies. Nothing is mocked, no fixture or staging catalog is
+ * substituted, and a runtime failure still produces the approved error state.
+ *
+ * Both variables are required, so the switch cannot arm itself by accident:
+ * `VERCEL_ENV=preview` is set by Vercel and cannot be forged on a production
+ * deploy, and `HSH_RELEASE_TARGET=demo` is a deliberate, temporary value that
+ * exists for no other purpose.
+ *
+ * @returns `true` only on a Vercel preview deployment explicitly marked `demo`.
+ */
+export function isDemoPreview(): boolean {
+  return (
+    process.env.VERCEL_ENV === "preview" &&
+    process.env.HSH_RELEASE_TARGET === "demo"
+  )
+}
+
 const supabaseSchema = z.object({
   url: z.url({ protocol: /^https?$/ }),
   /* Long enough to exclude a placeholder like `your_anon_key`. Both a legacy
