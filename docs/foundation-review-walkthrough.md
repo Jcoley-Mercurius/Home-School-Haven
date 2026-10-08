@@ -49,6 +49,7 @@ Each step matches one of the eight things this review is meant to show. Take as 
 - **STEP UP.** No coupon instructions appear. The GoDaddy checkout has no coupon field, so we need to know where families enter it (see 5.6).
 - **Policy documents.** The waiver, Code of Conduct, and Parent Handbook appear as sample drafts with no wording. Nothing will be written for you; the real text must come from you.
 - **Email.** Sign-in and notification email is not connected to the Home School Haven domain yet.
+- **Program photos.** The leaf panels on program cards, and the Haven Days image, are placeholders. Please send one photo per program that you are happy to publish. If a photo shows a child, please confirm the parents have agreed.
 
 ## 5. Decisions we need from you
 
